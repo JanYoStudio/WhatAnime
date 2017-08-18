@@ -32,6 +32,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ProgressBar;
 import android.transition.Visibility;
+import java.util.Date;
 
 public class MainActivity extends Activity 
 {
@@ -108,7 +109,13 @@ public class MainActivity extends Activity
 										String chinesename = mJSONObject.getJSONArray("synonyms_chinese").get(i).toString();
 										String episode = mJSONObject.getString("episode");
 										String from = mJSONObject.getString("from");
-										tv_text.setText("番名:"+name+"\n中文翻译:"+chinesename+"\n集数:"+episode+"\n时间:"+from);
+										Float time_ms_float = Float.parseFloat(from)*1000;
+										int time_ms_int = time_ms_float.intValue();
+										Date time_ms = new Date(time_ms_int);
+										int time_m = time_ms.getMinutes();
+										int time_s = time_ms.getSeconds();
+										
+										tv_text.setText("番名:"+name+"\n中文翻译:"+chinesename+"\n集数:"+episode+"\n时间:"+time_m+":"+time_s);
 										mProgressBar.setVisibility(View.GONE);
 									}
 								}
