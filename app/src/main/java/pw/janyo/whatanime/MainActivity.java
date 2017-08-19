@@ -1,21 +1,27 @@
 package pw.janyo.whatanime;
 
-import android.app.Activity;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -23,25 +29,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.json.JSONObject;
-import org.json.JSONException;
 import org.json.JSONArray;
-import org.json.JSONTokener;
-import android.widget.ImageView;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.widget.ProgressBar;
-import android.transition.Visibility;
-import java.util.Date;
+import org.json.JSONObject;
+import android.support.design.widget.FloatingActionButton;
 
-public class MainActivity extends Activity 
+
+
+public class MainActivity extends AppCompatActivity
 {
 	private int REQUEST_CODE;
-	private Button btn_upload;
+	private FloatingActionButton main_fab_upload;
 	private TextView tv_text;
 	private ImageView image;
 	private ProgressBar mProgressBar;
-	private String baseURL = "";
+	private Toolbar main_toolbar;
+	private String baseURL = "https://whatanime.ga/api/search?token=2b85c7881b18fe81062387e979144f62c85788c9";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,12 +51,16 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 		
-		btn_upload = (Button) findViewById(R.id.upload);
+		main_fab_upload = (FloatingActionButton) findViewById(R.id.main_fab_upload);
 		tv_text = (TextView) findViewById(R.id.TextView);
 		image = (ImageView) findViewById(R.id.ImageView);
 		mProgressBar = (ProgressBar) findViewById(R.id.ProgressBar);
+		main_toolbar = (Toolbar) findViewById(R.id.main_toolbar);
 		
-		btn_upload.setOnClickListener(new OnClickListener()
+		setSupportActionBar(main_toolbar);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		
+		main_fab_upload.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View p1)
