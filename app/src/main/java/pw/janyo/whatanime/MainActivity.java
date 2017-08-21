@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
 	private ImageView image;
 	private ProgressBar mProgressBar;
 	private Toolbar main_toolbar;
-	private String baseURL = "https://whatanime.ga/api/search?token=2b85c7881b18fe81062387e979144f62c85788c9";
+	private String baseURL = "";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState)
