@@ -1,15 +1,12 @@
 package pw.janyo.whatanime;
 
 import android.Manifest;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,7 +23,11 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,11 +42,20 @@ import org.json.JSONObject;
 
 import android.support.design.widget.FloatingActionButton;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.mystery0.tools.FileUtil.FileUtil;
+import com.mystery0.tools.Logs.Logs;
+import com.mystery0.tools.MysteryNetFrameWork.HttpUtil;
+import com.mystery0.tools.MysteryNetFrameWork.ResponseListener;
+
 public class MainActivity extends AppCompatActivity
 {
 	private static final String TAG = "MainActivity";
 	private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
 	private final static int REQUEST_CODE = 322;
+	private RequestQueue requestQueue;
 	private FloatingActionButton main_fab_upload;
 	private TextView tv_text;
 	private ImageView image;
@@ -58,13 +68,15 @@ public class MainActivity extends AppCompatActivity
 	{
 		super.onCreate(savedInstanceState);
 		requestPermission();
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_main);
 
-		main_fab_upload = (FloatingActionButton) findViewById(R.id.main_fab_upload);
-		tv_text = (TextView) findViewById(R.id.TextView);
-		image = (ImageView) findViewById(R.id.ImageView);
-		mProgressBar = (ProgressBar) findViewById(R.id.ProgressBar);
-		main_toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+		requestQueue = Volley.newRequestQueue(MainActivity.this);
+
+		main_fab_upload = findViewById(R.id.main_fab_upload);
+		tv_text = findViewById(R.id.TextView);
+		image = findViewById(R.id.ImageView);
+		mProgressBar = findViewById(R.id.ProgressBar);
+		main_toolbar = findViewById(R.id.toolbar);
 
 		setSupportActionBar(main_toolbar);
 		//noinspection ConstantConditions
@@ -75,7 +87,6 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onClick(View p1)
 			{
-				// TODO: Implement this method
 				Intent intent = new Intent();
 				intent.setType("image/*");
 				intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -97,63 +108,95 @@ public class MainActivity extends AppCompatActivity
 
 	private void Search(String base64)
 	{
-		OkHttpClient mOkHttpClient = new OkHttpClient.Builder().build();
-		RequestBody mRequestBody = new FormBody.Builder()
-				.add("image", base64)
-				.build();
-		Request mRequest = new Request.Builder()
-				.url(baseURL)
-				.post(mRequestBody)
-				.build();
-		Call call = mOkHttpClient.newCall(mRequest);
-		call.enqueue(new Callback()
-		{
+//		OkHttpClient mOkHttpClient = new OkHttpClient.Builder().build();
+//		RequestBody mRequestBody = new FormBody.Builder()
+//				.add("image", base64)
+//				.build();
+//		Request mRequest = new Request.Builder()
+//				.url(baseURL)
+//				.post(mRequestBody)
+//				.build();
+//		Call call = mOkHttpClient.newCall(mRequest);
+//		call.enqueue(new Callback()
+//		{
+//			@Override
+//			public void onFailure(Call p1, IOException p2)
+//			{
+//			}
+//
+//			@Override
+//			public void onResponse(Call p1, Response p2) throws IOException
+//			{
+//				final String response = p2.body().string();
+//				Logs.i(TAG, ": " + response);
+//				runOnUiThread(new Runnable()
+//				{
+//					@Override
+//					public void run()
+//					{
+//						try
+//						{
+//							JSONArray mJSONArray = new JSONObject(response).getJSONArray("docs");
+//							for (int i = 0; i < mJSONArray.length(); i++)
+//							{
+//								JSONObject mJSONObject = (JSONObject) mJSONArray.get(i);
+//								String name = mJSONObject.getString("title");
+//								String chineseName = mJSONObject.getJSONArray("synonyms_chinese").get(i).toString();
+//								String episode = mJSONObject.getString("episode");
+//								String from = mJSONObject.getString("from");
+//								Float time_ms_float = Float.parseFloat(from) * 1000;
+//								int time_ms_int = time_ms_float.intValue();
+//								Calendar calendar=Calendar.getInstance();
+//								calendar.setTimeInMillis(time_ms_int);
+////								Date time_ms = new Date(time_ms_int);
+////								int time_s = time_ms.getSeconds();
+////								int time_m = time_ms.getMinutes();
+//								int time_s=calendar.get(Calendar.SECOND);
+//								int time_m=calendar.get(Calendar.MINUTE);
+//
+//								tv_text.setText("番名:" + name + "\n中文翻译:" + chineseName + "\n集数:" + episode + "\n时间:" + time_m + ":" + time_s);
+//								mProgressBar.setVisibility(View.GONE);
+//							}
+//						} catch (Exception e)
+//						{
+//							e.printStackTrace();
+//						}
+//					}
+//				});
+//			}
+//		});
 
-			@Override
-			public void onFailure(Call p1, IOException p2)
-			{
-			}
-
-			@Override
-			public void onResponse(Call p1, Response p2) throws IOException
-			{
-				// TODO: Implement this method
-				final String response = p2.body().string();
-				runOnUiThread(new Runnable()
+		Map<String, String> map = new HashMap<>();
+		map.put("image", base64);
+		new HttpUtil(MainActivity.this)
+				.setRequestQueue(requestQueue)
+				.setRequestMethod(HttpUtil.RequestMethod.POST)
+				.setUrl(baseURL)
+				.setMap(map)
+				.setResponseListener(new ResponseListener()
 				{
-
 					@Override
-					public void run()
+					public void onResponse(int i, String s)
 					{
+						Logs.i(TAG, ": " + s);
 						try
 						{
-							JSONArray mJSONArray = new JSONObject(response).getJSONArray("docs");
-							for (int i = 0; i < mJSONArray.length(); i++)
-							{
-								JSONObject mJSONObject = (JSONObject) mJSONArray.get(i);
-								String name = mJSONObject.getString("title");
-								String chineseName = mJSONObject.getJSONArray("synonyms_chinese").get(i).toString();
-								String episode = mJSONObject.getString("episode");
-								String from = mJSONObject.getString("from");
-								Float time_ms_float = Float.parseFloat(from) * 1000;
-								int time_ms_int = time_ms_float.intValue();
-								Date time_ms = new Date(time_ms_int);
-								int time_m = time_ms.getMinutes();
-								int time_s = time_ms.getSeconds();
+							Animation animation = new Gson().fromJson(s, Animation.class);
+							Logs.i(TAG, ": " + animation.docs.size());
+							Logs.i(TAG, ": " + animation.docs.get(0).title);
+							Logs.i(TAG, ": " + animation.docs.get(0).synonyms_chinese.get(0));
+							Logs.i(TAG, ": " + animation.docs.get(0).episode);
+							Logs.i(TAG, ": " + animation.docs.get(0).from);
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTimeInMillis(((int) animation.docs.get(0).from));
 
-								tv_text.setText("番名:" + name + "\n中文翻译:" + chineseName + "\n集数:" + episode + "\n时间:" + time_m + ":" + time_s);
-								mProgressBar.setVisibility(View.GONE);
-							}
 						} catch (Exception e)
 						{
 							e.printStackTrace();
 						}
 					}
-
-
-				});
-			}
-		});
+				})
+				.open();
 	}
 
 	private String encodeToBase64(String path)
@@ -198,15 +241,18 @@ public class MainActivity extends AppCompatActivity
 		{
 			Uri uri = data.getData();
 			Log.i(TAG, "onActivityResult: " + uri);
+
 			try
 			{
-				String[] strings = {MediaStore.Images.Media.DATA};
-				CursorLoader mCursorLoader = new CursorLoader(this, uri, strings, null, null, null);
-				Cursor mCursor = mCursorLoader.loadInBackground();
-				int mInt = mCursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-				mCursor.moveToFirst();
-				String path = mCursor.getString(mInt);
+//				String[] strings = {MediaStore.Images.Media.DATA};
+//				CursorLoader mCursorLoader = new CursorLoader(this, uri, strings, null, null, null);
+//				Cursor mCursor = mCursorLoader.loadInBackground();
+//				int mInt = mCursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//				mCursor.moveToFirst();
+//				String path = mCursor.getString(mInt);
 				//Toast.makeText(getApplicationContext(),path,Toast.LENGTH_SHORT).show();
+				String path = FileUtil.getPath(MainActivity.this, uri);
+				Logs.i(TAG, ": " + path);
 				Bitmap bitmap = BitmapFactory.decodeFile(path);
 				image.setImageBitmap(bitmap);
 				String base64 = encodeToBase64(path);

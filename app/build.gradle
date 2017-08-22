@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "pw.janyo.whatanime"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
@@ -21,7 +21,17 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:cardview-v7:+'
-	compile 'com.android.support:design:+'
+    implementation 'com.android.support:support-v4:26.0.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.android.support:design:26.0.1'
+    compile 'com.github.Mystery00:ToolsDemo:1.8.1'
+    compile 'com.google.code.gson:gson:2.8.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:cardview-v7:26.0.1'
+}
+
+
+repositories {
+    mavenCentral()
 }
