@@ -7,5 +7,5 @@ public class Dock
 	String title;
 	List<String> synonyms_chinese;
 	String episode;
-	float from;
+	float at;
 }
