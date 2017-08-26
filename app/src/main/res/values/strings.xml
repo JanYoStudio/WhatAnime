@@ -4,4 +4,9 @@
     <string name="app_name">WhatAnime</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="text_name">番名：%1$s</string>
+    <string name="text_chinese_name">中文番名：%1$s</string>
+    <string name="text_number">集数：%1$s</string>
+    <string name="text_time">时间：%1$d:%2$d</string>
+
 </resources>
