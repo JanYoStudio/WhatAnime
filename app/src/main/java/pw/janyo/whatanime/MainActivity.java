@@ -33,7 +33,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import android.support.design.widget.FloatingActionButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mystery0.tools.FileUtil.FileUtil;
 import com.mystery0.tools.Logs.Logs;
 
@@ -42,10 +45,16 @@ public class MainActivity extends AppCompatActivity
 	private static final String TAG = "MainActivity";
 	private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
 	private final static int REQUEST_CODE = 322;
-	private AnalysisHandler analysisHandler = new AnalysisHandler();
+	//	private AnalysisHandler analysisHandler = new AnalysisHandler();
+	private TempHandler tempHandler = new TempHandler();
 	private ProgressDialog progressDialog;
-	private AnimationAdapter adapter;
+	//	private AnimationAdapter adapter;
 	private String baseURL = "https://whatanime.ga/api/search?token=2b85c7881b18fe81062387e979144f62c85788c9";
+	private ImageView imageView;
+	private TextView text_name;
+	private TextView text_chinese_name;
+	private TextView text_number;
+	private TextView text_time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -56,13 +65,23 @@ public class MainActivity extends AppCompatActivity
 
 		FloatingActionButton main_fab_upload = findViewById(R.id.main_fab_upload);
 		Toolbar toolbar = findViewById(R.id.toolbar);
-		RecyclerView recyclerView = findViewById(R.id.recyclerView);
-		recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-		analysisHandler.list = new ArrayList<>();
-		adapter = new AnimationAdapter(MainActivity.this, analysisHandler.list);
-		recyclerView.setAdapter(adapter);
-		analysisHandler.adapter = adapter;
-		analysisHandler.context = MainActivity.this;
+		imageView = findViewById(R.id.imageView);
+		text_name = findViewById(R.id.text_name);
+		text_chinese_name = findViewById(R.id.text_chinese_name);
+		text_number = findViewById(R.id.text_number);
+		text_time = findViewById(R.id.text_time);
+		tempHandler.text_name = text_name;
+		tempHandler.text_chinese_name = text_chinese_name;
+		tempHandler.text_number = text_number;
+		tempHandler.text_time = text_time;
+		tempHandler.context=MainActivity.this;
+//		RecyclerView recyclerView = findViewById(R.id.recyclerView);
+//		recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//		analysisHandler.list = new ArrayList<>();
+//		adapter = new AnimationAdapter(MainActivity.this, analysisHandler.list);
+//		recyclerView.setAdapter(adapter);
+//		analysisHandler.adapter = adapter;
+//		analysisHandler.context = MainActivity.this;
 
 		setSupportActionBar(toolbar);
 		//noinspection ConstantConditions
@@ -71,7 +90,8 @@ public class MainActivity extends AppCompatActivity
 		progressDialog = new ProgressDialog(MainActivity.this);
 		progressDialog.setMessage("搜索中……");
 		progressDialog.setCancelable(false);
-		analysisHandler.progressDialog = progressDialog;
+//		analysisHandler.progressDialog = progressDialog;
+		tempHandler.progressDialog = progressDialog;
 
 		main_fab_upload.setOnClickListener(new OnClickListener()
 		{
@@ -121,7 +141,8 @@ public class MainActivity extends AppCompatActivity
 				Message message = new Message();
 				message.obj = p2.body().string();
 				message.what = 0;
-				analysisHandler.sendMessage(message);
+//				analysisHandler.sendMessage(message);
+				tempHandler.sendMessage(message);
 			}
 		});
 	}
@@ -174,7 +195,8 @@ public class MainActivity extends AppCompatActivity
 			{
 				String path = FileUtil.getPath(MainActivity.this, uri);
 				Logs.i(TAG, ": " + path);
-				adapter.setImgPath(path);
+//				adapter.setImgPath(path);
+				Glide.with(MainActivity.this).load(path).into(imageView);
 				String base64 = encodeToBase64(path);
 				Search(base64);
 			} catch (Exception e)
