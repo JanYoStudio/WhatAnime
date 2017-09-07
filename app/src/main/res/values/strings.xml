@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">WhatAnime</string>
+    <string name="token">MmI4NWM3ODgxYjE4ZmU4MTA2MjM4N2U5NzkxNDRmNjJjODU3ODhjOQ==</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="text_name">番名：%1$s</string>
