@@ -11,15 +11,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -29,14 +29,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.handler.AnalyzeHandler;
+import pw.janyo.whatanime.util.Base64;
+import pw.janyo.whatanime.util.Base64DecoderException;
 import pw.janyo.whatanime.util.Encryption;
 
 import android.support.design.widget.FloatingActionButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.mystery0.tools.FileUtil.FileUtil;
 import com.mystery0.tools.Logs.Logs;
 
@@ -51,9 +51,10 @@ public class MainActivity extends AppCompatActivity
 	private final static int REQUEST_CODE = 322;
 	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
 	private ProgressDialog progressDialog;
-	private String baseURL = "https://whatanime.ga/api/search?token=2b85c7881b18fe81062387e979144f62c85788c9";
+	private String token = "2b85c7881b18fe81062387e979144f62c85788c9";
+	private String baseURL = "https://whatanime.ga/api/search?token=";
 	private FloatingActionButton main_fab_upload;
-	private ImageView imageView;
+	private AnimationAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -61,14 +62,14 @@ public class MainActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		requestPermission();
 		initialization();
+		try
+		{
+			Logs.i(TAG, "onCreate: " + new String(Base64.decode(getString(R.string.token))));
+		} catch (Base64DecoderException e)
+		{
+			e.printStackTrace();
+		}
 		monitor();
-//		RecyclerView recyclerView = findViewById(R.id.recyclerView);
-//		recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-//		analysisHandler.list = new ArrayList<>();
-//		adapter = new AnimationAdapter(MainActivity.this, analysisHandler.list);
-//		recyclerView.setAdapter(adapter);
-//		analysisHandler.adapter = adapter;
-//		analysisHandler.context = MainActivity.this;
 	}
 
 	private void initialization()
@@ -77,16 +78,13 @@ public class MainActivity extends AppCompatActivity
 
 		main_fab_upload = findViewById(R.id.main_fab_upload);
 		Toolbar toolbar = findViewById(R.id.toolbar);
-		imageView = findViewById(R.id.imageView);
-		TextView text_name = findViewById(R.id.text_name);
-		TextView text_chinese_name = findViewById(R.id.text_chinese_name);
-		TextView text_number = findViewById(R.id.text_number);
-		TextView text_time = findViewById(R.id.text_time);
-
-		analyzeHandler.text_name = text_name;
-		analyzeHandler.text_chinese_name = text_chinese_name;
-		analyzeHandler.text_number = text_number;
-		analyzeHandler.text_time = text_time;
+		RecyclerView recyclerView = findViewById(R.id.recyclerView);
+		recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+		analyzeHandler.list = new ArrayList<>();
+		adapter = new AnimationAdapter(MainActivity.this, analyzeHandler.list);
+		recyclerView.setAdapter(adapter);
+		analyzeHandler.adapter = adapter;
+		analyzeHandler.context = MainActivity.this;
 		analyzeHandler.context = MainActivity.this;
 
 		progressDialog = new ProgressDialog(MainActivity.this);
@@ -95,8 +93,6 @@ public class MainActivity extends AppCompatActivity
 		analyzeHandler.progressDialog = progressDialog;
 
 		setSupportActionBar(toolbar);
-		//noinspection ConstantConditions
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
 	}
 
 	private void monitor()
@@ -180,7 +176,7 @@ public class MainActivity extends AppCompatActivity
 			{
 				String path = FileUtil.getPath(MainActivity.this, uri);
 				Logs.i(TAG, "onActivityResult: " + path);
-				Glide.with(MainActivity.this).load(path).into(imageView);
+				adapter.setImgPath(path);
 				Search(Encryption.encodeFileToBase64(path));
 			} catch (Exception e)
 			{

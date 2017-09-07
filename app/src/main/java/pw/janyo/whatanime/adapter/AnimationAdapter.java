@@ -1,4 +1,4 @@
-package pw.janyo.whatanime;
+package pw.janyo.whatanime.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,19 +13,22 @@ import com.bumptech.glide.Glide;
 import java.util.Calendar;
 import java.util.List;
 
+import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.classes.Dock;
+
 public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.ViewHolder>
 {
 	private Context context;
 	private List<Dock> list;
 	private String imgPath;
 
-	AnimationAdapter(Context context, List<Dock> list)
+	public AnimationAdapter(Context context, List<Dock> list)
 	{
 		this.context = context;
 		this.list = list;
 	}
 
-	void setImgPath(String imgPath)
+	public void setImgPath(String imgPath)
 	{
 		this.imgPath = imgPath;
 		notifyDataSetChanged();
