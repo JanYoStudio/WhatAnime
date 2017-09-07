@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
 	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
 	private ProgressDialog progressDialog;
 	private String token = "2b85c7881b18fe81062387e979144f62c85788c9";
-	private String baseURL = "https://whatanime.ga/api/search?token=";
 	private FloatingActionButton main_fab_upload;
 	private AnimationAdapter adapter;
 
@@ -123,11 +122,24 @@ public class MainActivity extends AppCompatActivity
 	private void Search(String base64)
 	{
 		OkHttpClient mOkHttpClient = new OkHttpClient.Builder().build();
+		String url = "";
+		try
+		{
+			url = new String(Base64.decode(getString(R.string.token)));
+		} catch (Base64DecoderException e)
+		{
+			e.printStackTrace();
+		}
+		Logs.i(TAG, "Search: " + url);
+		if (url.equals(""))
+		{
+			analyzeHandler.sendEmptyMessage(0);
+		}
 		RequestBody mRequestBody = new FormBody.Builder()
 				.add("image", base64)
 				.build();
 		Request mRequest = new Request.Builder()
-				.url(baseURL)
+				.url(getString(R.string.requestUrl, url))
 				.post(mRequestBody)
 				.build();
 		Call call = mOkHttpClient.newCall(mRequest);
@@ -143,7 +155,7 @@ public class MainActivity extends AppCompatActivity
 			{
 				Message message = new Message();
 				message.obj = p2.body().string();
-				message.what = 0;
+				message.what = 1;
 				analyzeHandler.sendMessage(message);
 			}
 		});
