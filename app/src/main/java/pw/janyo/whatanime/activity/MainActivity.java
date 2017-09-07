@@ -1,4 +1,4 @@
-package pw.janyo.whatanime;
+package pw.janyo.whatanime.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -11,8 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
@@ -22,7 +20,6 @@ import android.view.View.OnClickListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -31,6 +28,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.handler.AnalyzeHandler;
+import pw.janyo.whatanime.util.Encryption;
 
 import android.support.design.widget.FloatingActionButton;
 import android.widget.ImageView;
@@ -40,41 +40,28 @@ import com.bumptech.glide.Glide;
 import com.mystery0.tools.FileUtil.FileUtil;
 import com.mystery0.tools.Logs.Logs;
 
+/**
+ * Created by mystery0.
+ */
+
 public class MainActivity extends AppCompatActivity
 {
 	private static final String TAG = "MainActivity";
 	private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
 	private final static int REQUEST_CODE = 322;
-	//	private AnalysisHandler analysisHandler = new AnalysisHandler();
-	private TempHandler tempHandler = new TempHandler();
+	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
 	private ProgressDialog progressDialog;
-	//	private AnimationAdapter adapter;
 	private String baseURL = "https://whatanime.ga/api/search?token=2b85c7881b18fe81062387e979144f62c85788c9";
+	private FloatingActionButton main_fab_upload;
 	private ImageView imageView;
-	private TextView text_name;
-	private TextView text_chinese_name;
-	private TextView text_number;
-	private TextView text_time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		requestPermission();
-		setContentView(R.layout.activity_main);
-
-		FloatingActionButton main_fab_upload = findViewById(R.id.main_fab_upload);
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		imageView = findViewById(R.id.imageView);
-		text_name = findViewById(R.id.text_name);
-		text_chinese_name = findViewById(R.id.text_chinese_name);
-		text_number = findViewById(R.id.text_number);
-		text_time = findViewById(R.id.text_time);
-		tempHandler.text_name = text_name;
-		tempHandler.text_chinese_name = text_chinese_name;
-		tempHandler.text_number = text_number;
-		tempHandler.text_time = text_time;
-		tempHandler.context=MainActivity.this;
+		initialization();
+		monitor();
 //		RecyclerView recyclerView = findViewById(R.id.recyclerView);
 //		recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 //		analysisHandler.list = new ArrayList<>();
@@ -82,17 +69,38 @@ public class MainActivity extends AppCompatActivity
 //		recyclerView.setAdapter(adapter);
 //		analysisHandler.adapter = adapter;
 //		analysisHandler.context = MainActivity.this;
+	}
 
-		setSupportActionBar(toolbar);
-		//noinspection ConstantConditions
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
+	private void initialization()
+	{
+		setContentView(R.layout.activity_main);
+
+		main_fab_upload = findViewById(R.id.main_fab_upload);
+		Toolbar toolbar = findViewById(R.id.toolbar);
+		imageView = findViewById(R.id.imageView);
+		TextView text_name = findViewById(R.id.text_name);
+		TextView text_chinese_name = findViewById(R.id.text_chinese_name);
+		TextView text_number = findViewById(R.id.text_number);
+		TextView text_time = findViewById(R.id.text_time);
+
+		analyzeHandler.text_name = text_name;
+		analyzeHandler.text_chinese_name = text_chinese_name;
+		analyzeHandler.text_number = text_number;
+		analyzeHandler.text_time = text_time;
+		analyzeHandler.context = MainActivity.this;
 
 		progressDialog = new ProgressDialog(MainActivity.this);
 		progressDialog.setMessage("搜索中……");
 		progressDialog.setCancelable(false);
-//		analysisHandler.progressDialog = progressDialog;
-		tempHandler.progressDialog = progressDialog;
+		analyzeHandler.progressDialog = progressDialog;
 
+		setSupportActionBar(toolbar);
+		//noinspection ConstantConditions
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
+	}
+
+	private void monitor()
+	{
 		main_fab_upload.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -137,35 +145,12 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onResponse(Call p1, Response p2) throws IOException
 			{
-				Logs.i(TAG, ": 132");
 				Message message = new Message();
 				message.obj = p2.body().string();
 				message.what = 0;
-//				analysisHandler.sendMessage(message);
-				tempHandler.sendMessage(message);
+				analyzeHandler.sendMessage(message);
 			}
 		});
-	}
-
-	private String encodeToBase64(String path)
-	{
-		String base64 = "";
-		try
-		{
-			File file = new File(path);
-			FileInputStream inputFile = new FileInputStream(file);
-			byte[] buffer = new byte[(int) file.length()];
-			inputFile.read(buffer);
-			inputFile.close();
-			base64 = Base64.encodeToString(buffer, Base64.NO_WRAP);
-
-			//tv_base64.setText(encodeString);
-//			Log.d("BitmapToBase64", base64);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return base64;
 	}
 
 	@Override
@@ -188,17 +173,15 @@ public class MainActivity extends AppCompatActivity
 		if (REQUEST_CODE == requestCode && RESULT_OK == resultCode)
 		{
 			final Uri uri = data.getData();
-			Log.i(TAG, "onActivityResult: " + uri);
+			Logs.i(TAG, "onActivityResult: " + uri);
 
 			progressDialog.show();
 			try
 			{
 				String path = FileUtil.getPath(MainActivity.this, uri);
-				Logs.i(TAG, ": " + path);
-//				adapter.setImgPath(path);
+				Logs.i(TAG, "onActivityResult: " + path);
 				Glide.with(MainActivity.this).load(path).into(imageView);
-				String base64 = encodeToBase64(path);
-				Search(base64);
+				Search(Encryption.encodeFileToBase64(path));
 			} catch (Exception e)
 			{
 				e.printStackTrace();

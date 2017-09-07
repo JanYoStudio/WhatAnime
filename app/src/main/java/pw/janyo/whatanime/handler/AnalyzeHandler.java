@@ -1,4 +1,4 @@
-package pw.janyo.whatanime;
+package pw.janyo.whatanime.handler;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,15 +12,19 @@ import com.mystery0.tools.Logs.Logs;
 
 import java.util.Calendar;
 
-public class TempHandler extends Handler
+import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.classes.Animation;
+import pw.janyo.whatanime.classes.Dock;
+
+public class AnalyzeHandler extends Handler
 {
-	private static final String TAG = "TempHandler";
-	Context context;
-	ProgressDialog progressDialog;
-	TextView text_name;
-	TextView text_chinese_name;
-	TextView text_number;
-	TextView text_time;
+	private static final String TAG = "AnalyzeHandler";
+	public Context context;
+	public ProgressDialog progressDialog;
+	public TextView text_name;
+	public TextView text_chinese_name;
+	public TextView text_number;
+	public TextView text_time;
 
 	@Override
 	public void handleMessage(Message msg)
