@@ -1,4 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: 'vip.mystery0.autoversion'
+autoVersion {
+    major 1
+    minor 0
+    patch 0
+    beta 1
+    alpha 0
+}
 
 android {
     compileSdkVersion 26
@@ -8,8 +16,9 @@ android {
         applicationId "pw.janyo.whatanime"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0.0"
+        versionCode autoVersion.code
+        versionName autoVersion.name
+        setProperty("archivesBaseName", "WhatAnime-$versionName")
     }
 
     buildTypes {
@@ -25,13 +34,11 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.0.2'
     compile 'com.android.support:design:26.0.2'
-    compile 'com.github.Mystery00:ToolsDemo:1.8.4'
+    compile 'com.github.Mystery00:ToolsDemo:1.8.7'
     compile 'com.google.code.gson:gson:2.8.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:cardview-v7:26.0.2'
 }
-
-
 
 repositories {
     mavenCentral()
