@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.0.2'
     compile 'com.android.support:design:26.0.2'
-    compile 'com.github.Mystery00:ToolsDemo:1.8.7'
+    compile 'com.github.Mystery00:ToolsDemo:2.0.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:cardview-v7:26.0.2'

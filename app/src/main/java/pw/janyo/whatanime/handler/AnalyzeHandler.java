@@ -7,7 +7,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.mystery0.tools.Logs.Logs;
+import vip.mystery0.tools.Logs.Logs;
 
 import java.util.List;
 

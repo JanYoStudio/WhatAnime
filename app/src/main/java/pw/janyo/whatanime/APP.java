@@ -2,8 +2,8 @@ package pw.janyo.whatanime;
 
 import android.app.Application;
 
-import com.mystery0.tools.CrashHandler.CrashHandler;
-import com.mystery0.tools.Logs.Logs;
+import vip.mystery0.tools.CrashHandler.CrashHandler;
+import vip.mystery0.tools.Logs.Logs;
 
 /**
  * Created by mystery0.

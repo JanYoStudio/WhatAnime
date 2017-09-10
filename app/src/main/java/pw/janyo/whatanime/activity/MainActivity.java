@@ -37,8 +37,8 @@ import pw.janyo.whatanime.util.Encryption;
 
 import android.support.design.widget.FloatingActionButton;
 
-import com.mystery0.tools.FileUtil.FileUtil;
-import com.mystery0.tools.Logs.Logs;
+import vip.mystery0.tools.FileUtil.FileUtil;
+import vip.mystery0.tools.Logs.Logs;
 
 /**
  * Created by mystery0.
