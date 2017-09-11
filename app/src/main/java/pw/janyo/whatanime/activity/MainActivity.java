@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity
 	private final static int REQUEST_CODE = 322;
 	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
 	private ProgressDialog progressDialog;
-	private String token = "2b85c7881b18fe81062387e979144f62c85788c9";
 	private FloatingActionButton main_fab_upload;
 	private AnimationAdapter adapter;
 
@@ -61,13 +61,6 @@ public class MainActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		requestPermission();
 		initialization();
-		try
-		{
-			Logs.i(TAG, "onCreate: " + new String(Base64.decode(getString(R.string.token))));
-		} catch (Base64DecoderException e)
-		{
-			e.printStackTrace();
-		}
 		monitor();
 	}
 
@@ -91,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 		progressDialog.setCancelable(false);
 		analyzeHandler.progressDialog = progressDialog;
 
-		setSupportActionBar(toolbar);
+		setToolbar(toolbar);
 	}
 
 	private void monitor()
@@ -148,6 +141,7 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onFailure(Call p1, IOException p2)
 			{
+				Logs.i(TAG, "onFailure: " + p2.getMessage());
 			}
 
 			@Override
@@ -157,6 +151,25 @@ public class MainActivity extends AppCompatActivity
 				message.obj = p2.body().string();
 				message.what = 1;
 				analyzeHandler.sendMessage(message);
+			}
+		});
+	}
+
+	private void setToolbar(Toolbar toolbar)
+	{
+		toolbar.inflateMenu(R.menu.menu_main);
+		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
+		{
+			@Override
+			public boolean onMenuItemClick(MenuItem item)
+			{
+				switch (item.getItemId())
+				{
+					case R.id.action_settings:
+						startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+						break;
+				}
+				return true;
 			}
 		});
 	}
