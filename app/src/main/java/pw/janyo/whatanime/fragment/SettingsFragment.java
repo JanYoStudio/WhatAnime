@@ -70,6 +70,7 @@ public class SettingsFragment extends PreferenceFragment
 							{
 								Logs.i(TAG, "onClick: " + textInputLayout.getEditText().getText().toString());
 								settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
+								resultNumberPreference.setSummary(String.valueOf(settings.getResultNumber()));
 							}
 						})
 						.setNegativeButton(android.R.string.cancel, null)

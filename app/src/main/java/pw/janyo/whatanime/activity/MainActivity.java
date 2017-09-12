@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
 			public void onFailure(Call p1, IOException p2)
 			{
 				Logs.i(TAG, "onFailure: " + p2.getMessage());
+				analyzeHandler.sendEmptyMessage(1);
 			}
 
 			@Override
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity
 			{
 				Message message = new Message();
 				message.obj = p2.body().string();
-				message.what = 1;
+				message.what = 0;
 				analyzeHandler.sendMessage(message);
 			}
 		});

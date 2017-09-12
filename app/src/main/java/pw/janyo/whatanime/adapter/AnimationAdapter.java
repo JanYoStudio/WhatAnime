@@ -46,6 +46,7 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 	{
 		if (position == 0)
 		{
+			holder.imageView.setVisibility(View.VISIBLE);
 			holder.text_name.setVisibility(View.GONE);
 			holder.text_chinese_name.setVisibility(View.GONE);
 			holder.text_number.setVisibility(View.GONE);
