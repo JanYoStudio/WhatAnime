@@ -14,6 +14,7 @@
 
     <string name="key_result_number">key_result_number</string>
     <string name="title_result_number">搜索结果数量(0表示不限制)</string>
+    <string name="summary_result_number">越靠前的结果越准确。</string>
 
     <string name="title_activity_main">MainActivity</string>
 

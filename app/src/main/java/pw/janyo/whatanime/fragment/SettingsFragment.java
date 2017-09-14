@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragment
 	private void initialization()
 	{
 		resultNumberPreference = findPreference(getString(R.string.key_result_number));
-		resultNumberPreference.setSummary(String.valueOf(settings.getResultNumber()));
+		resultNumberPreference.setSummary(R.string.summary_result_number);
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -60,6 +60,7 @@ public class SettingsFragment extends PreferenceFragment
 				final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
 				textInputLayout.setHint(getString(R.string.title_result_number));
 				textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+				textInputLayout.getEditText().setText(String.valueOf(settings.getResultNumber()));
 				new AlertDialog.Builder(getActivity())
 						.setTitle(" ")
 						.setView(view)
@@ -70,7 +71,6 @@ public class SettingsFragment extends PreferenceFragment
 							{
 								Logs.i(TAG, "onClick: " + textInputLayout.getEditText().getText().toString());
 								settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
-								resultNumberPreference.setSummary(String.valueOf(settings.getResultNumber()));
 							}
 						})
 						.setNegativeButton(android.R.string.cancel, null)

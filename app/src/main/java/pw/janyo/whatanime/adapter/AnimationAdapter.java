@@ -54,17 +54,13 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 			Glide.with(context).load(imgPath).into(holder.imageView);
 		} else
 		{
+			holder.imageView.setVisibility(View.GONE);
 			Dock dock = list.get(position - 1);
 			holder.text_name.setText(context.getString(R.string.text_name, dock.title));
-			StringBuilder temp = new StringBuilder();
-			for (String t : dock.synonyms_chinese)
-			{
-				temp.append(t).append("，");
-			}
-			holder.text_chinese_name.setText(context.getString(R.string.text_chinese_name, temp.toString()));
+			holder.text_chinese_name.setText(context.getString(R.string.text_chinese_name, dock.title_chinese));
 			holder.text_number.setText(context.getString(R.string.text_number, dock.episode));
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(((long) dock.at));
+			calendar.setTimeInMillis(((long) dock.at * 1000));
 			int time_s = calendar.get(Calendar.SECOND);
 			int time_m = calendar.get(Calendar.MINUTE);
 			holder.text_time.setText(context.getString(R.string.text_time, time_m, time_s));

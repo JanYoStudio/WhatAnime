@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity
 		{
 			e.printStackTrace();
 		}
-		Logs.i(TAG, "Search: " + url);
 		if (url.equals(""))
 		{
 			analyzeHandler.sendEmptyMessage(0);
@@ -225,13 +224,11 @@ public class MainActivity extends AppCompatActivity
 		if (REQUEST_CODE == requestCode && RESULT_OK == resultCode)
 		{
 			final Uri uri = data.getData();
-			Logs.i(TAG, "onActivityResult: " + uri);
 
 			progressDialog.show();
 			try
 			{
 				String path = FileUtil.getPath(MainActivity.this, uri);
-				Logs.i(TAG, "onActivityResult: " + path);
 				adapter.setImgPath(path);
 				Search(Encryption.encodeFileToBase64(path));
 			} catch (Exception e)
