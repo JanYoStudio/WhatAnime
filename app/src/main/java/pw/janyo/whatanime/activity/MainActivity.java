@@ -38,6 +38,10 @@ import pw.janyo.whatanime.util.Encryption;
 
 import android.support.design.widget.FloatingActionButton;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
+
+import pw.janyo.whatanime.util.Settings;
 import vip.mystery0.tools.FileUtil.FileUtil;
 import vip.mystery0.tools.Logs.Logs;
 
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 	private static final String TAG = "MainActivity";
 	private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
 	private final static int REQUEST_CODE = 322;
+	private Settings settings;
 	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
 	private ProgressDialog progressDialog;
 	private FloatingActionButton main_fab_upload;
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity
 
 	private void initialization()
 	{
+		settings = Settings.getInstance(this);
 		setContentView(R.layout.activity_main);
 
 		main_fab_upload = findViewById(R.id.main_fab_upload);
@@ -85,6 +91,26 @@ public class MainActivity extends AppCompatActivity
 		analyzeHandler.progressDialog = progressDialog;
 
 		setToolbar(toolbar);
+
+		showcase();
+	}
+
+	private void showcase()
+	{
+		if (settings.isFirstRun())
+		{
+			TapTargetView.showFor(this,
+					TapTarget.forView(main_fab_upload, "点击这个按钮上传动漫截图。")
+							.tintTarget(false),
+					new TapTargetView.Listener()
+					{
+						@Override
+						public void onTargetDismissed(TapTargetView view, boolean userInitiated)
+						{
+							settings.setFirstRun(false);
+						}
+					});
+		}
 	}
 
 	private void monitor()
@@ -161,6 +187,7 @@ public class MainActivity extends AppCompatActivity
 
 	private void setToolbar(Toolbar toolbar)
 	{
+		toolbar.setTitle(getTitle());
 		toolbar.inflateMenu(R.menu.menu_main);
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener()
 		{

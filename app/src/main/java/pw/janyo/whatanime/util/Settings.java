@@ -35,4 +35,14 @@ public class Settings
 	{
 		return sharedPreferences.getInt("resultNumber", 1);
 	}
+
+	public void setFirstRun(boolean isFirst)
+	{
+		sharedPreferences.edit().putBoolean("isFirst", isFirst).apply();
+	}
+
+	public boolean isFirstRun()
+	{
+		return sharedPreferences.getBoolean("isFirst", true);
+	}
 }

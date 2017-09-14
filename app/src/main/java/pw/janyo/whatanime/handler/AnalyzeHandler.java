@@ -65,15 +65,19 @@ public class AnalyzeHandler extends Handler
 			case 1:
 				String error = msg.obj.toString();
 				Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+				list.clear();
 				break;
 			case 2:
 				Toast.makeText(context, "解析错误", Toast.LENGTH_SHORT).show();
+				list.clear();
 				break;
 			case 3:
 				Toast.makeText(context, "返回数据过长，已知BUG，将会在不久后修复！", Toast.LENGTH_SHORT).show();
+				list.clear();
 				break;
 			case 4:
 				Toast.makeText(context, "图片太大，将会在之后的版本中尝试修复！", Toast.LENGTH_SHORT).show();
+				list.clear();
 				break;
 		}
 		progressDialog.dismiss();
