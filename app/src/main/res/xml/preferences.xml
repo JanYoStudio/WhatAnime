@@ -6,4 +6,21 @@
         android:key="@string/key_result_number"
         android:title="@string/title_result_number"/>
 
+    <Preference
+        android:key="@string/key_license"
+        android:title="@string/title_license"/>
+
+    <Preference
+        android:key="@string/key_open_source_address"
+        android:summary="@string/summary_open_source_address"
+        android:title="@string/title_open_source_address"/>
+
+    <Preference
+        android:key="@string/key_info_whatanime"
+        android:title="@string/title_info_whatanime"/>
+
+    <Preference
+        android:key="@string/key_info_janyo"
+        android:title="@string/title_info_janyo"/>
+
 </PreferenceScreen>

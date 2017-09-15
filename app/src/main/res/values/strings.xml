@@ -5,6 +5,16 @@
     <string name="token">MmI4NWM3ODgxYjE4ZmU4MTA2MjM4N2U5NzkxNDRmNjJjODU3ODhjOQ==</string>
     <string name="requestUrl">https://whatanime.ga/api/search?token=%1$s</string>
 
+    <string name="janyo_studio">JanYo Studio</string>
+    <string name="dicklight">DickLight</string>
+    <string name="zh_lyh">ZH_LYH</string>
+    <string name="cieyget">CieyGet</string>
+    <string name="mystery0">Mystery0</string>
+    <string name="gsoy">Gsoy</string>
+    <string name="kiva">Kiva</string>
+    <string name="copyright">Copyright @2016–2017 JanYo Studio</string>
+    <string name="all_right_reserved">All Right Reserved</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="text_name">番名：%1$s</string>
@@ -15,6 +25,25 @@
     <string name="key_result_number">key_result_number</string>
     <string name="title_result_number">搜索结果数量(0表示不限制)</string>
     <string name="summary_result_number">越靠前的结果越准确。</string>
+    <string name="key_license">key_license</string>
+    <string name="title_license">授权相关</string>
+    <string name="key_open_source_address">key_open_source_address</string>
+    <string name="title_open_source_address">开源地址</string>
+    <string name="summary_open_source_address">http</string>
+    <string name="key_info_whatanime">key_info_whatanime</string>
+    <string name="title_info_whatanime">关于WhatAnime</string>
+    <string name="key_info_janyo">key_info_janyo</string>
+    <string name="title_info_janyo">关于JanYo Studio</string>
+
+    <string name="license_title">“JanYo Studio” 授权解决方案</string>
+    <string name="license_subtitle">为避免在其它非“JanYo Studio”通过书面授权认可的平台引发的授权 风险/争议，特拟此案。</string>
+    <string name="license_text1">“JanYo Studio”(以下简称“工作室”)发布的产品缺省使用“GPL（GNU General Public License）”授权协议。工作室将在产品内部标识产品源程序及其附属品，使得任何人可以自由获取、阅读、传播，以及基于源代码重新构建它的二进制版本并发行该副本。</string>
+    <string name="license_text2">工作室希望使用者在自由使用我们的产品时，尊重工作室的劳动成果，承认工作室的知识产权。</string>
+    <string name="license_text3">工作室保证产品的自由使用、传播、阅读不受限，使用者应保障工作室的合法权益：</string>
+    <string name="license_text4">针对开源资料，禁止删改原作者注明的版权、授权方式 等信息。</string>
+    <string name="license_text5">源代码允许自由使用、添加至自己的项目，但必须注明来源，以及源的授权协议。</string>
+    <string name="license_text6">在从事盈利、商用活动中，针对产品的传播复制需注明来源，以及源的授权协议。</string>
+    <string name="license_text7">针对产品授权、答疑可电邮至工作室官方电子邮箱 : mystery0dyl520@gmail.com</string>
 
     <string name="title_activity_main">MainActivity</string>
 

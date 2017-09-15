@@ -6,11 +6,14 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.util.Settings;
@@ -25,6 +28,10 @@ public class SettingsFragment extends PreferenceFragment
 	private static final String TAG = "SettingsFragment";
 	private Settings settings;
 	private Preference resultNumberPreference;
+	private Preference licensePreference;
+	private Preference openSourceAddressPreference;
+	private Preference janyoInfoPreference;
+	private Preference whatAnimeInfoPreference;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState)
@@ -45,6 +52,11 @@ public class SettingsFragment extends PreferenceFragment
 	private void initialization()
 	{
 		resultNumberPreference = findPreference(getString(R.string.key_result_number));
+		licensePreference = findPreference(getString(R.string.key_license));
+		openSourceAddressPreference = findPreference(getString(R.string.key_open_source_address));
+		janyoInfoPreference = findPreference(getString(R.string.key_info_janyo));
+		whatAnimeInfoPreference=findPreference(getString(R.string.key_info_whatanime));
+
 		resultNumberPreference.setSummary(R.string.summary_result_number);
 	}
 
@@ -74,6 +86,60 @@ public class SettingsFragment extends PreferenceFragment
 							}
 						})
 						.setNegativeButton(android.R.string.cancel, null)
+						.show();
+				return false;
+			}
+		});
+		licensePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				View view_license = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_license, new NestedScrollView(getActivity()), false);
+				TextView text_license_point1 = view_license.findViewById(R.id.license_point1);
+				TextView text_license_point2 = view_license.findViewById(R.id.license_point2);
+				TextView text_license_point3 = view_license.findViewById(R.id.license_point3);
+				VectorDrawableCompat point = VectorDrawableCompat.create(getResources(), R.drawable.ic_point, null);
+				point.setBounds(0, 0, point.getMinimumWidth(), point.getMinimumHeight());
+				text_license_point1.setCompoundDrawables(point, null, null, null);
+				text_license_point2.setCompoundDrawables(point, null, null, null);
+				text_license_point3.setCompoundDrawables(point, null, null, null);
+				new AlertDialog.Builder(getActivity())
+						.setTitle(" ")
+						.setView(view_license)
+						.setPositiveButton(android.R.string.ok, null)
+						.show();
+				return false;
+			}
+		});
+		openSourceAddressPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+
+				return false;
+			}
+		});
+		whatAnimeInfoPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+
+				return false;
+			}
+		});
+		janyoInfoPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				View view_info = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_info, new NestedScrollView(getActivity()), false);
+				new AlertDialog.Builder(getActivity())
+						.setTitle(" ")
+						.setView(view_info)
+						.setPositiveButton(android.R.string.ok, null)
 						.show();
 				return false;
 			}
