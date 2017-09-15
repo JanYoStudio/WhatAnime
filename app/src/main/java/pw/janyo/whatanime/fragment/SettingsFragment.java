@@ -2,6 +2,7 @@ package pw.janyo.whatanime.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -56,7 +57,7 @@ public class SettingsFragment extends PreferenceFragment
 		licensePreference = findPreference(getString(R.string.key_license));
 		openSourceAddressPreference = findPreference(getString(R.string.key_open_source_address));
 		janyoInfoPreference = findPreference(getString(R.string.key_info_janyo));
-		whatAnimeInfoPreference=findPreference(getString(R.string.key_info_whatanime));
+		whatAnimeInfoPreference = findPreference(getString(R.string.key_info_whatanime));
 
 		resultNumberPreference.setSummary(R.string.summary_result_number);
 	}
@@ -118,7 +119,10 @@ public class SettingsFragment extends PreferenceFragment
 			@Override
 			public boolean onPreferenceClick(Preference preference)
 			{
-				Intent intent=new Intent(Intent.ACTION_VIEW);
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				Uri content_uri = Uri.parse(getString(R.string.url_janyo));
+				intent.setData(content_uri);
+				startActivity(intent);
 				return false;
 			}
 		});
@@ -127,7 +131,10 @@ public class SettingsFragment extends PreferenceFragment
 			@Override
 			public boolean onPreferenceClick(Preference preference)
 			{
-
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				Uri content_uri = Uri.parse(getString(R.string.url_whatanime));
+				intent.setData(content_uri);
+				startActivity(intent);
 				return false;
 			}
 		});
