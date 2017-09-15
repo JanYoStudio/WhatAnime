@@ -5,6 +5,9 @@
     <string name="token">MmI4NWM3ODgxYjE4ZmU4MTA2MjM4N2U5NzkxNDRmNjJjODU3ODhjOQ==</string>
     <string name="requestUrl">https://whatanime.ga/api/search?token=%1$s</string>
 
+    <string name="url_janyo">https://github.com/JanYoStudio/WhatAnime</string>
+    <string name="url_whatanime">https://github.com/soruly/whatanime.ga</string>
+
     <string name="janyo_studio">JanYo Studio</string>
     <string name="dicklight">DickLight</string>
     <string name="zh_lyh">ZH_LYH</string>

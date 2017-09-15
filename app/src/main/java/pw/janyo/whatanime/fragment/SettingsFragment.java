@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -117,7 +118,7 @@ public class SettingsFragment extends PreferenceFragment
 			@Override
 			public boolean onPreferenceClick(Preference preference)
 			{
-
+				Intent intent=new Intent(Intent.ACTION_VIEW);
 				return false;
 			}
 		});
