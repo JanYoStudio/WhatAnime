@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity
 			{
 				String path = FileUtil.getPath(MainActivity.this, uri);
 				adapter.setImgPath(path);
-				Search(Encryption.encodeFileToBase64(path));
+				Search(Encryption.encodeFileToBase64(MainActivity.this, path));
 			} catch (Exception e)
 			{
 				e.printStackTrace();
