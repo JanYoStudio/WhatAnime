@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.handler;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +8,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import dmax.dialog.SpotsDialog;
 import pw.janyo.whatanime.util.Settings;
 import vip.mystery0.tools.Logs.Logs;
 
@@ -22,7 +22,7 @@ public class AnalyzeHandler extends Handler
 {
 	private static final String TAG = "AnalyzeHandler";
 	public Context context;
-	public ProgressDialog progressDialog;
+	public SpotsDialog progressDialog;
 	public List<Dock> list;
 	public AnimationAdapter adapter;
 

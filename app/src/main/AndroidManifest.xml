@@ -10,12 +10,14 @@
         android:name=".APP"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

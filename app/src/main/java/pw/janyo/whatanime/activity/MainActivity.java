@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.activity;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,6 +21,7 @@ import android.view.View.OnClickListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import dmax.dialog.SpotsDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 	private final static int REQUEST_CODE = 322;
 	private Settings settings;
 	private AnalyzeHandler analyzeHandler = new AnalyzeHandler();
-	private ProgressDialog progressDialog;
+	private SpotsDialog progressDialog;
 	private FloatingActionButton main_fab_upload;
 	private AnimationAdapter adapter;
 
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity
 		analyzeHandler.context = MainActivity.this;
 		analyzeHandler.context = MainActivity.this;
 
-		progressDialog = new ProgressDialog(MainActivity.this);
+		progressDialog = new SpotsDialog(MainActivity.this, R.style.SpotsDialog);
 		progressDialog.setMessage("搜索中……");
 		progressDialog.setCancelable(false);
 		analyzeHandler.progressDialog = progressDialog;
@@ -226,15 +226,16 @@ public class MainActivity extends AppCompatActivity
 			final Uri uri = data.getData();
 
 			progressDialog.show();
-			try
+			final String path = FileUtil.getPath(MainActivity.this, uri);
+			adapter.setImgPath(path);
+			new Thread(new Runnable()
 			{
-				String path = FileUtil.getPath(MainActivity.this, uri);
-				adapter.setImgPath(path);
-				Search(Encryption.encodeFileToBase64(MainActivity.this, path));
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+				@Override
+				public void run()
+				{
+					Search(Encryption.encodeFileToBase64(MainActivity.this, path));
+				}
+			}).start();
 		}
 	}
 }
