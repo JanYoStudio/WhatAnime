@@ -17,6 +17,7 @@ public class APP extends Application
 		super.onCreate();
 		Logs.setLevel(Logs.LogLevel.Debug);
 		CrashHandler.getInstance(this)
+				.setDirectory(getExternalCacheDir())
 				.init();
 	}
 }
