@@ -23,7 +23,7 @@ public class Encryption
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 			int options = 100;
-			while (outputStream.toByteArray().length / 1024 > 500 && options > 0)
+			while (outputStream.toByteArray().length / 1024 > 800 && options > 0)
 			{
 				outputStream.reset();
 				bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
