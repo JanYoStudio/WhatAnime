@@ -18,20 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import dmax.dialog.SpotsDialog;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.handler.AnalyzeHandler;
@@ -242,7 +235,7 @@ public class MainActivity extends AppCompatActivity
 				@Override
 				public void run()
 				{
-					Search(Encryption.encodeFileToBase64(MainActivity.this, path));
+					Search(Encryption.encodeFileToBase64(path));
 				}
 			}).start();
 		}
