@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.classes.Dock;
@@ -49,6 +51,8 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 			holder.imageView.setVisibility(View.VISIBLE);
 			holder.text_name.setVisibility(View.GONE);
 			holder.text_chinese_name.setVisibility(View.GONE);
+			holder.text_english_name.setVisibility(View.GONE);
+			holder.text_similarity.setVisibility(View.GONE);
 			holder.text_number.setVisibility(View.GONE);
 			holder.text_time.setVisibility(View.GONE);
 			Glide.with(context).load(imgPath).into(holder.imageView);
@@ -58,12 +62,13 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 			Dock dock = list.get(position - 1);
 			holder.text_name.setText(context.getString(R.string.text_name, dock.title));
 			holder.text_chinese_name.setText(context.getString(R.string.text_chinese_name, dock.title_chinese));
+			holder.text_english_name.setText(context.getString(R.string.text_english_name, dock.title_english));
+			holder.text_similarity.setText(context.getString(R.string.text_similarity, dock.similarity * 100 + "%"));
 			holder.text_number.setText(context.getString(R.string.text_number, dock.episode));
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(((long) dock.at * 1000));
-			int time_s = calendar.get(Calendar.SECOND);
-			int time_m = calendar.get(Calendar.MINUTE);
-			holder.text_time.setText(context.getString(R.string.text_time, time_m, time_s));
+			SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.CHINA);
+			holder.text_time.setText(context.getString(R.string.text_time, dateFormat.format(calendar.getTime())));
 		}
 	}
 
@@ -78,6 +83,8 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 		ImageView imageView;
 		TextView text_name;
 		TextView text_chinese_name;
+		TextView text_english_name;
+		TextView text_similarity;
 		TextView text_number;
 		TextView text_time;
 
@@ -87,6 +94,8 @@ public class AnimationAdapter extends RecyclerView.Adapter<AnimationAdapter.View
 			imageView = itemView.findViewById(R.id.imageView);
 			text_name = itemView.findViewById(R.id.text_name);
 			text_chinese_name = itemView.findViewById(R.id.text_chinese_name);
+			text_english_name = itemView.findViewById(R.id.text_english_name);
+			text_similarity = itemView.findViewById(R.id.text_similarity);
 			text_number = itemView.findViewById(R.id.text_number);
 			text_time = itemView.findViewById(R.id.text_time);
 		}

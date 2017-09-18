@@ -22,8 +22,10 @@
 
     <string name="text_name">番名：%1$s</string>
     <string name="text_chinese_name">中文番名：%1$s</string>
+    <string name="text_english_name">英文名：%1$s</string>
+    <string name="text_similarity">准确度：%1$s</string>
     <string name="text_number">集数：%1$s</string>
-    <string name="text_time">时间：%1$d:%2$d</string>
+    <string name="text_time">时间：%1$s</string>
 
     <string name="key_result_number">key_result_number</string>
     <string name="title_result_number">搜索结果数量(0表示不限制)</string>
