@@ -6,11 +6,9 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import dmax.dialog.SpotsDialog;
 import pw.janyo.whatanime.util.Settings;
-import vip.mystery0.tools.Logs.Logs;
+import vip.mystery0.tools.HTTPok.HTTPokResponse;
 
 import java.util.List;
 
@@ -33,11 +31,10 @@ public class AnalyzeHandler extends Handler
 		switch (msg.what)
 		{
 			case 0:
-				String response = msg.obj.toString();
-				Logs.i(TAG, "handleMessage: " + response);
+				HTTPokResponse response = (HTTPokResponse) msg.obj;
 				try
 				{
-					Animation animation = new Gson().fromJson(response, Animation.class);
+					Animation animation = response.getJSON(Animation.class);
 					list.clear();
 					Settings settings = Settings.getInstance(context);
 					if (settings.getResultNumber() == 0 || settings.getResultNumber() > animation.docs.size())
@@ -48,18 +45,7 @@ public class AnalyzeHandler extends Handler
 				} catch (Exception e)
 				{
 					Log.wtf(TAG, "handleMessage: 解析json错误", e);
-					switch (response.charAt(0))
-					{
-						case '{':
-							sendEmptyMessage(3);
-							break;
-						case '<':
-							sendEmptyMessage(4);
-							break;
-						default:
-							sendEmptyMessage(2);
-							break;
-					}
+					sendEmptyMessage(2);
 				}
 				break;
 			case 1:
@@ -69,14 +55,6 @@ public class AnalyzeHandler extends Handler
 				break;
 			case 2:
 				Toast.makeText(context, "解析错误", Toast.LENGTH_SHORT).show();
-				list.clear();
-				break;
-			case 3:
-				Toast.makeText(context, "返回数据过长，已知BUG，将会在不久后修复！", Toast.LENGTH_SHORT).show();
-				list.clear();
-				break;
-			case 4:
-				Toast.makeText(context, "图片太大，将会在之后的版本中尝试修复！", Toast.LENGTH_SHORT).show();
 				list.clear();
 				break;
 		}

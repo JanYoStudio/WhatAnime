@@ -20,6 +20,9 @@ import android.view.View.OnClickListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import dmax.dialog.SpotsDialog;
 import okhttp3.Call;
@@ -43,6 +46,9 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 
 import pw.janyo.whatanime.util.Settings;
 import vip.mystery0.tools.FileUtil.FileUtil;
+import vip.mystery0.tools.HTTPok.HTTPok;
+import vip.mystery0.tools.HTTPok.HTTPokResponse;
+import vip.mystery0.tools.HTTPok.HTTPokResponseListener;
 import vip.mystery0.tools.Logs.Logs;
 
 /**
@@ -140,7 +146,10 @@ public class MainActivity extends AppCompatActivity
 
 	private void Search(String base64)
 	{
-		OkHttpClient mOkHttpClient = new OkHttpClient.Builder().build();
+		OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
+				.connectTimeout(10, TimeUnit.SECONDS)
+				.readTimeout(20, TimeUnit.SECONDS)
+				.build();
 		String url = "";
 		try
 		{
@@ -153,35 +162,35 @@ public class MainActivity extends AppCompatActivity
 		{
 			analyzeHandler.sendEmptyMessage(0);
 		}
-		RequestBody mRequestBody = new FormBody.Builder()
-				.add("image", base64)
-				.build();
-		Request mRequest = new Request.Builder()
-				.url(getString(R.string.requestUrl, url))
-				.post(mRequestBody)
-				.build();
-		Call call = mOkHttpClient.newCall(mRequest);
-		call.enqueue(new Callback()
-		{
-			@Override
-			public void onFailure(Call p1, IOException p2)
-			{
-				Logs.i(TAG, "onFailure: " + p2.getMessage());
-				Message message = new Message();
-				message.obj = p2.getMessage();
-				message.what = 1;
-				analyzeHandler.sendMessage(message);
-			}
+		Map<String, String> map = new HashMap<>();
+		map.put("image", base64);
+		new HTTPok()
+				.setURL(getString(R.string.requestUrl, url))
+				.setRequestMethod(HTTPok.Companion.getPOST())
+				.setParams(map)
+				.setOkHttpClient(mOkHttpClient)
+				.setListener(new HTTPokResponseListener()
+				{
+					@Override
+					public void onError(String msg)
+					{
+						Logs.i(TAG, "onFailure: " + msg);
+						Message message = new Message();
+						message.obj = msg;
+						message.what = 1;
+						analyzeHandler.sendMessage(message);
+					}
 
-			@Override
-			public void onResponse(Call p1, Response p2) throws IOException
-			{
-				Message message = new Message();
-				message.obj = p2.body().string();
-				message.what = 0;
-				analyzeHandler.sendMessage(message);
-			}
-		});
+					@Override
+					public void onResponse(HTTPokResponse httPokResponse)
+					{
+						Message message = new Message();
+						message.obj = httPokResponse;
+						message.what = 0;
+						analyzeHandler.sendMessage(message);
+					}
+				})
+				.open();
 	}
 
 	private void setToolbar(Toolbar toolbar)
