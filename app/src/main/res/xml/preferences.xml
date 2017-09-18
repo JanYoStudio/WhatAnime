@@ -7,6 +7,10 @@
         android:title="@string/title_result_number"/>
 
     <Preference
+        android:key="@string/key_similarity"
+        android:title="@string/title_similarity"/>
+
+    <Preference
         android:key="@string/key_license"
         android:title="@string/title_license"/>
 

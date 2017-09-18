@@ -18,7 +18,7 @@
     <string name="copyright">Copyright @2016–2017 JanYo Studio</string>
     <string name="all_right_reserved">All Right Reserved</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">设置</string>
 
     <string name="text_name">番名：%1$s</string>
     <string name="text_chinese_name">中文番名：%1$s</string>
@@ -30,6 +30,8 @@
     <string name="key_result_number">key_result_number</string>
     <string name="title_result_number">搜索结果数量(0表示不限制)</string>
     <string name="summary_result_number">越靠前的结果越准确。</string>
+    <string name="key_similarity">key_similarity</string>
+    <string name="title_similarity">准确度设置</string>
     <string name="key_license">key_license</string>
     <string name="title_license">授权相关</string>
     <string name="key_open_source_address">key_open_source_address</string>
@@ -48,7 +50,5 @@
     <string name="license_text5">源代码允许自由使用、添加至自己的项目，但必须注明来源，以及源的授权协议。</string>
     <string name="license_text6">在从事盈利、商用活动中，针对产品的传播复制需注明来源，以及源的授权协议。</string>
     <string name="license_text7">针对产品授权、答疑可电邮至工作室官方电子邮箱 : mystery0dyl520@gmail.com</string>
-
-    <string name="title_activity_main">MainActivity</string>
 
 </resources>

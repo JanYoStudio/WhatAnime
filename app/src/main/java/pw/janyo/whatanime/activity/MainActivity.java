@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
 						@Override
 						public void onTargetDismissed(TapTargetView view, boolean userInitiated)
 						{
-							settings.setFirstRun(false);
+							settings.setFirstRun();
 						}
 					});
 		}

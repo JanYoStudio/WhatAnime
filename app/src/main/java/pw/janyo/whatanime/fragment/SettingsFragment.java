@@ -30,6 +30,7 @@ public class SettingsFragment extends PreferenceFragment
 	private static final String TAG = "SettingsFragment";
 	private Settings settings;
 	private Preference resultNumberPreference;
+	private Preference similarityPreference;
 	private Preference licensePreference;
 	private Preference openSourceAddressPreference;
 	private Preference janyoInfoPreference;
@@ -73,6 +74,33 @@ public class SettingsFragment extends PreferenceFragment
 				View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_edit, new TextInputLayout(getActivity()), false);
 				final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
 				textInputLayout.setHint(getString(R.string.title_result_number));
+				textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+				textInputLayout.getEditText().setText(String.valueOf(settings.getResultNumber()));
+				new AlertDialog.Builder(getActivity())
+						.setTitle(" ")
+						.setView(view)
+						.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i)
+							{
+								Logs.i(TAG, "onClick: " + textInputLayout.getEditText().getText().toString());
+								settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
+							}
+						})
+						.setNegativeButton(android.R.string.cancel, null)
+						.show();
+				return false;
+			}
+		});
+		similarityPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_edit, new TextInputLayout(getActivity()), false);
+				final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
+				textInputLayout.setHint(getString(R.string.title_similarity));
 				textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
 				textInputLayout.getEditText().setText(String.valueOf(settings.getResultNumber()));
 				new AlertDialog.Builder(getActivity())

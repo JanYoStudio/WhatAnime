@@ -36,13 +36,23 @@ public class Settings
 		return sharedPreferences.getInt("resultNumber", 1);
 	}
 
-	public void setFirstRun(boolean isFirst)
+	public void setFirstRun()
 	{
-		sharedPreferences.edit().putBoolean("isFirst", isFirst).apply();
+		sharedPreferences.edit().putBoolean("isFirst", false).apply();
 	}
 
 	public boolean isFirstRun()
 	{
 		return sharedPreferences.getBoolean("isFirst", true);
+	}
+
+	public void setSimilarity(float similarity)
+	{
+		sharedPreferences.edit().putFloat("similarity", similarity).apply();
+	}
+
+	public float getSimilarity()
+	{
+		return sharedPreferences.getFloat("similarity", 0f);
 	}
 }
