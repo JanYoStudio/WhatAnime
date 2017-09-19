@@ -33,6 +33,7 @@ public class SettingsFragment extends PreferenceFragment
 	private Preference similarityPreference;
 	private Preference licensePreference;
 	private Preference openSourceAddressPreference;
+	private Preference checkUpdatePreference;
 	private Preference janyoInfoPreference;
 	private Preference whatAnimeInfoPreference;
 
@@ -58,6 +59,7 @@ public class SettingsFragment extends PreferenceFragment
 		similarityPreference = findPreference(getString(R.string.key_similarity));
 		licensePreference = findPreference(getString(R.string.key_license));
 		openSourceAddressPreference = findPreference(getString(R.string.key_open_source_address));
+		checkUpdatePreference = findPreference(getString(R.string.key_check_update));
 		janyoInfoPreference = findPreference(getString(R.string.key_info_janyo));
 		whatAnimeInfoPreference = findPreference(getString(R.string.key_info_whatanime));
 
@@ -149,6 +151,18 @@ public class SettingsFragment extends PreferenceFragment
 			{
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				Uri content_uri = Uri.parse(getString(R.string.url_janyo));
+				intent.setData(content_uri);
+				startActivity(intent);
+				return false;
+			}
+		});
+		checkUpdatePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		{
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				Uri content_uri = Uri.parse(getString(R.string.url_play));
 				intent.setData(content_uri);
 				startActivity(intent);
 				return false;

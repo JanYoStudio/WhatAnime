@@ -2,30 +2,44 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-        android:key="@string/key_result_number"
-        android:title="@string/title_result_number"/>
+    <PreferenceCategory
+        android:title="@string/title_result_settings">
 
-    <Preference
-        android:key="@string/key_similarity"
-        android:title="@string/title_similarity"/>
+        <Preference
+            android:key="@string/key_result_number"
+            android:title="@string/title_result_number"/>
 
-    <Preference
-        android:key="@string/key_license"
-        android:title="@string/title_license"/>
+        <Preference
+            android:key="@string/key_similarity"
+            android:title="@string/title_similarity"/>
 
-    <Preference
-        android:key="@string/key_open_source_address"
-        android:summary="@string/url_janyo"
-        android:title="@string/title_open_source_address"/>
+    </PreferenceCategory>
 
-    <Preference
-        android:key="@string/key_info_whatanime"
-        android:summary="@string/url_whatanime"
-        android:title="@string/title_info_whatanime"/>
+    <PreferenceCategory
+        android:title="@string/title_about">
 
-    <Preference
-        android:key="@string/key_info_janyo"
-        android:title="@string/title_info_janyo"/>
+        <Preference
+            android:key="@string/key_license"
+            android:title="@string/title_license"/>
+
+        <Preference
+            android:key="@string/key_open_source_address"
+            android:summary="@string/url_janyo"
+            android:title="@string/title_open_source_address"/>
+
+        <Preference
+            android:key="@string/key_check_update"
+            android:title="@string/title_check_update"/>
+
+        <Preference
+            android:key="@string/key_info_whatanime"
+            android:summary="@string/url_whatanime"
+            android:title="@string/title_info_whatanime"/>
+
+        <Preference
+            android:key="@string/key_info_janyo"
+            android:title="@string/title_info_janyo"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

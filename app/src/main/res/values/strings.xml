@@ -5,6 +5,7 @@
     <string name="token">MmI4NWM3ODgxYjE4ZmU4MTA2MjM4N2U5NzkxNDRmNjJjODU3ODhjOQ==</string>
     <string name="requestUrl">https://whatanime.ga/api/search?token=%1$s</string>
 
+    <string name="url_play">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="url_janyo">https://github.com/JanYoStudio/WhatAnime</string>
     <string name="url_whatanime">https://github.com/soruly/whatanime.ga</string>
 
@@ -27,15 +28,19 @@
     <string name="text_number">集数：%1$s</string>
     <string name="text_time">时间：%1$s</string>
 
+    <string name="title_result_settings">结果设置</string>
     <string name="key_result_number">key_result_number</string>
     <string name="title_result_number">搜索结果数量(0表示不限制)</string>
     <string name="summary_result_number">越靠前的结果越准确。</string>
     <string name="key_similarity">key_similarity</string>
     <string name="title_similarity">准确度设置</string>
+    <string name="title_about">关于</string>
     <string name="key_license">key_license</string>
     <string name="title_license">授权相关</string>
     <string name="key_open_source_address">key_open_source_address</string>
     <string name="title_open_source_address">开源地址</string>
+    <string name="key_check_update">key_check_update</string>
+    <string name="title_check_update">检查更新</string>
     <string name="key_info_whatanime">key_info_whatanime</string>
     <string name="title_info_whatanime">关于WhatAnime</string>
     <string name="key_info_janyo">key_info_janyo</string>
