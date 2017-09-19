@@ -29,8 +29,9 @@ public class Encryption
 				bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
 				options -= 10;
 			}
-			int length = outputStream.toByteArray().length;
-			base64 = Base64.encodeToString(outputStream.toByteArray(), 0, length, Base64.NO_WRAP);
+			byte[] data = outputStream.toByteArray();
+			int length = data.length;
+			base64 = Base64.encodeToString(data, 0, length, Base64.NO_WRAP);
 			outputStream.close();
 		} catch (Exception e)
 		{
