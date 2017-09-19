@@ -49,6 +49,6 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.Mystery00.ToolsDemo:autoversion:2.0.3'
+        classpath 'com.github.Mystery00.ToolsDemo:autoversion:2.1.0'
     }
 }
