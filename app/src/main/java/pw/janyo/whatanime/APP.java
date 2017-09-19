@@ -16,7 +16,7 @@ public class APP extends Application
 	public void onCreate()
 	{
 		super.onCreate();
-		Logs.setLevel(Logs.LogLevel.Release);
+		Logs.setLevel(Logs.LogLevel.Debug);
 		CrashHandler.getInstance(this)
 				.init();
 	}
