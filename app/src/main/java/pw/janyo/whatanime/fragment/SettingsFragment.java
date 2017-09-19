@@ -55,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment
 	private void initialization()
 	{
 		resultNumberPreference = findPreference(getString(R.string.key_result_number));
+		similarityPreference = findPreference(getString(R.string.key_similarity));
 		licensePreference = findPreference(getString(R.string.key_license));
 		openSourceAddressPreference = findPreference(getString(R.string.key_open_source_address));
 		janyoInfoPreference = findPreference(getString(R.string.key_info_janyo));
@@ -84,7 +85,6 @@ public class SettingsFragment extends PreferenceFragment
 							@Override
 							public void onClick(DialogInterface dialogInterface, int i)
 							{
-								Logs.i(TAG, "onClick: " + textInputLayout.getEditText().getText().toString());
 								settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
 							}
 						})
@@ -102,7 +102,7 @@ public class SettingsFragment extends PreferenceFragment
 				final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
 				textInputLayout.setHint(getString(R.string.title_similarity));
 				textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-				textInputLayout.getEditText().setText(String.valueOf(settings.getResultNumber()));
+				textInputLayout.getEditText().setText(String.valueOf(settings.getSimilarity() * 100));
 				new AlertDialog.Builder(getActivity())
 						.setTitle(" ")
 						.setView(view)
@@ -111,8 +111,8 @@ public class SettingsFragment extends PreferenceFragment
 							@Override
 							public void onClick(DialogInterface dialogInterface, int i)
 							{
-								Logs.i(TAG, "onClick: " + textInputLayout.getEditText().getText().toString());
-								settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
+								float similarity = Float.parseFloat(textInputLayout.getEditText().getText().toString());
+								settings.setSimilarity(similarity / 100f);
 							}
 						})
 						.setNegativeButton(android.R.string.cancel, null)

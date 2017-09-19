@@ -10,6 +10,7 @@ import dmax.dialog.SpotsDialog;
 import pw.janyo.whatanime.util.Settings;
 import vip.mystery0.tools.HTTPok.HTTPokResponse;
 
+import java.util.Iterator;
 import java.util.List;
 
 import pw.janyo.whatanime.adapter.AnimationAdapter;
@@ -37,10 +38,23 @@ public class AnalyzeHandler extends Handler
 					Animation animation = response.getJSON(Animation.class);
 					list.clear();
 					Settings settings = Settings.getInstance(context);
-					if (settings.getResultNumber() == 0 || settings.getResultNumber() > animation.docs.size())
-						list.addAll(animation.docs);
-					else
+					if (settings.getResultNumber() < list.size())
+					{
 						list.addAll(animation.docs.subList(0, settings.getResultNumber()));
+					} else
+					{
+						list.addAll(animation.docs);
+					}
+					if (settings.getSimilarity() != 0f)
+					{
+						Iterator<Dock> iterator = list.iterator();
+						while (iterator.hasNext())
+						{
+							Dock dock = iterator.next();
+							if (dock.similarity < settings.getSimilarity())
+								iterator.remove();
+						}
+					}
 					adapter.notifyDataSetChanged();
 				} catch (Exception e)
 				{
