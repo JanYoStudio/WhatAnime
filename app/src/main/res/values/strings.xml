@@ -20,6 +20,7 @@
     <string name="all_right_reserved">All Right Reserved</string>
 
     <string name="action_settings">设置</string>
+    <string name="action_upload">上传</string>
 
     <string name="text_name">番名：%1$s</string>
     <string name="text_chinese_name">中文番名：%1$s</string>
@@ -27,6 +28,17 @@
     <string name="text_similarity">准确度：%1$s</string>
     <string name="text_number">集数：%1$s</string>
     <string name="text_time">时间：%1$s</string>
+
+    <string name="exception_time">崩溃时间：%1$s</string>
+    <string name="exception_version">崩溃版本：%1$s_%2$d</string>
+    <string name="exception_sdk">SDK：%1$s_%2$d</string>
+    <string name="exception_vendor">Vendor：%1$s</string>
+    <string name="exception_model">Model：%1$s</string>
+    <string name="exception_message">崩溃详情：\n%1$s</string>
+
+    <string name="hint_upload_log">日志文件上传中……</string>
+    <string name="hint_upload_log_done">日志已经成功反馈给开发者，即将重启应用！</string>
+    <string name="hint_upload_log_error">日志上传失败，请联系开发者！</string>
 
     <string name="title_result_settings">结果设置</string>
     <string name="key_result_number">key_result_number</string>

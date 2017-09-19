@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import dmax.dialog.SpotsDialog;
 import okhttp3.OkHttpClient;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
+import pw.janyo.whatanime.classes.Error;
 import pw.janyo.whatanime.handler.AnalyzeHandler;
 import pw.janyo.whatanime.util.Base64;
 import pw.janyo.whatanime.util.Base64DecoderException;
@@ -38,6 +40,8 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 
 import pw.janyo.whatanime.util.Settings;
+import vip.mystery0.tools.CrashHandler.CatchExceptionListener;
+import vip.mystery0.tools.CrashHandler.CrashHandler;
 import vip.mystery0.tools.FileUtil.FileUtil;
 import vip.mystery0.tools.HTTPok.HTTPok;
 import vip.mystery0.tools.HTTPok.HTTPokResponse;
@@ -90,6 +94,22 @@ public class MainActivity extends AppCompatActivity
 		analyzeHandler.progressDialog = progressDialog;
 
 		setToolbar(toolbar);
+
+		CrashHandler.getInstance(MainActivity.this)
+				.sendException(new CatchExceptionListener()
+				{
+					@Override
+					public void onException(String date, File file, String appVersionName, int appVersionCode, String androidVersion, int sdk, String vendor, String model, Throwable throwable)
+					{
+						Error error = new Error(date, appVersionName, appVersionCode, androidVersion, sdk, vendor, model, throwable);
+						Bundle bundle = new Bundle();
+						bundle.putSerializable("file", file);
+						bundle.putSerializable("error", error);
+						Intent intent = new Intent(MainActivity.this, ErrorActivity.class);
+						intent.putExtra("error", bundle);
+						startActivity(intent);
+					}
+				});
 
 		showcase();
 	}
