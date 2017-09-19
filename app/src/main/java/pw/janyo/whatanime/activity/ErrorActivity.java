@@ -79,7 +79,7 @@ public class ErrorActivity extends AppCompatActivity
 					map.put("vendor", error.vendor);
 					map.put("model", error.model);
 					new HTTPok()
-							.setURL("http://123.206.186.70/php/uploadLog/upload_file.php")
+							.setURL("http://janyo.pw/uploadLog/upload_file.php")
 							.setRequestMethod(HTTPok.Companion.getPOST())
 							.setParams(map)
 							.isFileRequest()
