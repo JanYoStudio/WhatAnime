@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,19 +19,15 @@ import android.view.View.OnClickListener;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import dmax.dialog.SpotsDialog;
-import okhttp3.OkHttpClient;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Error;
 import pw.janyo.whatanime.handler.AnalyzeHandler;
+import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
 import pw.janyo.whatanime.util.Base64;
 import pw.janyo.whatanime.util.Base64DecoderException;
-import pw.janyo.whatanime.util.Encryption;
 
 import android.support.design.widget.FloatingActionButton;
 
@@ -40,13 +35,10 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 
 import pw.janyo.whatanime.util.Settings;
+import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
 import vip.mystery0.tools.CrashHandler.CatchExceptionListener;
 import vip.mystery0.tools.CrashHandler.CrashHandler;
 import vip.mystery0.tools.FileUtil.FileUtil;
-import vip.mystery0.tools.HTTPok.HTTPok;
-import vip.mystery0.tools.HTTPok.HTTPokResponse;
-import vip.mystery0.tools.HTTPok.HTTPokResponseListener;
-import vip.mystery0.tools.Logs.Logs;
 
 /**
  * Created by mystery0.
@@ -157,55 +149,6 @@ public class MainActivity extends AppCompatActivity
 		}
 	}
 
-	private void Search(String base64)
-	{
-		OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
-				.connectTimeout(10, TimeUnit.SECONDS)
-				.readTimeout(20, TimeUnit.SECONDS)
-				.build();
-		String url = "";
-		try
-		{
-			url = new String(Base64.decode(getString(R.string.token)));
-		} catch (Base64DecoderException e)
-		{
-			e.printStackTrace();
-		}
-		if (url.equals(""))
-		{
-			analyzeHandler.sendEmptyMessage(0);
-		}
-		Map<String, String> map = new HashMap<>();
-		map.put("image", base64);
-		new HTTPok()
-				.setURL(getString(R.string.requestUrl, url))
-				.setRequestMethod(HTTPok.Companion.getPOST())
-				.setParams(map)
-				.setOkHttpClient(mOkHttpClient)
-				.setListener(new HTTPokResponseListener()
-				{
-					@Override
-					public void onError(String msg)
-					{
-						Logs.i(TAG, "onFailure: " + msg);
-						Message message = new Message();
-						message.obj = msg;
-						message.what = 1;
-						analyzeHandler.sendMessage(message);
-					}
-
-					@Override
-					public void onResponse(HTTPokResponse httPokResponse)
-					{
-						Message message = new Message();
-						message.obj = httPokResponse;
-						message.what = 0;
-						analyzeHandler.sendMessage(message);
-					}
-				})
-				.open();
-	}
-
 	private void setToolbar(Toolbar toolbar)
 	{
 		toolbar.setTitle(getTitle());
@@ -217,6 +160,9 @@ public class MainActivity extends AppCompatActivity
 			{
 				switch (item.getItemId())
 				{
+					case R.id.action_history:
+						startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+						break;
 					case R.id.action_settings:
 						startActivity(new Intent(MainActivity.this, SettingsActivity.class));
 						break;
@@ -246,7 +192,6 @@ public class MainActivity extends AppCompatActivity
 		if (REQUEST_CODE == requestCode && RESULT_OK == resultCode)
 		{
 			final Uri uri = data.getData();
-
 			progressDialog.show();
 			final String path = FileUtil.getPath(MainActivity.this, uri);
 			adapter.setImgPath(path);
@@ -255,7 +200,36 @@ public class MainActivity extends AppCompatActivity
 				@Override
 				public void run()
 				{
-					Search(Encryption.encodeFileToBase64(path));
+					String url = "";
+					try
+					{
+						url = new String(Base64.decode(getString(R.string.token)));
+					} catch (Base64DecoderException e)
+					{
+						e.printStackTrace();
+					}
+					if (url.equals(""))
+					{
+						analyzeHandler.sendEmptyMessage(0);
+						return;
+					}
+					WhatAnimeBuilder builder = new WhatAnimeBuilder();
+					builder.setImgFile(path);
+					builder.build(MainActivity.this, getString(R.string.requestUrl, url), analyzeHandler.list, new WhatAnimeBuildListener()
+					{
+						@Override
+						public void done()
+						{
+							analyzeHandler.sendEmptyMessage(0);
+						}
+
+						@Override
+						public void error(Exception e)
+						{
+							Log.wtf(TAG, "error: ", e);
+							analyzeHandler.sendEmptyMessage(1);
+						}
+					});
 				}
 			}).start();
 		}

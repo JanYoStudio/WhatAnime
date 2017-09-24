@@ -7,4 +7,7 @@
     <dimen name="dialog_about_margin_top_title">20dp</dimen>
     <dimen name="dialog_about_margin_top">5dp</dimen>
     <dimen name="dialog_about_name_size">18sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="item_history_img_height">120dp</dimen>
+    <dimen name="item_history_img_width">160dp</dimen>
 </resources>

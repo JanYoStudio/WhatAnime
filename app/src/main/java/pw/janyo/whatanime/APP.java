@@ -1,6 +1,9 @@
 package pw.janyo.whatanime;
 
 import android.app.Application;
+
+import org.litepal.LitePal;
+
 import vip.mystery0.tools.CrashHandler.CrashHandler;
 import vip.mystery0.tools.Logs.Logs;
 
@@ -16,7 +19,8 @@ public class APP extends Application
 	public void onCreate()
 	{
 		super.onCreate();
-		Logs.setLevel(Logs.LogLevel.Release);
+		Logs.setLevel(Logs.LogLevel.Debug);
+		LitePal.initialize(this);
 		CrashHandler.getInstance(this)
 				.init();
 	}

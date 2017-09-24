@@ -1,25 +1,35 @@
-package pw.janyo.whatanime.util;
+package pw.janyo.whatanime.util.whatanime;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
- * Created by mystery0.
+ * Created by myste.
  */
 
-public class Encryption
+public class WhatAnime
 {
-	private static final String TAG = "Encryption";
+	private String path;
 
-	public static String encodeFileToBase64(String path)
+	public void setPath(String path)
 	{
-		String base64 = "";
+		this.path = path;
+	}
+
+	Bitmap getBitmapFromFile()
+	{
+		return BitmapFactory.decodeFile(path);
+	}
+
+	byte[] compressBitmap(Bitmap bitmap)
+	{
+		byte[] data;
 		try
 		{
-			Bitmap bitmap = BitmapFactory.decodeFile(path);
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 			int options = 100;
@@ -29,14 +39,19 @@ public class Encryption
 				bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
 				options -= 10;
 			}
-			byte[] data = outputStream.toByteArray();
-			int length = data.length;
-			base64 = Base64.encodeToString(data, 0, length, Base64.NO_WRAP);
+			data = outputStream.toByteArray();
 			outputStream.close();
-		} catch (Exception e)
+		} catch (IOException e)
 		{
 			e.printStackTrace();
+			data = new byte[0];
 		}
-		return base64;
+		return data;
+	}
+
+	String base64Data(byte[] data)
+	{
+		int length = data.length;
+		return Base64.encodeToString(data, 0, length, Base64.NO_WRAP);
 	}
 }

@@ -67,5 +67,6 @@
     <string name="license_text5">源代码允许自由使用、添加至自己的项目，但必须注明来源，以及源的授权协议。</string>
     <string name="license_text6">在从事盈利、商用活动中，针对产品的传播复制需注明来源，以及源的授权协议。</string>
     <string name="license_text7">针对产品授权、答疑可电邮至工作室官方电子邮箱 : mystery0dyl520@gmail.com</string>
+    <string name="title_activity_history">历史纪录</string>
 
 </resources>

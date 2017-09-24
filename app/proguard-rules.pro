@@ -190,3 +190,12 @@
 -keep class dmax.dialog.** {
     *;
 }
+
+## LitePal
+-keep class org.litepal.** {
+    *;
+}
+
+-keep class * extends org.litepal.crud.DataSupport {
+    *;
+}
