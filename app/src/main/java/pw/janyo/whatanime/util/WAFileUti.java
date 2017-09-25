@@ -1,8 +1,6 @@
 package pw.janyo.whatanime.util;
 
 import android.content.Context;
-import android.os.Message;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import pw.janyo.whatanime.R;
-import pw.janyo.whatanime.activity.MainActivity;
 import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
