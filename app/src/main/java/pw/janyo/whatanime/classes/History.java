@@ -9,6 +9,7 @@ import org.litepal.crud.DataSupport;
 public class History extends DataSupport
 {
 	private String imaPath;
+	private String cachePath;
 	private String title;
 	private String saveFilePath;
 
@@ -20,6 +21,16 @@ public class History extends DataSupport
 	public void setImaPath(String imaPath)
 	{
 		this.imaPath = imaPath;
+	}
+
+	public String getCachePath()
+	{
+		return cachePath;
+	}
+
+	public void setCachePath(String cachePath)
+	{
+		this.cachePath = cachePath;
 	}
 
 	public String getTitle()

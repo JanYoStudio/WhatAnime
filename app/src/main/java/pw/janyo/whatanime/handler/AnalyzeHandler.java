@@ -7,10 +7,13 @@ import android.widget.Toast;
 
 import dmax.dialog.SpotsDialog;
 
+import java.util.Iterator;
 import java.util.List;
 
 import pw.janyo.whatanime.adapter.AnimationAdapter;
+import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.Dock;
+import pw.janyo.whatanime.util.Settings;
 
 public class AnalyzeHandler extends Handler
 {
@@ -26,6 +29,26 @@ public class AnalyzeHandler extends Handler
 		switch (msg.what)
 		{
 			case 0:
+				Animation animation = (Animation) msg.obj;
+				list.clear();
+				Settings settings = Settings.getInstance(context);
+				if (settings.getResultNumber() < list.size())
+				{
+					list.addAll(animation.docs.subList(0, settings.getResultNumber()));
+				} else
+				{
+					list.addAll(animation.docs);
+				}
+				if (settings.getSimilarity() != 0f)
+				{
+					Iterator<Dock> iterator = list.iterator();
+					while (iterator.hasNext())
+					{
+						Dock dock = iterator.next();
+						if (dock.similarity < settings.getSimilarity())
+							iterator.remove();
+					}
+				}
 				adapter.notifyDataSetChanged();
 				break;
 			case 1:

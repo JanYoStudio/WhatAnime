@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import dmax.dialog.SpotsDialog;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
+import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.Error;
 import pw.janyo.whatanime.handler.AnalyzeHandler;
 import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
@@ -215,12 +217,15 @@ public class MainActivity extends AppCompatActivity
 					}
 					WhatAnimeBuilder builder = new WhatAnimeBuilder();
 					builder.setImgFile(path);
-					builder.build(MainActivity.this, getString(R.string.requestUrl, url), analyzeHandler.list, new WhatAnimeBuildListener()
+					builder.build(MainActivity.this, getString(R.string.requestUrl, url), new WhatAnimeBuildListener()
 					{
 						@Override
-						public void done()
+						public void done(Animation animation)
 						{
-							analyzeHandler.sendEmptyMessage(0);
+							Message message = new Message();
+							message.what = 0;
+							message.obj = animation;
+							analyzeHandler.sendMessage(message);
 						}
 
 						@Override

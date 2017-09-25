@@ -23,6 +23,7 @@ import pw.janyo.whatanime.classes.Dock;
 import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
 import pw.janyo.whatanime.util.Settings;
+import pw.janyo.whatanime.util.WAFileUti;
 import vip.mystery0.tools.HTTPok.HTTPok;
 import vip.mystery0.tools.HTTPok.HTTPokException;
 import vip.mystery0.tools.HTTPok.HTTPokResponse;
@@ -56,7 +57,7 @@ public class WhatAnimeBuilder
 		history.setImaPath(path);
 	}
 
-	public void build(final Context context, String url, final List<Dock> list, final WhatAnimeBuildListener listener)
+	public void build(final Context context, String url, final WhatAnimeBuildListener listener)
 	{
 		String base64 = whatAnime.base64Data(whatAnime.compressBitmap(whatAnime.getBitmapFromFile()));
 		Map<String, String> map = new HashMap<>();
@@ -85,33 +86,18 @@ public class WhatAnimeBuilder
 							md.update(date.getBytes());
 							md5 = new BigInteger(1, md.digest()).toString(16);
 							Logs.i(TAG, "onResponse: " + md5);
-							File saveFile = new File(context.getCacheDir() + File.separator + md5);
-							Logs.i(TAG, "onResponse: " + httPokResponse.getFile(saveFile));
-							FileReader fileReader = new FileReader(saveFile);
+							File jsonFile = new File(context.getCacheDir() + File.separator + "json" + File.separator + md5);
+							jsonFile.getParentFile().mkdirs();
+							Logs.i(TAG, "onResponse: " + httPokResponse.getFile(jsonFile));
+							FileReader fileReader = new FileReader(jsonFile);
 							Animation animation = new Gson().fromJson(fileReader, Animation.class);
-							list.clear();
-							Settings settings = Settings.getInstance(context);
-							if (settings.getResultNumber() < list.size())
-							{
-								list.addAll(animation.docs.subList(0, settings.getResultNumber()));
-							} else
-							{
-								list.addAll(animation.docs);
-							}
-							if (settings.getSimilarity() != 0f)
-							{
-								Iterator<Dock> iterator = list.iterator();
-								while (iterator.hasNext())
-								{
-									Dock dock = iterator.next();
-									if (dock.similarity < settings.getSimilarity())
-										iterator.remove();
-								}
-							}
-							history.setTitle(list.get(0).title);
-							history.setSaveFilePath(saveFile.getAbsolutePath());
-							history.save();
-							listener.done();
+							String cacheImgPath = context.getCacheDir() + File.separator + "img" + File.separator + md5;
+							WAFileUti.fileCopy(history.getImaPath(), cacheImgPath);
+							history.setCachePath(cacheImgPath);
+							history.setTitle(animation.docs.get(0).title);
+							history.setSaveFilePath(jsonFile.getAbsolutePath());
+							history.saveOrUpdate("imaPath = ?", history.getImaPath());
+							listener.done(animation);
 						} catch (FileNotFoundException | NoSuchAlgorithmException e)
 						{
 							listener.error(e);

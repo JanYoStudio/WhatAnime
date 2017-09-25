@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SpotsDialog/SpotsDialog.iml" filepath="$PROJECT_DIR$/SpotsDialog/SpotsDialog.iml" />
+      <module fileurl="file://D:\program\AndroidStudio\WhatAnime\SpotsDialog\SpotsDialog.iml" filepath="D:\program\AndroidStudio\WhatAnime\SpotsDialog\SpotsDialog.iml" />
       <module fileurl="file://$PROJECT_DIR$/WhatAnime.iml" filepath="$PROJECT_DIR$/WhatAnime.iml" />
+      <module fileurl="file://D:\program\AndroidStudio\WhatAnime\WhatAnime.iml" filepath="D:\program\AndroidStudio\WhatAnime\WhatAnime.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\program\AndroidStudio\WhatAnime\app\app.iml" filepath="D:\program\AndroidStudio\WhatAnime\app\app.iml" />
     </modules>
   </component>
 </project>
