@@ -104,4 +104,11 @@ public class WAFileUti
 			}
 		});
 	}
+
+	public static void deleteHistory(History history)
+	{
+		new File(history.getCachePath()).deleteOnExit();
+		new File(history.getSaveFilePath()).deleteOnExit();
+		history.delete();
+	}
 }

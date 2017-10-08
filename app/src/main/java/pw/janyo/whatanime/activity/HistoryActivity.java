@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import org.litepal.crud.DataSupport;
@@ -33,10 +34,28 @@ public class HistoryActivity extends AppCompatActivity
 		setContentView(R.layout.activity_history);
 		toolbar = findViewById(R.id.toolbar);
 
-		List<History> list = WAFileUti.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
+		final List<History> list = WAFileUti.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
 		RecyclerView recyclerView = findViewById(R.id.recyclerView);
 		recyclerView.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
-		recyclerView.setAdapter(new HistoryAdapter(HistoryActivity.this, list));
+		final HistoryAdapter adapter = new HistoryAdapter(HistoryActivity.this, list);
+		ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT)
+		{
+			@Override
+			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target)
+			{
+				return false;
+			}
+
+			@Override
+			public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction)
+			{
+				WAFileUti.deleteHistory(list.get(viewHolder.getAdapterPosition()));
+				list.remove(viewHolder.getAdapterPosition());
+				adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+			}
+		};
+		new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
+		recyclerView.setAdapter(adapter);
 
 		setSupportActionBar(toolbar);
 	}
