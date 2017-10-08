@@ -5,8 +5,8 @@ import android.content.Context;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -80,9 +80,17 @@ public class WhatAnimeBuilder
 							md.update(date.getBytes());
 							md5 = new BigInteger(1, md.digest()).toString(16);
 							File jsonFile = new File(context.getFilesDir() + File.separator + "json" + File.separator + md5);
+							httPokResponse.getFile(jsonFile);
 							jsonFile.getParentFile().mkdirs();
+							if (!jsonFile.exists())
+								jsonFile.createNewFile();
 							FileReader fileReader = new FileReader(jsonFile);
 							Animation animation = new Gson().fromJson(fileReader, Animation.class);
+							if (animation == null)
+							{
+								listener.error(new Exception("返回数据错误！"));
+								return;
+							}
 							String cacheImgPath = context.getFilesDir() + File.separator + "img" + File.separator + md5;
 							WAFileUti.fileCopy(history.getImaPath(), cacheImgPath);
 							history.setCachePath(cacheImgPath);
@@ -90,7 +98,7 @@ public class WhatAnimeBuilder
 							history.setSaveFilePath(jsonFile.getAbsolutePath());
 							history.saveOrUpdate("imaPath = ?", history.getImaPath());
 							listener.done(animation);
-						} catch (FileNotFoundException | NoSuchAlgorithmException e)
+						} catch (NoSuchAlgorithmException | IOException e)
 						{
 							listener.error(e);
 						}
