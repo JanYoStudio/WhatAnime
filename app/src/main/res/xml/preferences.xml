@@ -32,6 +32,10 @@
             android:title="@string/title_check_update"/>
 
         <Preference
+            android:title="图标鸣谢"
+            android:summary="\@爱吃饭的越越"/>
+
+        <Preference
             android:key="@string/key_info_whatanime"
             android:summary="@string/url_whatanime"
             android:title="@string/title_info_whatanime"/>
