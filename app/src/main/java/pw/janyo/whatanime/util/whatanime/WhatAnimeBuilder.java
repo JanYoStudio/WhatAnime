@@ -39,7 +39,7 @@ public class WhatAnimeBuilder
 	{
 		whatAnime = new WhatAnime();
 		mOkHttpClient = new OkHttpClient.Builder()
-				.connectTimeout(10, TimeUnit.SECONDS)
+				.connectTimeout(20, TimeUnit.SECONDS)
 				.readTimeout(20, TimeUnit.SECONDS)
 				.build();
 		history = new History();
