@@ -19,15 +19,19 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.Dock;
 import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.interfaces.SearchService;
-import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
+import pw.janyo.whatanime.util.Base64;
+import pw.janyo.whatanime.util.Base64DecoderException;
 import pw.janyo.whatanime.util.Settings;
 import pw.janyo.whatanime.util.WAFileUti;
 import retrofit2.Retrofit;
@@ -40,19 +44,28 @@ import vip.mystery0.tools.logs.Logs;
 
 public class WhatAnimeBuilder {
     private static final String TAG = "WhatAnimeBuilder";
+    private String token;
     private WhatAnime whatAnime;
     private Retrofit retrofit;
     private ZLoadingDialog zLoadingDialog;
     private History history;
 
-    public WhatAnimeBuilder(Context context, String url) {
+    public WhatAnimeBuilder(Context context) {
         whatAnime = new WhatAnime();
+        try {
+            token = new String(Base64.decode(context.getString(R.string.token)));
+        } catch (Base64DecoderException e) {
+            e.printStackTrace();
+        }
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
+                .addInterceptor(logging)
                 .build();
         retrofit = new Retrofit.Builder()
-                .baseUrl(url)
+                .baseUrl(context.getString(R.string.requestUrl))
                 .client(mOkHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -71,13 +84,13 @@ public class WhatAnimeBuilder {
         history.setImaPath(path);
     }
 
-    public void build(final Context context, final List<Dock> list, final WhatAnimeBuildListener whatAnimeBuildListener) {
+    public void build(final Context context, final List<Dock> list, final AnimationAdapter adapter) {
         Observable.create(new ObservableOnSubscribe<Animation>() {
             @Override
             public void subscribe(ObservableEmitter<Animation> subscriber) throws Exception {
                 String base64 = whatAnime.base64Data(whatAnime.compressBitmap(whatAnime.getBitmapFromFile()));
                 Animation animation = retrofit.create(SearchService.class)
-                        .search(base64, null)
+                        .search(token, base64, null)
                         .execute()
                         .body();
                 if (animation == null) {
@@ -98,16 +111,16 @@ public class WhatAnimeBuilder {
                 history.setSaveFilePath(jsonFile.getAbsolutePath());
                 history.saveOrUpdate("imaPath = ?", history.getImaPath());
                 list.clear();
-                if (Settings.INSTANCE.getResultNumber() < list.size()) {
-                    list.addAll(animation.docs.subList(0, Settings.INSTANCE.getResultNumber()));
+                if (Settings.getResultNumber() < list.size()) {
+                    list.addAll(animation.docs.subList(0, Settings.getResultNumber()));
                 } else {
                     list.addAll(animation.docs);
                 }
-                if (Settings.INSTANCE.getSimilarity() != 0f) {
+                if (Settings.getSimilarity() != 0f) {
                     Iterator<Dock> iterator = list.iterator();
                     while (iterator.hasNext()) {
                         Dock dock = iterator.next();
-                        if (dock.similarity < Settings.INSTANCE.getSimilarity())
+                        if (dock.similarity < Settings.getSimilarity())
                             iterator.remove();
                     }
                 }
@@ -116,6 +129,7 @@ public class WhatAnimeBuilder {
         })
                 .subscribeOn(Schedulers.newThread())
                 .unsubscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Animation>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -124,19 +138,18 @@ public class WhatAnimeBuilder {
 
                     @Override
                     public void onNext(Animation animation) {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         zLoadingDialog.dismiss();
-                        whatAnimeBuildListener.error(e);
+                        Logs.wtf(TAG, "onError: ", e);
                     }
 
                     @Override
                     public void onComplete() {
                         zLoadingDialog.dismiss();
-                        whatAnimeBuildListener.done();
+                        adapter.notifyDataSetChanged();
                     }
                 });
     }

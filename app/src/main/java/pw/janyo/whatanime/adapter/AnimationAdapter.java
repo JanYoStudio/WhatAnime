@@ -67,9 +67,9 @@ public class AnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Dock dock = list.get(position - 1);
             viewHolder.text_name.setText(context.getString(R.string.text_name, dock.title));
             viewHolder.text_chinese_name.setText(context.getString(R.string.text_chinese_name, dock.title_chinese));
-            viewHolder.text_chinese_name_synonyms.setText(context.getString(R.string.text_chinese_name_synonyms, dock.synonyms_chinese));
+//            viewHolder.text_chinese_name_synonyms.setText(context.getString(R.string.text_chinese_name_synonyms, dock.synonyms_chinese));
             viewHolder.text_english_name.setText(context.getString(R.string.text_english_name, dock.title_english));
-            viewHolder.text_english_name_synonyms.setText(context.getString(R.string.text_english_name_synonyms, dock.synonyms));
+//            viewHolder.text_english_name_synonyms.setText(context.getString(R.string.text_english_name_synonyms, dock.synonyms));
             viewHolder.text_romaji_name.setText(context.getString(R.string.text_romaji_name, dock.title_romaji));
             viewHolder.text_season.setText(context.getString(R.string.text_season, dock.season));
             viewHolder.text_episode.setText(context.getString(R.string.text_episode, dock.episode));

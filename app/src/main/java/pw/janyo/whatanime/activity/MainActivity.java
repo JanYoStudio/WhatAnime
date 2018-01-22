@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -74,14 +73,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showcase() {
-        if (Settings.INSTANCE.isFirst()) {
+        if (Settings.isFirst()) {
             TapTargetView.showFor(this,
                     TapTarget.forView(main_fab_upload, "点击这个按钮上传动漫截图。")
                             .tintTarget(false),
                     new TapTargetView.Listener() {
                         @Override
                         public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                            Settings.INSTANCE.setFirst(false);
+                            Settings.setFirst();
                         }
                     });
         }
@@ -143,28 +142,9 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             final String path = FileUtil.getPath(MainActivity.this, uri);
             adapter.setImgPath(path);
-            String url = "";
-            try {
-                url = new String(Base64.decode(getString(R.string.token)));
-            } catch (Base64DecoderException e) {
-                e.printStackTrace();
-            }
-            if (url.equals("")) {
-                return;
-            }
-            WhatAnimeBuilder builder = new WhatAnimeBuilder(MainActivity.this, getString(R.string.requestUrl, url));
+            WhatAnimeBuilder builder = new WhatAnimeBuilder(MainActivity.this);
             builder.setImgFile(path);
-            builder.build(MainActivity.this, list, new WhatAnimeBuildListener() {
-                @Override
-                public void done() {
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void error(Throwable e) {
-                    Logs.wtf(TAG, "error: ", e);
-                }
-            });
+            builder.build(MainActivity.this, list, adapter);
         }
     }
 }

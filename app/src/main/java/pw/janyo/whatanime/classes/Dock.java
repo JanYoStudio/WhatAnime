@@ -15,8 +15,8 @@ public class Dock {
     public String title_chinese;//中文标题
     public String title_english;//英文标题
     public String title_romaji;//罗马字
-    public String synonyms;//备用英文标题
-    public String synonyms_chinese;//备用中文标题
+    public String[] synonyms;//备用英文标题
+    public String[] synonyms_chinese;//备用中文标题
     public String season;//发行时间
 //    public String filename;//匹配的文件名称
 }

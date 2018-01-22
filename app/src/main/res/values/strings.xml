@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">WhatAnime</string>
     <string name="token">MmI4NWM3ODgxYjE4ZmU4MTA2MjM4N2U5NzkxNDRmNjJjODU3ODhjOQ==</string>
-    <string name="requestUrl">https://whatanime.ga/api/search?token=%1$s</string>
+    <string name="requestUrl">https://whatanime.ga/</string>
 
     <string name="url_play">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="url_janyo">https://github.com/JanYoStudio/WhatAnime</string>

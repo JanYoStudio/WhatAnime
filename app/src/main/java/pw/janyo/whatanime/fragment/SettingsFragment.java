@@ -59,14 +59,14 @@ public class SettingsFragment extends PreferenceFragment {
                 final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
                 textInputLayout.setHint(getString(R.string.title_result_number));
                 textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-                textInputLayout.getEditText().setText(String.valueOf(Settings.INSTANCE.getResultNumber()));
+                textInputLayout.getEditText().setText(String.valueOf(Settings.getResultNumber()));
                 new AlertDialog.Builder(getActivity())
                         .setTitle(" ")
                         .setView(view)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Settings.INSTANCE.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
+                                Settings.setResultNumber(Integer.parseInt(textInputLayout.getEditText().getText().toString()));
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, null)
@@ -81,7 +81,7 @@ public class SettingsFragment extends PreferenceFragment {
                 final TextInputLayout textInputLayout = view.findViewById(R.id.layout);
                 textInputLayout.setHint(getString(R.string.title_similarity));
                 textInputLayout.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-                textInputLayout.getEditText().setText(String.valueOf(Settings.INSTANCE.getSimilarity() * 100));
+                textInputLayout.getEditText().setText(String.valueOf(Settings.getSimilarity() * 100));
                 new AlertDialog.Builder(getActivity())
                         .setTitle(" ")
                         .setView(view)
@@ -89,7 +89,7 @@ public class SettingsFragment extends PreferenceFragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 float similarity = Float.parseFloat(textInputLayout.getEditText().getText().toString());
-                                Settings.INSTANCE.setSimilarity(similarity / 100f);
+                                Settings.setSimilarity(similarity / 100f);
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, null)
