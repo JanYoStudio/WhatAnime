@@ -4,7 +4,7 @@ apply plugin: 'io.fabric'
 autoVersion {
     major 1
     minor 2
-    patch 0
+    patch 1
     beta 0
     alpha 0
 }
@@ -22,8 +22,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

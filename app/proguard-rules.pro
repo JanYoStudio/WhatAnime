@@ -32,6 +32,14 @@
 # 代码混淆压缩比，在0~7之间，默认为5，一般不做修改
 -optimizationpasses 5
 
+#指定外部模糊字典
+-obfuscationdictionary dictionary.txt
+#指定class模糊字典
+#-classobfuscationdictionary filename
+#指定package模糊字典
+#-packageobfuscationdictionary filename
+
+
 # 混合时不使用大小写混合，混合后的类名为小写
 -dontusemixedcaseclassnames
 
@@ -186,11 +194,6 @@
   public *;
 }
 
-## SpotsDialog
--keep class dmax.dialog.** {
-    *;
-}
-
 ## LitePal
 -keep class org.litepal.** {
     *;
@@ -198,4 +201,27 @@
 
 -keep class * extends org.litepal.crud.DataSupport {
     *;
+}
+
+## Retrofit混淆配置
+
+-dontwarn retrofit2.**
+-keep class retrofit2.* {
+    *;
+}
+-keepattributes Signature
+-keepattributes Exceptions
+
+##RxJava RxAndroid混淆配置
+
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.ArrayQueue*Field {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
