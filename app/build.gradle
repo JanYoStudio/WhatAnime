@@ -3,7 +3,7 @@ apply plugin: 'vip.mystery0.autoversion'
 apply plugin: 'io.fabric'
 autoVersion {
     major 1
-    minor 1
+    minor 2
     patch 0
     beta 0
     alpha 0
