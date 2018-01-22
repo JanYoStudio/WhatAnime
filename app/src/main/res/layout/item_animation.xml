@@ -17,11 +17,10 @@
             android:id="@+id/hint_name"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_name"
             app:layout_constraintBottom_toBottomOf="@+id/text_name"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_name" />
 
@@ -32,18 +31,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_chinese_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_name"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/hint_chinese_name"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_chinese_name"
             app:layout_constraintBottom_toBottomOf="@+id/text_chinese_name"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_chinese_name" />
 
@@ -54,18 +52,16 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_chinese_name_synonyms"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_chinese_name"
             app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
         <TextView
             android:id="@+id/hint_chinese_name_synonyms"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_chinese_name_synonyms"
             app:layout_constraintBottom_toBottomOf="@+id/text_chinese_name_synonyms"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_chinese_name_synonyms" />
 
@@ -76,18 +72,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_english_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintTop_toBottomOf="@+id/text_chinese_name" />
 
         <TextView
             android:id="@+id/hint_english_name"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_english_name"
             app:layout_constraintBottom_toBottomOf="@+id/text_english_name"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_english_name" />
 
@@ -98,18 +93,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_english_name_synonyms"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_english_name"
             app:layout_constraintTop_toBottomOf="@+id/text_chinese_name_synonyms" />
 
         <TextView
             android:id="@+id/hint_english_name_synonyms"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_english_name_synonyms"
             app:layout_constraintBottom_toBottomOf="@+id/text_english_name_synonyms"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_english_name_synonyms" />
 
@@ -120,18 +114,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_romaji_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_english_name_synonyms"
             app:layout_constraintTop_toBottomOf="@+id/text_english_name" />
 
         <TextView
             android:id="@+id/hint_romaji_name"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_romaji_name"
             app:layout_constraintBottom_toBottomOf="@+id/text_romaji_name"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_romaji_name" />
 
@@ -142,18 +135,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_season"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_romaji_name"
             app:layout_constraintTop_toBottomOf="@+id/text_english_name_synonyms" />
 
         <TextView
             android:id="@+id/hint_season"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_season"
             app:layout_constraintBottom_toBottomOf="@+id/text_season"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_season" />
 
@@ -164,18 +156,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_episode"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_season"
             app:layout_constraintTop_toBottomOf="@+id/text_romaji_name" />
 
         <TextView
             android:id="@+id/hint_episode"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_episode"
             app:layout_constraintBottom_toBottomOf="@+id/text_episode"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_episode" />
 
@@ -186,18 +177,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_aniListId"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_episode"
             app:layout_constraintTop_toBottomOf="@+id/text_season" />
 
         <TextView
             android:id="@+id/hint_aniListId"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_aniListId"
             app:layout_constraintBottom_toBottomOf="@+id/text_aniListId"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_aniListId" />
 
@@ -208,18 +198,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_similarity"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_aniListId"
             app:layout_constraintTop_toBottomOf="@+id/text_episode" />
 
         <TextView
             android:id="@+id/hint_similarity"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_similarity"
             app:layout_constraintBottom_toBottomOf="@+id/text_similarity"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_similarity" />
 
@@ -230,18 +219,17 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toTopOf="@id/text_time"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_similarity"
             app:layout_constraintTop_toBottomOf="@+id/text_aniListId" />
 
         <TextView
             android:id="@+id/hint_time"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/text_time"
             app:layout_constraintBottom_toBottomOf="@+id/text_time"
-            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="@+id/hint_chinese_name_synonyms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_time" />
 
@@ -252,15 +240,8 @@
             android:layout_margin="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@+id/hint_time"
             app:layout_constraintTop_toBottomOf="@+id/text_similarity" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="125dp" />
 
     </android.support.constraint.ConstraintLayout>
 
