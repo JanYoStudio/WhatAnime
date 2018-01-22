@@ -8,7 +8,6 @@
     <string name="url_janyo">https://github.com/JanYoStudio/WhatAnime</string>
     <string name="url_whatanime">https://github.com/soruly/whatanime.ga</string>
 
-    <string name="janyo_studio">JanYo Studio</string>
     <string name="dicklight">DickLight</string>
     <string name="zh_lyh">ZH_LYH</string>
     <string name="cieyget">CieyGet</string>
@@ -20,7 +19,6 @@
 
     <string name="action_history">历史纪录</string>
     <string name="action_settings">设置</string>
-    <string name="action_upload">上传</string>
 
     <string name="text_name">标题：</string>
     <string name="text_chinese_name">中文标题：</string>
@@ -35,9 +33,6 @@
     <string name="text_time">时间：</string>
     <string name="time">从 %1$s 到 %2$s ， 位于 %3$s</string>
 
-    <string name="hint_upload_log">日志文件上传中……</string>
-    <string name="hint_upload_log_done">日志已经成功反馈给开发者，即将重启应用！</string>
-    <string name="hint_upload_log_error">日志上传失败，请联系开发者！</string>
     <string name="hint_http_exception_busy">当前使用的人数过多，请稍后重试！</string>
     <string name="hint_http_exception_error">请求发生错误，请联系开发者！返回码：%1$d，错误详情：%2$s</string>
     <string name="hint_other_error">其他错误，请联系开发者！错误详情：%1$s</string>

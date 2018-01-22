@@ -20,9 +20,6 @@ import android.view.View.OnClickListener;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Dock;
-import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
-import pw.janyo.whatanime.util.Base64;
-import pw.janyo.whatanime.util.Base64DecoderException;
 
 import android.support.design.widget.FloatingActionButton;
 
@@ -35,7 +32,6 @@ import java.util.List;
 import pw.janyo.whatanime.util.Settings;
 import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
 import vip.mystery0.tools.fileUtil.FileUtil;
-import vip.mystery0.tools.logs.Logs;
 
 /**
  * Created by mystery0.
