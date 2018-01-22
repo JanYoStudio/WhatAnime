@@ -22,28 +22,25 @@
     <string name="action_settings">设置</string>
     <string name="action_upload">上传</string>
 
-    <string name="text_name">标题：%1$s</string>
-    <string name="text_chinese_name">中文标题：%1$s</string>
-    <string name="text_chinese_name_synonyms">备用中文标题：%1$s</string>
-    <string name="text_english_name">英文标题：%1$s</string>
-    <string name="text_english_name_synonyms">备用英文标题：%1$s</string>
-    <string name="text_romaji_name">罗马字：%1$s</string>
-    <string name="text_season">发行时间：%1$s</string>
-    <string name="text_episode">集数：%1$s</string>
-    <string name="text_aniListId">AniList ID：%1$s</string>
-    <string name="text_similarity">准确度：%1$s</string>
-    <string name="text_time">时间：从 %1$s 到 %2$s ， 位于 %3$s</string>
-
-    <string name="exception_time">崩溃时间：%1$s</string>
-    <string name="exception_version">崩溃版本：%1$s_%2$d</string>
-    <string name="exception_sdk">SDK：%1$s_%2$d</string>
-    <string name="exception_vendor">Vendor：%1$s</string>
-    <string name="exception_model">Model：%1$s</string>
-    <string name="exception_message">崩溃详情：\n%1$s</string>
+    <string name="text_name">标题：</string>
+    <string name="text_chinese_name">中文标题：</string>
+    <string name="text_chinese_name_synonyms">备用中文标题：</string>
+    <string name="text_english_name">英文标题：</string>
+    <string name="text_english_name_synonyms">备用英文标题：</string>
+    <string name="text_romaji_name">罗马字：</string>
+    <string name="text_season">发行时间：</string>
+    <string name="text_episode">集数：</string>
+    <string name="text_aniListId">AniList ID：</string>
+    <string name="text_similarity">准确度：</string>
+    <string name="text_time">时间：</string>
+    <string name="time">从 %1$s 到 %2$s ， 位于 %3$s</string>
 
     <string name="hint_upload_log">日志文件上传中……</string>
     <string name="hint_upload_log_done">日志已经成功反馈给开发者，即将重启应用！</string>
     <string name="hint_upload_log_error">日志上传失败，请联系开发者！</string>
+    <string name="hint_http_exception_busy">当前使用的人数过多，请稍后重试！</string>
+    <string name="hint_http_exception_error">请求发生错误，请联系开发者！返回码：%1$d，错误详情：%2$s</string>
+    <string name="hint_other_error">其他错误，请联系开发者！错误详情：%1$s</string>
 
     <string name="title_result_settings">结果设置</string>
     <string name="key_result_number">key_result_number</string>

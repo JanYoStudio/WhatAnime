@@ -2,6 +2,8 @@ package pw.janyo.whatanime.util.whatanime;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 
 import com.zyao89.view.zloading.ZLoadingDialog;
@@ -23,8 +25,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import pw.janyo.whatanime.R;
+import pw.janyo.whatanime.activity.MainActivity;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.Dock;
@@ -34,6 +36,7 @@ import pw.janyo.whatanime.util.Base64;
 import pw.janyo.whatanime.util.Base64DecoderException;
 import pw.janyo.whatanime.util.Settings;
 import pw.janyo.whatanime.util.WAFileUti;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import vip.mystery0.tools.logs.Logs;
@@ -44,6 +47,7 @@ import vip.mystery0.tools.logs.Logs;
 
 public class WhatAnimeBuilder {
     private static final String TAG = "WhatAnimeBuilder";
+    private CoordinatorLayout coordinatorLayout;
     private String token;
     private WhatAnime whatAnime;
     private Retrofit retrofit;
@@ -52,17 +56,15 @@ public class WhatAnimeBuilder {
 
     public WhatAnimeBuilder(Context context) {
         whatAnime = new WhatAnime();
+        coordinatorLayout = ((MainActivity) context).findViewById(R.id.coordinatorLayout);
         try {
             token = new String(Base64.decode(context.getString(R.string.token)));
         } catch (Base64DecoderException e) {
             e.printStackTrace();
         }
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
-                .addInterceptor(logging)
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(context.getString(R.string.requestUrl))
@@ -143,7 +145,20 @@ public class WhatAnimeBuilder {
                     @Override
                     public void onError(Throwable e) {
                         zLoadingDialog.dismiss();
-                        Logs.wtf(TAG, "onError: ", e);
+                        if (e instanceof HttpException) {
+                            HttpException httpException = (HttpException) e;
+                            String message = httpException.response().message();
+                            int code = httpException.response().code();
+                            if (code == 429) {
+                                Snackbar.make(coordinatorLayout, R.string.hint_http_exception_busy, Snackbar.LENGTH_LONG)
+                                        .show();
+                            } else
+                                Snackbar.make(coordinatorLayout, context.getString(R.string.hint_http_exception_error, code, message), Snackbar.LENGTH_LONG)
+                                        .show();
+                        }
+                        Snackbar.make(coordinatorLayout, context.getString(R.string.hint_other_error, e.getMessage()), Snackbar.LENGTH_LONG)
+                                .show();
+                        e.printStackTrace();
                     }
 
                     @Override

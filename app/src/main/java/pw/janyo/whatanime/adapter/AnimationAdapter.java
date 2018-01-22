@@ -65,16 +65,29 @@ public class AnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder instanceof ViewHolder) {
             ViewHolder viewHolder = (ViewHolder) holder;
             Dock dock = list.get(position - 1);
-            viewHolder.text_name.setText(context.getString(R.string.text_name, dock.title));
-            viewHolder.text_chinese_name.setText(context.getString(R.string.text_chinese_name, dock.title_chinese));
-//            viewHolder.text_chinese_name_synonyms.setText(context.getString(R.string.text_chinese_name_synonyms, dock.synonyms_chinese));
-            viewHolder.text_english_name.setText(context.getString(R.string.text_english_name, dock.title_english));
-//            viewHolder.text_english_name_synonyms.setText(context.getString(R.string.text_english_name_synonyms, dock.synonyms));
-            viewHolder.text_romaji_name.setText(context.getString(R.string.text_romaji_name, dock.title_romaji));
-            viewHolder.text_season.setText(context.getString(R.string.text_season, dock.season));
-            viewHolder.text_episode.setText(context.getString(R.string.text_episode, dock.episode));
-            viewHolder.text_aniListId.setText(context.getString(R.string.text_aniListId, dock.anilist_id));
-            viewHolder.text_similarity.setText(context.getString(R.string.text_similarity, dock.similarity * 100 + "%"));
+            viewHolder.text_name.setText(dock.title);
+            viewHolder.text_chinese_name.setText(dock.title_chinese);
+            StringBuilder synonyms_chinese = new StringBuilder();
+            if (dock.synonyms_chinese.length != 0)
+                for (String temp : dock.synonyms_chinese)
+                    synonyms_chinese.append(temp).append("\n");
+            else
+                synonyms_chinese.append("无");
+            viewHolder.text_chinese_name_synonyms.setText(synonyms_chinese);
+            viewHolder.text_english_name.setText(dock.title_english);
+            StringBuilder synonyms = new StringBuilder();
+            if (dock.synonyms.length != 0)
+                for (String temp : dock.synonyms)
+                    synonyms.append(temp).append("\n");
+            else
+                synonyms.append("无");
+            viewHolder.text_english_name_synonyms.setText(synonyms);
+            viewHolder.text_romaji_name.setText(dock.title_romaji);
+            viewHolder.text_season.setText(dock.season);
+            viewHolder.text_episode.setText(dock.episode);
+            viewHolder.text_aniListId.setText(dock.anilist_id);
+            String similarity = String.valueOf(dock.similarity * 100) + '%';
+            viewHolder.text_similarity.setText(similarity);
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.CHINA);
             calendar.setTimeInMillis((long) dock.from * 1000);
@@ -83,7 +96,7 @@ public class AnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String to = dateFormat.format(calendar.getTime());
             calendar.setTimeInMillis(((long) dock.at * 1000));
             String at = dateFormat.format(calendar.getTime());
-            viewHolder.text_time.setText(context.getString(R.string.text_time, from, to, at));
+            viewHolder.text_time.setText(context.getString(R.string.time, from, to, at));
         } else if (holder instanceof ImageViewHolder) {
             ImageViewHolder viewHolder = (ImageViewHolder) holder;
             if (imgPath != null)
@@ -101,7 +114,7 @@ public class AnimationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         ImageViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView;
+            imageView = itemView.findViewById(R.id.imageView);
         }
     }
 
