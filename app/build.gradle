@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'vip.mystery0.autoversion'
+apply plugin: 'io.fabric'
 autoVersion {
     major 1
     minor 1
@@ -31,7 +32,7 @@ android {
 dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
     compile 'com.github.Mystery00.ToolsDemo:tools:2.3.4'
@@ -48,6 +49,9 @@ dependencies {
     compile 'com.zyao89:zloading:1.0.8'
     compile 'com.github.bumptech.glide:glide:4.3.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
+    }
 }
 
 repositories {
@@ -61,3 +65,4 @@ buildscript {
         classpath 'com.github.Mystery00.ToolsDemo:autoversion:2.3.4'
     }
 }
+apply plugin: 'com.google.gms.google-services'
