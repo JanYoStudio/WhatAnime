@@ -30,10 +30,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Preference"/>
         <activity
-            android:name=".activity.ErrorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
             android:name=".activity.HistoryActivity"
             android:label="@string/title_activity_history"
             android:theme="@style/AppTheme">

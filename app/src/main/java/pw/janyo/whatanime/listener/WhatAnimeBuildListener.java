@@ -8,7 +8,7 @@ import pw.janyo.whatanime.classes.Animation;
 
 public interface WhatAnimeBuildListener
 {
-	void done(Animation animation);
+	void done();
 
-	void error(Exception e);
+	void error(Throwable e);
 }

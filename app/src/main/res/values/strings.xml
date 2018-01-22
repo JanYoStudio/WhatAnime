@@ -22,12 +22,17 @@
     <string name="action_settings">设置</string>
     <string name="action_upload">上传</string>
 
-    <string name="text_name">番名：%1$s</string>
-    <string name="text_chinese_name">中文番名：%1$s</string>
-    <string name="text_english_name">英文名：%1$s</string>
+    <string name="text_name">标题：%1$s</string>
+    <string name="text_chinese_name">中文标题：%1$s</string>
+    <string name="text_chinese_name_synonyms">备用中文标题：%1$s</string>
+    <string name="text_english_name">英文标题：%1$s</string>
+    <string name="text_english_name_synonyms">备用英文标题：%1$s</string>
+    <string name="text_romaji_name">罗马字：%1$s</string>
+    <string name="text_season">发行时间：%1$s</string>
+    <string name="text_episode">集数：%1$s</string>
+    <string name="text_aniListId">AniList ID：%1$s</string>
     <string name="text_similarity">准确度：%1$s</string>
-    <string name="text_number">集数：%1$s</string>
-    <string name="text_time">时间：%1$s</string>
+    <string name="text_time">时间：从 %1$s 到 %2$s ， 位于 %3$s</string>
 
     <string name="exception_time">崩溃时间：%1$s</string>
     <string name="exception_version">崩溃版本：%1$s_%2$d</string>
@@ -49,11 +54,8 @@
     <string name="title_about">关于</string>
     <string name="key_license">key_license</string>
     <string name="title_license">授权相关</string>
-    <string name="key_open_source_address">key_open_source_address</string>
     <string name="title_open_source_address">开源地址</string>
-    <string name="key_check_update">key_check_update</string>
     <string name="title_check_update">检查更新</string>
-    <string name="key_info_whatanime">key_info_whatanime</string>
     <string name="title_info_whatanime">关于WhatAnime</string>
     <string name="key_info_janyo">key_info_janyo</string>
     <string name="title_info_janyo">关于JanYo Studio</string>

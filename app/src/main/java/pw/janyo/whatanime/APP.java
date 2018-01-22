@@ -1,27 +1,30 @@
 package pw.janyo.whatanime;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 
 import org.litepal.LitePal;
 
-import vip.mystery0.tools.CrashHandler.CrashHandler;
-import vip.mystery0.tools.Logs.Logs;
+import vip.mystery0.tools.logs.Logs;
 
 /**
  * Created by mystery0.
  */
 
-public class APP extends Application
-{
-	private static final String TAG = "APP";
+public class APP extends Application {
+    @SuppressLint("StaticFieldLeak")
+    private static Context context;
 
-	@Override
-	public void onCreate()
-	{
-		super.onCreate();
-		Logs.setLevel(Logs.LogLevel.Debug);
-		LitePal.initialize(this);
-		CrashHandler.getInstance(this)
-				.init();
-	}
+    public static Context getContext() {
+        return context;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context = getApplicationContext();
+        Logs.setLevel(Logs.INSTANCE.getDebug());
+        LitePal.initialize(this);
+    }
 }

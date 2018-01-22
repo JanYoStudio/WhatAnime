@@ -17,58 +17,49 @@ import pw.janyo.whatanime.adapter.HistoryAdapter;
 import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.util.WAFileUti;
 
-public class HistoryActivity extends AppCompatActivity
-{
-	private Toolbar toolbar;
+public class HistoryActivity extends AppCompatActivity {
+    private Toolbar toolbar;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		initialization();
-		monitor();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initialization();
+        monitor();
+    }
 
-	private void initialization()
-	{
-		setContentView(R.layout.activity_history);
-		toolbar = findViewById(R.id.toolbar);
+    private void initialization() {
+        setContentView(R.layout.activity_history);
+        toolbar = findViewById(R.id.toolbar);
 
-		final List<History> list = WAFileUti.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
-		RecyclerView recyclerView = findViewById(R.id.recyclerView);
-		recyclerView.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
-		final HistoryAdapter adapter = new HistoryAdapter(HistoryActivity.this, list);
-		ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT)
-		{
-			@Override
-			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target)
-			{
-				return false;
-			}
+        final List<History> list = WAFileUti.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
+        final HistoryAdapter adapter = new HistoryAdapter(HistoryActivity.this, list);
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-			@Override
-			public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction)
-			{
-				WAFileUti.deleteHistory(list.get(viewHolder.getAdapterPosition()));
-				list.remove(viewHolder.getAdapterPosition());
-				adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-			}
-		};
-		new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
-		recyclerView.setAdapter(adapter);
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                WAFileUti.deleteHistory(list.get(viewHolder.getAdapterPosition()));
+                list.remove(viewHolder.getAdapterPosition());
+                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+        };
+        new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(adapter);
 
-		setSupportActionBar(toolbar);
-	}
+        setSupportActionBar(toolbar);
+    }
 
-	private void monitor()
-	{
-		toolbar.setNavigationOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				finish();
-			}
-		});
-	}
+    private void monitor() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
 }

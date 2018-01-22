@@ -6,7 +6,6 @@ import java.util.List;
  * Created by mystery0.
  */
 
-public class Animation
-{
-	public List<Dock> docs;
+public class Animation {
+    public List<Dock> docs;
 }

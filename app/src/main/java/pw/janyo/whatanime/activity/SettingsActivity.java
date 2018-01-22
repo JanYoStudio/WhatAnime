@@ -17,37 +17,32 @@ import pw.janyo.whatanime.fragment.SettingsFragment;
  * Created by myste.
  */
 
-public class SettingsActivity extends PreferenceActivity
-{
-	private Toolbar toolbar;
-	CoordinatorLayout coordinatorLayout;
+public class SettingsActivity extends PreferenceActivity {
+    private Toolbar toolbar;
+    CoordinatorLayout coordinatorLayout;
 
-	@Override
-	protected void onCreate(@Nullable Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		getFragmentManager().beginTransaction().replace(R.id.content_wrapper, new SettingsFragment()).commit();
-		toolbar.setTitle(getTitle());
-	}
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getFragmentManager().beginTransaction().replace(R.id.content_wrapper, new SettingsFragment()).commit();
+        toolbar.setTitle(getTitle());
+    }
 
-	@Override
-	public void setContentView(int layoutResID)
-	{
-		ViewGroup contentView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_settings, new LinearLayout(this), false);
-		toolbar = contentView.findViewById(R.id.toolbar);
-		toolbar.setNavigationOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				finish();
-			}
-		});
-		coordinatorLayout = contentView.findViewById(R.id.coordinatorLayout);
+    @Override
+    public void setContentView(int layoutResID) {
+        ViewGroup contentView = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.activity_settings, new LinearLayout(this), false);
+        toolbar = contentView.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        coordinatorLayout = contentView.findViewById(R.id.coordinatorLayout);
 
-		ViewGroup contentWrapper = contentView.findViewById(R.id.content_wrapper);
-		LayoutInflater.from(this).inflate(layoutResID, contentWrapper, true);
+        ViewGroup contentWrapper = contentView.findViewById(R.id.content_wrapper);
+        LayoutInflater.from(this).inflate(layoutResID, contentWrapper, true);
 
-		getWindow().setContentView(contentView);
-	}
+        getWindow().setContentView(contentView);
+    }
 }
