@@ -58,6 +58,7 @@ dependencies {
 	implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+	compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 }
 
 repositories {

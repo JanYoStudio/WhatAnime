@@ -18,21 +18,18 @@ public class WhatAnime {
         this.path = path;
     }
 
-    Bitmap getBitmapFromFile() {
-        return BitmapFactory.decodeFile(path);
-    }
-
-    byte[] compressBitmap(Bitmap bitmap) {
+    byte[] compressBitmap() {
         byte[] data;
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            int options = 100;
-            while (outputStream.toByteArray().length / 1024 > 800 && options > 0) {
-                outputStream.reset();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
-                options -= 10;
-            }
+            int quality = 100;
+            do {
+				outputStream.reset();
+				Bitmap bitmap=BitmapFactory.decodeFile(path);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+				quality -= 10;
+			}
+            while (outputStream.toByteArray().length / 1024 > 800 && quality > 0);
             data = outputStream.toByteArray();
             outputStream.close();
         } catch (IOException e) {

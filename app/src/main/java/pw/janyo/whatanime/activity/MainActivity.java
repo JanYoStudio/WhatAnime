@@ -33,10 +33,6 @@ import pw.janyo.whatanime.util.Settings;
 import pw.janyo.whatanime.util.WAFileUtil;
 import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
 
-/**
- * Created by mystery0.
- */
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
