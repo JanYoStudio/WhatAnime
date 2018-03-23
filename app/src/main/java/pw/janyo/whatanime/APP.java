@@ -6,7 +6,7 @@ import android.content.Context;
 
 import org.litepal.LitePal;
 
-import vip.mystery0.tools.logs.Logs;
+import vip.mystery0.logs.Logs;
 
 /**
  * Created by mystery0.
@@ -24,7 +24,7 @@ public class APP extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        Logs.setLevel(Logs.INSTANCE.getDebug());
+//		Logs.setLevel(Logs.Level.RELEASE);
         LitePal.initialize(this);
     }
 }

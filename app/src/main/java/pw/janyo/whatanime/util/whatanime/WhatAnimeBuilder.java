@@ -35,15 +35,11 @@ import pw.janyo.whatanime.interfaces.SearchService;
 import pw.janyo.whatanime.util.Base64;
 import pw.janyo.whatanime.util.Base64DecoderException;
 import pw.janyo.whatanime.util.Settings;
-import pw.janyo.whatanime.util.WAFileUti;
+import pw.janyo.whatanime.util.WAFileUtil;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import vip.mystery0.tools.logs.Logs;
-
-/**
- * Created by myste.
- */
+import vip.mystery0.logs.Logs;
 
 public class WhatAnimeBuilder {
     private static final String TAG = "WhatAnimeBuilder";
@@ -105,9 +101,9 @@ public class WhatAnimeBuilder {
                 messageDigest.update(Calendar.getInstance().getTime().toString().getBytes());
                 String md5 = new BigInteger(1, messageDigest.digest()).toString(16);
                 File jsonFile = new File(context.getExternalFilesDir(null) + File.separator + "json" + File.separator + md5);
-                WAFileUti.saveJson(animation, jsonFile);
+                WAFileUtil.saveJson(animation, jsonFile);
                 String cacheImgPath = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + md5;
-                WAFileUti.fileCopy(history.getImaPath(), cacheImgPath);
+                WAFileUtil.fileCopy(history.getImaPath(), cacheImgPath);
                 history.setCachePath(cacheImgPath);
                 history.setTitle(animation.docs.get(0).title);
                 history.setSaveFilePath(jsonFile.getAbsolutePath());

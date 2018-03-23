@@ -37,24 +37,25 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:support-v4:27.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-core:12.0.0'
     implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.android.support:cardview-v7:27.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
+	annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
     implementation 'androidx.core:core-ktx:0.2'
-    api 'com.github.Mystery00.ToolsDemo:tools:2.4.5'
-    api 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
-    api 'org.litepal.android:core:1.6.1'
-    api 'com.squareup.retrofit2:retrofit:2.3.0'
-    api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    api 'com.squareup.retrofit2:converter-gson:2.3.0'
-    api 'com.squareup.okhttp3:okhttp:3.10.0'
-    api 'com.zyao89:zloading:1.0.8'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+	implementation 'com.github.Mystery0Tools:Logs:1.0.0'
+	implementation 'com.github.Mystery0Tools:Tools:1.0.1'
+	implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+	implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+	implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+	implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
+	implementation 'org.litepal.android:core:1.6.1'
+	implementation 'com.zyao89:zloading:1.0.11'
+	implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
 }
@@ -67,7 +68,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.Mystery00.ToolsDemo:autoversion:2.4.5'
+		classpath 'com.github.Mystery0Tools:AutoVersion:1.0.1'
     }
 }
 apply plugin: 'com.google.gms.google-services'

@@ -15,7 +15,7 @@ import java.util.List;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.HistoryAdapter;
 import pw.janyo.whatanime.classes.History;
-import pw.janyo.whatanime.util.WAFileUti;
+import pw.janyo.whatanime.util.WAFileUtil;
 
 public class HistoryActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -31,7 +31,7 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         toolbar = findViewById(R.id.toolbar);
 
-        final List<History> list = WAFileUti.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
+        final List<History> list = WAFileUtil.checkList(HistoryActivity.this, DataSupport.findAll(History.class));
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
         final HistoryAdapter adapter = new HistoryAdapter(HistoryActivity.this, list);
@@ -43,7 +43,7 @@ public class HistoryActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                WAFileUti.deleteHistory(list.get(viewHolder.getAdapterPosition()));
+                WAFileUtil.deleteHistory(list.get(viewHolder.getAdapterPosition()));
                 list.remove(viewHolder.getAdapterPosition());
                 adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
             }

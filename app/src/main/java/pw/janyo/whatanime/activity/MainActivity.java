@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pw.janyo.whatanime.util.Settings;
+import pw.janyo.whatanime.util.WAFileUtil;
 import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
-import vip.mystery0.tools.fileUtil.FileUtil;
 
 /**
  * Created by mystery0.
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (REQUEST_CODE == requestCode && RESULT_OK == resultCode) {
             Uri uri = data.getData();
-            final String path = FileUtil.getPath(MainActivity.this, uri);
+            final String path = WAFileUtil.getPath(MainActivity.this, uri);
             adapter.setImgPath(path);
             WhatAnimeBuilder builder = new WhatAnimeBuilder(MainActivity.this);
             builder.setImgFile(path);

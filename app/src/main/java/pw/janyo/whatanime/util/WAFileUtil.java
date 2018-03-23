@@ -20,12 +20,13 @@ import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
 import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
+import vip.mystery0.tools.utils.FileTools;
 
 /**
  * Created by myste.
  */
 
-public class WAFileUti {
+public class WAFileUtil extends FileTools {
     public static void fileCopy(String oldPath, String newPath) {
         try {
             File oldFile = new File(oldPath);
