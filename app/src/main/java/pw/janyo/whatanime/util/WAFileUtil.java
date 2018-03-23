@@ -4,22 +4,15 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Iterator;
 import java.util.List;
 
 import pw.janyo.whatanime.R;
-import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.History;
-import pw.janyo.whatanime.listener.WhatAnimeBuildListener;
-import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
 import vip.mystery0.tools.utils.FileTools;
 
 /**
@@ -82,17 +75,6 @@ public class WAFileUtil extends FileTools {
         if (url.equals("")) {
             return;
         }
-//        WhatAnimeBuilder builder = new WhatAnimeBuilder(context.getString(R.string.requestUrl, url));
-//        builder.setImgFile(path);
-//        builder.build(context, new WhatAnimeBuildListener() {
-//            @Override
-//            public void done(Animation animation) {
-//            }
-//
-//            @Override
-//            public void error(Exception e) {
-//            }
-//        });
     }
 
     public static boolean saveJson(Object object, File file) {

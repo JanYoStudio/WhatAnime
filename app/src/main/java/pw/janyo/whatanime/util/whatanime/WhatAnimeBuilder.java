@@ -30,6 +30,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.activity.MainActivity;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
