@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.util.whatanime;
 
 import android.content.Context;
-import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -48,61 +47,62 @@ import vip.mystery0.logs.Logs;
 
 public class WhatAnimeBuilder {
 	private static final String TAG = "WhatAnimeBuilder";
-    private CoordinatorLayout coordinatorLayout;
-    private String token;
-    private WhatAnime whatAnime;
-    private Retrofit retrofit;
-    private ZLoadingDialog zLoadingDialog;
+	private CoordinatorLayout coordinatorLayout;
+	private String token;
+	private WhatAnime whatAnime;
+	private Retrofit retrofit;
+	private ZLoadingDialog zLoadingDialog;
 
-    public WhatAnimeBuilder(Context context) {
-        whatAnime = new WhatAnime();
-        coordinatorLayout = ((MainActivity) context).findViewById(R.id.coordinatorLayout);
-        try {
-            token = new String(Base64.decode(context.getString(R.string.token)));
-        } catch (Base64DecoderException e) {
-            e.printStackTrace();
-        }
-        OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(context.getString(R.string.requestUrl))
-                .client(mOkHttpClient)
+	public WhatAnimeBuilder(Context context) {
+		whatAnime = new WhatAnime();
+		coordinatorLayout = ((MainActivity) context).findViewById(R.id.coordinatorLayout);
+		try {
+			token = new String(Base64.decode(context.getString(R.string.token)));
+		} catch (Base64DecoderException e) {
+			e.printStackTrace();
+		}
+		OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
+				.connectTimeout(20, TimeUnit.SECONDS)
+				.readTimeout(20, TimeUnit.SECONDS)
+				.build();
+		retrofit = new Retrofit.Builder()
+				.baseUrl(context.getString(R.string.requestUrl))
+				.client(mOkHttpClient)
 				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        zLoadingDialog = new ZLoadingDialog(context)
-                .setLoadingBuilder(Z_TYPE.STAR_LOADING)
-                .setHintText("正在搜索……")
-                .setHintTextSize(16F)
-                .setCanceledOnTouchOutside(false)
-                .setLoadingColor(ContextCompat.getColor(context, R.color.colorAccent))
-                .setHintTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-    }
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+		zLoadingDialog = new ZLoadingDialog(context)
+				.setLoadingBuilder(Z_TYPE.STAR_LOADING)
+				.setHintText("正在搜索……")
+				.setHintTextSize(16F)
+				.setCanceledOnTouchOutside(false)
+				.setLoadingColor(ContextCompat.getColor(context, R.color.colorAccent))
+				.setHintTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+	}
 
-    public void setImgFile(String path) {
-        whatAnime.setPath(path);
-    }
+	public void setImgFile(String path) {
+		whatAnime.setPath(path);
+	}
 
-    public void build(final Context context, final List<Dock> list, final AnimationAdapter adapter) {
-        Observable.create(new ObservableOnSubscribe<Animation>() {
-            @Override
-            public void subscribe(final ObservableEmitter<Animation> subscriber) {
-                String base64 = whatAnime.base64Data(whatAnime.compressBitmap());
-                retrofit.create(SearchService.class)
-						.search(token,base64,null)
+	public void build(final Context context, final List<Dock> list, final AnimationAdapter adapter) {
+		Observable.create(new ObservableOnSubscribe<Animation>() {
+			@Override
+			public void subscribe(final ObservableEmitter<Animation> subscriber) {
+				String base64 = whatAnime.base64Data(whatAnime.compressBitmap());
+				retrofit.create(SearchService.class)
+						.search(token, base64, null)
 						.subscribeOn(Schedulers.newThread())
 						.unsubscribeOn(Schedulers.newThread())
 						.map(new Function<ResponseBody, Animation>() {
 							@Override
 							public Animation apply(ResponseBody responseBody) {
-								return new Gson().fromJson(new InputStreamReader(responseBody.byteStream()),Animation.class);
+								return new Gson().fromJson(new InputStreamReader(responseBody.byteStream()), Animation.class);
 							}
 						})
 						.observeOn(Schedulers.newThread())
 						.subscribe(new Observer<Animation>() {
 							private Animation animation;
+
 							@Override
 							public void onSubscribe(Disposable d) {
 
@@ -110,7 +110,7 @@ public class WhatAnimeBuilder {
 
 							@Override
 							public void onNext(Animation animation) {
-								this.animation=animation;
+								this.animation = animation;
 							}
 
 							@Override
@@ -120,7 +120,8 @@ public class WhatAnimeBuilder {
 							}
 
 							@Override
-							public void onComplete() {subscriber.onNext(animation);
+							public void onComplete() {
+								subscriber.onNext(animation);
 								try {
 									MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 									messageDigest.update(Calendar.getInstance().getTime().toString().getBytes());
@@ -148,45 +149,53 @@ public class WhatAnimeBuilder {
 							}
 						});
 
-            }
-        })
-                .subscribeOn(Schedulers.newThread())
-                .unsubscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Animation>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        zLoadingDialog.show();
-                    }
+			}
+		})
+				.subscribeOn(Schedulers.newThread())
+				.unsubscribeOn(Schedulers.newThread())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Observer<Animation>() {
+					@Override
+					public void onSubscribe(Disposable d) {
+						zLoadingDialog.show();
+					}
 
-                    @Override
-                    public void onNext(Animation animation) {
-                    }
+					@Override
+					public void onNext(Animation animation) {
+					}
 
-                    @Override
-                    public void onError(Throwable e) {
-                        zLoadingDialog.dismiss();
-                        if (e instanceof HttpException) {
-                            HttpException httpException = (HttpException) e;
-                            String message = httpException.response().message();
-                            int code = httpException.response().code();
-                            if (code == 429) {
-                                Snackbar.make(coordinatorLayout, R.string.hint_http_exception_busy, Snackbar.LENGTH_LONG)
-                                        .show();
-                            } else
-                                Snackbar.make(coordinatorLayout, context.getString(R.string.hint_http_exception_error, code, message), Snackbar.LENGTH_LONG)
-                                        .show();
-                        }
-                        Snackbar.make(coordinatorLayout, context.getString(R.string.hint_other_error, e.getMessage()), Snackbar.LENGTH_LONG)
-                                .show();
-                        e.printStackTrace();
-                    }
+					@Override
+					public void onError(Throwable e) {
+						zLoadingDialog.dismiss();
+						if (e instanceof HttpException) {
+							HttpException httpException = (HttpException) e;
+							String message = httpException.response().message();
+							int code = httpException.response().code();
+							switch (code) {
+								case 429:
+									Snackbar.make(coordinatorLayout, R.string.hint_http_exception_busy, Snackbar.LENGTH_LONG)
+											.show();
+									break;
+								case 413:
+									Snackbar.make(coordinatorLayout, R.string.hint_request_entity_too_large, Snackbar.LENGTH_LONG)
+											.show();
+									break;
+								default:
+									Snackbar.make(coordinatorLayout, context.getString(R.string.hint_http_exception_error, code, message), Snackbar.LENGTH_LONG)
+											.show();
+									break;
+							}
+						}
+						Snackbar.make(coordinatorLayout, context.getString(R.string.hint_other_error, e.getMessage()), Snackbar.LENGTH_LONG)
+								.show();
+						e.printStackTrace();
+					}
 
-                    @Override
-                    public void onComplete() {
-                        zLoadingDialog.dismiss();
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-    }
+					@Override
+					public void onComplete() {
+						zLoadingDialog.dismiss();
+						adapter.notifyDataSetChanged();
+					}
+				});
+	}
 }
