@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 			public boolean onMenuItemClick(MenuItem item) {
 				switch (item.getItemId()) {
 					case R.id.action_history:
-						startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+//						startActivity(new Intent(MainActivity.this, HistoryActivity.class));
 						break;
 					case R.id.action_settings:
 						startActivity(new Intent(MainActivity.this, SettingsActivity.class));

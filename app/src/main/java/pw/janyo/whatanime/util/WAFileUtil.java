@@ -1,18 +1,12 @@
 package pw.janyo.whatanime.util;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
-import pw.janyo.whatanime.R;
-import pw.janyo.whatanime.classes.History;
 import vip.mystery0.tools.utils.FileTools;
 
 /**
@@ -42,41 +36,6 @@ public class WAFileUtil extends FileTools {
         }
     }
 
-    public static List<History> checkList(final Context context, List<History> list) {
-        Iterator<History> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            final History history = iterator.next();
-            File cacheFile = new File(history.getSaveFilePath());
-            if (cacheFile.exists())
-                continue;
-            if (new File(history.getImaPath()).exists()) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new File(history.getCachePath()).delete();
-                        requestInfo(context, history.getImaPath());
-                    }
-                }).start();
-                continue;
-            }
-            history.delete();
-            iterator.remove();
-        }
-        return list;
-    }
-
-    private static void requestInfo(Context context, String path) {
-        String url = "";
-        try {
-            url = new String(Base64.decode(context.getString(R.string.token)));
-        } catch (Base64DecoderException e) {
-            e.printStackTrace();
-        }
-        if (url.equals("")) {
-            return;
-        }
-    }
-
     public static boolean saveJson(Object object, File file) {
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
@@ -98,11 +57,5 @@ public class WAFileUtil extends FileTools {
                 }
         }
         return true;
-    }
-
-    public static void deleteHistory(History history) {
-        new File(history.getCachePath()).deleteOnExit();
-        new File(history.getSaveFilePath()).deleteOnExit();
-        history.delete();
     }
 }
