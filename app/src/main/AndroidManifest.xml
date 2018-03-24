@@ -29,7 +29,6 @@
 			android:label="@string/action_settings"
 			android:screenOrientation="portrait"
 			android:theme="@style/AppTheme.Preference" />
-		<activity android:name=".activity.PlayActivity"></activity>
 	</application>
 
 </manifest>
