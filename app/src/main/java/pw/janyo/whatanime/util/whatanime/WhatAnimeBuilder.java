@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.util.whatanime;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,7 @@ import pw.janyo.whatanime.activity.MainActivity;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Animation;
 import pw.janyo.whatanime.classes.Dock;
+import pw.janyo.whatanime.classes.History;
 import pw.janyo.whatanime.interfaces.SearchService;
 import pw.janyo.whatanime.util.Base64;
 import pw.janyo.whatanime.util.Base64DecoderException;
@@ -52,6 +54,7 @@ public class WhatAnimeBuilder {
 	private WhatAnime whatAnime;
 	private Retrofit retrofit;
 	private ZLoadingDialog zLoadingDialog;
+	private History history;
 
 	public WhatAnimeBuilder(Context context) {
 		whatAnime = new WhatAnime();
@@ -78,10 +81,12 @@ public class WhatAnimeBuilder {
 				.setCanceledOnTouchOutside(false)
 				.setLoadingColor(ContextCompat.getColor(context, R.color.colorAccent))
 				.setHintTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+		history = new History();
 	}
 
 	public void setImgFile(String path) {
 		whatAnime.setPath(path);
+		history.setImaPath(path);
 	}
 
 	public void build(final Context context, final List<Dock> list, final AnimationAdapter adapter) {
@@ -128,6 +133,12 @@ public class WhatAnimeBuilder {
 									String md5 = new BigInteger(1, messageDigest.digest()).toString(16);
 									File jsonFile = new File(context.getExternalFilesDir(null) + File.separator + "json" + File.separator + md5);
 									WAFileUtil.saveJson(animation, jsonFile);
+									String cacheImgPath = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + md5;
+									WAFileUtil.fileCopy(history.getImaPath(), cacheImgPath);
+									history.setCachePath(cacheImgPath);
+									history.setTitle(animation.docs.get(0).title);
+									history.setSaveFilePath(jsonFile.getAbsolutePath());
+									history.saveOrUpdate("imaPath = ?", history.getImaPath());
 									list.clear();
 									if (Settings.getResultNumber() < list.size()) {
 										list.addAll(animation.docs.subList(0, Settings.getResultNumber()));
