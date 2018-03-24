@@ -8,7 +8,7 @@ public class Dock {
 	public float from;//开始
 	public float to;//结束
 	public float at;//位于
-	public String episode;//集数
+	public String episode;
 	public float similarity;//匹配度
 	public String anilist_id;//AniList id
 	public String mal_id;//MyAnimeList ID

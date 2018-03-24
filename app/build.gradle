@@ -2,50 +2,50 @@ apply plugin: 'com.android.application'
 apply plugin: 'vip.mystery0.autoversion'
 apply plugin: 'io.fabric'
 autoVersion {
-    major 1
-    minor 2
-    patch 1
-    beta 0
-    alpha 0
+	major 1
+	minor 2
+	patch 1
+	beta 0
+	alpha 0
 }
 
 android {
-    compileSdkVersion 27
+	compileSdkVersion 27
 
-    defaultConfig {
-        applicationId "pw.janyo.whatanime"
-        minSdkVersion 19
-        targetSdkVersion 27
-        versionCode autoVersion.code
-        versionName autoVersion.name
-        setProperty("archivesBaseName", "WhatAnime-$versionName")
-    }
+	defaultConfig {
+		applicationId "pw.janyo.whatanime"
+		minSdkVersion 19
+		targetSdkVersion 27
+		versionCode autoVersion.code
+		versionName autoVersion.name
+		setProperty("archivesBaseName", "WhatAnime-$versionName")
+	}
 
-    buildTypes {
-        debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+	buildTypes {
+		debug {
+			minifyEnabled true
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+		release {
+			minifyEnabled true
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:support-v4:27.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-core:12.0.0'
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.android.support:cardview-v7:27.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
+	implementation 'com.android.support:support-v4:27.1.0'
+	implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+	implementation 'com.google.firebase:firebase-core:12.0.0'
+	implementation 'com.android.support:appcompat-v7:27.1.0'
+	implementation 'com.android.support:design:27.1.0'
+	implementation 'com.android.support:cardview-v7:27.1.0'
+	implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
+	implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+	implementation 'com.github.bumptech.glide:glide:4.6.1'
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
-    implementation 'androidx.core:core-ktx:0.2'
+	implementation 'androidx.core:core-ktx:0.2'
 	implementation 'com.github.Mystery0Tools:Logs:1.0.0'
 	implementation 'com.github.Mystery0Tools:Tools:1.0.1'
 	implementation 'com.squareup.retrofit2:retrofit:2.4.0'
@@ -56,19 +56,19 @@ dependencies {
 	implementation 'org.litepal.android:core:1.6.1'
 	implementation 'com.zyao89:zloading:1.0.11'
 	implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true
-    }
+		transitive = true
+	}
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 buildscript {
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-    dependencies {
+	repositories {
+		maven { url 'https://jitpack.io' }
+	}
+	dependencies {
 		classpath 'com.github.Mystery0Tools:AutoVersion:1.0.1'
-    }
+	}
 }
 apply plugin: 'com.google.gms.google-services'

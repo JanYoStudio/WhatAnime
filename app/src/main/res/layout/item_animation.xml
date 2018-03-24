@@ -8,30 +8,34 @@
 	android:layout_marginEnd="8dp"
 	android:layout_marginBottom="16dp">
 
-	<android.support.constraint.Guideline
-		android:id="@+id/guideline"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		app:layout_constraintGuide_percent="0.4" />
-
 	<ImageView
 		android:id="@+id/imageView"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
+		android:layout_width="160dp"
+		android:layout_height="90dp"
 		android:layout_margin="8dp"
 		android:contentDescription="@string/app_name"
-		app:layout_constraintEnd_toStartOf="@+id/guideline"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
+
+	<TextView
+		android:id="@+id/textView_hint"
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:layout_marginStart="8dp"
+		android:gravity="end"
+		app:layout_constraintBottom_toBottomOf="@id/textView"
+		app:layout_constraintStart_toEndOf="@+id/imageView"
+		app:layout_constraintTop_toTopOf="@id/textView" />
 
 	<TextView
 		android:id="@+id/textView"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_margin="8dp"
+		android:layout_marginTop="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginBottom="8dp"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="@+id/guideline"
+		app:layout_constraintStart_toEndOf="@id/textView_hint"
 		app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
