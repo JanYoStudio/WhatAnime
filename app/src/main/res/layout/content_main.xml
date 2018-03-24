@@ -2,19 +2,24 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/centerLayout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	tools:context=".activity.PlayActivity">
+	app:layout_behavior="@string/appbar_scrolling_view_behavior"
+	tools:context="pw.janyo.whatanime.activity.MainActivity"
+	tools:showIn="@layout/activity_main">
 
-	<VideoView
-		android:id="@+id/videoView"
+	<include
+		android:id="@+id/headerLayout"
+		layout="@layout/item_image" />
+
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/recyclerView"
 		android:layout_width="0dp"
-		android:layout_height="wrap_content"
+		android:layout_height="0dp"
+		android:layout_marginTop="8dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		app:layout_constraintTop_toBottomOf="@id/headerLayout" />
 
 </android.support.constraint.ConstraintLayout>

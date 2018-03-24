@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,32 +18,45 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 
 import pw.janyo.whatanime.R;
 import pw.janyo.whatanime.adapter.AnimationAdapter;
 import pw.janyo.whatanime.classes.Dock;
 
 import android.support.design.widget.FloatingActionButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import pw.janyo.whatanime.util.Settings;
 import pw.janyo.whatanime.util.WAFileUtil;
 import pw.janyo.whatanime.util.whatanime.WhatAnimeBuilder;
+import vip.mystery0.logs.Logs;
 
 public class MainActivity extends AppCompatActivity {
 	private static final String TAG = "MainActivity";
 	private final static int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233;
 	private final static int REQUEST_CODE = 322;
-	private final static int REQUEST_HEADER_CODE = 333;
+	private ImageView imageView;
+	private VideoView videoView;
+	private ProgressBar progressBar;
 	private FloatingActionButton main_fab_upload;
 	private AnimationAdapter adapter;
 	private List<Dock> list = new ArrayList<>();
+	private String nowPlayUrl = "";
+	private RequestOptions options = new RequestOptions()
+			.diskCacheStrategy(DiskCacheStrategy.NONE);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +68,9 @@ public class MainActivity extends AppCompatActivity {
 
 	private void initialization() {
 		setContentView(R.layout.activity_main);
-
+		imageView = findViewById(R.id.imageView);
+		videoView = findViewById(R.id.videoView);
+		progressBar = findViewById(R.id.progressBar);
 		main_fab_upload = findViewById(R.id.main_fab_upload);
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		RecyclerView recyclerView = findViewById(R.id.recyclerView);
@@ -91,19 +107,42 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void monitor() {
-		main_fab_upload.setOnClickListener(new OnClickListener() {
+		main_fab_upload.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View p1) {
-				if (adapter.getImgPath() != null)
-					search(adapter.getImgPath());
-				else
-					doChoose(REQUEST_CODE);
+				doChoose(REQUEST_CODE);
 			}
 		});
-		adapter.setHeaderClickListener(new AnimationAdapter.HeaderClickListener() {
+		adapter.setOnClickListener(new AnimationAdapter.OnClickListener() {
 			@Override
-			public void onClick() {
-				doChoose(REQUEST_HEADER_CODE);
+			public void onClick(Dock dock) {
+				try {
+					String requestUrl = "https://whatanime.ga/preview.php?season=" + dock.season + "&anime=" + URLEncoder.encode(dock.anime, "UTF-8") + "&file=" + URLEncoder.encode(dock.filename, "UTF-8") + "&t=" + dock.at + "&token=" + dock.tokenthumb;
+					if (!nowPlayUrl.equals(requestUrl)) {
+						nowPlayUrl = requestUrl;
+						videoView.stopPlayback();
+						videoView.setVideoURI(Uri.parse(requestUrl));
+					}
+					imageView.setVisibility(View.GONE);
+					videoView.setVisibility(View.VISIBLE);
+					progressBar.setVisibility(View.VISIBLE);
+					videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+						@Override
+						public void onPrepared(MediaPlayer mp) {
+							progressBar.setVisibility(View.GONE);
+						}
+					});
+					videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+						@Override
+						public void onCompletion(MediaPlayer mp) {
+							videoView.setVisibility(View.GONE);
+							imageView.setVisibility(View.VISIBLE);
+						}
+					});
+					videoView.start();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -159,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 			return;
 		Uri uri = data.getData();
 		final String path = WAFileUtil.getPath(MainActivity.this, uri);
-		adapter.setImgPath(path);
+		Glide.with(this).load(path).apply(options).into(imageView);
 		switch (requestCode) {
 			case REQUEST_CODE:
 				search(path);

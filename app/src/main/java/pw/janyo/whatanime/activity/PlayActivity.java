@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.activity;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,7 +8,6 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import pw.janyo.whatanime.R;
-import vip.mystery0.logs.Logs;
 import vip.mystery0.tools.base.BaseActivity;
 
 public class PlayActivity extends BaseActivity {
@@ -18,7 +16,7 @@ public class PlayActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_play);
+		setContentView(R.layout.layout_play);
 
 		Intent intent = getIntent();
 		String url = intent.getStringExtra("url");
