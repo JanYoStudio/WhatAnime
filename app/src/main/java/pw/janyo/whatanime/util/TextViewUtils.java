@@ -22,9 +22,9 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.graphics.RectF;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextDirectionHeuristic;
@@ -40,7 +40,7 @@ import java.util.Hashtable;
 
 /**
  * TextViewUtils.
- * {@link android.support.v7.widget.AppCompatTextViewAutoSizeHelper}
+ * {@link androidx.appcompat.widget.AppCompatTextViewAutoSizeHelper}
  *
  * @author danny
  * @version 1.0
