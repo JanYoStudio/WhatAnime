@@ -6,8 +6,5 @@ import java.io.File
 
 class SearchViewModel:ViewModel() {
 	var searchImageFile=MutableLiveData<File>()
-	get() {
-
-	}
-	private set
+	var searchResultList=MutableLiveData<List<>>()
 }
