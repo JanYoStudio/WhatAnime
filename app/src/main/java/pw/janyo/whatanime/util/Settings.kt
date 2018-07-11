@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import pw.janyo.whatanime.APP
 
 object Settings {
-	private val sharedPreference = APP.context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+	private val sharedPreference = APP.context!!.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
 	var resultNumber: Int
 		get() = sharedPreference.getInt("resultNumber", 1)

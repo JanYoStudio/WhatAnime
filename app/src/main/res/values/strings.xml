@@ -40,6 +40,16 @@
 	<string name="key_info_janyo">key_info_janyo</string>
 	<string name="title_info_janyo">关于JanYo Studio</string>
 
+	<string name="hint_time">时间：</string>
+	<string name="hint_title_native">日语标题：</string>
+	<string name="hint_title_chinese">中文标题：</string>
+	<string name="hint_title_english">英文标题：</string>
+	<string name="hint_title_romaji">罗马字：</string>
+	<string name="hint_episode">集数：</string>
+	<string name="hint_ani_list_id">AniList ID：</string>
+	<string name="hint_mal_id">MyAnimeList ID：</string>
+	<string name="hint_similarity">准确度：</string>
+
 	<string name="license_title">“JanYo Studio” 授权解决方案</string>
 	<string name="license_subtitle">为避免在其它非“JanYo Studio”通过书面授权认可的平台引发的授权 风险/争议，特拟此案。</string>
 	<string name="license_text1">“JanYo Studio”(以下简称“工作室”)发布的产品缺省使用“GPL（GNU General Public License）”授权协议。工作室将在产品内部标识产品源程序及其附属品，使得任何人可以自由获取、阅读、传播，以及基于源代码重新构建它的二进制版本并发行该副本。</string>

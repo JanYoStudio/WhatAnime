@@ -17,11 +17,15 @@ class APP : Application() {
 	override fun onCreate() {
 		super.onCreate()
 		context = applicationContext
+		instance = this
 	}
 
 	companion object {
 		@SuppressLint("StaticFieldLeak")
 		var context: Context? = null
+			private set
+
+		var instance: Application? = null
 			private set
 	}
 }
