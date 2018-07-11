@@ -51,5 +51,6 @@
 	<string name="license_text7">针对产品授权、答疑可电邮至工作室官方电子邮箱 : mystery0dyl520@gmail.com</string>
 	<string name="title_activity_history">历史纪录</string>
 	<string name="text_hint_history">匹配结果</string>
+	<string name="title_activity_search">SearchActivity</string>
 
 </resources>

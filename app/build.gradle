@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'vip.mystery0.autoversion'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 autoVersion {
 	major 1
 	minor 3
@@ -10,7 +12,6 @@ autoVersion {
 
 android {
 	compileSdkVersion 28
-
 	defaultConfig {
 		applicationId "pw.janyo.whatanime"
 		minSdkVersion 19
