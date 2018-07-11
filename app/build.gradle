@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'vip.mystery0.autoversion'
-apply plugin: 'io.fabric'
 autoVersion {
 	major 1
 	minor 3
@@ -36,7 +35,6 @@ android {
 dependencies {
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
 	implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
-	implementation 'com.google.firebase:firebase-core:16.0.1'
 	implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
 	implementation 'com.google.android.material:material:1.0.0-beta01'
 	implementation 'androidx.cardview:cardview:1.0.0-beta01'
@@ -54,9 +52,6 @@ dependencies {
 	implementation 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
 	implementation 'org.litepal.android:core:2.0.0'
 	implementation 'com.zyao89:zloading:1.1.2'
-	implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-		transitive = true
-	}
 }
 
 repositories {
@@ -70,4 +65,3 @@ buildscript {
 		classpath 'com.github.Mystery0Tools:AutoVersion:1.0.1'
 	}
 }
-apply plugin: 'com.google.gms.google-services'
