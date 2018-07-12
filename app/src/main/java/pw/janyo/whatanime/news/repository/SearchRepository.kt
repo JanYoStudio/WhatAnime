@@ -3,7 +3,11 @@ package pw.janyo.whatanime.news.repository
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.news.constant.Constant
+import pw.janyo.whatanime.news.constant.RxObserver
 import pw.janyo.whatanime.news.factory.RetrofitFactory
 import pw.janyo.whatanime.news.httpService.SearchApi
 import pw.janyo.whatanime.news.model.Animation
@@ -12,6 +16,7 @@ import pw.janyo.whatanime.util.Base64
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import vip.mystery0.logs.Logs
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 
@@ -31,11 +36,13 @@ object SearchRepository {
 		searchApi.search(token, base64, null)
 				.enqueue(object : Callback<Animation> {
 					override fun onFailure(call: Call<Animation>?, t: Throwable?) {
+						Logs.i("onFailure: ")
 						t?.printStackTrace()
 					}
 
 					override fun onResponse(call: Call<Animation>?, response: Response<Animation>) {
 						docs.value = response.body()!!.docs
+						Logs.i("onResponse: ")
 					}
 				})
 		return docs

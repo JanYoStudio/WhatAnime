@@ -11,14 +11,12 @@ class SearchViewModel : ViewModel() {
 	private var searchResultList: LiveData<ArrayList<Docs>>? = null
 
 	fun getSearchFile(path: String): LiveData<File> {
-		if (searchImageFile == null)
-			searchImageFile = SearchRepository.convertUriToFile(path)
+		searchImageFile = SearchRepository.convertUriToFile(path)
 		return searchImageFile!!
 	}
 
 	fun getSearchResultList(file: File): LiveData<ArrayList<Docs>> {
-		if (searchResultList == null)
-			searchResultList = SearchRepository.search(file)
+		searchResultList = SearchRepository.search(file)
 		return searchResultList!!
 	}
 }

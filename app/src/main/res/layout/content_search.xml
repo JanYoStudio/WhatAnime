@@ -8,13 +8,18 @@
 		xmlns:tools="http://schemas.android.com/tools"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
 		tools:context=".news.ui.SearchActivity"
 		tools:showIn="@layout/activity_search">
 
 		<include
 			android:id="@+id/include"
-			layout="@layout/item_image" />
+			layout="@layout/item_image"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
 
 		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/recyclerView"

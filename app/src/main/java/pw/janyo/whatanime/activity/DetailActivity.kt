@@ -24,7 +24,7 @@
 //import io.reactivex.Observable
 //import io.reactivex.ObservableEmitter
 //import io.reactivex.ObservableOnSubscribe
-//import io.reactivex.Observer
+//import io.reactivex.RxObserver
 //import io.reactivex.android.schedulers.AndroidSchedulers
 //import io.reactivex.disposables.Disposable
 //import io.reactivex.schedulers.Schedulers
@@ -97,7 +97,7 @@
 //				.subscribeOn(Schedulers.newThread())
 //				.unsubscribeOn(Schedulers.newThread())
 //				.observeOn(AndroidSchedulers.mainThread())
-//				.subscribe(object : Observer<Animation> {
+//				.subscribe(object : RxObserver<Animation> {
 //					private var animation: Animation? = null
 //
 //					override fun onSubscribe(d: Disposable) {}

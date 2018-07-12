@@ -40,8 +40,6 @@ class SearchActivity : BaseActivity(R.layout.activity_search) {
 
 	private val searchListObserver = Observer<ArrayList<Docs>> {
 		Logs.i("列表数据变化")
-		Toast.makeText(this, it.size.toString(), Toast.LENGTH_LONG)
-				.show()
 		searchResultList.clear()
 		searchResultList.addAll(it)
 		searchResultAdapter.notifyDataSetChanged()
@@ -74,6 +72,10 @@ class SearchActivity : BaseActivity(R.layout.activity_search) {
 
 	override fun monitor() {
 		super.monitor()
+		itemImageBinding.imageView.setOnClickListener {
+			searchResultList.add(Docs())
+			searchResultAdapter.notifyDataSetChanged()
+		}
 		fab.setOnClickListener { _ ->
 			val intent = Intent()
 			intent.type = "image/*"
@@ -83,6 +85,7 @@ class SearchActivity : BaseActivity(R.layout.activity_search) {
 	}
 
 	private fun initRecyclerView() {
+		searchResultList.add(Docs())
 		contentSearchBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		searchResultAdapter = SearchResultAdapter(this, searchResultList)
 		contentSearchBinding.recyclerView.adapter = searchResultAdapter
