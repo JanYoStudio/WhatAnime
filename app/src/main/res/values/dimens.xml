@@ -1,11 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<dimen name="dialog_margin">16dp</dimen>
-	<dimen name="dialog_license_title">18sp</dimen>
-	<dimen name="dialog_license_margin_top_title">20dp</dimen>
-	<dimen name="dialog_license_margin_top">5dp</dimen>
-	<dimen name="dialog_about_name_size">18sp</dimen>
-	<dimen name="item_history_img_height">90dp</dimen>
-	<dimen name="item_history_img_width">160dp</dimen>
 	<dimen name="fab_margin">16dp</dimen>
 </resources>

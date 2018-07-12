@@ -5,7 +5,7 @@
 
 		<variable
 			name="animationDocs"
-			type="pw.janyo.whatanime.news.model.Docs" />
+			type="pw.janyo.whatanime.model.Docs" />
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

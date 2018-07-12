@@ -1,14 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_history"
-        android:icon="@drawable/ic_history"
-        android:title="@string/action_history"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/action_settings"
-        app:showAsAction="ifRoom"/>
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context="pw.janyo.whatanime.ui.MainActivity">
+	<item
+		android:id="@+id/action_settings"
+		android:orderInCategory="100"
+		android:title="@string/action_settings"
+		app:showAsAction="never" />
 </menu>
