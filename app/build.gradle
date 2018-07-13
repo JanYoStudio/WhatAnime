@@ -47,4 +47,10 @@ dependencies {
 	//Lifecycle
 	implementation "androidx.lifecycle:lifecycle-extensions:2.0.0-beta01"
 	annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0-beta01"
+	//Room
+	implementation "androidx.room:room-runtime:2.0.0-beta01"
+	annotationProcessor "androidx.room:room-compiler:2.0.0-beta01"
+	//RxAndroid
+	implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+	implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
 }
