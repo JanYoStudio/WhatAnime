@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 autoVersion {
 	major 1
-	minor 3
+	minor 4
 	patch 0
 	beta 0
 	alpha 0
@@ -30,6 +30,8 @@ android {
 	buildTypes {
 		debug {
 			resValue "string", "app_version_name", autoVersion.name
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 		release {
 			resValue "string", "app_version_name", autoVersion.name
