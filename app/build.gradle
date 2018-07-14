@@ -24,19 +24,30 @@ android {
 		versionCode autoVersion.code
 		versionName autoVersion.name
 		vectorDrawables.useSupportLibrary = true
+
+
 	}
 	buildTypes {
+		debug {
+			resValue "string", "app_version_name", autoVersion.name
+		}
 		release {
+			resValue "string", "app_version_name", autoVersion.name
 			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}
+
 }
 
 dependencies {
 	kapt "androidx.databinding:databinding-compiler:3.3.0-alpha02"
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+	//androidx
+	implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
+	implementation 'androidx.vectordrawable:vectordrawable:1.0.0-beta01'
 	implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+	implementation 'androidx.preference:preference:1.0.0-beta01'
 	implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 	implementation 'com.google.android.material:material:1.0.0-beta01'
 	//Mystery0Tools

@@ -190,6 +190,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 				startActivity(Intent(this, HistoryActivity::class.java))
 				true
 			}
+			R.id.action_info -> {
+				startActivity(Intent(this, AboutActivity::class.java))
+				true
+			}
 			else -> super.onOptionsItemSelected(item)
 		}
 	}

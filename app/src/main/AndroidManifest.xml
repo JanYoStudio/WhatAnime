@@ -28,7 +28,15 @@
 		<activity
 			android:name=".ui.activity.HistoryActivity"
 			android:label="@string/title_activity_history"
-			android:theme="@style/AppTheme.NoActionBar"></activity>
+			android:theme="@style/AppTheme.NoActionBar" />
+		<activity
+			android:name=".ui.activity.SettingsActivity"
+			android:label="@string/title_activity_settings"
+			android:theme="@style/AppTheme.Preference" />
+		<activity
+			android:name=".ui.activity.AboutActivity"
+			android:label="@string/title_activity_settings"
+			android:theme="@style/AppTheme.Preference" />
 	</application>
 
 </manifest>

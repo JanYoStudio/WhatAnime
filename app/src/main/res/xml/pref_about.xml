@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="关于">
+		<Preference
+			android:summary="https://github.com/JanYoStudio/WhatAnime"
+			android:title="Github地址">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://github.com/JanYoStudio/WhatAnime" />
+		</Preference>
+		<Preference android:title="开源协议">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE" />
+		</Preference>
+		<Preference
+			android:summary="在Google Play商店中打开"
+			android:title="Google Play">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://play.google.com/store/apps/details?id=pw.janyo.whatanime" />
+		</Preference>
+		<Preference
+			android:summary="在酷安中打开"
+			android:title="酷安地址">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://www.coolapk.com/apk/pw.janyo.whatanime" />
+		</Preference>
+		<Preference
+			android:summary="JanYo Studio授权解决方案"
+			android:title="授权管理">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md" />
+		</Preference>
+		<Preference
+			android:summary="@string/app_version_name"
+			android:title="当前版本" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="关于WhatAnime">
+		<Preference
+			android:summary="WhatAnime API开发者"
+			android:title="soruly">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="https://github.com/soruly" />
+		</Preference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="关于JanYo Studio">
+		<Preference android:title="@string/dick_light" />
+
+		<Preference
+			android:summary="@string/link_zh_lyh"
+			android:title="@string/zh_lyh">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="@string/link_zh_lyh" />
+		</Preference>
+
+		<Preference android:title="@string/cieyget" />
+
+		<Preference
+			android:summary="@string/link_mystery0"
+			android:title="@string/mystery0">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="@string/link_mystery0" />
+		</Preference>
+
+		<Preference android:title="@string/gsoy" />
+
+		<Preference
+			android:summary="@string/link_kiva"
+			android:title="@string/kiva">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="@string/link_kiva" />
+		</Preference>
+	</PreferenceCategory>
+</PreferenceScreen>
