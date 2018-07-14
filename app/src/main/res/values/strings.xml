@@ -1,7 +1,8 @@
 <resources>
 	<string name="app_name">WhatAnime</string>
 
-	<string name="action_settings">Settings</string>
+	<string name="action_re_request_permission">重新请求</string>
+	<string name="action_settings">设置</string>
 
 	<string name="hint_time">时间：</string>
 	<string name="hint_title_native">日语标题：</string>
@@ -12,4 +13,9 @@
 	<string name="hint_ani_list_id">AniList ID：</string>
 	<string name="hint_mal_id">MyAnimeList ID：</string>
 	<string name="hint_similarity">准确度：</string>
+
+	<string name="hint_permission_deny">读取文件的权限用于获取截图，没有该权限，WhatAnime将会无法使用，请授予WhatAnime此权限！</string>
+	<string name="hint_select_file_path_null">获取到的路径为空，请检查文件是否存在</string>
+	<string name="hint_cache_make_dir_error">缓存目录创建失败，请检查应用权限</string>
+	<string name="hint_no_result">无结果</string>
 </resources>

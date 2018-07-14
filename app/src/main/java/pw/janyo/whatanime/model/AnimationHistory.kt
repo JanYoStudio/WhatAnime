@@ -16,9 +16,9 @@ class AnimationHistory {
 	@ColumnInfo(name = "animation_result")
 	lateinit var result: String//结果
 	@ColumnInfo(name = "animation_time")
-	lateinit var time: String//时间
+	var time: Long = 0L//时间
 	@ColumnInfo(name = "animation_title")
 	lateinit var title: String//标题
 	@ColumnInfo(name = "animation_filter")
-	lateinit var filter: String//过滤
+	var filter: String? = null//过滤
 }

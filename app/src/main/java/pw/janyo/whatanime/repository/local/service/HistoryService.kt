@@ -1,16 +1,15 @@
 package pw.janyo.whatanime.repository.local.service
 
-import androidx.lifecycle.LiveData
 import pw.janyo.whatanime.model.AnimationHistory
 
 interface HistoryService {
-	fun saveHistory(animationHistory: AnimationHistory): LiveData<Long>
+	fun saveHistory(animationHistory: AnimationHistory): Long
 
-	fun delete(animationHistory: AnimationHistory): LiveData<Long>
+	fun delete(animationHistory: AnimationHistory): Int
 
-	fun queryAllHistory(): LiveData<AnimationHistory>
+	fun queryAllHistory(): List<AnimationHistory>
 
-	fun update(animationHistory: AnimationHistory): LiveData<Long>
+	fun update(animationHistory: AnimationHistory): Int
 
-	fun queryHistoryByOriginPath(originPath: String): LiveData<AnimationHistory>
+	fun queryHistoryByOriginPathAndFilter(originPath: String, filter: String?): AnimationHistory?
 }

@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'vip.mystery0.autoversion'
+apply plugin: 'kotlin-kapt'
+
 autoVersion {
 	major 1
 	minor 3
@@ -31,10 +33,12 @@ android {
 }
 
 dependencies {
+	kapt "androidx.databinding:databinding-compiler:3.3.0-alpha02"
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
 	implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 	implementation 'com.google.android.material:material:1.0.0-beta01'
+	//Mystery0Tools
 	implementation 'com.github.Mystery0Tools:Logs:1.2.0'
 	implementation 'com.github.Mystery0Tools:Tools:1.4.0'
 	//Retrofit
@@ -46,11 +50,13 @@ dependencies {
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
 	//Lifecycle
 	implementation "androidx.lifecycle:lifecycle-extensions:2.0.0-beta01"
-	annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0-beta01"
+	kapt "androidx.lifecycle:lifecycle-compiler:2.0.0-beta01"
 	//Room
 	implementation "androidx.room:room-runtime:2.0.0-beta01"
-	annotationProcessor "androidx.room:room-compiler:2.0.0-beta01"
+	kapt "androidx.room:room-compiler:2.0.0-beta01"
 	//RxAndroid
 	implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 	implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
+	//ZLoading
+	implementation 'com.zyao89:zloading:1.1.2'
 }

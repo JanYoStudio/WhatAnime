@@ -19,5 +19,5 @@ class Animation {
 	var trial: Int = 0//搜索次数
 	var quota: Int = 0//剩余额度
 	var expire: Int = 0//额度重置剩余时间
-	var docs: ArrayList<Docs>? = null//结果
+	lateinit var docs: ArrayList<Docs>//结果
 }

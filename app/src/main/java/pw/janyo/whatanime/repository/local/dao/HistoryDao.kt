@@ -1,23 +1,25 @@
 package pw.janyo.whatanime.repository.local.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import pw.janyo.whatanime.model.AnimationHistory
 
 @Dao
 interface HistoryDao {
 	@Insert
-	fun saveHistory(vararg animationHistory: AnimationHistory): Long
+	fun saveHistory(animationHistory: AnimationHistory): Long
 
 	@Delete
-	fun delete(vararg animationHistory: AnimationHistory): Long
+	fun delete(animationHistory: AnimationHistory): Int
 
 	@Query("SELECT * FROM tb_animation_history")
-	fun queryAllHistory(): LiveData<AnimationHistory>
+	fun queryAllHistory(): List<AnimationHistory>
 
 	@Update
-	fun update(vararg animationHistory: AnimationHistory): Long
+	fun update(animationHistory: AnimationHistory): Int
 
-	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath")
-	fun queryHistoryByOriginPath(originPath: String): LiveData<AnimationHistory>
+	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath LIMIT 1")
+	fun queryHistoryByOriginPath(originPath: String): AnimationHistory?
+
+	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath and animation_filter = :filter LIMIT 1")
+	fun queryHistoryByOriginPathAndFilter(originPath: String, filter: String): AnimationHistory?
 }

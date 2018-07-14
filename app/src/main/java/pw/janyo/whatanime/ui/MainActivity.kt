@@ -2,6 +2,7 @@ package pw.janyo.whatanime.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
@@ -11,14 +12,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.snackbar.Snackbar
+import com.zyao89.view.zloading.ZLoadingDialog
+import com.zyao89.view.zloading.Z_TYPE
 
 import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
+import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.Docs
+import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.viewModel.MainViewModel
-import vip.mystery0.logs.Logs
 import vip.mystery0.tools.base.BaseActivity
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
@@ -34,16 +41,26 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	private lateinit var mainViewModel: MainViewModel
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
 	private val docsList = ArrayList<Docs>()
-	private val docsListObserver = Observer<ArrayList<Docs>> {
+	private lateinit var dialog: Dialog
+	private val options = RequestOptions()
+			.diskCacheStrategy(DiskCacheStrategy.NONE)
+
+	private val animationObserver = Observer<Animation> {
 		docsList.clear()
-		docsList.addAll(it)
+		docsList.addAll(it.docs)
 		mainRecyclerAdapter.notifyDataSetChanged()
+		hideDialog()
 	}
 	private val imageFileObserver = Observer<File> {
 		if (!it.exists())
 			return@Observer
-		Glide.with(this).load(it.absolutePath).into(contentMainBinding.imageView)
-		mainViewModel.getSearchResultList(it).observe(this, docsListObserver)
+		Glide.with(this).load(it.absolutePath).apply(options).into(contentMainBinding.imageView)
+		MainRepository.search(it, null, mainViewModel)
+	}
+	private val messageObserver = Observer<String> {
+		hideDialog()
+		Snackbar.make(activityMainBinding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
+				.show()
 	}
 
 	override fun inflateView(layoutId: Int) {
@@ -62,7 +79,24 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	override fun initData() {
 		super.initData()
 		requestPermission()
+		initViewModel()
+		initDialog()
+	}
+
+	private fun initViewModel() {
 		mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+		mainViewModel.imageFile.observe(this, imageFileObserver)
+		mainViewModel.resultList.observe(this, animationObserver)
+		mainViewModel.message.observe(this, messageObserver)
+	}
+
+	private fun initDialog() {
+		dialog = ZLoadingDialog(this)
+				.setLoadingBuilder(Z_TYPE.STAR_LOADING)
+				.setCanceledOnTouchOutside(false)
+				.setLoadingColor(ContextCompat.getColor(this, R.color.colorAccent))
+				.setHintTextColor(ContextCompat.getColor(this, R.color.colorAccent))
+				.create()
 	}
 
 	override fun monitor() {
@@ -82,12 +116,32 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 					WRITE_EXTERNAL_STORAGE_REQUEST_CODE)
 	}
 
+	private fun showDialog() {
+		if (!dialog.isShowing)
+			dialog.show()
+	}
+
+	private fun hideDialog() {
+		dialog.dismiss()
+	}
+
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		if (requestCode == WRITE_EXTERNAL_STORAGE_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-			Logs.i("onRequestPermissionsResult: 获得权限")
-		} else {
-			finish()
+		when (requestCode) {
+			WRITE_EXTERNAL_STORAGE_REQUEST_CODE -> {
+				if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+					Snackbar.make(activityMainBinding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
+							.setAction(R.string.action_re_request_permission) {
+								requestPermission()
+							}
+							.addCallback(object : Snackbar.Callback() {
+								override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+									if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
+										finish()
+								}
+							})
+							.show()
+			}
 		}
 	}
 
@@ -95,13 +149,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (resultCode != Activity.RESULT_OK)
 			return
+		showDialog()
 		val uri = data!!.data
 		val path = FileTools.getPath(this, uri)
 		if (path == null) {
-			Logs.i("onActivityResult: null")
+			mainViewModel.message.value = getString(R.string.hint_select_file_path_null)
 			return
 		}
-		mainViewModel.getSearchFile(path)
-				.observe(this, imageFileObserver)
+		mainViewModel.imageFile.value = File(path)
 	}
 }

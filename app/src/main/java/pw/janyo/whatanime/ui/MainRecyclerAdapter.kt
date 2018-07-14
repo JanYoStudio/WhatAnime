@@ -5,26 +5,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ItemSearchResultBinding
 import pw.janyo.whatanime.model.Docs
-import vip.mystery0.logs.Logs
 import vip.mystery0.tools.base.BaseRecyclerViewAdapter
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainRecyclerAdapter(private val context: Context,
 						  list: ArrayList<in Docs>) : BaseRecyclerViewAdapter<MainRecyclerAdapter.ViewHolder, Docs>(context, R.layout.item_search_result, list) {
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-		Logs.i("onCreateViewHolder: ")
 		return ViewHolder(createView(parent))
 	}
 
 	override fun setItemView(holder: ViewHolder, position: Int, data: Docs) {
-		Logs.i("setItemView: ")
 		holder.binding.animationDocs = data
-//		val requestUrl = "https://whatanime.ga/thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
-//		Glide.with(context).load(requestUrl).into(holder.binding.imageView)
+		val requestUrl = "https://whatanime.ga/thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
+		Glide.with(context).load(requestUrl).into(holder.binding.imageView)
 		val dateFormat = SimpleDateFormat("mm:ss", Locale.CHINA)
 		val calendar = Calendar.getInstance()
 		calendar.timeInMillis = data.at.toLong() * 1000
@@ -33,15 +32,6 @@ class MainRecyclerAdapter(private val context: Context,
 		holder.binding.textViewMalId.text = data.mal_id.toString()
 		val similarity = "${data.similarity * 100}%"
 		holder.binding.textViewSimilarity.text = similarity
-	}
-
-	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-		Logs.i("onBindViewHolder: ")
-	}
-
-	override fun getItemCount(): Int {
-		Logs.i("getItemCount: " + super.getItemCount())
-		return super.getItemCount()
 	}
 
 	class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

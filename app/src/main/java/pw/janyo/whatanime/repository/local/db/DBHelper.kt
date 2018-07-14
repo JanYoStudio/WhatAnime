@@ -8,6 +8,7 @@ object DBHelper {
 	lateinit var db: DB
 
 	fun init(context: Context) {
-		db = Room.databaseBuilder(context.applicationContext, DB::class.java, DATABASE_NAME).build()
+		db = Room.databaseBuilder(context.applicationContext, DB::class.java, DATABASE_NAME)
+				.build()
 	}
 }
