@@ -102,6 +102,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
 	override fun initView() {
 		super.initView()
+		title = getString(R.string.title_activity_main)
 		setSupportActionBar(activityMainBinding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		mainRecyclerAdapter = MainRecyclerAdapter(this, activityMainBinding, docsList)
