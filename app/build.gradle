@@ -24,8 +24,7 @@ android {
 		versionCode autoVersion.code
 		versionName autoVersion.name
 		vectorDrawables.useSupportLibrary = true
-
-
+		setProperty("archivesBaseName", "WhatAnime-$versionName")
 	}
 	buildTypes {
 		debug {
