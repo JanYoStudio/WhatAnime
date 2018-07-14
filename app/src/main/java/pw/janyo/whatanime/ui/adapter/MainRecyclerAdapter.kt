@@ -1,4 +1,4 @@
-package pw.janyo.whatanime.ui
+package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
 import android.view.View

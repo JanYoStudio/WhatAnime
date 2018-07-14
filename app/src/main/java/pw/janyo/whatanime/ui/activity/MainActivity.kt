@@ -1,4 +1,4 @@
-package pw.janyo.whatanime.ui
+package pw.janyo.whatanime.ui.activity
 
 import android.Manifest
 import android.app.Activity
@@ -25,6 +25,7 @@ import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.repository.MainRepository
+import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.tools.base.BaseActivity
 import vip.mystery0.tools.utils.FileTools
