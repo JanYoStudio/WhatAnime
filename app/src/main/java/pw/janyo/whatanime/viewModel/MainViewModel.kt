@@ -6,7 +6,8 @@ import pw.janyo.whatanime.model.Animation
 import java.io.File
 
 class MainViewModel : ViewModel() {
-	var imageFile = MutableLiveData<File>()
-	var resultList = MutableLiveData<Animation>()
-	var message = MutableLiveData<String>()
+	val imageFile = MutableLiveData<File>()
+	val resultList = MutableLiveData<Animation>()
+	val message = MutableLiveData<String>()
+	val isShowDetail = MutableLiveData<Boolean>()
 }

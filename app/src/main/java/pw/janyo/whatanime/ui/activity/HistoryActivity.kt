@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import pw.janyo.whatanime.R
 
-import kotlinx.android.synthetic.main.activity_history.*
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
 import pw.janyo.whatanime.model.AnimationHistory
@@ -45,7 +44,11 @@ class HistoryActivity : BaseActivity(R.layout.activity_history) {
 
 	override fun initView() {
 		super.initView()
-		setSupportActionBar(toolbar)
+		setSupportActionBar(activityHistoryBinding.toolbar)
+		supportActionBar!!.setDisplayShowHomeEnabled(true)
+		activityHistoryBinding.toolbar.setNavigationOnClickListener {
+			finish()
+		}
 		contentHistoryBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		historyRecyclerAdapter = HistoryRecyclerAdapter(this, activityHistoryBinding, animationHistoryList)
 		contentHistoryBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))

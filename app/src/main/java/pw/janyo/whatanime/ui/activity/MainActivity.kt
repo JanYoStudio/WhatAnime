@@ -1,12 +1,15 @@
 package pw.janyo.whatanime.ui.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -39,6 +42,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
 		private const val WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233
+		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
+		private const val INTENT_TITLE = "INTENT_TITLE"
+
+		fun showDetail(context: Context, cacheFile: File, title: String) {
+			val intent = Intent(context, MainActivity::class.java)
+			intent.putExtra(INTENT_CACHE_FILE, cacheFile)
+			intent.putExtra(INTENT_TITLE, title)
+			context.startActivity(intent)
+		}
 	}
 
 	private lateinit var activityMainBinding: ActivityMainBinding
@@ -46,6 +58,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	private lateinit var mainViewModel: MainViewModel
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
 	private val docsList = ArrayList<Docs>()
+	private var isShowDetail = false
 	private lateinit var dialog: Dialog
 	private val options = RequestOptions()
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -77,7 +90,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
 	override fun initView() {
 		super.initView()
-		setSupportActionBar(toolbar)
+		setSupportActionBar(activityMainBinding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		mainRecyclerAdapter = MainRecyclerAdapter(this, activityMainBinding, docsList)
 		contentMainBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
@@ -89,6 +102,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		requestPermission()
 		initViewModel()
 		initDialog()
+		initIntent()
 	}
 
 	private fun initViewModel() {
@@ -96,6 +110,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
 		mainViewModel.message.observe(this, messageObserver)
+		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })
 	}
 
 	private fun initDialog() {
@@ -106,6 +121,20 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 				.setLoadingColor(ContextCompat.getColor(this, R.color.colorAccent))
 				.setHintTextColor(ContextCompat.getColor(this, R.color.colorAccent))
 				.create()
+	}
+
+	@SuppressLint("RestrictedApi")
+	private fun initIntent() {
+		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
+			activityMainBinding.fab.visibility = View.GONE
+			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
+			mainViewModel.imageFile.value = cacheFile
+			title = intent.getStringExtra(INTENT_TITLE)
+			supportActionBar!!.setDisplayShowHomeEnabled(true)
+			activityMainBinding.toolbar.setNavigationOnClickListener {
+				finish()
+			}
+		}
 	}
 
 	override fun monitor() {
@@ -135,7 +164,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-		menuInflater.inflate(R.menu.menu_main, menu)
+		if (!isShowDetail)
+			menuInflater.inflate(R.menu.menu_main, menu)
 		return true
 	}
 
