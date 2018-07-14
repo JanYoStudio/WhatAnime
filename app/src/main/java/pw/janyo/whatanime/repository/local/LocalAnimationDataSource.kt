@@ -13,6 +13,7 @@ import pw.janyo.whatanime.utils.FileUtil
 import pw.janyo.whatanime.utils.RxObservable
 import pw.janyo.whatanime.utils.RxObserver
 import vip.mystery0.logs.Logs
+import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.util.*
 
@@ -54,6 +55,20 @@ object LocalAnimationDataSource : AnimationDateSource {
 			messageLiveData.value = StringConstant.hint_cache_make_dir_error
 			return
 		}
+		when (FileTools.copyFile(file.absolutePath, saveFile.absolutePath)) {
+			FileTools.MAKE_DIR_ERROR -> {
+				messageLiveData.value = StringConstant.hint_cache_make_dir_error
+				return
+			}
+			FileTools.FILE_NOT_EXIST -> {
+				messageLiveData.value = StringConstant.hint_origin_file_null
+				return
+			}
+			FileTools.ERROR -> {
+				messageLiveData.value = StringConstant.hint_file_copy_error
+				return
+			}
+		}
 		animationHistory.cachePath = saveFile.absolutePath
 		animationHistory.result = GsonFactory.gson.toJson(animation)
 		animationHistory.time = Calendar.getInstance().timeInMillis
@@ -63,5 +78,54 @@ object LocalAnimationDataSource : AnimationDateSource {
 			animationHistory.title = StringConstant.hint_no_result
 		animationHistory.filter = filter
 		historyService.saveHistory(animationHistory)
+	}
+
+	fun queryAllHistory(animationHistoryLiveData: MutableLiveData<List<AnimationHistory>>, messageLiveData: MutableLiveData<String>) {
+		RxObservable<List<AnimationHistory>>()
+				.doThings {
+					try {
+						it.onFinish(historyService.queryAllHistory())
+					} catch (e: Exception) {
+						it.onError(e)
+					}
+				}
+				.subscribe(object : RxObserver<List<AnimationHistory>>() {
+					override fun onFinish(data: List<AnimationHistory>?) {
+						animationHistoryLiveData.value = data
+					}
+
+					override fun onError(e: Throwable) {
+						messageLiveData.value = e.message
+					}
+				})
+	}
+
+	fun deleteHistory(animationHistory: AnimationHistory, animationHistoryLiveData: MutableLiveData<List<AnimationHistory>>, messageLiveData: MutableLiveData<String>) {
+		RxObservable<Boolean>()
+				.doThings {
+					try {
+						val result = historyService.delete(animationHistory)
+						if (result == 1)
+							it.onFinish(true)
+						else
+							it.onFinish(false)
+					} catch (e: Exception) {
+						messageLiveData.value = e.message
+						queryAllHistory(animationHistoryLiveData, messageLiveData)
+					}
+				}
+				.subscribe(object : RxObserver<Boolean>() {
+					override fun onFinish(data: Boolean?) {
+						if (data != null)
+							if (data)
+								messageLiveData.value = StringConstant.hint_history_delete_done
+							else
+								messageLiveData.value = StringConstant.hint_history_delete_error
+					}
+
+					override fun onError(e: Throwable) {
+						messageLiveData.value = e.message
+					}
+				})
 	}
 }

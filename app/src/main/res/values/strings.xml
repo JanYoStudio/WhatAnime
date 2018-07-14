@@ -2,7 +2,7 @@
 	<string name="app_name">WhatAnime</string>
 
 	<string name="action_re_request_permission">重新请求</string>
-	<string name="action_settings">设置</string>
+	<string name="action_history">历史纪录</string>
 
 	<string name="hint_time">时间：</string>
 	<string name="hint_title_native">日语标题：</string>
@@ -13,14 +13,19 @@
 	<string name="hint_ani_list_id">AniList ID：</string>
 	<string name="hint_mal_id">MyAnimeList ID：</string>
 	<string name="hint_similarity">准确度：</string>
+	<string name="hint_time_history">存储时间：</string>
 
 	<string name="hint_permission_deny">读取文件的权限用于获取截图，没有该权限，WhatAnime将会无法使用，请授予WhatAnime此权限！</string>
 	<string name="hint_select_file_path_null">获取到的路径为空，请检查文件是否存在！</string>
 	<string name="hint_select_file_not_exist">文件不存在，请检查！</string>
 	<string name="hint_cache_make_dir_error">缓存目录创建失败，请检查应用权限！</string>
+	<string name="hint_origin_file_null">图片不存在！</string>
+	<string name="hint_file_copy_error">文件拷贝失败！</string>
 	<string name="hint_response_error">返回数据错误！</string>
 	<string name="hint_no_result">无结果</string>
+	<string name="hint_history_delete_done">历史纪录删除成功！</string>
+	<string name="hint_history_delete_error">历史纪录删除失败！</string>
 
 	<string name="title_activity_main">WhatAnime - 以图搜番</string>
-	<string name="title_activity_history">HistoryActivity</string>
+	<string name="title_activity_history">历史纪录</string>
 </resources>

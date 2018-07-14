@@ -23,6 +23,7 @@ android {
 		targetSdkVersion 28
 		versionCode autoVersion.code
 		versionName autoVersion.name
+		vectorDrawables.useSupportLibrary = true
 	}
 	buildTypes {
 		release {

@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -99,6 +101,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	private fun initDialog() {
 		dialog = ZLoadingDialog(this)
 				.setLoadingBuilder(Z_TYPE.STAR_LOADING)
+				.setHintText(" ")
 				.setCanceledOnTouchOutside(false)
 				.setLoadingColor(ContextCompat.getColor(this, R.color.colorAccent))
 				.setHintTextColor(ContextCompat.getColor(this, R.color.colorAccent))
@@ -129,6 +132,21 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
 	private fun hideDialog() {
 		dialog.dismiss()
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		menuInflater.inflate(R.menu.menu_main, menu)
+		return true
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+		return when (item?.itemId) {
+			R.id.action_history -> {
+				startActivity(Intent(this, HistoryActivity::class.java))
+				true
+			}
+			else -> super.onOptionsItemSelected(item)
+		}
 	}
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
