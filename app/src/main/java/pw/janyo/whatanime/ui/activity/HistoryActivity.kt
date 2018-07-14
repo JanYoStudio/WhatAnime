@@ -45,7 +45,7 @@ class HistoryActivity : BaseActivity(R.layout.activity_history) {
 	override fun initView() {
 		super.initView()
 		setSupportActionBar(activityHistoryBinding.toolbar)
-		supportActionBar!!.setDisplayShowHomeEnabled(true)
+		supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 		activityHistoryBinding.toolbar.setNavigationOnClickListener {
 			finish()
 		}

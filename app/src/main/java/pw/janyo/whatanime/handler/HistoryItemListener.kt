@@ -9,6 +9,6 @@ import java.io.File
 class HistoryItemListener(private val context: Context,
 						  private val activityHistoryBinding: ActivityHistoryBinding) {
 	fun click(animationHistory: AnimationHistory, title: String) {
-		MainActivity.showDetail(context, File(animationHistory.cachePath), title)
+		MainActivity.showDetail(context, File(animationHistory.originPath), File(animationHistory.cachePath), title)
 	}
 }

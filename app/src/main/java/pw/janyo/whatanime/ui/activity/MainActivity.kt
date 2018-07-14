@@ -42,11 +42,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
 		private const val WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233
+		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_TITLE = "INTENT_TITLE"
 
-		fun showDetail(context: Context, cacheFile: File, title: String) {
+		fun showDetail(context: Context, originFile: File, cacheFile: File, title: String) {
 			val intent = Intent(context, MainActivity::class.java)
+			intent.putExtra(INTENT_ORIGIN_FILE, originFile)
 			intent.putExtra(INTENT_CACHE_FILE, cacheFile)
 			intent.putExtra(INTENT_TITLE, title)
 			context.startActivity(intent)
@@ -59,6 +61,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
 	private val docsList = ArrayList<Docs>()
 	private var isShowDetail = false
+	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
 	private val options = RequestOptions()
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -74,7 +77,16 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 			mainViewModel.message.value = getString(R.string.hint_select_file_not_exist)
 			return@Observer
 		}
-		Glide.with(this).load(it.absolutePath).apply(options).into(contentMainBinding.imageView)
+		if (isShowDetail && cacheFile != null)
+			Glide.with(this)
+					.load(cacheFile)
+					.apply(options)
+					.into(contentMainBinding.imageView)
+		else
+			Glide.with(this)
+					.load(it.absolutePath)
+					.apply(options)
+					.into(contentMainBinding.imageView)
 		MainRepository.search(it, null, mainViewModel)
 	}
 	private val messageObserver = Observer<String> {
@@ -126,11 +138,14 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	@SuppressLint("RestrictedApi")
 	private fun initIntent() {
 		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
+			mainViewModel.isShowDetail.value = true
 			activityMainBinding.fab.visibility = View.GONE
+			val originFile: File = intent.getSerializableExtra(INTENT_ORIGIN_FILE) as File
 			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
-			mainViewModel.imageFile.value = cacheFile
+			this.cacheFile = cacheFile
+			mainViewModel.imageFile.value = originFile
 			title = intent.getStringExtra(INTENT_TITLE)
-			supportActionBar!!.setDisplayShowHomeEnabled(true)
+			supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 			activityMainBinding.toolbar.setNavigationOnClickListener {
 				finish()
 			}

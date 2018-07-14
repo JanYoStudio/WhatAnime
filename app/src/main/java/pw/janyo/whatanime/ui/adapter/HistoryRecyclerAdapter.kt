@@ -31,6 +31,7 @@ class HistoryRecyclerAdapter(private val context: Context,
 		val animation = GsonFactory.gson.fromJson<Animation>(data.result, Animation::class.java)
 		holder.binding.handler = HistoryItemListener(context, activityHistoryBinding)
 		holder.binding.animation = animation
+		holder.binding.history = data
 		Glide.with(context).load(data.cachePath).apply(options).into(holder.binding.imageView)
 		if (animation.docs.isNotEmpty()) {
 			holder.binding.animationDocs = animation.docs[0]
