@@ -21,4 +21,10 @@ class AnimationHistory {
 	lateinit var title: String//标题
 	@ColumnInfo(name = "animation_filter")
 	var filter: String? = null//过滤
+
+	override fun toString(): String {
+		return "AnimationHistory(id=$id, originPath='$originPath', cachePath='$cachePath', result='$result', time=$time, title='$title', filter=$filter)"
+	}
+
+
 }

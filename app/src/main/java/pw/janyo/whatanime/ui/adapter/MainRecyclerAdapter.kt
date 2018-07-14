@@ -16,9 +16,7 @@ import java.util.*
 
 class MainRecyclerAdapter(private val context: Context,
 						  list: ArrayList<in Docs>) : BaseRecyclerViewAdapter<MainRecyclerAdapter.ViewHolder, Docs>(context, R.layout.item_search_result, list) {
-	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-		return ViewHolder(createView(parent))
-	}
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(createView(parent))
 
 	override fun setItemView(holder: ViewHolder, position: Int, data: Docs) {
 		holder.binding.animationDocs = data

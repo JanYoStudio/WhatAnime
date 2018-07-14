@@ -12,6 +12,7 @@ import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
 import pw.janyo.whatanime.utils.RxObservable
 import pw.janyo.whatanime.utils.RxObserver
+import vip.mystery0.logs.Logs
 import java.io.File
 import java.util.*
 
@@ -21,15 +22,14 @@ object LocalAnimationDataSource : AnimationDateSource {
 
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<Animation>, messageLiveData: MutableLiveData<String>, file: File, filter: String?) {
 		RxObservable<Animation>()
-				.doThingsOnThread {
+				.doThings {
 					try {
 						val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
 						if (animationHistory == null) {
 							RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, messageLiveData, file, filter)
-							return@doThingsOnThread
+							return@doThings
 						}
 						val animation = GsonFactory.gson.fromJson<Animation>(animationHistory.result, Animation::class.java)
-						animationLiveData.value = animation
 						it.onFinish(animation)
 					} catch (e: Exception) {
 						it.onError(e)
@@ -62,5 +62,6 @@ object LocalAnimationDataSource : AnimationDateSource {
 		else
 			animationHistory.title = StringConstant.hint_no_result
 		animationHistory.filter = filter
+		historyService.saveHistory(animationHistory)
 	}
 }

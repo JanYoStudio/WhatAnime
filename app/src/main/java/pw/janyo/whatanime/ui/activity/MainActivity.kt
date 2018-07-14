@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -27,6 +28,7 @@ import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
+import vip.mystery0.logs.Logs
 import vip.mystery0.tools.base.BaseActivity
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
@@ -53,8 +55,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		hideDialog()
 	}
 	private val imageFileObserver = Observer<File> {
-		if (!it.exists())
+		if (!it.exists()) {
+			mainViewModel.message.value = getString(R.string.hint_select_file_not_exist)
 			return@Observer
+		}
 		Glide.with(this).load(it.absolutePath).apply(options).into(contentMainBinding.imageView)
 		MainRepository.search(it, null, mainViewModel)
 	}
@@ -74,6 +78,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		setSupportActionBar(toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		mainRecyclerAdapter = MainRecyclerAdapter(this, docsList)
+		contentMainBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
 
@@ -152,6 +157,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 			return
 		showDialog()
 		val uri = data!!.data
+		Logs.i("onActivityResult: $uri")
 		val path = FileTools.getPath(this, uri)
 		if (path == null) {
 			mainViewModel.message.value = getString(R.string.hint_select_file_path_null)
