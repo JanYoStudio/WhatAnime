@@ -22,4 +22,5 @@
 	<string name="hint_no_result">无结果</string>
 
 	<string name="title_activity_main">WhatAnime - 以图搜番</string>
+	<string name="title_activity_history">HistoryActivity</string>
 </resources>
