@@ -4,6 +4,10 @@
 	<data>
 
 		<variable
+			name="handler"
+			type="pw.janyo.whatanime.handler.MainItemListener" />
+
+		<variable
 			name="animationDocs"
 			type="pw.janyo.whatanime.model.Docs" />
 	</data>
@@ -19,6 +23,7 @@
 			android:layout_width="160dp"
 			android:layout_height="90dp"
 			android:contentDescription="@string/app_name"
+			android:onClick="@{()->handler.click(animationDocs)}"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />

@@ -77,7 +77,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		super.initView()
 		setSupportActionBar(toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		mainRecyclerAdapter = MainRecyclerAdapter(this, docsList)
+		mainRecyclerAdapter = MainRecyclerAdapter(this, activityMainBinding, docsList)
 		contentMainBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
