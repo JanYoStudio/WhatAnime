@@ -201,3 +201,15 @@
 -libraryjars  <java.home>/lib/rt.jar
 -libraryjars  <java.home>/lib/jce.jar
 -dontwarn
+
+# Matisse
+-dontwarn com.squareup.picasso.**
+
+# About Library
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}

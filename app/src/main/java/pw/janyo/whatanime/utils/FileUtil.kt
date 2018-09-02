@@ -13,11 +13,11 @@ object FileUtil {
 	 * @return 缓存文件（需要判断是否存在，如果返回为空说明目录权限有问题）
 	 */
 	fun getCacheFile(file: File): File? {
-		val saveParent = APP.context.getExternalFilesDir(CACHE_IMAGE_FILE_NAME)
+		val saveParent = APP.context.getExternalFilesDir(CACHE_IMAGE_FILE_NAME) ?: return null
 		if (!saveParent.exists())
 			saveParent.mkdirs()
 		if (saveParent.isDirectory || saveParent.delete() && saveParent.mkdirs()) {
-			val md5Name = StringTools.getMD5(file.absolutePath)
+			val md5Name = StringTools.md5(file.absolutePath)
 			return File(saveParent, md5Name)
 		}
 		return null

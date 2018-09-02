@@ -28,17 +28,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
+import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
-import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
-import vip.mystery0.tools.base.BaseActivity
+import vip.mystery0.tools.base.binding.BaseBindingActivity
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 
-class MainActivity : BaseActivity(R.layout.activity_main) {
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
 		private const val WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233
@@ -55,11 +55,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		}
 	}
 
-	private lateinit var activityMainBinding: ActivityMainBinding
 	private lateinit var contentMainBinding: ContentMainBinding
 	private lateinit var mainViewModel: MainViewModel
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
-	private val docsList = ArrayList<Docs>()
 	private var isShowDetail = false
 	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
@@ -67,8 +65,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
 	private val animationObserver = Observer<Animation> {
-		docsList.clear()
-		docsList.addAll(it.docs)
+		mainRecyclerAdapter.items.clear()
+		mainRecyclerAdapter.items.addAll(it.docs)
 		mainRecyclerAdapter.notifyDataSetChanged()
 		hideDialog()
 	}
@@ -91,21 +89,21 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	}
 	private val messageObserver = Observer<String> {
 		hideDialog()
-		Snackbar.make(activityMainBinding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
+		Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
 				.show()
 	}
 
 	override fun inflateView(layoutId: Int) {
-		activityMainBinding = DataBindingUtil.setContentView(this, layoutId)
-		contentMainBinding = activityMainBinding.include
+		binding = DataBindingUtil.setContentView(this, layoutId)
+		contentMainBinding = binding.include
 	}
 
 	override fun initView() {
 		super.initView()
 		title = getString(R.string.title_activity_main)
-		setSupportActionBar(activityMainBinding.toolbar)
+		setSupportActionBar(binding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		mainRecyclerAdapter = MainRecyclerAdapter(this, activityMainBinding, docsList)
+		mainRecyclerAdapter = MainRecyclerAdapter(this, MainItemListener(binding))
 		contentMainBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
@@ -140,14 +138,14 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 	private fun initIntent() {
 		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
 			mainViewModel.isShowDetail.value = true
-			activityMainBinding.fab.visibility = View.GONE
+			binding.fab.visibility = View.GONE
 			val originFile: File = intent.getSerializableExtra(INTENT_ORIGIN_FILE) as File
 			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
 			this.cacheFile = cacheFile
 			mainViewModel.imageFile.value = originFile
 			title = intent.getStringExtra(INTENT_TITLE)
 			supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-			activityMainBinding.toolbar.setNavigationOnClickListener {
+			binding.toolbar.setNavigationOnClickListener {
 				finish()
 			}
 		}
@@ -204,7 +202,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 		when (requestCode) {
 			WRITE_EXTERNAL_STORAGE_REQUEST_CODE -> {
 				if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
-					Snackbar.make(activityMainBinding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
+					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
 							.setAction(R.string.action_re_request_permission) {
 								requestPermission()
 							}

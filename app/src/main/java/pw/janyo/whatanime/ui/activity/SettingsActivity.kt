@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
-import pw.janyo.whatanime.R
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On

@@ -10,9 +10,8 @@ import pw.janyo.whatanime.repository.local.service.HistoryService
 import pw.janyo.whatanime.repository.local.service.HistoryServiceImpl
 import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
-import pw.janyo.whatanime.utils.RxObservable
-import pw.janyo.whatanime.utils.RxObserver
-import vip.mystery0.logs.Logs
+import vip.mystery0.rxpackagedata.rx.RxObservable
+import vip.mystery0.rxpackagedata.rx.RxObserver
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.util.*

@@ -13,7 +13,7 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.utils.Base64
-import pw.janyo.whatanime.utils.RxObserver
+import vip.mystery0.rxpackagedata.rx.RxObserver
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.io.InputStreamReader
