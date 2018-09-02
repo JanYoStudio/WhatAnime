@@ -17,6 +17,9 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.HistoryRepository
 import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
+import vip.mystery0.logs.Logs
+import vip.mystery0.rxpackagedata.PackageData
+import vip.mystery0.rxpackagedata.Status.*
 import vip.mystery0.tools.base.binding.BaseBindingActivity
 
 class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.activity_history) {
@@ -24,16 +27,25 @@ class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.act
 	private lateinit var historyViewModel: HistoryViewModel
 	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
 
-	private val animationHistoryObserver = Observer<List<AnimationHistory>> {
-		historyRecyclerAdapter.items.clear()
-		historyRecyclerAdapter.items.addAll(it)
-		historyRecyclerAdapter.notifyDataSetChanged()
-		dismissRefresh()
-	}
-	private val messageObserver = Observer<String> {
-		dismissRefresh()
-		Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
-				.show()
+	private val animationHistoryObserver = Observer<PackageData<List<AnimationHistory>>> {
+		when (it.status) {
+			Content -> {
+				historyRecyclerAdapter.items.clear()
+				historyRecyclerAdapter.items.addAll(it.data!!)
+				historyRecyclerAdapter.notifyDataSetChanged()
+				dismissRefresh()
+			}
+			Loading -> showRefresh()
+			Empty -> {
+				dismissRefresh()
+				Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_LONG)
+						.show()
+			}
+			Error -> {
+				Logs.wtf("animationHistoryObserver: ", it.error)
+				dismissRefresh()
+			}
+		}
 	}
 
 	override fun inflateView(layoutId: Int) {
@@ -60,7 +72,12 @@ class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.act
 			override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 				val position = viewHolder.adapterPosition
 				historyRecyclerAdapter.notifyItemRemoved(position)
-				HistoryRepository.deleteHistory(historyRecyclerAdapter.items.removeAt(position), historyViewModel)
+				HistoryRepository.deleteHistory(historyRecyclerAdapter.items.removeAt(position)) {
+					Snackbar.make(binding.coordinatorLayout, if (it) R.string.hint_history_delete_done else R.string.hint_history_delete_error, Snackbar.LENGTH_LONG)
+							.show()
+					if (!it)
+						showRefresh()
+				}
 			}
 		}).attachToRecyclerView(contentHistoryBinding.recyclerView)
 	}
@@ -74,7 +91,6 @@ class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.act
 	private fun initViewModel() {
 		historyViewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
 		historyViewModel.historyList.observe(this, animationHistoryObserver)
-		historyViewModel.message.observe(this, messageObserver)
 	}
 
 	override fun monitor() {
@@ -85,7 +101,6 @@ class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.act
 	}
 
 	private fun refresh() {
-		showRefresh()
 		HistoryRepository.loadHistory(historyViewModel)
 	}
 

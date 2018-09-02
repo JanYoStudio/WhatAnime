@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +22,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
+import com.zhihu.matisse.Matisse
+import com.zhihu.matisse.MimeType
 import com.zyao89.view.zloading.ZLoadingDialog
 import com.zyao89.view.zloading.Z_TYPE
 
@@ -31,11 +34,13 @@ import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.repository.MainRepository
+import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
+import vip.mystery0.rxpackagedata.PackageData
+import vip.mystery0.rxpackagedata.Status.*
 import vip.mystery0.tools.base.binding.BaseBindingActivity
-import vip.mystery0.tools.utils.FileTools
 import java.io.File
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -64,15 +69,30 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	private val options = RequestOptions()
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
-	private val animationObserver = Observer<Animation> {
-		mainRecyclerAdapter.items.clear()
-		mainRecyclerAdapter.items.addAll(it.docs)
-		mainRecyclerAdapter.notifyDataSetChanged()
-		hideDialog()
+	private val animationObserver = Observer<PackageData<Animation>> {
+		when (it.status) {
+			Content -> {
+				mainRecyclerAdapter.items.clear()
+				mainRecyclerAdapter.items.addAll(it.data!!.docs)
+				mainRecyclerAdapter.notifyDataSetChanged()
+				hideDialog()
+			}
+			Loading -> showDialog()
+			Empty -> {
+				hideDialog()
+				Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_SHORT)
+						.show()
+			}
+			Error -> {
+				Logs.wtf("animationObserver: ", it.error)
+				hideDialog()
+			}
+		}
 	}
 	private val imageFileObserver = Observer<File> {
 		if (!it.exists()) {
-			mainViewModel.message.value = getString(R.string.hint_select_file_not_exist)
+			Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
+					.show()
 			return@Observer
 		}
 		if (isShowDetail && cacheFile != null)
@@ -86,11 +106,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 					.apply(options)
 					.into(contentMainBinding.imageView)
 		MainRepository.search(it, null, mainViewModel)
-	}
-	private val messageObserver = Observer<String> {
-		hideDialog()
-		Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
-				.show()
 	}
 
 	override fun inflateView(layoutId: Int) {
@@ -110,7 +125,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 	override fun initData() {
 		super.initData()
-		requestPermission()
 		initViewModel()
 		initDialog()
 		initIntent()
@@ -120,7 +134,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 		mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
-		mainViewModel.message.observe(this, messageObserver)
 		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })
 	}
 
@@ -154,18 +167,30 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	override fun monitor() {
 		super.monitor()
 		fab.setOnClickListener { _ ->
-			val intent = Intent()
-			intent.type = "image/*"
-			intent.action = Intent.ACTION_GET_CONTENT
-			startActivityForResult(intent, REQUEST_CODE)
+			if (requestPermission())
+				doSelect()
 		}
 	}
 
-	private fun requestPermission() {
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+	private fun requestPermission(): Boolean {
+		return if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			ActivityCompat.requestPermissions(this,
 					arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
 					WRITE_EXTERNAL_STORAGE_REQUEST_CODE)
+			false
+		} else true
+	}
+
+	private fun doSelect() {
+		Matisse.from(this)
+				.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP))
+				.showSingleMediaType(true)
+				.countable(false)
+				.maxSelectable(1)
+				.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+				.thumbnailScale(0.85f)
+				.imageEngine(CustomGlideEngine())
+				.forResult(REQUEST_CODE)
 	}
 
 	private fun showDialog() {
@@ -174,7 +199,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	}
 
 	private fun hideDialog() {
-		dialog.dismiss()
+		if (dialog.isShowing)
+			dialog.dismiss()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -206,29 +232,22 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 							.setAction(R.string.action_re_request_permission) {
 								requestPermission()
 							}
-							.addCallback(object : Snackbar.Callback() {
-								override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-									if (event != Snackbar.Callback.DISMISS_EVENT_ACTION)
-										finish()
-								}
-							})
 							.show()
+				else
+					doSelect()
 			}
 		}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (resultCode != Activity.RESULT_OK)
-			return
-		showDialog()
-		val uri = data!!.data
-		Logs.i("onActivityResult: $uri")
-		val path = FileTools.getPath(this, uri)
-		if (path == null) {
-			mainViewModel.message.value = getString(R.string.hint_select_file_path_null)
-			return
+		if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+			val fileList = Matisse.obtainPathResult(data)
+			if (fileList.isNotEmpty())
+				mainViewModel.imageFile.value = File(fileList[0])
+			else
+				Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+						.show()
 		}
-		mainViewModel.imageFile.value = File(path)
 	}
 }

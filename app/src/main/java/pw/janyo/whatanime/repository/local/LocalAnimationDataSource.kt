@@ -10,6 +10,7 @@ import pw.janyo.whatanime.repository.local.service.HistoryService
 import pw.janyo.whatanime.repository.local.service.HistoryServiceImpl
 import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
+import vip.mystery0.rxpackagedata.PackageData
 import vip.mystery0.rxpackagedata.rx.RxObservable
 import vip.mystery0.rxpackagedata.rx.RxObserver
 import vip.mystery0.tools.utils.FileTools
@@ -17,54 +18,52 @@ import java.io.File
 import java.util.*
 
 object LocalAnimationDataSource : AnimationDateSource {
-
 	private val historyService: HistoryService = HistoryServiceImpl
 
-	override fun queryAnimationByImage(animationLiveData: MutableLiveData<Animation>, messageLiveData: MutableLiveData<String>, file: File, filter: String?) {
+	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
 		RxObservable<Animation>()
 				.doThings {
-					try {
-						val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
-						if (animationHistory == null) {
-							RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, messageLiveData, file, filter)
-							return@doThings
-						}
-						val animation = GsonFactory.gson.fromJson<Animation>(animationHistory.result, Animation::class.java)
-						it.onFinish(animation)
-					} catch (e: Exception) {
-						it.onError(e)
+					val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
+					if (animationHistory == null) {
+						RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, file, filter)
+						return@doThings
 					}
+					val animation = GsonFactory.gson.fromJson<Animation>(animationHistory.result, Animation::class.java)
+					it.onFinish(animation)
 				}
 				.subscribe(object : RxObserver<Animation>() {
 					override fun onFinish(data: Animation?) {
-						animationLiveData.value = data
+						if (data == null||data.docs.isEmpty())
+							animationLiveData.value = PackageData.empty()
+						else
+							animationLiveData.value = PackageData.content(data)
 					}
 
 					override fun onError(e: Throwable) {
-						messageLiveData.value = e.message
+						animationLiveData.value = PackageData.error(e)
 					}
 				})
 	}
 
-	fun saveHistory(messageLiveData: MutableLiveData<String>, file: File, filter: String?, animation: Animation) {
+	fun saveHistory(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?, animation: Animation) {
 		val animationHistory = AnimationHistory()
 		animationHistory.originPath = file.absolutePath
 		val saveFile = FileUtil.getCacheFile(file)
 		if (saveFile == null) {
-			messageLiveData.value = StringConstant.hint_cache_make_dir_error
+			animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
 			return
 		}
 		when (FileTools.copyFile(file.absolutePath, saveFile.absolutePath)) {
 			FileTools.MAKE_DIR_ERROR -> {
-				messageLiveData.value = StringConstant.hint_cache_make_dir_error
+				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
 				return
 			}
 			FileTools.FILE_NOT_EXIST -> {
-				messageLiveData.value = StringConstant.hint_origin_file_null
+				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_origin_file_null))
 				return
 			}
 			FileTools.ERROR -> {
-				messageLiveData.value = StringConstant.hint_file_copy_error
+				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_file_copy_error))
 				return
 			}
 		}
@@ -79,51 +78,43 @@ object LocalAnimationDataSource : AnimationDateSource {
 		historyService.saveHistory(animationHistory)
 	}
 
-	fun queryAllHistory(animationHistoryLiveData: MutableLiveData<List<AnimationHistory>>, messageLiveData: MutableLiveData<String>) {
+	fun queryAllHistory(animationHistoryLiveData: MutableLiveData<PackageData<List<AnimationHistory>>>) {
 		RxObservable<List<AnimationHistory>>()
 				.doThings {
-					try {
-						it.onFinish(historyService.queryAllHistory())
-					} catch (e: Exception) {
-						it.onError(e)
-					}
+					it.onFinish(historyService.queryAllHistory())
 				}
 				.subscribe(object : RxObserver<List<AnimationHistory>>() {
 					override fun onFinish(data: List<AnimationHistory>?) {
-						animationHistoryLiveData.value = data
+						if (data == null || data.isEmpty())
+							animationHistoryLiveData.value = PackageData.empty()
+						else
+							animationHistoryLiveData.value = PackageData.content(data)
 					}
 
 					override fun onError(e: Throwable) {
-						messageLiveData.value = e.message
+						animationHistoryLiveData.value = PackageData.error(e)
 					}
 				})
 	}
 
-	fun deleteHistory(animationHistory: AnimationHistory, animationHistoryLiveData: MutableLiveData<List<AnimationHistory>>, messageLiveData: MutableLiveData<String>) {
+	fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) {
 		RxObservable<Boolean>()
 				.doThings {
-					try {
-						val result = historyService.delete(animationHistory)
-						if (result == 1)
-							it.onFinish(true)
-						else
-							it.onFinish(false)
-					} catch (e: Exception) {
-						messageLiveData.value = e.message
-						queryAllHistory(animationHistoryLiveData, messageLiveData)
-					}
+					val result = historyService.delete(animationHistory)
+					if (result == 1)
+						it.onFinish(true)
+					else
+						it.onFinish(false)
 				}
 				.subscribe(object : RxObserver<Boolean>() {
 					override fun onFinish(data: Boolean?) {
 						if (data != null)
-							if (data)
-								messageLiveData.value = StringConstant.hint_history_delete_done
-							else
-								messageLiveData.value = StringConstant.hint_history_delete_error
+							listener.invoke(data)
 					}
 
 					override fun onError(e: Throwable) {
-						messageLiveData.value = e.message
+						e.printStackTrace()
+						listener.invoke(false)
 					}
 				})
 	}
