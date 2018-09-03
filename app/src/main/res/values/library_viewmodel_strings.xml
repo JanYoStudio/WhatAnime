@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string name="define_int_viewmodel"/>
+	<!-- Author section -->
+	<string name="library_viewmodel_author">Google Jetpack</string>
+	<string name="library_viewmodel_authorWebsite">https://developer.android.com/jetpack/</string>
+	<!-- Library section -->
+	<string name="library_viewmodel_libraryName">ViewModel</string>
+	<string name="library_viewmodel_libraryDescription">The ViewModel class is designed to store and manage UI-related data in a lifecycle conscious way. The ViewModel class allows data to survive configuration changes such as screen rotations.</string>
+	<string name="library_viewmodel_libraryWebsite">https://developer.android.com/topic/libraries/architecture/viewmodel</string>
+	<string name="library_viewmodel_libraryVersion">2.0.0-rc01</string>
+	<!-- OpenSource section -->
+	<string name="library_viewmodel_isOpenSource">true</string>
+	<string name="library_viewmodel_repositoryLink">https://android.googlesource.com/platform/frameworks/support/+/master/lifecycle/viewmodel/</string>
+	<!-- ClassPath for autoDetect section -->
+	<string name="library_viewmodel_classPath">androidx.lifecycle</string>
+	<!-- License section -->
+	<string name="library_viewmodel_licenseId">apache_2_0</string>
+	<!-- Custom variables section -->
+</resources>
