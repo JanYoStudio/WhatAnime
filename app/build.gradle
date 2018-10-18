@@ -74,7 +74,7 @@ dependencies {
 	//ZLoading
 	implementation 'com.zyao89:zloading:1.1.2'
 	//Matisse
-	implementation 'com.zhihu.android:matisse:0.5.2-beta2'
+	implementation 'com.zhihu.android:matisse:0.5.2-beta3'
 	//About Library
-	implementation "com.mikepenz:aboutlibraries:6.2.0-rc01"
+	implementation "com.mikepenz:aboutlibraries:6.2.0"
 }

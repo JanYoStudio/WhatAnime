@@ -1,16 +1,12 @@
 package pw.janyo.whatanime.ui.fragment
 
 import android.os.Bundle
-import androidx.preference.PreferenceFragment
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.base.BasePreferenceFragment
 
-class AboutFragment : PreferenceFragment() {
-	override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-		setPreferencesFromResource(R.xml.pref_about, rootKey)
-	}
-
+class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		val openSourceLicenseAboutPreference = findPreference("key_open_source_license_about")
