@@ -183,7 +183,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 	private fun doSelect() {
 		Matisse.from(this)
-				.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP))
+				.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
 				.showSingleMediaType(true)
 				.countable(false)
 				.maxSelectable(1)
