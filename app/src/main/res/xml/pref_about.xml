@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="设置">
-		<SwitchPreference android:title="隐藏可能引起不适的内容" />
+	<PreferenceCategory android:title="@string/category_settings">
+		<SwitchPreference
+			android:id="@string/id_hide_sex"
+			android:title="@string/title_hide_sex" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="关于">
 		<Preference
@@ -22,47 +24,47 @@
 			android:key="@string/key_about_open_source_license"
 			android:title="@string/title_about_open_source_license" />
 		<Preference
-			android:summary="在Google Play商店中打开"
-			android:title="Google Play">
+			android:summary="@string/summary_about_open_on_play"
+			android:title="@string/title_about_open_on_play">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://play.google.com/store/apps/details?id=pw.janyo.whatanime" />
+				android:data="@string/link_about_open_on_play" />
 		</Preference>
 		<Preference
-			android:summary="在酷安中打开"
-			android:title="酷安地址">
+			android:summary="@string/summary_about_open_on_coolapk"
+			android:title="@string/title_about_open_on_coolapk">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://www.coolapk.com/apk/pw.janyo.whatanime" />
+				android:data="@string/link_about_open_on_coolapk" />
 		</Preference>
 		<Preference
-			android:summary="JanYo Studio授权解决方案"
-			android:title="授权管理">
+			android:summary="@string/summary_janyo_license"
+			android:title="@string/title_janyo_license">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md" />
+				android:data="@string/link_janyo_license" />
 		</Preference>
 		<Preference
 			android:summary="@string/app_version_name"
-			android:title="当前版本" />
+			android:title="@string/title_version" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="关于WhatAnime">
+	<PreferenceCategory android:title="@string/category_about_whatanime">
 		<Preference
-			android:summary="WhatAnime API开发者"
-			android:title="soruly">
+			android:summary="@string/summary_developer_whatanime"
+			android:title="@string/title_developer_whatanime">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://github.com/soruly" />
+				android:data="@string/link_developer_whatanime" />
 		</Preference>
 		<Preference
-			android:summary="GNU General Public License v3.0"
-			android:title="WhatAnime.ga">
+			android:summary="@string/summary_whatanime"
+			android:title="@string/title_whatanime">
 			<intent
 				android:action="android.intent.action.VIEW"
-				android:data="https://whatanime.ga" />
+				android:data="@string/link_whatanime" />
 		</Preference>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="关于JanYo Studio">
+	<PreferenceCategory android:title="@string/category_about_janyo">
 		<Preference android:title="@string/dick_light" />
 
 		<Preference
