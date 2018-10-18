@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import pw.janyo.whatanime.repository.local.db.DBHelper
+import vip.mystery0.crashhandler.CrashConfig
 import vip.mystery0.crashhandler.CrashHandler
 
 /**
@@ -18,9 +19,10 @@ class APP : Application() {
 		instance = this
 		DBHelper.init(this)
 		CrashHandler.getInstance(this)
-				.setDir(getExternalFilesDir("log")!!)
-				.setPrefix("log")
-				.setSuffix("txt")
+				.setConfig(CrashConfig()
+						.setDirName("log")
+						.setFileNameSuffix("log")
+						.setInSDCard(true))
 				.init()
 	}
 
