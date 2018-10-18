@@ -2,7 +2,7 @@
 <resources>
 	<string name="category_settings">设置</string>
 	<string name="title_hide_sex">隐藏可能引起不适的内容</string>
-	<string name="id_hide_sex" translatable="false">id_hide_sex</string>
+	<string name="key_hide_sex" translatable="false">key_hide_sex</string>
 
 	<string name="category_about">关于</string>
 	<string name="title_about_github">Github地址</string>

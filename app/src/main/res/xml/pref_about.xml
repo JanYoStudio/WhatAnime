@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory android:title="@string/category_settings">
 		<SwitchPreference
-			android:id="@string/id_hide_sex"
+			android:key="@string/key_hide_sex"
 			android:title="@string/title_hide_sex" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="关于">

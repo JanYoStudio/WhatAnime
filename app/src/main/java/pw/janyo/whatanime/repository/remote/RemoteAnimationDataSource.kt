@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.api.SearchApi
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.factory.GsonFactory
 import pw.janyo.whatanime.factory.RetrofitFactory
@@ -37,6 +38,8 @@ object RemoteAnimationDataSource : AnimationDateSource {
 						if (data == null || data.docs.isEmpty()) {
 							animationLiveData.value = PackageData.empty()
 						} else {
+							if (Configure.hideSex)
+								data.docs = data.docs.filter { !it.is_adult }
 							animationLiveData.value = PackageData.content(data)
 						}
 					}

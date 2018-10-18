@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.repository.local
 
 import androidx.lifecycle.MutableLiveData
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.factory.GsonFactory
 import pw.janyo.whatanime.model.Animation
@@ -33,10 +34,13 @@ object LocalAnimationDataSource : AnimationDateSource {
 				}
 				.subscribe(object : RxObserver<Animation>() {
 					override fun onFinish(data: Animation?) {
-						if (data == null||data.docs.isEmpty())
+						if (data == null || data.docs.isEmpty())
 							animationLiveData.value = PackageData.empty()
-						else
+						else {
+							if (Configure.hideSex)
+								data.docs = data.docs.filter { !it.is_adult }
 							animationLiveData.value = PackageData.content(data)
+						}
 					}
 
 					override fun onError(e: Throwable) {
@@ -70,7 +74,7 @@ object LocalAnimationDataSource : AnimationDateSource {
 		animationHistory.cachePath = saveFile.absolutePath
 		animationHistory.result = GsonFactory.gson.toJson(animation)
 		animationHistory.time = Calendar.getInstance().timeInMillis
-		if (animation.docs.size > 0)
+		if (animation.docs.isNotEmpty())
 			animationHistory.title = animation.docs[0].title_native
 		else
 			animationHistory.title = StringConstant.hint_no_result
