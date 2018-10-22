@@ -16,7 +16,7 @@ class MainRecyclerAdapter(private val context: Context,
 	override fun setItemView(binding: ItemSearchResultBinding, position: Int, data: Docs) {
 		binding.handler = listener
 		binding.animationDocs = data
-		val requestUrl = "https://whatanime.ga/thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
+		val requestUrl = "https://trace.moe/thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
 		Glide.with(context).load(requestUrl).into(binding.imageView)
 		val dateFormat = SimpleDateFormat("mm:ss", Locale.CHINA)
 		val calendar = Calendar.getInstance()

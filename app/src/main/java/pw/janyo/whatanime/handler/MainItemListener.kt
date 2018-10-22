@@ -13,8 +13,7 @@ class MainItemListener(activityMainBinding: ActivityMainBinding) {
 
 	fun click(docs: Docs) {
 		try {
-			//https://whatanime.ga/preview.php?anilist_id=${anilist_id}&file=${encodeURIComponent(filename)}&t=${at}&token=${tokenthumb}
-			val requestUrl = "https://whatanime.ga/preview.php?anilist_id=" + docs.anilist_id + "&file=" + URLEncoder.encode(docs.filename, "UTF-8") + "&t=" + docs.at + "&token=" + docs.tokenthumb
+			val requestUrl = "https://trace.moe/preview.php?anilist_id=" + docs.anilist_id + "&file=" + URLEncoder.encode(docs.filename, "UTF-8") + "&t=" + docs.at + "&token=" + docs.tokenthumb
 			if (nowPlayUrl != requestUrl) {
 				nowPlayUrl = requestUrl
 				contentMainBinding.videoView!!.stopPlayback()
