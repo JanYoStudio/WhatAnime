@@ -22,8 +22,8 @@
 	<string name="title_developer_whatanime" translatable="false">soruly</string>
 	<string name="link_developer_whatanime" translatable="false">https://github.com/soruly</string>
 
-	<string name="title_whatanime" translatable="false">WhatAnime.ga</string>
+	<string name="title_whatanime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
 	<string name="summary_whatanime" translatable="false">GNU General Public License v3.0</string>
-	<string name="link_whatanime" translatable="false">https://whatanime.ga</string>
+	<string name="link_whatanime" translatable="false">https://trace.moe/</string>
 
 </resources>
