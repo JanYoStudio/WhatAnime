@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-	<string name="define_int_zloading"/>
+	<string name="define_int_zloading" translatable="false" />
 	<!-- Author section -->
-	<string name="library_zloading_author">zyao89</string>
-	<string name="library_zloading_authorWebsite">https://github.com/zyao89</string>
+	<string name="library_zloading_author" translatable="false">zyao89</string>
+	<string name="library_zloading_authorWebsite" translatable="false">https://github.com/zyao89</string>
 	<!-- Library section -->
-	<string name="library_zloading_libraryName">ZLoading</string>
-	<string name="library_zloading_libraryDescription">这是一个自定义控件合集。目前包含Loading View。持续更新中…</string>
-	<string name="library_zloading_libraryWebsite">https://github.com/zyao89/ZLoading</string>
-	<string name="library_zloading_libraryVersion">1.1.2</string>
+	<string name="library_zloading_libraryName" translatable="false">ZLoading</string>
+	<string name="library_zloading_libraryDescription" translatable="false">这是一个自定义控件合集。目前包含Loading View。持续更新中…</string>
+	<string name="library_zloading_libraryWebsite" translatable="false">https://github.com/zyao89/ZLoading</string>
+	<string name="library_zloading_libraryVersion" translatable="false">1.1.2</string>
 	<!-- OpenSource section -->
-	<string name="library_zloading_isOpenSource">true</string>
-	<string name="library_zloading_repositoryLink">https://github.com/zyao89/ZLoading</string>
+	<string name="library_zloading_isOpenSource" translatable="false">true</string>
+	<string name="library_zloading_repositoryLink" translatable="false">https://github.com/zyao89/ZLoading</string>
 	<!-- ClassPath for autoDetect section -->
-	<string name="library_zloading_classPath">com.zyao89.view.zloading</string>
+	<string name="library_zloading_classPath" translatable="false">com.zyao89.view.zloading</string>
 	<!-- License section -->
-	<string name="library_zloading_licenseId">apache_2_0</string>
+	<string name="library_zloading_licenseId" translatable="false">apache_2_0</string>
 	<!-- Custom variables section -->
 </resources>

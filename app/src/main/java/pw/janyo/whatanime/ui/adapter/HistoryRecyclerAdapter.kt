@@ -28,7 +28,7 @@ class HistoryRecyclerAdapter(private val context: Context,
 		Glide.with(context).load(data.cachePath).apply(options).into(binding.imageView)
 		if (animation.docs.isNotEmpty()) {
 			binding.animationDocs = animation.docs[0]
-			val dateFormat = SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.CHINA)
+			val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
 			val calendar = Calendar.getInstance()
 			calendar.timeInMillis = data.time
 			binding.textViewTime.text = dateFormat.format(calendar.time)

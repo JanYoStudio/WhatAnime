@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-	<string name="define_int_room"/>
+	<string name="define_int_room" translatable="false" />
 	<!-- Author section -->
-	<string name="library_room_author">Google Jetpack</string>
-	<string name="library_room_authorWebsite">https://developer.android.com/jetpack/</string>
+	<string name="library_room_author" translatable="false">Google Jetpack</string>
+	<string name="library_room_authorWebsite" translatable="false">https://developer.android.com/jetpack/</string>
 	<!-- Library section -->
-	<string name="library_room_libraryName">Room</string>
-	<string name="library_room_libraryDescription">
+	<string name="library_room_libraryName" translatable="false">Room</string>
+	<string name="library_room_libraryDescription" translatable="false">
 		<![CDATA[
 		The Room persistence library provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
         <br /><br />
         The library helps you create a cache of your app\'s data on a device that\'s running your app. This cache, which serves as your app\'s single source of truth, allows users to view a consistent copy of key information within your app, regardless of whether users have an internet connection.
         ]]>
 	</string>
-	<string name="library_room_libraryWebsite">https://developer.android.com/topic/libraries/architecture/room</string>
-	<string name="library_room_libraryVersion">2.0.0-rc01</string>
+	<string name="library_room_libraryWebsite" translatable="false">https://developer.android.com/topic/libraries/architecture/room</string>
+	<string name="library_room_libraryVersion" translatable="false">2.0.0-rc01</string>
 	<!-- OpenSource section -->
-	<string name="library_room_isOpenSource">true</string>
-	<string name="library_room_repositoryLink">https://android.googlesource.com/platform/frameworks/support/+/master/room/</string>
+	<string name="library_room_isOpenSource" translatable="false">true</string>
+	<string name="library_room_repositoryLink" translatable="false">https://android.googlesource.com/platform/frameworks/support/+/master/room/</string>
 	<!-- ClassPath for autoDetect section -->
-	<string name="library_room_classPath">androidx.room</string>
+	<string name="library_room_classPath" translatable="false">androidx.room</string>
 	<!-- License section -->
-	<string name="library_room_licenseId">apache_2_0</string>
+	<string name="library_room_licenseId" translatable="false">apache_2_0</string>
 	<!-- Custom variables section -->
 </resources>

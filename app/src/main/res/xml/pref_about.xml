@@ -5,7 +5,7 @@
 			android:key="@string/key_hide_sex"
 			android:title="@string/title_hide_sex" />
 	</PreferenceCategory>
-	<PreferenceCategory android:title="关于">
+	<PreferenceCategory android:title="@string/category_about">
 		<Preference
 			android:summary="@string/summary_about_github"
 			android:title="@string/title_about_github">

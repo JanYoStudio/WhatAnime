@@ -1,43 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="category_settings">设置</string>
-	<string name="title_hide_sex">隐藏可能引起不适的内容</string>
 	<string name="key_hide_sex" translatable="false">key_hide_sex</string>
 
-	<string name="category_about">关于</string>
-	<string name="title_about_github">Github地址</string>
-	<string name="summary_about_github">https://github.com/JanYoStudio/WhatAnime</string>
-	<string name="link_about_github">https://github.com/JanYoStudio/WhatAnime</string>
+	<string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
+	<string name="link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
 
-	<string name="title_about_license">开源协议</string>
-	<string name="summary_about_license">Apache License 2.0</string>
-	<string name="link_about_license">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
+	<string name="summary_about_license" translatable="false">Apache License 2.0</string>
+	<string name="link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
 
-	<string name="title_about_open_source_license">开源许可</string>
 	<string name="key_about_open_source_license" translatable="false">key_open_source_license_about</string>
 
-	<string name="title_about_open_on_play">Google Play</string>
-	<string name="summary_about_open_on_play">在Google Play商店中打开</string>
-	<string name="link_about_open_on_play">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
+	<string name="title_about_open_on_play">Google Play Store</string>
+	<string name="link_about_open_on_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
 
-	<string name="title_about_open_on_coolapk">酷安地址</string>
-	<string name="summary_about_open_on_coolapk">在酷安中打开</string>
-	<string name="link_about_open_on_coolapk">https://www.coolapk.com/apk/pw.janyo.whatanime</string>
+	<string name="link_about_open_on_coolapk" translatable="false">https://www.coolapk.com/apk/pw.janyo.whatanime</string>
 
-	<string name="title_janyo_license">授权管理</string>
-	<string name="summary_janyo_license">JanYo Studio授权解决方案</string>
-	<string name="link_janyo_license">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
+	<string name="title_janyo_license">License</string>
+	<string name="summary_janyo_license">JanYo Studio License</string>
+	<string name="link_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
 
-	<string name="title_version">当前版本</string>
+	<string name="title_developer_whatanime" translatable="false">soruly</string>
+	<string name="link_developer_whatanime" translatable="false">https://github.com/soruly</string>
 
-	<string name="category_about_whatanime">关于WhatAnime</string>
-	<string name="title_developer_whatanime">soruly</string>
-	<string name="summary_developer_whatanime">WhatAnime API开发者</string>
-	<string name="link_developer_whatanime">https://github.com/soruly</string>
+	<string name="title_whatanime" translatable="false">WhatAnime.ga</string>
+	<string name="summary_whatanime" translatable="false">GNU General Public License v3.0</string>
+	<string name="link_whatanime" translatable="false">https://whatanime.ga</string>
 
-	<string name="title_whatanime">WhatAnime.ga</string>
-	<string name="summary_whatanime">GNU General Public License v3.0</string>
-	<string name="link_whatanime">https://whatanime.ga</string>
-
-	<string name="category_about_janyo">关于JanYo Studio</string>
 </resources>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-	<string name="define_int_mystery0tools"/>
+	<string name="define_int_mystery0tools" translatable="false" />
 	<!-- Author section -->
-	<string name="library_mystery0tools_author">Mystery0</string>
-	<string name="library_mystery0tools_authorWebsite">https://github.com/Mystery00</string>
+	<string name="library_mystery0tools_author" translatable="false">Mystery0</string>
+	<string name="library_mystery0tools_authorWebsite" translatable="false">https://github.com/Mystery00</string>
 	<!-- Library section -->
-	<string name="library_mystery0tools_libraryName">Mystery0Tools</string>
-	<string name="library_mystery0tools_libraryDescription">Tools made by Mystery0</string>
-	<string name="library_mystery0tools_libraryWebsite">https://github.com/Mystery0Tools</string>
-	<string name="library_mystery0tools_libraryVersion">1.0.3</string>
+	<string name="library_mystery0tools_libraryName" translatable="false">Mystery0Tools</string>
+	<string name="library_mystery0tools_libraryDescription" translatable="false">Tools made by Mystery0</string>
+	<string name="library_mystery0tools_libraryWebsite" translatable="false">https://github.com/Mystery0Tools</string>
+	<string name="library_mystery0tools_libraryVersion" translatable="false">1.0.3</string>
 	<!-- OpenSource section -->
-	<string name="library_mystery0tools_isOpenSource">true</string>
-	<string name="library_mystery0tools_repositoryLink">https://github.com/Mystery0Tools</string>
+	<string name="library_mystery0tools_isOpenSource" translatable="false">true</string>
+	<string name="library_mystery0tools_repositoryLink" translatable="false">https://github.com/Mystery0Tools</string>
 	<!-- ClassPath for autoDetect section -->
-	<string name="library_mystery0tools_classPath">vip.mystery0.tools</string>
+	<string name="library_mystery0tools_classPath" translatable="false">vip.mystery0.tools</string>
 	<!-- License section -->
-	<string name="library_mystery0tools_licenseId">apache_2_0</string>
+	<string name="library_mystery0tools_licenseId" translatable="false">apache_2_0</string>
 	<!-- Custom variables section -->
 </resources>
