@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">WhatAnime</string>
+	<string name="action_history">厤史紀錄</string>
+	<string name="action_info">聲氣</string>
+	<string name="action_re_request_permission">重新請求</string>
+	<string name="category_about">関于</string>
+	<string name="category_about_janyo">関于JanYo Studio</string>
+	<string name="category_about_whatanime">関于WhatAnime</string>
+	<string name="category_settings">設寘</string>
+	<string name="hint_cache_make_dir_error">緩存目錄創建失敗，請檢査應用權限！</string>
+	<string name="hint_episode">集數：</string>
+	<string name="hint_file_copy_error">文件拷貝失敗！</string>
+	<string name="hint_history_delete_done">厤史紀錄刪除得食！</string>
+	<string name="hint_history_delete_error">厤史紀錄刪除失敗！</string>
+	<string name="hint_no_result">冇結菓</string>
+	<string name="hint_origin_file_null">圖片唔存喺！</string>
+	<string name="hint_permission_deny">讀取文件嘅權限用于獲取截圖，冇該權限，WhatAnime將會冇灋使用，請授予WhatAnime此權限！</string>
+	<string name="hint_response_error">返囘數據錯誤！</string>
+	<string name="hint_select_file_not_exist">文件唔存喺，請檢査！</string>
+	<string name="hint_select_file_path_null">獲取到嘅路徑為空，請檢査文件繫咪存喺！</string>
+	<string name="hint_similarity">準確度：</string>
+	<string name="hint_time">時間：</string>
+	<string name="hint_time_history">存儲時間：</string>
+	<string name="hint_title_chinese">中文標題：</string>
+	<string name="hint_title_english">英文標題：</string>
+	<string name="hint_title_native">日語標題：</string>
+	<string name="hint_title_romaji">羅馬字：</string>
+	<string name="hint_ani_list_id">AniList ID: </string>
+	<string name="hint_mal_id">MyAnimeList ID: </string>
+	<string name="summary_about_open_on_coolapk">喺酷安中五星支持</string>
+	<string name="summary_about_open_on_play">喺Google Play商店中五星支持</string>
+	<string name="summary_developer_whatanime">WhatAnime API開發者</string>
+	<string name="summary_janyo_license">JanYo Studio授權解決方案</string>
+	<string name="title_about_github">Github地阯</string>
+	<string name="title_about_license">開源協議</string>
+	<string name="title_about_open_on_coolapk">酷安地阯</string>
+	<string name="title_about_open_on_play">Google Play Store</string>
+	<string name="title_about_open_source_license">開源許可</string>
+	<string name="title_activity_history">厤史紀錄</string>
+	<string name="title_activity_main">以圖蒐番</string>
+	<string name="title_activity_settings">関于</string>
+	<string name="title_hide_sex">隱藏可能引起唔適嘅內容</string>
+	<string name="title_janyo_license">授權打理</string>
+	<string name="title_version">當前版本</string>
+</resources>
