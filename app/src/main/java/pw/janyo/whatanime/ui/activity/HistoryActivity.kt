@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.ui.activity
 
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -49,7 +48,7 @@ class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.act
 	}
 
 	override fun inflateView(layoutId: Int) {
-		binding = DataBindingUtil.setContentView(this, layoutId)
+		super.inflateView(layoutId)
 		contentHistoryBinding = binding.include
 	}
 

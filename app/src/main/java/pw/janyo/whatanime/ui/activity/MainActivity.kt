@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -113,7 +112,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	}
 
 	override fun inflateView(layoutId: Int) {
-		binding = DataBindingUtil.setContentView(this, layoutId)
+		super.inflateView(layoutId)
 		contentMainBinding = binding.include
 	}
 
