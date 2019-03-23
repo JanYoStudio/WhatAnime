@@ -35,7 +35,7 @@ android {
 		}
 		release {
 			resValue "string", "app_version_name", autoVersion.name
-			minifyEnabled false
+			minifyEnabled true
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}

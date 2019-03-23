@@ -90,6 +90,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	private val imageFileObserver = Observer<File> {
 		if (!it.exists()) {
 			Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
+					.addCallback(object :Snackbar.Callback(){
+						override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+							super.onDismissed(transientBottomBar, event)
+							finish()
+						}
+					})
 					.show()
 			return@Observer
 		}
