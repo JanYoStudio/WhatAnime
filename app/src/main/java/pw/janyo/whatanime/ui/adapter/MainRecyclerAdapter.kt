@@ -18,7 +18,8 @@ class MainRecyclerAdapter(private val context: Context,
 		binding.handler = listener
 		binding.animationDocs = data
 		val requestUrl = "${Constant.baseUrl}thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
-		Glide.with(context).load(requestUrl).into(binding.imageView)
+		Glide.with(context).load(requestUrl).placeholder(R.mipmap.janyo_studio)
+				.error(R.drawable.ic_load_failed).into(binding.imageView)
 		val dateFormat = SimpleDateFormat("mm:ss", Locale.CHINA)
 		val calendar = Calendar.getInstance()
 		calendar.timeInMillis = data.at.toLong() * 1000
