@@ -86,13 +86,5 @@
 		</Preference>
 
 		<Preference android:title="@string/gsoy" />
-
-		<Preference
-			android:summary="@string/link_kiva"
-			android:title="@string/kiva">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_kiva" />
-		</Preference>
 	</PreferenceCategory>
 </PreferenceScreen>
