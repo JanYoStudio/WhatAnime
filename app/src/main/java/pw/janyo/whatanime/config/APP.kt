@@ -18,12 +18,11 @@ class APP : Application() {
 		context = applicationContext
 		instance = this
 		DBHelper.init(this)
-		CrashHandler.getInstance(this)
-				.setConfig(CrashConfig()
-						.setDirName("log")
-						.setFileNameSuffix("log")
-						.setInSDCard(true))
-				.init()
+		CrashHandler.config {
+			it.setDirName("log")
+			it.setFileNameSuffix("log")
+			it.setDir(externalCacheDir!!)
+		}.initWithContext(this)
 	}
 
 	companion object {

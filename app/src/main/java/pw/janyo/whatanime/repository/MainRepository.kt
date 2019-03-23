@@ -2,7 +2,7 @@ package pw.janyo.whatanime.repository
 
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.viewModel.MainViewModel
-import vip.mystery0.rxpackagedata.PackageData
+import vip.mystery0.rx.PackageData
 import java.io.File
 
 object MainRepository {

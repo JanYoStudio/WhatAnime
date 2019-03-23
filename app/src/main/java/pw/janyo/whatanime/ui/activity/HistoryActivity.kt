@@ -18,8 +18,8 @@ import pw.janyo.whatanime.repository.HistoryRepository
 import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
-import vip.mystery0.rxpackagedata.PackageData
-import vip.mystery0.rxpackagedata.Status.*
+import vip.mystery0.rx.PackageData
+import vip.mystery0.rx.Status.*
 import vip.mystery0.tools.base.binding.BaseBindingActivity
 
 class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.activity_history) {

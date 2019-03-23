@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -38,15 +37,14 @@ import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
-import vip.mystery0.rxpackagedata.PackageData
-import vip.mystery0.rxpackagedata.Status.*
+import vip.mystery0.rx.PackageData
+import vip.mystery0.rx.Status.*
 import vip.mystery0.tools.base.binding.BaseBindingActivity
 import java.io.File
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
-		private const val WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 233
 		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_TITLE = "INTENT_TITLE"
@@ -166,31 +164,31 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 	override fun monitor() {
 		super.monitor()
-		fab.setOnClickListener { _ ->
-			if (requestPermission())
-				doSelect()
+		fab.setOnClickListener {
+			doSelect()
 		}
 	}
 
-	private fun requestPermission(): Boolean {
-		return if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			ActivityCompat.requestPermissions(this,
-					arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-					WRITE_EXTERNAL_STORAGE_REQUEST_CODE)
-			false
-		} else true
-	}
-
 	private fun doSelect() {
-		Matisse.from(this)
-				.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
-				.showSingleMediaType(true)
-				.countable(false)
-				.maxSelectable(1)
-				.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-				.thumbnailScale(0.85f)
-				.imageEngine(CustomGlideEngine())
-				.forResult(REQUEST_CODE)
+		requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { code, result ->
+			if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
+				Matisse.from(this)
+						.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
+						.showSingleMediaType(true)
+						.countable(false)
+						.maxSelectable(1)
+						.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+						.thumbnailScale(0.85f)
+						.imageEngine(CustomGlideEngine())
+						.forResult(REQUEST_CODE)
+			} else {
+				Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
+						.setAction(R.string.action_re_request_permission) {
+							reRequestPermission(code)
+						}
+						.show()
+			}
+		}
 	}
 
 	private fun showDialog() {
@@ -220,22 +218,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
-		}
-	}
-
-	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		when (requestCode) {
-			WRITE_EXTERNAL_STORAGE_REQUEST_CODE -> {
-				if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
-					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
-							.setAction(R.string.action_re_request_permission) {
-								requestPermission()
-							}
-							.show()
-				else
-					doSelect()
-			}
 		}
 	}
 

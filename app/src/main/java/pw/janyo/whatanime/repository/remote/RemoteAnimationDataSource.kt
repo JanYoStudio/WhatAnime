@@ -13,8 +13,8 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.utils.Base64
-import vip.mystery0.rxpackagedata.PackageData
-import vip.mystery0.rxpackagedata.rx.RxObserver
+import vip.mystery0.rx.OnlyCompleteObserver
+import vip.mystery0.rx.PackageData
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 
@@ -25,15 +25,14 @@ object RemoteAnimationDataSource : AnimationDateSource {
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
 		val base64 = FileTools.compressImage(Bitmap.CompressFormat.JPEG, file, 1000, 10)
 		searchApi.search(token, base64, filter)
-				.subscribeOn(Schedulers.newThread())
-				.unsubscribeOn(Schedulers.newThread())
+				.subscribeOn(Schedulers.io())
 				.map {
 					val data = GsonFactory.parse<Animation>(it)
 					LocalAnimationDataSource.saveHistory(animationLiveData, file, filter, data)
 					data
 				}
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(object : RxObserver<Animation>() {
+				.subscribe(object : OnlyCompleteObserver<Animation>() {
 					override fun onFinish(data: Animation?) {
 						if (data == null || data.docs.isEmpty()) {
 							animationLiveData.value = PackageData.empty()

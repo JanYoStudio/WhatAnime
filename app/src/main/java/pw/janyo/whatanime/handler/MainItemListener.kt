@@ -16,12 +16,12 @@ class MainItemListener(activityMainBinding: ActivityMainBinding) {
 			val requestUrl = "https://trace.moe/preview.php?anilist_id=" + docs.anilist_id + "&file=" + URLEncoder.encode(docs.filename, "UTF-8") + "&t=" + docs.at + "&token=" + docs.tokenthumb
 			if (nowPlayUrl != requestUrl) {
 				nowPlayUrl = requestUrl
-				contentMainBinding.videoView!!.stopPlayback()
+				contentMainBinding.videoView.stopPlayback()
 				contentMainBinding.videoView.setVideoURI(Uri.parse(requestUrl))
 			}
-			contentMainBinding.imageView!!.visibility = View.GONE
-			contentMainBinding.videoView!!.visibility = View.VISIBLE
-			contentMainBinding.progressBar!!.visibility = View.VISIBLE
+			contentMainBinding.imageView.visibility = View.GONE
+			contentMainBinding.videoView.visibility = View.VISIBLE
+			contentMainBinding.progressBar.visibility = View.VISIBLE
 			contentMainBinding.videoView.setOnPreparedListener { contentMainBinding.progressBar.visibility = View.GONE }
 			contentMainBinding.videoView.setOnCompletionListener {
 				contentMainBinding.videoView.visibility = View.GONE

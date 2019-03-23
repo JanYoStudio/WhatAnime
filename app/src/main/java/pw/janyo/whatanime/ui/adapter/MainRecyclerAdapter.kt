@@ -3,6 +3,7 @@ package pw.janyo.whatanime.ui.adapter
 import android.content.Context
 import com.bumptech.glide.Glide
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.databinding.ItemSearchResultBinding
 import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Docs
@@ -16,7 +17,7 @@ class MainRecyclerAdapter(private val context: Context,
 	override fun setItemView(binding: ItemSearchResultBinding, position: Int, data: Docs) {
 		binding.handler = listener
 		binding.animationDocs = data
-		val requestUrl = "https://trace.moe/thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
+		val requestUrl = "${Constant.baseUrl}thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
 		Glide.with(context).load(requestUrl).into(binding.imageView)
 		val dateFormat = SimpleDateFormat("mm:ss", Locale.CHINA)
 		val calendar = Calendar.getInstance()

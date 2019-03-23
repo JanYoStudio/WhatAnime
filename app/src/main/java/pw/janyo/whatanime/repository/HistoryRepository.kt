@@ -4,7 +4,7 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
 import pw.janyo.whatanime.viewModel.HistoryViewModel
-import vip.mystery0.rxpackagedata.PackageData
+import vip.mystery0.rx.PackageData
 import java.io.File
 
 object HistoryRepository {

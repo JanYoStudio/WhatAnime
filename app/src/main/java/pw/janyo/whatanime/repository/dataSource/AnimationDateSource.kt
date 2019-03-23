@@ -2,7 +2,7 @@ package pw.janyo.whatanime.repository.dataSource
 
 import androidx.lifecycle.MutableLiveData
 import pw.janyo.whatanime.model.Animation
-import vip.mystery0.rxpackagedata.PackageData
+import vip.mystery0.rx.PackageData
 import java.io.File
 
 interface AnimationDateSource {

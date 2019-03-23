@@ -1,6 +1,9 @@
 package pw.janyo.whatanime.repository.local
 
 import androidx.lifecycle.MutableLiveData
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.factory.GsonFactory
@@ -11,9 +14,8 @@ import pw.janyo.whatanime.repository.local.service.HistoryService
 import pw.janyo.whatanime.repository.local.service.HistoryServiceImpl
 import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
-import vip.mystery0.rxpackagedata.PackageData
-import vip.mystery0.rxpackagedata.rx.RxObservable
-import vip.mystery0.rxpackagedata.rx.RxObserver
+import vip.mystery0.rx.OnlyCompleteObserver
+import vip.mystery0.rx.PackageData
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.util.*
@@ -22,17 +24,24 @@ object LocalAnimationDataSource : AnimationDateSource {
 	private val historyService: HistoryService = HistoryServiceImpl
 
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
-		RxObservable<Animation>()
-				.doThings {
-					val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
-					if (animationHistory == null) {
-						RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, file, filter)
-						return@doThings
+		Observable.create<String> {
+			val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
+			if (animationHistory == null) {
+				RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, file, filter)
+				return@create
+			}
+			it.onNext(animationHistory.result)
+			it.onComplete()
+		}
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.computation())
+				.map { GsonFactory.gson.fromJson<Animation>(it, Animation::class.java) }
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(object : OnlyCompleteObserver<Animation>() {
+					override fun onError(e: Throwable) {
+						animationLiveData.value = PackageData.error(e)
 					}
-					val animation = GsonFactory.gson.fromJson<Animation>(animationHistory.result, Animation::class.java)
-					it.onFinish(animation)
-				}
-				.subscribe(object : RxObserver<Animation>() {
+
 					override fun onFinish(data: Animation?) {
 						if (data == null || data.docs.isEmpty())
 							animationLiveData.value = PackageData.empty()
@@ -41,10 +50,6 @@ object LocalAnimationDataSource : AnimationDateSource {
 								data.docs = data.docs.filter { !it.is_adult }
 							animationLiveData.value = PackageData.content(data)
 						}
-					}
-
-					override fun onError(e: Throwable) {
-						animationLiveData.value = PackageData.error(e)
 					}
 				})
 	}
@@ -83,42 +88,43 @@ object LocalAnimationDataSource : AnimationDateSource {
 	}
 
 	fun queryAllHistory(animationHistoryLiveData: MutableLiveData<PackageData<List<AnimationHistory>>>) {
-		RxObservable<List<AnimationHistory>>()
-				.doThings {
-					it.onFinish(historyService.queryAllHistory())
-				}
-				.subscribe(object : RxObserver<List<AnimationHistory>>() {
+		Observable.create<List<AnimationHistory>> {
+			it.onNext(historyService.queryAllHistory())
+			it.onComplete()
+		}
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(object : OnlyCompleteObserver<List<AnimationHistory>>() {
+					override fun onError(e: Throwable) {
+						animationHistoryLiveData.value = PackageData.error(e)
+					}
+
 					override fun onFinish(data: List<AnimationHistory>?) {
 						if (data == null || data.isEmpty())
 							animationHistoryLiveData.value = PackageData.empty()
 						else
 							animationHistoryLiveData.value = PackageData.content(data)
 					}
-
-					override fun onError(e: Throwable) {
-						animationHistoryLiveData.value = PackageData.error(e)
-					}
 				})
 	}
 
 	fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) {
-		RxObservable<Boolean>()
-				.doThings {
-					val result = historyService.delete(animationHistory)
-					if (result == 1)
-						it.onFinish(true)
-					else
-						it.onFinish(false)
-				}
-				.subscribe(object : RxObserver<Boolean>() {
-					override fun onFinish(data: Boolean?) {
-						if (data != null)
-							listener.invoke(data)
-					}
-
+		Observable.create<Boolean> {
+			val result = historyService.delete(animationHistory)
+			it.onNext(result == 1)
+			it.onComplete()
+		}
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(object : OnlyCompleteObserver<Boolean>() {
 					override fun onError(e: Throwable) {
 						e.printStackTrace()
 						listener.invoke(false)
+					}
+
+					override fun onFinish(data: Boolean?) {
+						if (data != null)
+							listener.invoke(data)
 					}
 				})
 	}
