@@ -1,0 +1,30 @@
+language: android   # 声明构建语言环境
+notifications:      # 每次构建的时候是否通知，如果不想收到通知邮箱（个人感觉邮件贼烦），那就设置false吧
+  email: false
+
+sudo: false         # 开启基于容器的Travis CI任务，让编译效率更高。
+android:            # 配置信息
+  components:
+  - tools
+  - build-tools-28.0.3
+  - android-28
+  - extras
+
+before_install:
+- chmod +x gradlew  # 改变gradlew的访问权限
+#  - sdkmanager --update
+#script:              # 执行:下面的命令
+#- ./gradlew assembleRelease
+#
+#before_deploy:       # 部署之前
+## 使用 mv 命令进行修改apk文件的名字
+#- mv app/build/outputs/apk/app-release.apk app/build/outputs/apk/buff.apk
+#
+#deploy:              # 部署
+#  provider: releases # 部署到GitHub Release，除此之外，Travis CI还支持发布到fir.im、AWS、Google App Engine等
+#  api_key:           # 填写GitHub的token （Settings -> Personal access tokens -> Generate new token）
+#    secure: 7f4dc45a19f742dce39cbe4d1e5852xxxxxxxxx
+#  file: app/build/outputs/apk/buff.apk   # 部署文件路径
+#  skip_cleanup: true     # 设置为true以跳过清理,不然apk文件就会被清理
+#  on:     # 发布时机
+#    tags: true       # tags设置为true表示只有在有tag的情况下才部署
