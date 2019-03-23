@@ -9,7 +9,7 @@
 	<string name="library_databindinglibrary_libraryName" translatable="false">DataBinding</string>
 	<string name="library_databindinglibrary_libraryDescription" translatable="false">The Data Binding Library is a support library that allows you to bind UI components in your layouts to data sources in your app using a declarative format rather than programmatically.</string>
 	<string name="library_databindinglibrary_libraryWebsite" translatable="false">https://developer.android.com/topic/libraries/data-binding/</string>
-	<string name="library_databindinglibrary_libraryVersion" translatable="false">3.2.0-rc03</string>
+	<string name="library_databindinglibrary_libraryVersion" translatable="false">3.3.2</string>
 	<!-- OpenSource section -->
 	<string name="library_databindinglibrary_isOpenSource" translatable="false">true</string>
 	<string name="library_databindinglibrary_repositoryLink" translatable="false">https://android.googlesource.com/platform/frameworks/data-binding/</string>

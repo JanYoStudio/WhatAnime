@@ -9,7 +9,7 @@
 	<string name="library_viewmodel_libraryName" translatable="false">ViewModel</string>
 	<string name="library_viewmodel_libraryDescription" translatable="false">The ViewModel class is designed to store and manage UI-related data in a lifecycle conscious way. The ViewModel class allows data to survive configuration changes such as screen rotations.</string>
 	<string name="library_viewmodel_libraryWebsite" translatable="false">https://developer.android.com/topic/libraries/architecture/viewmodel</string>
-	<string name="library_viewmodel_libraryVersion" translatable="false">2.0.0-rc01</string>
+	<string name="library_viewmodel_libraryVersion" translatable="false">2.0.0</string>
 	<!-- OpenSource section -->
 	<string name="library_viewmodel_isOpenSource" translatable="false">true</string>
 	<string name="library_viewmodel_repositoryLink" translatable="false">https://android.googlesource.com/platform/frameworks/support/+/master/lifecycle/viewmodel/</string>

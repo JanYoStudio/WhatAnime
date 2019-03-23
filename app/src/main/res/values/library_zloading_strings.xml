@@ -9,7 +9,7 @@
 	<string name="library_zloading_libraryName" translatable="false">ZLoading</string>
 	<string name="library_zloading_libraryDescription" translatable="false">这是一个自定义控件合集。目前包含Loading View。持续更新中…</string>
 	<string name="library_zloading_libraryWebsite" translatable="false">https://github.com/zyao89/ZLoading</string>
-	<string name="library_zloading_libraryVersion" translatable="false">1.1.2</string>
+	<string name="library_zloading_libraryVersion" translatable="false">1.2.0</string>
 	<!-- OpenSource section -->
 	<string name="library_zloading_isOpenSource" translatable="false">true</string>
 	<string name="library_zloading_repositoryLink" translatable="false">https://github.com/zyao89/ZLoading</string>

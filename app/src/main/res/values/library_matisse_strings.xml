@@ -9,7 +9,7 @@
 	<string name="library_matisse_libraryName" translatable="false">Matisse</string>
 	<string name="library_matisse_libraryDescription" translatable="false">A well-designed local image and video selector for Android</string>
 	<string name="library_matisse_libraryWebsite" translatable="false">https://github.com/zhihu/Matisse</string>
-	<string name="library_matisse_libraryVersion" translatable="false">0.5.2-beta2</string>
+	<string name="library_matisse_libraryVersion" translatable="false">0.5.2-beta4</string>
 	<!-- OpenSource section -->
 	<string name="library_matisse_isOpenSource" translatable="false">true</string>
 	<string name="library_matisse_repositoryLink" translatable="false">https://github.com/zhihu/Matisse</string>
