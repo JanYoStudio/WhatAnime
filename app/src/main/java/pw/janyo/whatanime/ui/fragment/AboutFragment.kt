@@ -3,8 +3,8 @@ package pw.janyo.whatanime.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
-import androidx.preference.SwitchPreference
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import pw.janyo.whatanime.R
@@ -16,8 +16,9 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
-		val hideSexPreference: SwitchPreference = findPreferenceById(R.string.key_hide_sex)
+		val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
+		val useInAppImageSelect: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
 		val openSourceLicenseAboutPreference: Preference = findPreferenceById(R.string.key_about_open_source_license)
 
 		languagePreference.summary = languageArray[Configure.language]
@@ -46,6 +47,10 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					}
 					.setNegativeButton(android.R.string.cancel, null)
 					.show()
+			true
+		}
+		useInAppImageSelect.setOnPreferenceChangeListener { _, _ ->
+			Configure.useInAppImageSelect = !useInAppImageSelect.isChecked
 			true
 		}
 		openSourceLicenseAboutPreference.setOnPreferenceClickListener {

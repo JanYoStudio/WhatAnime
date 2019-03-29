@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -31,6 +32,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.handler.MainItemListener
@@ -38,6 +40,7 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
+import pw.janyo.whatanime.utils.FileUtil
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.OnlyCompleteObserver
@@ -48,6 +51,7 @@ import java.io.File
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
+		private const val FILE_SELECT_CODE = 124
 		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_TITLE = "INTENT_TITLE"
@@ -179,24 +183,30 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun doSelect() {
-		requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { code, result ->
-			if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
-				Matisse.from(this)
-						.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
-						.showSingleMediaType(true)
-						.countable(false)
-						.maxSelectable(1)
-						.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-						.thumbnailScale(0.85f)
-						.imageEngine(CustomGlideEngine())
-						.forResult(REQUEST_CODE)
-			} else {
-				Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
-						.setAction(R.string.action_re_request_permission) {
-							reRequestPermission(code)
-						}
-						.show()
+		if (Configure.useInAppImageSelect)
+			requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) { code, result ->
+				if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
+					Matisse.from(this)
+							.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
+							.showSingleMediaType(true)
+							.countable(false)
+							.maxSelectable(1)
+							.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+							.thumbnailScale(0.85f)
+							.imageEngine(CustomGlideEngine())
+							.forResult(REQUEST_CODE)
+				} else {
+					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
+							.setAction(R.string.action_re_request_permission) {
+								reRequestPermission(code)
+							}
+							.show()
+				}
 			}
+		else {
+			val intent = Intent(Intent.ACTION_PICK)
+			intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+			startActivityForResult(intent, FILE_SELECT_CODE)
 		}
 	}
 
@@ -232,30 +242,67 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-			Observable.create<File> {
-				val fileList = Matisse.obtainPathResult(data)
-				if (fileList.isNotEmpty())
-					it.onNext(File(fileList[0]))
-				it.onComplete()
-			}
-					.subscribeOn(Schedulers.single())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(object : OnlyCompleteObserver<File>() {
-						override fun onError(e: Throwable) {
-							Logs.wtfm("onError: ", e)
-							Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-									.show()
-						}
+		when (requestCode) {
+			REQUEST_CODE -> {
+				if (resultCode == Activity.RESULT_OK) {
+					Observable.create<File> {
+						val fileList = Matisse.obtainPathResult(data)
+						if (fileList.isNotEmpty())
+							it.onNext(File(fileList[0]))
+						it.onComplete()
+					}
+							.subscribeOn(Schedulers.single())
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe(object : OnlyCompleteObserver<File>() {
+								override fun onError(e: Throwable) {
+									Logs.wtfm("onError: ", e)
+									Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+											.show()
+								}
 
-						override fun onFinish(data: File?) {
-							if (data != null)
-								mainViewModel.imageFile.value = data
-							else
-								Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-										.show()
-						}
-					})
+								override fun onFinish(data: File?) {
+									if (data != null)
+										mainViewModel.imageFile.value = data
+									else
+										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+												.show()
+								}
+							})
+				}
+			}
+			FILE_SELECT_CODE -> {
+				if (resultCode == Activity.RESULT_OK) {
+					Observable.create<File> {
+						val file = FileUtil.cloneUriToFile(this, data?.data!!)
+						if (file != null && file.exists())
+							it.onNext(file)
+						it.onComplete()
+					}
+							.subscribeOn(Schedulers.single())
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe(object : OnlyCompleteObserver<File>() {
+								override fun onError(e: Throwable) {
+									if (e is SecurityException) {
+										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+												.show()
+									} else {
+										e.printStackTrace()
+										Snackbar.make(binding.coordinatorLayout, e.message
+												?: getString(R.string.hint_select_file_path_null), Snackbar.LENGTH_LONG)
+												.show()
+									}
+								}
+
+								override fun onFinish(data: File?) {
+									if (data != null)
+										mainViewModel.imageFile.value = data
+									else
+										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+												.show()
+								}
+							})
+				}
+			}
 		}
 	}
 }

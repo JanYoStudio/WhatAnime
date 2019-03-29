@@ -72,7 +72,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 				val position = viewHolder.adapterPosition
 				historyRecyclerAdapter.notifyItemRemoved(position)
 				HistoryRepository.deleteHistory(historyRecyclerAdapter.items.removeAt(position)) {
-					Snackbar.make(binding.coordinatorLayout, if (it) R.string.hint_history_delete_done else R.string.hint_history_delete_error, Snackbar.LENGTH_LONG)
+					Snackbar.make(binding.coordinatorLayout, if (it) R.string.hint_history_delete_done else R.string.hint_history_delete_error, Snackbar.LENGTH_SHORT)
 							.show()
 					if (!it)
 						showRefresh()

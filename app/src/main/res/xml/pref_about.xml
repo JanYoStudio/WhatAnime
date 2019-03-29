@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory android:title="@string/category_settings">
-		<SwitchPreference
+		<CheckBoxPreference
 			android:key="@string/key_hide_sex"
 			android:title="@string/title_hide_sex" />
 		<Preference
 			android:key="@string/key_language"
 			android:title="@string/title_language" />
+		<CheckBoxPreference
+			android:key="@string/key_use_in_app_image_select"
+			android:summary="@string/summary_use_in_app_image_select"
+			android:title="@string/title_use_in_app_image_select" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/category_about">
 		<Preference
