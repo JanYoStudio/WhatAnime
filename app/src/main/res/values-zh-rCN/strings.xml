@@ -49,4 +49,7 @@
 	<string name="array_language_chinese_simplified">中文（简体）</string>
 	<string name="title_language">语言</string>
 	<string name="title_change_language">修改语言</string>
+	<string name="hint_select_file_uri_not_grant_permission">似乎是因为您使用的图库应用没有对Uri进行授权所以无法获取图片的信息，请尝试使用“应用内图片选择器”或者换一个图库应用。</string>
+	<string name="title_use_in_app_image_select">使用应用内图片选择器</string>
+	<string name="summary_use_in_app_image_select">需要 READ_EXTERNAL_STORAGE 权限</string>
 </resources>

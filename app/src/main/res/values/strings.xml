@@ -38,6 +38,7 @@
 	<string name="hint_origin_file_null">The image file doesn\'t exist! </string>
 	<string name="hint_select_file_not_exist">The selected image file doesn\'t exist! </string>
 	<string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
+	<string name="hint_select_file_uri_not_grant_permission">It seems that the gallery app you are using does not authorize Uri so you can\'t get the image information. \nTry using the \"in-app image selector\" or changing to a new gallery app.</string>
 	<string name="hint_similarity">Accuracy: </string>
 	<string name="hint_time">Time: </string>
 	<string name="hint_time_history">Save time: </string>

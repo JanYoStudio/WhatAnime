@@ -43,4 +43,13 @@
 	<string name="title_hide_sex">隱藏可能引起不適的內容</string>
 	<string name="title_janyo_license">授權管理</string>
 	<string name="title_version">當前版本</string>
+	<string name="array_language_default">默認</string>
+	<string name="array_language_chinese_traditional">中文（繁體）</string>
+	<string name="array_language_chinese_cantonese">粵語</string>
+	<string name="array_language_chinese_simplified">中文（簡體）</string>
+	<string name="title_language">語言</string>
+	<string name="title_change_language">修改語言</string>
+	<string name="hint_select_file_uri_not_grant_permission">似乎是因為您使用的圖庫應用沒有對Uri進行授權所以無法獲取圖片的信息，請嘗試使用“應用內圖片選擇器”或者換一個圖庫應用。</string>
+	<string name="title_use_in_app_image_select">使用應用內圖片選擇器</string>
+	<string name="summary_use_in_app_image_select">需要 READ_EXTERNAL_STORAGE 權限</string>
 </resources>
