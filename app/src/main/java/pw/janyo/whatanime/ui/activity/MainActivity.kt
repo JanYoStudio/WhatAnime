@@ -24,6 +24,9 @@ import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zyao89.view.zloading.ZLoadingDialog
 import com.zyao89.view.zloading.Z_TYPE
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
@@ -36,6 +39,7 @@ import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
+import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.Status.*
 import vip.mystery0.tools.base.binding.BaseBindingActivity
@@ -89,7 +93,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	private val imageFileObserver = Observer<File> {
 		if (!it.exists()) {
 			Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
-					.addCallback(object :Snackbar.Callback(){
+					.addCallback(object : Snackbar.Callback() {
 						override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
 							super.onDismissed(transientBottomBar, event)
 							finish()
@@ -229,12 +233,29 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-			val fileList = Matisse.obtainPathResult(data)
-			if (fileList.isNotEmpty())
-				mainViewModel.imageFile.value = File(fileList[0])
-			else
-				Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-						.show()
+			Observable.create<File> {
+				val fileList = Matisse.obtainPathResult(data)
+				if (fileList.isNotEmpty())
+					it.onNext(File(fileList[0]))
+				it.onComplete()
+			}
+					.subscribeOn(Schedulers.single())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(object : OnlyCompleteObserver<File>() {
+						override fun onError(e: Throwable) {
+							Logs.wtfm("onError: ", e)
+							Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+									.show()
+						}
+
+						override fun onFinish(data: File?) {
+							if (data != null)
+								mainViewModel.imageFile.value = data
+							else
+								Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
+										.show()
+						}
+					})
 		}
 	}
 }
