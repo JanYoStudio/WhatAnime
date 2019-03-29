@@ -4,6 +4,9 @@
 		<SwitchPreference
 			android:key="@string/key_hide_sex"
 			android:title="@string/title_hide_sex" />
+		<Preference
+			android:key="@string/key_language"
+			android:title="@string/title_language" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/category_about">
 		<Preference

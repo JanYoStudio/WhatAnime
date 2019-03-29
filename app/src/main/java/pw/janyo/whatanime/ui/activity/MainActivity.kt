@@ -30,6 +30,7 @@ import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.handler.MainItemListener
@@ -42,10 +43,9 @@ import vip.mystery0.logs.Logs
 import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.Status.*
-import vip.mystery0.tools.base.binding.BaseBindingActivity
 import java.io.File
 
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
 		private const val REQUEST_CODE = 123
 		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"

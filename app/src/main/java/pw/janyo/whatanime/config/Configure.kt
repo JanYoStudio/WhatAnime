@@ -8,4 +8,9 @@ object Configure {
 	var hideSex: Boolean
 		set(value) = sharedPreference.edit().putBoolean("config_hide_sex", value).apply()
 		get() = sharedPreference.getBoolean("config_hide_sex", true)
+
+	var language: Int
+		set(value) = sharedPreference.edit().putInt("config_language", value).apply()
+		get() = sharedPreference.getInt("config_language", 0)
+
 }

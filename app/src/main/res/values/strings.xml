@@ -6,7 +6,7 @@
 	<string name="cieyget" translatable="false">CieyGet</string>
 	<string name="mystery0" translatable="false">Mystery0</string>
 	<string name="gsoy" translatable="false">Gsoy</string>
-	<string name="link_zh_lyh" translatable="false">https://zh-lyh.github.io/</string>
+	<string name="link_zh_lyh" translatable="false">https://liuyuhong.ml/</string>
 	<string name="link_mystery0" translatable="false">https://mystery0.vip/</string>
 
 	<string name="hint_title_romaji">Romaji: </string>
@@ -25,6 +25,10 @@
 	<string name="category_about_janyo">About JanYo Studio</string>
 	<string name="category_about_whatanime">About WhatAnime</string>
 	<string name="category_settings">Settings</string>
+	<string name="array_language_default">Default</string>
+	<string name="array_language_chinese_simplified">Chinese (Simplified)</string>
+	<string name="array_language_chinese_traditional">Chinese (Traditional)</string>
+	<string name="array_language_chinese_cantonese">Cantonese</string>
 	<string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
 	<string name="hint_episode">Episode: </string>
 	<string name="hint_file_copy_error">File copy failed! </string>
@@ -49,5 +53,6 @@
 	<string name="title_about_open_source_license">Open Source</string>
 	<string name="title_activity_history">History</string>
 	<string name="title_hide_sex">Hide content of NSFW</string>
+	<string name="title_change_language">Change Language</string>
 	<string name="title_version">Version</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.base.WABaseActivity
 
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
@@ -19,9 +20,8 @@ import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.Status.*
-import vip.mystery0.tools.base.binding.BaseBindingActivity
 
-class HistoryActivity : BaseBindingActivity<ActivityHistoryBinding>(R.layout.activity_history) {
+class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
 	private lateinit var historyViewModel: HistoryViewModel
 	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
