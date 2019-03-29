@@ -10,7 +10,6 @@ import vip.mystery0.tools.base.binding.BaseBindingActivity
 import java.util.*
 
 abstract class WABaseActivity<B : ViewDataBinding>(@LayoutRes layoutId: Int?) : BaseBindingActivity<B>(layoutId) {
-
 	override fun attachBaseContext(newBase: Context) {
 		val newLocale: Locale = when (Configure.language) {
 			1 -> Locale.SIMPLIFIED_CHINESE
@@ -18,8 +17,6 @@ abstract class WABaseActivity<B : ViewDataBinding>(@LayoutRes layoutId: Int?) : 
 			3 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) Locale.forLanguageTag("zh-Hant-HK") else Locale.SIMPLIFIED_CHINESE
 			else -> Locale.getDefault()
 		}
-//		val list = LocaleList.getDefault()
-//		Logs.i("attachBaseContext: $list")
 		super.attachBaseContext(LanguageContextWrapper.wrap(newBase, newLocale))
 	}
 }
