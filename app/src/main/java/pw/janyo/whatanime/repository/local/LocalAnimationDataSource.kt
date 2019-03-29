@@ -26,11 +26,8 @@ object LocalAnimationDataSource : AnimationDateSource {
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
 		Observable.create<String> {
 			val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
-			if (animationHistory == null) {
-				RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, file, filter)
-				return@create
-			}
-			it.onNext(animationHistory.result)
+			if (animationHistory != null)
+				it.onNext(animationHistory.result)
 			it.onComplete()
 		}
 				.subscribeOn(Schedulers.io())
@@ -43,7 +40,11 @@ object LocalAnimationDataSource : AnimationDateSource {
 					}
 
 					override fun onFinish(data: Animation?) {
-						if (data == null || data.docs.isEmpty())
+						if (data == null) {
+							RemoteAnimationDataSource.queryAnimationByImage(animationLiveData, file, filter)
+							return
+						}
+						if (data.docs.isEmpty())
 							animationLiveData.value = PackageData.empty()
 						else {
 							if (Configure.hideSex)
