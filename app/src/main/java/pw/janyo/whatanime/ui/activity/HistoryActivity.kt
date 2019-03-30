@@ -56,6 +56,8 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 		super.initView()
 		setSupportActionBar(binding.toolbar)
 		supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+		title = getString(R.string.title_activity_history)
+		binding.toolbar.title = title
 		binding.toolbar.setNavigationOnClickListener {
 			finish()
 		}

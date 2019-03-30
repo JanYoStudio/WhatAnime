@@ -9,7 +9,9 @@ import pw.janyo.whatanime.ui.fragment.AboutFragment
 class AboutActivity : WABaseActivity<ActivityAboutBinding>(R.layout.activity_about) {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		supportFragmentManager.beginTransaction().replace(R.id.content_wrapper, AboutFragment()).commit()
+		supportFragmentManager.beginTransaction().replace(R.id.content_wrapper, AboutFragment())
+				.commit()
+		title = getString(R.string.title_activity_settings)
 		binding.toolbar.title = title
 		binding.toolbar.setNavigationOnClickListener {
 			finish()
