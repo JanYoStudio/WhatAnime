@@ -4,7 +4,7 @@
 
 # 检索结果出处
 
-> “WhatAnime” 开发团队(==此处特指Android客户端开发团队“JanYo Studio.”==)不对检索结果负责，检索结果由“WhatAnime” API维护者提供。
+> “WhatAnime” 开发团队(此处特指Android客户端开发团队“JanYo Studio.”)不对检索结果负责，检索结果由“WhatAnime” API维护者提供。
 
 > [“WhatAnime” API提供者主页](https://about.me/soruly)
 
