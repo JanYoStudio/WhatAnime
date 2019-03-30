@@ -236,6 +236,14 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				startActivity(Intent(this, AboutActivity::class.java))
 				true
 			}
+			R.id.action_about -> {
+				MarkdownActivity.intentTo(this, "about.md")
+				true
+			}
+			R.id.action_faq -> {
+				MarkdownActivity.intentTo(this, "faq.md")
+				true
+			}
 			else -> super.onOptionsItemSelected(item)
 		}
 	}

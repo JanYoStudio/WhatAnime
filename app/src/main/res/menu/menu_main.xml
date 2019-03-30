@@ -12,4 +12,20 @@
 		android:icon="@drawable/ic_info_outline"
 		android:title="@string/action_info"
 		app:showAsAction="ifRoom" />
+	<item
+		android:id="@+id/action_more"
+		android:icon="@drawable/ic_more"
+		android:title="@string/action_more"
+		app:showAsAction="ifRoom">
+		<menu>
+			<item
+				android:id="@+id/action_about"
+				android:title="@string/action_about"
+				app:showAsAction="never" />
+			<item
+				android:id="@+id/action_faq"
+				android:title="@string/action_faq"
+				app:showAsAction="never" />
+		</menu>
+	</item>
 </menu>

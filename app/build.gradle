@@ -7,8 +7,8 @@ apply plugin: 'kotlin-kapt'
 autoVersion {
 	major 1
 	minor 4
-	patch 3
-	beta 0
+	patch 4
+	beta 2
 	alpha 0
 	isShowBuild false
 }
@@ -77,4 +77,6 @@ dependencies {
 	implementation 'com.zhihu.android:matisse:0.5.2-beta4'
 	//About Library
 	implementation "com.mikepenz:aboutlibraries:6.2.1"
+	//Markwon
+	implementation "ru.noties.markwon:core:3.0.0"
 }
