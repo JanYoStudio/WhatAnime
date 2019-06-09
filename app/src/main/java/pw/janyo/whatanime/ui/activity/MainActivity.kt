@@ -226,8 +226,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		return true
 	}
 
-	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-		return when (item?.itemId) {
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		return when (item.itemId) {
 			R.id.action_history -> {
 				startActivity(Intent(this, HistoryActivity::class.java))
 				true
