@@ -65,7 +65,7 @@
 	<string name="title_change_preview_config">更改視頻預覽選項</string>
 	<string name="title_night_mode">夜間模式</string>
 	<string name="title_preview_config">視頻預覽</string>
-	<string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>
-	<string name="array_summary_preview_config_natural_scene_cutting">通過 trace.moe-media 自動檢測預覽的時間戳邊界，得到一個靜音的視頻預覽。</string>
+	<string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界，得到一個靜音的視頻預覽。</string>
+	<string name="array_summary_preview_config_natural_scene_cutting">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>
 	<string name="array_summary_preview_config_origin">截圖時刻前後3秒的視頻預覽。（提前1秒，延後2秒）</string>
 </resources>
