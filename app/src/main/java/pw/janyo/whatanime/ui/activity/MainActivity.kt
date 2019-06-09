@@ -78,7 +78,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			Content -> {
 				mainRecyclerAdapter.items.clear()
 				mainRecyclerAdapter.items.addAll(it.data!!.docs)
-				mainRecyclerAdapter.notifyDataSetChanged()
 				hideDialog()
 			}
 			Loading -> showDialog()

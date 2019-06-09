@@ -29,7 +29,6 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 			Content -> {
 				historyRecyclerAdapter.items.clear()
 				historyRecyclerAdapter.items.addAll(it.data!!)
-				historyRecyclerAdapter.notifyDataSetChanged()
 				dismissRefresh()
 			}
 			Loading -> showRefresh()
