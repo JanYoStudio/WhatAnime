@@ -62,17 +62,17 @@ object LocalAnimationDataSource : AnimationDateSource {
 		animationHistory.originPath = file.absolutePath
 		val saveFile = FileUtil.getCacheFile(file)
 		if (saveFile == null) {
-			animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
+			animationLiveData.postValue(PackageData.error(Exception(StringConstant.hint_cache_make_dir_error)))
 			return
 		}
 		val exception = doByTry { FileTools.instance.copyFile(file, saveFile) }
 		if (exception !is ToolsException) {
-			animationLiveData.value = PackageData.error(Exception(StringConstant.hint_file_copy_error))
+			animationLiveData.postValue(PackageData.error(Exception(StringConstant.hint_file_copy_error)))
 			return
 		}
 		when (exception.code) {
-			ToolsException.MAKE_DIR_ERROR -> animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
-			ToolsException.FILE_NOT_EXIST -> animationLiveData.value = PackageData.error(Exception(StringConstant.hint_origin_file_null))
+			ToolsException.MAKE_DIR_ERROR -> animationLiveData.postValue(PackageData.error(Exception(StringConstant.hint_cache_make_dir_error)))
+			ToolsException.FILE_NOT_EXIST -> animationLiveData.postValue(PackageData.error(Exception(StringConstant.hint_origin_file_null)))
 		}
 		animationHistory.cachePath = saveFile.absolutePath
 		animationHistory.result = GsonFactory.gson.toJson(animation)
