@@ -15,7 +15,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -28,7 +27,6 @@ import com.zyao89.view.zloading.Z_TYPE
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-
 import kotlinx.android.synthetic.main.activity_main.*
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
@@ -130,7 +128,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		setSupportActionBar(binding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		mainRecyclerAdapter = MainRecyclerAdapter(this, MainItemListener(binding))
-		contentMainBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
 

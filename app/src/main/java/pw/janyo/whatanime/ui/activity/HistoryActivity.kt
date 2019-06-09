@@ -2,14 +2,12 @@ package pw.janyo.whatanime.ui.activity
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
-
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
 import pw.janyo.whatanime.handler.HistoryItemListener
@@ -63,7 +61,6 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 		}
 		contentHistoryBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 		historyRecyclerAdapter = HistoryRecyclerAdapter(this, HistoryItemListener(this, binding))
-		contentHistoryBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 		contentHistoryBinding.recyclerView.adapter = historyRecyclerAdapter
 		ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 			override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
