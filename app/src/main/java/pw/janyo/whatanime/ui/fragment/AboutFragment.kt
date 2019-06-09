@@ -14,17 +14,20 @@ import vip.mystery0.tools.base.BasePreferenceFragment
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	private val languageArray by lazy { resources.getStringArray(R.array.language) }
 	private val nightModeArray by lazy { resources.getStringArray(R.array.night_mode) }
+	private val previewConfigArray by lazy { resources.getStringArray(R.array.preview_config_summary) }
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
+		val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
 		val useInAppImageSelect: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
 		val openSourceLicenseAboutPreference: Preference = findPreferenceById(R.string.key_about_open_source_license)
 
 		languagePreference.summary = languageArray[Configure.language]
 		nightModePreference.summary = nightModeArray[Configure.nightMode]
+		previewConfigPreference.summary=previewConfigArray[Configure.previewConfig]
 
 		hideSexPreference.setOnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
@@ -62,13 +65,28 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.setPositiveButton(android.R.string.ok) { _, _ ->
 						val needRestart = select != Configure.nightMode
 						Configure.nightMode = select
-						nightModePreference.summary = nightModeArray[Configure.language]
+						nightModePreference.summary = nightModeArray[Configure.nightMode]
 						if (needRestart) {
 							val intent = activity!!.packageManager.getLaunchIntentForPackage(activity!!.packageName)
 							intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 							activity!!.startActivity(intent)
 							activity!!.finish()
 						}
+					}
+					.setNegativeButton(android.R.string.cancel, null)
+					.show()
+			true
+		}
+		previewConfigPreference.setOnPreferenceClickListener {
+			var select = Configure.previewConfig
+			MaterialAlertDialogBuilder(activity!!)
+					.setTitle(R.string.title_change_preview_config)
+					.setSingleChoiceItems(R.array.preview_config, select) { _, which ->
+						select = which
+					}
+					.setPositiveButton(android.R.string.ok) { _, _ ->
+						Configure.previewConfig = select
+						previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
 					}
 					.setNegativeButton(android.R.string.cancel, null)
 					.show()

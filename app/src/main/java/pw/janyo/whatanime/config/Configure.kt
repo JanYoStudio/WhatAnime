@@ -21,4 +21,9 @@ object Configure {
 				.putInt("config_night_mode", value)
 				.apply()
 		get() = sharedPreference.getInt("config_night_mode", 3)
+	var previewConfig: Int
+		set(value) = sharedPreference.edit()
+				.putInt("config_preview_config", value)
+				.apply()
+		get() = sharedPreference.getInt("config_preview_config", 0)
 }

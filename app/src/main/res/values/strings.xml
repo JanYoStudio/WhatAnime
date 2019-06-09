@@ -36,6 +36,9 @@
 	<string name="array_night_mode_on">On</string>
 	<string name="array_night_mode_off">Off</string>
 	<string name="array_night_mode_follow_system">Follow system</string>
+	<string name="array_preview_config_origin">Origin</string>
+	<string name="array_preview_config_natural_scene_cutting">Preview with Natural Scene Cutting</string>
+	<string name="array_preview_config_mute_natural">Preview with Natural Scene Cutting (Mute)</string>
 	<string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
 	<string name="hint_episode">Episode: </string>
 	<string name="hint_file_copy_error">File copy failed! </string>
@@ -62,5 +65,6 @@
 	<string name="title_activity_history">History</string>
 	<string name="title_hide_sex">Hide content of NSFW</string>
 	<string name="title_change_language">Change Language</string>
+	<string name="title_change_preview_config">Change Previews</string>
 	<string name="title_version">Version</string>
 </resources>

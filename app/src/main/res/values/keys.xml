@@ -3,11 +3,14 @@
 	<string name="key_hide_sex" translatable="false">key_hide_sex</string>
 	<string name="key_language" translatable="false">key_language</string>
 	<string name="key_night_mode" translatable="false">key_night_mode</string>
+	<string name="key_preview_config" translatable="false">key_preview_config</string>
 	<string name="key_use_in_app_image_select" translatable="false">key_use_in_app_image_select</string>
 
 	<string name="title_language">Language</string>
 
 	<string name="title_night_mode">Night Mode</string>
+
+	<string name="title_preview_config">Previews</string>
 
 	<string name="title_use_in_app_image_select">Use in-app image selector</string>
 	<string name="summary_use_in_app_image_select">READ_EXTERNAL_STORAGE permission required</string>

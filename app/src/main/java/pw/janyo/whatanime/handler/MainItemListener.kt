@@ -2,6 +2,7 @@ package pw.janyo.whatanime.handler
 
 import android.net.Uri
 import android.view.View
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.model.Docs
 import java.io.UnsupportedEncodingException
@@ -13,7 +14,11 @@ class MainItemListener(activityMainBinding: ActivityMainBinding) {
 
 	fun click(docs: Docs) {
 		try {
-			val requestUrl = "https://trace.moe/preview.php?anilist_id=" + docs.anilist_id + "&file=" + URLEncoder.encode(docs.filename, "UTF-8") + "&t=" + docs.at + "&token=" + docs.tokenthumb
+			val requestUrl = when (Configure.previewConfig) {
+				1 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}"
+				2 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}&mute"
+				else -> "https://trace.moe/preview.php?anilist_id=${docs.anilist_id}&file=${URLEncoder.encode(docs.filename, "UTF-8")}&t=${docs.at}&token=${docs.tokenthumb}"
+			}
 			if (nowPlayUrl != requestUrl) {
 				nowPlayUrl = requestUrl
 				contentMainBinding.videoView.stopPlayback()
@@ -28,8 +33,11 @@ class MainItemListener(activityMainBinding: ActivityMainBinding) {
 				contentMainBinding.imageView.visibility = View.VISIBLE
 			}
 			contentMainBinding.videoView.start()
-		} catch (e: UnsupportedEncodingException) {
+		} catch (e: Exception) {
 			e.printStackTrace()
+			contentMainBinding.progressBar.visibility = View.GONE
+			contentMainBinding.videoView.visibility = View.GONE
+			contentMainBinding.imageView.visibility = View.VISIBLE
 		}
 	}
 }
