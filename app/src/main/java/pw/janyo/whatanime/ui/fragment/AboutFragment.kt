@@ -10,6 +10,7 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import vip.mystery0.tools.base.BasePreferenceFragment
+import vip.mystery0.tools.utils.PackageTools
 
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	private val languageArray by lazy { resources.getStringArray(R.array.language) }
@@ -27,7 +28,12 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 
 		languagePreference.summary = languageArray[Configure.language]
 		nightModePreference.summary = nightModeArray[Configure.nightMode]
-		previewConfigPreference.summary=previewConfigArray[Configure.previewConfig]
+		previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
+		if (PackageTools.instance.isAfter(PackageTools.VERSION_Q)) {
+			Configure.useInAppImageSelect = false
+			useInAppImageSelect.isEnabled = false
+		}
+		useInAppImageSelect.isChecked = Configure.useInAppImageSelect
 
 		hideSexPreference.setOnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
