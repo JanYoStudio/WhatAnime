@@ -52,4 +52,20 @@
 	<string name="hint_select_file_uri_not_grant_permission">似乎是因為您使用的圖庫應用沒有對Uri進行授權所以無法獲取圖片的信息，請嘗試使用“應用內圖片選擇器”或者換一個圖庫應用。</string>
 	<string name="title_use_in_app_image_select">使用應用內圖片選擇器</string>
 	<string name="summary_use_in_app_image_select">需要 READ_EXTERNAL_STORAGE 權限</string>
+	<string name="action_faq">疑難解答</string>
+	<string name="action_about">關於</string>
+	<string name="action_more">更多</string>
+	<string name="array_night_mode_auto">自動</string>
+	<string name="array_night_mode_follow_system">跟隨系統</string>
+	<string name="array_night_mode_off">關</string>
+	<string name="array_night_mode_on">開</string>
+	<string name="array_preview_config_mute_natural">自然場景切割視頻預覽（靜音）</string>
+	<string name="array_preview_config_natural_scene_cutting">自然場景切割視頻預覽</string>
+	<string name="array_preview_config_origin">原始視頻預覽</string>
+	<string name="title_change_preview_config">更改視頻預覽選項</string>
+	<string name="title_night_mode">夜間模式</string>
+	<string name="title_preview_config">視頻預覽</string>
+	<string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>
+	<string name="array_summary_preview_config_natural_scene_cutting">通過 trace.moe-media 自動檢測預覽的時間戳邊界，得到一個靜音的視頻預覽。</string>
+	<string name="array_summary_preview_config_origin">截圖時刻前後3秒的視頻預覽。（提前1秒，延後2秒）</string>
 </resources>

@@ -55,4 +55,17 @@
 	<string name="action_faq">疑难解答</string>
 	<string name="action_about">关于</string>
 	<string name="action_more">更多</string>
+	<string name="array_night_mode_auto">自动</string>
+	<string name="array_night_mode_follow_system">跟随系统</string>
+	<string name="array_night_mode_off">关</string>
+	<string name="array_night_mode_on">开</string>
+	<string name="array_preview_config_mute_natural">自然场景切割视频预览（静音）</string>
+	<string name="array_preview_config_natural_scene_cutting">自然场景切割视频预览</string>
+	<string name="array_preview_config_origin">原始视频预览</string>
+	<string name="title_change_preview_config">更改视频预览选项</string>
+	<string name="title_night_mode">夜间模式</string>
+	<string name="title_preview_config">视频预览</string>
+	<string name="array_summary_preview_config_mute_natural">透过 trace.moe-media 自动检测预览嘅时间戳边界。</string>
+	<string name="array_summary_preview_config_natural_scene_cutting">透过 trace.moe-media 自动检测预览嘅时间戳边界，得到一个静音嘅视频预览。</string>
+	<string name="array_summary_preview_config_origin">截图时刻前后3秒嘅视频预览。（提前1秒，延后2秒）</string>
 </resources>

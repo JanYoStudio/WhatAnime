@@ -5,7 +5,6 @@ import android.view.View
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.model.Docs
-import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
 class MainItemListener(activityMainBinding: ActivityMainBinding) {
