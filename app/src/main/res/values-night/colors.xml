@@ -8,4 +8,5 @@
     <color name="mColorSecondaryVariant">@color/design_dark_default_color_secondary_variant</color>
     <color name="mColorOnSecondary">@color/design_dark_default_color_on_secondary</color>
     <color name="mColorSurface">@color/design_dark_default_color_background</color>
+    <color name="mColorOnSurface">#FFFFFF</color>
 </resources>

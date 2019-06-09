@@ -11,7 +11,14 @@
         <item name="android:navigationBarColor">@color/mColorPrimaryDark</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
 
-    <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark"/>
+
+    <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="strokeWidth">0dp</item>
+        <item name="strokeColor">@color/outlined_stroke_color</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">#303030</item>
+    </style>
 </resources>
