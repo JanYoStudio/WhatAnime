@@ -16,7 +16,7 @@
 -keepattributes *Annotation*
 
 # 忽略警告
--ignorewarning
+-ignorewarnings
 
 -keep public class * extends android.app.Activity                               # 保持哪些类不被混淆
 -keep public class * extends android.app.Application                            # 保持哪些类不被混淆
