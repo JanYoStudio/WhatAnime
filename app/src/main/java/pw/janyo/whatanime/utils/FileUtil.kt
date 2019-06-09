@@ -21,7 +21,7 @@ object FileUtil {
 		if (!saveParent.exists())
 			saveParent.mkdirs()
 		if (saveParent.isDirectory || saveParent.delete() && saveParent.mkdirs()) {
-			val md5Name = StringTools.md5(file.absolutePath)
+			val md5Name = StringTools.instance.md5(file.absolutePath)
 			return File(saveParent, md5Name)
 		}
 		return null
@@ -40,9 +40,8 @@ object FileUtil {
 		if (!parent.exists())
 			parent.mkdirs()
 		if (parent.isDirectory || parent.delete() && parent.mkdirs()) {
-			val file = File(parent, StringTools.sha1(uri.toString()))
-			val contentResolver = context.contentResolver
-			FileTools.saveFile(contentResolver.openInputStream(uri), file)
+			val file = File(parent, StringTools.instance.sha1(uri.toString()))
+			FileTools.instance.cloneUriToFile(context, uri, file)
 			return file
 		}
 		return null

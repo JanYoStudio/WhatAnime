@@ -7,6 +7,9 @@
 		<Preference
 			android:key="@string/key_language"
 			android:title="@string/title_language" />
+		<Preference
+			android:key="@string/key_night_mode"
+			android:title="@string/title_night_mode" />
 		<CheckBoxPreference
 			android:key="@string/key_use_in_app_image_select"
 			android:summary="@string/summary_use_in_app_image_select"

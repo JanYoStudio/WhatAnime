@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="colorPrimary">#008577</color>
-	<color name="colorPrimaryDark">#00574B</color>
-	<color name="colorAccent">#D81B60</color>
+	<color name="mColorPrimary">@color/design_default_color_primary</color>
+	<color name="mColorPrimaryVariant">@color/design_default_color_primary_variant</color>
+	<color name="mColorPrimaryDark">@color/design_default_color_primary_dark</color>
+	<color name="mColorOnPrimary">@color/design_default_color_on_primary</color>
+	<color name="mColorSecondary">@color/design_default_color_secondary</color>
+	<color name="mColorSecondaryVariant">@color/design_default_color_secondary_variant</color>
+	<color name="mColorOnSecondary">@color/design_default_color_on_secondary</color>
+	<color name="mColorSurface">@color/design_default_color_background</color>
 </resources>

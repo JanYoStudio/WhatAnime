@@ -6,4 +6,10 @@
 		<item>@string/array_language_chinese_traditional</item>
 		<item>@string/array_language_chinese_cantonese</item>
 	</string-array>
+	<string-array name="night_mode">
+		<item>@string/array_night_mode_auto</item>
+		<item>@string/array_night_mode_on</item>
+		<item>@string/array_night_mode_off</item>
+		<item>@string/array_night_mode_follow_system</item>
+	</string-array>
 </resources>

@@ -32,6 +32,10 @@
 	<string name="array_language_chinese_simplified">Chinese (Simplified)</string>
 	<string name="array_language_chinese_traditional">Chinese (Traditional)</string>
 	<string name="array_language_chinese_cantonese">Cantonese</string>
+	<string name="array_night_mode_auto">Auto</string>
+	<string name="array_night_mode_on">On</string>
+	<string name="array_night_mode_off">Off</string>
+	<string name="array_night_mode_follow_system">Follow system</string>
 	<string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
 	<string name="hint_episode">Episode: </string>
 	<string name="hint_file_copy_error">File copy failed! </string>

@@ -16,4 +16,9 @@ object Configure {
 	var useInAppImageSelect: Boolean
 		set(value) = sharedPreference.edit().putBoolean("config_use_in_app_image_select", value).apply()
 		get() = sharedPreference.getBoolean("config_use_in_app_image_select", false)
+	var nightMode: Int
+		set(value) = sharedPreference.edit()
+				.putInt("config_night_mode", value)
+				.apply()
+		get() = sharedPreference.getInt("config_night_mode", 3)
 }

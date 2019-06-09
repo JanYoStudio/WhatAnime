@@ -20,7 +20,7 @@ android {
 	}
 	defaultConfig {
 		applicationId "pw.janyo.whatanime"
-		minSdkVersion 19
+		minSdkVersion 21
 		targetSdkVersion 29
 		versionCode autoVersion.code
 		versionName autoVersion.name

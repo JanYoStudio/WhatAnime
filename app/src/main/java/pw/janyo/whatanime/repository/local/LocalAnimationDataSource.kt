@@ -16,6 +16,8 @@ import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.FileUtil
 import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
+import vip.mystery0.tools.ToolsException
+import vip.mystery0.tools.doByTry
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.util.*
@@ -63,19 +65,14 @@ object LocalAnimationDataSource : AnimationDateSource {
 			animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
 			return
 		}
-		when (FileTools.copyFile(file.absolutePath, saveFile.absolutePath)) {
-			FileTools.MAKE_DIR_ERROR -> {
-				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
-				return
-			}
-			FileTools.FILE_NOT_EXIST -> {
-				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_origin_file_null))
-				return
-			}
-			FileTools.ERROR -> {
-				animationLiveData.value = PackageData.error(Exception(StringConstant.hint_file_copy_error))
-				return
-			}
+		val exception = doByTry { FileTools.instance.copyFile(file, saveFile) }
+		if (exception !is ToolsException) {
+			animationLiveData.value = PackageData.error(Exception(StringConstant.hint_file_copy_error))
+			return
+		}
+		when (exception.code) {
+			ToolsException.MAKE_DIR_ERROR -> animationLiveData.value = PackageData.error(Exception(StringConstant.hint_cache_make_dir_error))
+			ToolsException.FILE_NOT_EXIST -> animationLiveData.value = PackageData.error(Exception(StringConstant.hint_origin_file_null))
 		}
 		animationHistory.cachePath = saveFile.absolutePath
 		animationHistory.result = GsonFactory.gson.toJson(animation)
