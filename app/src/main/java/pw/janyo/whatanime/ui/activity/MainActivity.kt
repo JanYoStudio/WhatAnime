@@ -44,6 +44,7 @@ import vip.mystery0.logs.Logs
 import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.Status.*
+import vip.mystery0.tools.utils.PackageTools
 import java.io.File
 
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -180,7 +181,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun doSelect() {
-		if (Configure.useInAppImageSelect)
+		if (Configure.useInAppImageSelect && PackageTools.instance.isBefore(PackageTools.VERSION_Q, exclude = true))
 			requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) { code, result ->
 				if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
 					Matisse.from(this)
