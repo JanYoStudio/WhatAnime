@@ -7,7 +7,6 @@ import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
-import pw.janyo.whatanime.factory.GsonFactory
 import pw.janyo.whatanime.factory.RetrofitFactory
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
@@ -15,6 +14,7 @@ import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.utils.Base64
 import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
+import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 
@@ -27,7 +27,7 @@ object RemoteAnimationDataSource : AnimationDateSource {
 		searchApi.search(token, base64, filter)
 				.subscribeOn(Schedulers.io())
 				.map {
-					val data = GsonFactory.parse<Animation>(it)
+					val data = it.string().fromJson<Animation>()
 					LocalAnimationDataSource.saveHistory(animationLiveData, file, filter, data)
 					data
 				}

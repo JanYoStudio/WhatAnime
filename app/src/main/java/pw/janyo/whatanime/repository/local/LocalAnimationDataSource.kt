@@ -6,7 +6,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant
-import pw.janyo.whatanime.factory.GsonFactory
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
@@ -18,6 +17,8 @@ import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.tools.ToolsException
 import vip.mystery0.tools.doByTry
+import vip.mystery0.tools.factory.fromJson
+import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 import java.util.*
@@ -34,7 +35,7 @@ object LocalAnimationDataSource : AnimationDateSource {
 		}
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.computation())
-				.map { GsonFactory.gson.fromJson<Animation>(it, Animation::class.java) }
+				.map { it.fromJson<Animation>() }
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(object : OnlyCompleteObserver<Animation>() {
 					override fun onError(e: Throwable) {
@@ -78,7 +79,7 @@ object LocalAnimationDataSource : AnimationDateSource {
 			return
 		}
 		animationHistory.cachePath = saveFile.absolutePath
-		animationHistory.result = GsonFactory.gson.toJson(animation)
+		animationHistory.result = animation.toJson()
 		animationHistory.time = Calendar.getInstance().timeInMillis
 		if (animation.docs.isNotEmpty())
 			animationHistory.title = animation.docs[0].title_native

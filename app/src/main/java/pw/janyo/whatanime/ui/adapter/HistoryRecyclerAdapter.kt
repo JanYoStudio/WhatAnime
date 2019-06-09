@@ -6,11 +6,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ItemHistoryBinding
-import pw.janyo.whatanime.factory.GsonFactory
 import pw.janyo.whatanime.handler.HistoryItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
+import vip.mystery0.tools.factory.fromJson
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,7 +21,7 @@ class HistoryRecyclerAdapter(private val context: Context,
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
 	override fun setItemView(binding: ItemHistoryBinding, position: Int, data: AnimationHistory) {
-		val animation = GsonFactory.gson.fromJson<Animation>(data.result, Animation::class.java)
+		val animation = data.result.fromJson<Animation>()
 		binding.handler = listener
 		binding.animation = animation
 		binding.history = data
