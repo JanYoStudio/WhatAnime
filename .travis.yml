@@ -12,6 +12,8 @@ android:            # 配置信息
 
 before_install:
 - chmod +x gradlew  # 改变gradlew的访问权限
+- curl https://gist.githubusercontent.com/noamtamim/b04ef67239d2b43638aa5a9a024a1937/raw/56f1a38dd88a3774b71a063822444f3961d61873/android-sdk-license.sh | sh
+
 #  - sdkmanager --update
 #script:              # 执行:下面的命令
 #- ./gradlew assembleRelease
