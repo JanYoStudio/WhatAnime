@@ -35,11 +35,11 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		useInAppImageSelect.isChecked = Configure.useInAppImageSelect
 
-		hideSexPreference.setOnPreferenceChangeListener { _, _ ->
+		hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
 			true
 		}
-		languagePreference.setOnPreferenceClickListener {
+		languagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.language
 			MaterialAlertDialogBuilder(activity!!)
 					.setTitle(R.string.title_change_language)
@@ -61,7 +61,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		nightModePreference.setOnPreferenceClickListener {
+		nightModePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.nightMode
 			MaterialAlertDialogBuilder(activity!!)
 					.setTitle(" ")
@@ -83,7 +83,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		previewConfigPreference.setOnPreferenceClickListener {
+		previewConfigPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.previewConfig
 			MaterialAlertDialogBuilder(activity!!)
 					.setTitle(R.string.title_change_preview_config)
@@ -98,11 +98,11 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		useInAppImageSelect.setOnPreferenceChangeListener { _, _ ->
+		useInAppImageSelect.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.useInAppImageSelect = !useInAppImageSelect.isChecked
 			true
 		}
-		openSourceLicenseAboutPreference.setOnPreferenceClickListener {
+		openSourceLicenseAboutPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			LibsBuilder()
 					.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
 					.withAboutAppName(getString(R.string.app_name))
@@ -119,7 +119,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 							"Room",
 							"ViewModel",
 							"ZLoading")
-					.start(activity)
+					.start(activity!!)
 			true
 		}
 	}
