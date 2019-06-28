@@ -45,19 +45,19 @@ dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	//androidx
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-	implementation 'androidx.vectordrawable:vectordrawable:1.1.0-beta01'
+	implementation 'androidx.vectordrawable:vectordrawable:1.1.0-beta02'
 	implementation 'androidx.appcompat:appcompat:1.0.2'
-	implementation 'androidx.preference:preference:1.1.0-alpha05'
-	implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta1'
+	implementation 'androidx.preference:preference:1.1.0-beta01'
+	implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
 	implementation 'com.google.android.material:material:1.1.0-alpha07'
 	//Mystery0Tools
 	implementation 'vip.mystery0.tools:logs:1.4.0'
 	implementation 'vip.mystery0.tools:tools:1.9.7'
 	implementation 'vip.mystery0.tools:crashhandler:1.1.1'
 	//Retrofit
-	implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
-	implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+	implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
+	implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 	implementation 'com.squareup.okhttp3:logging-interceptor:4.0.0-alpha02'
 	//Glide
 	implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -66,17 +66,17 @@ dependencies {
 	implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
 	kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha01'
 	//Room
-	implementation 'androidx.room:room-runtime:2.1.0-rc01'
-	kapt 'androidx.room:room-compiler:2.1.0-rc01'
+	implementation 'androidx.room:room-runtime:2.1.0'
+	kapt 'androidx.room:room-compiler:2.1.0'
 	//RxAndroid
 	implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-	implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+	implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
 	//ZLoading
 	implementation 'com.zyao89:zloading:1.2.0'
 	//Matisse
 	implementation 'com.zhihu.android:matisse:0.5.2-beta4'
 	//About Library
-	implementation "com.mikepenz:aboutlibraries:6.2.1"
+	implementation "com.mikepenz:aboutlibraries:7.0.0"
 	//Markwon
-	implementation 'ru.noties.markwon:core:3.0.1'
+	implementation 'ru.noties.markwon:core:3.0.2'
 }
