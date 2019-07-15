@@ -48,11 +48,11 @@ dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	//androidx
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-	implementation 'androidx.vectordrawable:vectordrawable:1.1.0-beta02'
+	implementation 'androidx.vectordrawable:vectordrawable:1.1.0-rc01'
 	implementation 'androidx.appcompat:appcompat:1.0.2'
-	implementation 'androidx.preference:preference:1.1.0-beta01'
+	implementation 'androidx.preference:preference:1.1.0-rc01'
 	implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-	implementation 'com.google.android.material:material:1.1.0-alpha07'
+	implementation 'com.google.android.material:material:1.1.0-alpha08'
 	//Mystery0Tools
 	implementation 'vip.mystery0.tools:logs:1.4.0'
 	implementation 'vip.mystery0.tools:tools:1.9.7'
@@ -67,7 +67,7 @@ dependencies {
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 	//Lifecycle
 	implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
-	kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha01'
+	kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha02'
 	//Room
 	implementation 'androidx.room:room-runtime:2.1.0'
 	kapt 'androidx.room:room-compiler:2.1.0'
