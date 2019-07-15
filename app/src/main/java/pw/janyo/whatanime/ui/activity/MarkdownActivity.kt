@@ -2,12 +2,12 @@ package pw.janyo.whatanime.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import io.noties.markwon.Markwon
 import pw.janyo.whatanime.R
 
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityMarkdownBinding
 import pw.janyo.whatanime.utils.FileUtil
-import io.noties.markwon.Markwon
 
 class MarkdownActivity : WABaseActivity<ActivityMarkdownBinding>(R.layout.activity_markdown) {
 	private var fileName: String = ""
