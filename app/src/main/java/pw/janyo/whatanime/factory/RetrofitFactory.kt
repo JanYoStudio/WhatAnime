@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.factory
 
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import pw.janyo.whatanime.constant.Constant
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -16,7 +15,7 @@ object RetrofitFactory {
 //					.setLevel(HttpLoggingInterceptor.Level.BODY))
 			.build()
 
-	val retrofit = Retrofit.Builder()
+	val retrofit: Retrofit = Retrofit.Builder()
 			.baseUrl(Constant.baseUrl)
 			.client(client)
 			.addCallAdapterFactory(RxJava2CallAdapterFactory.create())

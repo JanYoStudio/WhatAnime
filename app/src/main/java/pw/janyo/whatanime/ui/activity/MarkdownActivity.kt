@@ -7,7 +7,7 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityMarkdownBinding
 import pw.janyo.whatanime.utils.FileUtil
-import ru.noties.markwon.Markwon
+import io.noties.markwon.Markwon
 
 class MarkdownActivity : WABaseActivity<ActivityMarkdownBinding>(R.layout.activity_markdown) {
 	private var fileName: String = ""
@@ -32,7 +32,7 @@ class MarkdownActivity : WABaseActivity<ActivityMarkdownBinding>(R.layout.activi
 	override fun initData() {
 		super.initData()
 		if (intent != null && intent.hasExtra("fileName"))
-			fileName = intent.getStringExtra("fileName")
+			fileName = intent.getStringExtra("fileName")!!
 		else
 			finish()
 		when (fileName) {
