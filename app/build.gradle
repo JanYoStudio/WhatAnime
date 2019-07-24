@@ -61,7 +61,7 @@ dependencies {
 	implementation 'com.squareup.retrofit2:retrofit:2.6.0'
 	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
 	implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-	implementation 'com.squareup.okhttp3:logging-interceptor:4.0.0-alpha02'
+	implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
 	//Glide
 	implementation 'com.github.bumptech.glide:glide:4.9.0'
 	annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
@@ -79,7 +79,7 @@ dependencies {
 	//Matisse
 	implementation 'com.zhihu.android:matisse:0.5.2-beta4'
 	//About Library
-	implementation "com.mikepenz:aboutlibraries:7.0.0"
+	implementation "com.mikepenz:aboutlibraries:7.0.1"
 	//Markwon
-	implementation 'io.noties.markwon:core:4.0.1'
+	implementation 'io.noties.markwon:core:4.0.2'
 }
