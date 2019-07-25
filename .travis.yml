@@ -6,7 +6,7 @@ sudo: false         # 开启基于容器的Travis CI任务，让编译效率更�
 android:            # 配置信息
   components:
   - tools
-  - build-tools-29.0.0
+  - build-tools-29.0.1
   - android-29
   - extras
 
