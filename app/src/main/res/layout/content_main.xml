@@ -81,17 +81,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/hint_search_limit" />
-
-                    <TextView
-                        android:id="@+id/searchLimit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                    android:paddingStart="6dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="6dp"
+                    android:paddingBottom="12dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -101,17 +94,8 @@
                     <TextView
                         android:id="@+id/searchQuota"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_search_limit_ttl" />
-
-                    <TextView
-                        android:id="@+id/searchLimitTtl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -121,7 +105,8 @@
                     <TextView
                         android:id="@+id/searchQuotaTtl"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 

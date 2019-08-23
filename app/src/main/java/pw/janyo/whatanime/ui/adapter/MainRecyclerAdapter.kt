@@ -13,12 +13,8 @@ import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Docs
 import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.utils.formatTime
-import vip.mystery0.tools.utils.toCalendar
-import vip.mystery0.tools.utils.toTimeString
 import java.net.URLEncoder
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class MainRecyclerAdapter(private val context: Context,
 						  private val listener: MainItemListener) : BaseBindingRecyclerViewAdapter<Docs, ItemSearchResultBinding>(R.layout.item_search_result) {
@@ -36,18 +32,14 @@ class MainRecyclerAdapter(private val context: Context,
 		binding.textViewTitleChinese.text = chineseTitle
 		binding.textViewTitleEnglish.text = englishTitle
 		binding.textViewTitleRomaji.text = romajiTitle
-		val dateFormat = SimpleDateFormat("mm:ss", Locale.CHINA)
-		val calendar = Calendar.getInstance()
-		calendar.timeInMillis = data.at.toLong() * 1000
-		binding.textViewTime.text = dateFormat.format(calendar.time)
+		binding.textViewTime.text = (data.at.toLong() * 1000).formatTime()
 		binding.textViewAniListId.text = data.anilist_id.toString()
 		binding.textViewMalId.text = data.mal_id.toString()
 		val similarity = "${DecimalFormat("#.000").format(data.similarity * 100)}%"
 		binding.textViewSimilarity.text = similarity
 		binding.cardView.setOnClickListener {
 			MaterialAlertDialogBuilder(context)
-					.setTitle(" ")
-					.setMessage(R.string.hint_show_animation_detail)
+					.setTitle(context.getString(R.string.hint_show_animation_detail, data.title_native))
 					.setPositiveButton(android.R.string.ok) { _, _ ->
 						val intent = Intent(Intent.ACTION_VIEW)
 						intent.data = Uri.parse("https://anilist.co/anime/${data.anilist_id}")

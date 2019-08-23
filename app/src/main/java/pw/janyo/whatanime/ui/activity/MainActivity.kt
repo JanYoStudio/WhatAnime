@@ -45,6 +45,7 @@ import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.Status.*
 import vip.mystery0.tools.utils.PackageTools
+import vip.mystery0.tools.utils.formatTime
 import java.io.File
 
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -77,10 +78,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		when (it.status) {
 			Content -> {
 				val quota = it.data!!
-				searchLimit.text = quota.limit.toString()
-				searchLimitTtl.text = quota.limit_ttl.toString()
 				searchQuota.text = quota.quota.toString()
-				searchQuotaTtl.text = quota.quota_ttl.toString()
+				searchQuotaTtl.text = (quota.quota_ttl * 1000).toLong().formatTime()
 			}
 			Error -> {
 				Logs.wtf("quotaObserver: ", it.error)
