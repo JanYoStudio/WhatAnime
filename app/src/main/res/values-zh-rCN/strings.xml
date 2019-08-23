@@ -68,4 +68,9 @@
 	<string name="array_summary_preview_config_mute_natural">通过 trace.moe-media 自动检测预览的时间戳边界，得到一个静音的视频预览。</string>
 	<string name="array_summary_preview_config_natural_scene_cutting">通过 trace.moe-media 自动检测预览的时间戳边界。</string>
 	<string name="array_summary_preview_config_origin">截图时刻前后3秒的视频预览。（提前1秒，延后2秒）</string>
+    <string name="hint_no_browser">请先安装一个浏览器。</string>
+	<string name="hint_select_browser">请选择一个浏览器：</string>
+	<string name="hint_search_quota">搜索配额：</string>
+	<string name="hint_search_quota_ttl">配额更新时间：</string>
+	<string name="hint_show_animation_detail">想查看更多关于《%1$s》的信息吗？</string>
 </resources>

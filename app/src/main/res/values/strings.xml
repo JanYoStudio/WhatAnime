@@ -12,10 +12,8 @@
 	<string name="hint_title_romaji">Romaji: </string>
 	<string name="hint_ani_list_id">AniList ID: </string>
 	<string name="hint_mal_id">MyAnimeList ID: </string>
-	<string name="hint_search_limit">Search limit:</string>
-	<string name="hint_search_quota">Search quota:</string>
-	<string name="hint_search_limit_ttl">Search limit ttl:</string>
-	<string name="hint_search_quota_ttl">Search quota ttl:</string>
+	<string name="hint_search_quota">Search quota: </string>
+	<string name="hint_search_quota_ttl">Search quota TTL: </string>
 
 	<string name="hint_permission_deny">The permissions to read the file are used to get the image, without which the WhatAnime will not be available, please grant WhatAnime this permission! </string>
 	<string name="hint_response_error">Response data error!</string>
@@ -64,7 +62,7 @@
 	<string name="hint_title_native">Japanese Title: </string>
 	<string name="hint_select_browser">Please select a browser:</string>
 	<string name="hint_no_browser">Please install a browser first.</string>
-	<string name="hint_show_animation_detail">Do you want to view more details?</string>
+	<string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
 	<string name="summary_about_open_on_coolapk">Rate in CoolAPK</string>
 	<string name="summary_about_open_on_play">Rate in Google Play Store</string>
 	<string name="summary_developer_whatanime">WhatAnime API Developer</string>
