@@ -56,10 +56,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-    implementation 'com.google.android.material:material:1.1.0-alpha08'
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
     //Mystery0Tools
     implementation 'vip.mystery0.tools:logs:1.4.0'
-    implementation 'vip.mystery0.tools:tools:1.9.7'
+    implementation 'vip.mystery0.tools:tools:1.9.8'
     implementation 'vip.mystery0.tools:crashhandler:1.1.1'
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
@@ -70,11 +70,11 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     //Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha03'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha03'
     //Room
-    implementation 'androidx.room:room-runtime:2.2.0-alpha01'
-    kapt 'androidx.room:room-compiler:2.2.0-alpha01'
+    implementation 'androidx.room:room-runtime:2.2.0-alpha02'
+    kapt 'androidx.room:room-compiler:2.2.0-alpha02'
     //RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
