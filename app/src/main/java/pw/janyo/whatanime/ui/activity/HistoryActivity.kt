@@ -1,7 +1,7 @@
 package pw.janyo.whatanime.ui.activity
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +21,7 @@ import vip.mystery0.rx.Status.*
 
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
-	private lateinit var historyViewModel: HistoryViewModel
+	private val historyViewModel: HistoryViewModel by lazy { ViewModelProvider(this).get(HistoryViewModel::class.java) }
 	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
 
 	private val animationHistoryObserver = Observer<PackageData<List<AnimationHistory>>> {
@@ -86,7 +86,6 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 	}
 
 	private fun initViewModel() {
-		historyViewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
 		historyViewModel.historyList.observe(this, animationHistoryObserver)
 	}
 

@@ -12,8 +12,9 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -25,6 +26,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
@@ -32,6 +34,7 @@ import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
+import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
@@ -62,7 +65,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private lateinit var contentMainBinding: ContentMainBinding
-	private lateinit var mainViewModel: MainViewModel
+	private val mainViewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
 	private var isShowDetail = false
 	private var cacheFile: File? = null
@@ -70,9 +73,29 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val options = RequestOptions()
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
+	private val quotaObserver = Observer<PackageData<SearchQuota>> {
+		when (it.status) {
+			Content -> {
+				val quota = it.data!!
+				searchLimit.text = quota.limit.toString()
+				searchLimitTtl.text = quota.limit_ttl.toString()
+				searchQuota.text = quota.quota.toString()
+				searchQuotaTtl.text = quota.quota_ttl.toString()
+			}
+			Error -> {
+				Logs.wtf("quotaObserver: ", it.error)
+				Toast.makeText(this, it.error?.message, Toast.LENGTH_LONG)
+						.show()
+			}
+			else -> {
+			}
+		}
+	}
+
 	private val animationObserver = Observer<PackageData<Animation>> {
 		when (it.status) {
 			Content -> {
+				MainRepository.showQuota(mainViewModel)
 				mainRecyclerAdapter.items.clear()
 				mainRecyclerAdapter.items.addAll(it.data!!.docs)
 				hideDialog()
@@ -84,6 +107,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 						.show()
 			}
 			Error -> {
+				MainRepository.showQuota(mainViewModel)
 				Logs.wtf("animationObserver: ", it.error)
 				hideDialog()
 			}
@@ -133,10 +157,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		initViewModel()
 		initDialog()
 		initIntent()
+		MainRepository.showQuota(mainViewModel)
 	}
 
 	private fun initViewModel() {
-		mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+		mainViewModel.quota.observe(this, quotaObserver)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
 		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })

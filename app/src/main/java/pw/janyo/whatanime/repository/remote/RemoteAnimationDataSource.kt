@@ -6,12 +6,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.factory.RetrofitFactory
 import pw.janyo.whatanime.model.Animation
+import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
-import pw.janyo.whatanime.utils.Base64
+import vip.mystery0.logs.Logs
 import vip.mystery0.rx.OnlyCompleteObserver
 import vip.mystery0.rx.PackageData
 import vip.mystery0.tools.factory.fromJson
@@ -20,6 +20,26 @@ import java.io.File
 
 object RemoteAnimationDataSource : AnimationDateSource {
 	private val searchApi = RetrofitFactory.retrofit.create(SearchApi::class.java)
+
+	fun showQuota(quotaLiveData: MutableLiveData<PackageData<SearchQuota>>) {
+		searchApi.getMe()
+				.subscribeOn(Schedulers.io())
+				.map { it.string().fromJson<SearchQuota>() }
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(object : OnlyCompleteObserver<SearchQuota>() {
+					override fun onFinish(data: SearchQuota?) {
+						if (data == null) {
+							quotaLiveData.value = PackageData.empty()
+						} else {
+							quotaLiveData.value = PackageData.content(data)
+						}
+					}
+
+					override fun onError(e: Throwable) {
+						quotaLiveData.value = PackageData.error(e)
+					}
+				})
+	}
 
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
 		val base64 = FileTools.instance.compressImage(Bitmap.CompressFormat.JPEG, file, 1000, 10)

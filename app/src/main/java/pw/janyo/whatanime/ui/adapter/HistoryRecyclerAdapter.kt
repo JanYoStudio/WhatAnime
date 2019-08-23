@@ -11,8 +11,9 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.factory.fromJson
-import java.text.SimpleDateFormat
-import java.util.*
+import vip.mystery0.tools.utils.toCalendar
+import vip.mystery0.tools.utils.toDateTimeString
+import java.text.DecimalFormat
 
 class HistoryRecyclerAdapter(private val context: Context,
 							 private val listener: HistoryItemListener) : BaseBindingRecyclerViewAdapter<AnimationHistory, ItemHistoryBinding>(R.layout.item_history) {
@@ -28,11 +29,8 @@ class HistoryRecyclerAdapter(private val context: Context,
 		Glide.with(context).load(data.cachePath).apply(options).into(binding.imageView)
 		if (animation.docs.isNotEmpty()) {
 			binding.animationDocs = animation.docs[0]
-			val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-			val calendar = Calendar.getInstance()
-			calendar.timeInMillis = data.time
-			binding.textViewTime.text = dateFormat.format(calendar.time)
-			val similarity = "${animation.docs[0].similarity * 100}%"
+			binding.textViewTime.text = data.time.toCalendar().toDateTimeString()
+			val similarity = "${DecimalFormat("#.0000").format(animation.docs[0].similarity * 100)}%"
 			binding.textViewSimilarity.text = similarity
 		} else {
 			binding.textViewSimilarity.text = "0%"
