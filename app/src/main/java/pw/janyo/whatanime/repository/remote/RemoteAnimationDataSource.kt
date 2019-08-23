@@ -20,11 +20,10 @@ import java.io.File
 
 object RemoteAnimationDataSource : AnimationDateSource {
 	private val searchApi = RetrofitFactory.retrofit.create(SearchApi::class.java)
-	private val token = String(Base64.decode(Constant.token))
 
 	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, file: File, filter: String?) {
 		val base64 = FileTools.instance.compressImage(Bitmap.CompressFormat.JPEG, file, 1000, 10)
-		searchApi.search(token, base64, filter)
+		searchApi.search(base64, filter)
 				.subscribeOn(Schedulers.io())
 				.map {
 					val data = it.string().fromJson<Animation>()
