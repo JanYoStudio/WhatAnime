@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout>
 
     <data>
 
@@ -13,7 +12,9 @@
             type="pw.janyo.whatanime.model.Docs" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView"
         style="@style/CardViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,23 +25,90 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textViewTitleNative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/value_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/textViewTitleChinese"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewTitleChinese"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/value_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/textViewTitleEnglish"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTitleNative" />
+
+                <TextView
+                    android:id="@+id/textViewTitleEnglish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/value_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/textViewTitleRomaji"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTitleChinese" />
+
+                <TextView
+                    android:id="@+id/textViewTitleRomaji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/value_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewTitleEnglish" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="160dp"
                 android:layout_height="90dp"
+                android:layout_marginTop="8dp"
                 android:contentDescription="@string/app_name"
                 android:onClick="@{()->handler.click(animationDocs)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/nameLayout" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/nameLayout">
 
                 <TextView
                     android:id="@+id/textViewTimeHint"
@@ -53,54 +121,6 @@
                     app:layout_constraintBottom_toBottomOf="@id/textViewTime"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/textViewTime" />
-
-                <TextView
-                    android:id="@+id/textViewTitleNativeHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:gravity="top"
-                    android:text="@string/hint_title_native"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewTitleNative"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textViewTitleNative" />
-
-                <TextView
-                    android:id="@+id/textViewTitleChineseHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:gravity="top"
-                    android:text="@string/hint_title_chinese"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewTitleChinese"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textViewTitleChinese" />
-
-                <TextView
-                    android:id="@+id/textViewTitleEnglishHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:gravity="top"
-                    android:text="@string/hint_title_english"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewTitleEnglish"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textViewTitleEnglish" />
-
-                <TextView
-                    android:id="@+id/textViewTitleRomajiHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:gravity="top"
-                    android:text="@string/hint_title_romaji"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toBottomOf="@id/textViewTitleRomaji"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textViewTitleRomaji" />
 
                 <TextView
                     android:id="@+id/textViewEpisodeHint"
@@ -155,33 +175,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:barrierDirection="end"
-                    app:constraint_referenced_ids="textViewAniListIdHint,textViewSimilarityHint,textViewMalIdHint,textViewTitleEnglishHint,textViewTitleChineseHint,textViewEpisodeHint,textViewTitleRomajiHint,textViewTimeHint,textViewTitleNativeHint" />
+                    app:constraint_referenced_ids="textViewAniListIdHint,textViewSimilarityHint,textViewMalIdHint,textViewEpisodeHint,textViewTimeHint" />
 
                 <TextView
-                    android:id="@+id/textViewTitleRomaji"
+                    android:id="@+id/textViewTime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:text="@{animationDocs.title_romaji}"
-                    android:textIsSelectable="true"
                     android:textSize="@dimen/value_text_size"
                     app:layout_constraintBottom_toTopOf="@id/textViewEpisode"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@id/barrier"
-                    app:layout_constraintTop_toBottomOf="@id/textViewTitleEnglish" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textViewTitleNative"
+                    android:id="@+id/textViewEpisode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:text="@{animationDocs.title_native}"
+                    android:text="@{animationDocs.episode}"
                     android:textIsSelectable="true"
                     android:textSize="@dimen/value_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/textViewTitleChinese"
+                    app:layout_constraintBottom_toTopOf="@id/textViewAniListId"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@id/barrier"
@@ -216,27 +234,11 @@
                     app:layout_constraintTop_toBottomOf="@id/textViewAniListId" />
 
                 <TextView
-                    android:id="@+id/textViewTitleEnglish"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@{animationDocs.title_english}"
-                    android:textIsSelectable="true"
-                    android:textSize="@dimen/value_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/textViewTitleRomaji"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/barrier"
-                    app:layout_constraintTop_toBottomOf="@id/textViewTitleChinese" />
-
-                <TextView
                     android:id="@+id/textViewSimilarity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textIsSelectable="true"
                     android:textSize="@dimen/value_text_size"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -244,50 +246,6 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@id/barrier"
                     app:layout_constraintTop_toBottomOf="@id/textViewMalId" />
-
-                <TextView
-                    android:id="@+id/textViewTime"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textIsSelectable="true"
-                    android:textSize="@dimen/value_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/textViewTitleNative"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/barrier"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewTitleChinese"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@{animationDocs.title_chinese}"
-                    android:textIsSelectable="true"
-                    android:textSize="@dimen/value_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/textViewTitleEnglish"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/barrier"
-                    app:layout_constraintTop_toBottomOf="@id/textViewTitleNative" />
-
-                <TextView
-                    android:id="@+id/textViewEpisode"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@{animationDocs.episode}"
-                    android:textIsSelectable="true"
-                    android:textSize="@dimen/value_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/textViewAniListId"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/barrier"
-                    app:layout_constraintTop_toBottomOf="@id/textViewTitleRomaji" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
