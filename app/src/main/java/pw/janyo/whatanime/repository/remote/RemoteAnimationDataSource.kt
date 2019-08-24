@@ -5,14 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.factory.RetrofitFactory
-import pw.janyo.whatanime.manager.content
-import pw.janyo.whatanime.manager.empty
-import pw.janyo.whatanime.manager.error
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import vip.mystery0.rx.PackageData
+import vip.mystery0.rx.content
+import vip.mystery0.rx.empty
+import vip.mystery0.rx.error
 import vip.mystery0.tools.utils.FileTools
 import java.io.File
 

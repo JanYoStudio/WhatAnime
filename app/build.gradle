@@ -14,9 +14,6 @@ autoVersion {
 }
 
 android {
-    packagingOptions {
-        exclude 'META-INF/library-core_release.kotlin_module'
-    }
     compileSdkVersion 29
     dataBinding {
         enabled = true
@@ -29,6 +26,12 @@ android {
         versionName autoVersion.name
         vectorDrawables.useSupportLibrary = true
         setProperty("archivesBaseName", "WhatAnime-$versionName")
+        //指定room.schemaLocation生成的文件路径
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         debug {
@@ -73,6 +76,7 @@ dependencies {
     kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha03'
     //Room
     implementation 'androidx.room:room-runtime:2.2.0-beta01'
+    implementation 'androidx.room:room-ktx:2.2.0-beta01'
     kapt 'androidx.room:room-compiler:2.2.0-beta01'
     //ZLoading
     implementation 'com.zyao89:zloading:1.2.0'
