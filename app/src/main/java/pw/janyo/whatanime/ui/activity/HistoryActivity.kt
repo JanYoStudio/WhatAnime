@@ -64,7 +64,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 			finish()
 		}
 		contentHistoryBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		historyRecyclerAdapter = HistoryRecyclerAdapter(this, HistoryItemListener(this, binding))
+		historyRecyclerAdapter = HistoryRecyclerAdapter(this, HistoryItemListener(this))
 		contentHistoryBinding.recyclerView.adapter = historyRecyclerAdapter
 		ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 			override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {

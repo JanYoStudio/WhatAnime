@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -38,6 +39,7 @@ import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
+import vip.mystery0.tools.toast
 import vip.mystery0.tools.toastLong
 import vip.mystery0.tools.utils.PackageTools
 import vip.mystery0.tools.utils.formatTime
@@ -130,6 +132,10 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 						.into(contentMainBinding.imageView)
 			MainRepository.search(data, null, mainViewModel)
 		}
+
+		override fun error(data: File?, e: Throwable?) {
+			e.toastLong(this@MainActivity)
+		}
 	}
 
 	override fun inflateView(layoutId: Int) {
@@ -150,8 +156,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		super.initData()
 		initViewModel()
 		initDialog()
-		initIntent()
 		MainRepository.showQuota(mainViewModel)
+		initIntent()
 	}
 
 	private fun initViewModel() {
@@ -167,6 +173,16 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	@SuppressLint("RestrictedApi")
 	private fun initIntent() {
+		if (intent.action == Intent.ACTION_SEND && intent.type != null && intent.type!!.startsWith("image/")) {
+			//接收其他来源的图片
+			try {
+				val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+				intent.data = uri
+				MainRepository.parseImageFile(mainViewModel, intent)
+			} catch (e: Exception) {
+				getString(R.string.hint_select_file_path_null).toast(this)
+			}
+		}
 		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
 			mainViewModel.isShowDetail.value = true
 			binding.fab.visibility = View.GONE
