@@ -59,11 +59,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha09'
     //Mystery0Tools
     implementation 'vip.mystery0.tools:logs:1.4.0'
-    implementation 'vip.mystery0.tools:tools:1.9.9'
+    implementation 'vip.mystery0.tools:tools:2.0.4'
     implementation 'vip.mystery0.tools:crashhandler:1.1.1'
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
     //Glide
@@ -75,9 +74,6 @@ dependencies {
     //Room
     implementation 'androidx.room:room-runtime:2.2.0-beta01'
     kapt 'androidx.room:room-compiler:2.2.0-beta01'
-    //RxAndroid
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
     //ZLoading
     implementation 'com.zyao89:zloading:1.2.0'
     //Matisse

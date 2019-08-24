@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.ui.activity
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,31 +15,37 @@ import pw.janyo.whatanime.repository.HistoryRepository
 import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
-import vip.mystery0.rx.PackageData
-import vip.mystery0.rx.Status.*
+import vip.mystery0.rx.PackageDataObserver
+import vip.mystery0.tools.dispatchMessage
 
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
 	private val historyViewModel: HistoryViewModel by lazy { ViewModelProvider(this).get(HistoryViewModel::class.java) }
 	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
 
-	private val animationHistoryObserver = Observer<PackageData<List<AnimationHistory>>> {
-		when (it.status) {
-			Content -> {
-				historyRecyclerAdapter.items.clear()
-				historyRecyclerAdapter.items.addAll(it.data!!)
-				dismissRefresh()
-			}
-			Loading -> showRefresh()
-			Empty -> {
-				dismissRefresh()
-				Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_LONG)
-						.show()
-			}
-			Error -> {
-				Logs.wtf("animationHistoryObserver: ", it.error)
-				dismissRefresh()
-			}
+	private val animationHistoryObserver = object : PackageDataObserver<List<AnimationHistory>> {
+		override fun content(data: List<AnimationHistory>?) {
+			historyRecyclerAdapter.items.clear()
+			historyRecyclerAdapter.items.addAll(data!!)
+			dismissRefresh()
+		}
+
+		override fun loading() {
+			showRefresh()
+		}
+
+		override fun empty(data: List<AnimationHistory>?) {
+			dismissRefresh()
+			Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_LONG)
+					.show()
+		}
+
+		override fun error(data: List<AnimationHistory>?, e: Throwable?) {
+			Logs.wtf("animationHistoryObserver: ", e)
+			dismissRefresh()
+			Snackbar.make(binding.coordinatorLayout, e.dispatchMessage()
+					?: "", Snackbar.LENGTH_LONG)
+					.show()
 		}
 	}
 

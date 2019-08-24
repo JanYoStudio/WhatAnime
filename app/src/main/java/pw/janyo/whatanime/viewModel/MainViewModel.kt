@@ -8,7 +8,7 @@ import vip.mystery0.rx.PackageData
 import java.io.File
 
 class MainViewModel : ViewModel() {
-	val imageFile = MutableLiveData<File>()
+	val imageFile = MutableLiveData<PackageData<File>>()
 	val resultList = MutableLiveData<PackageData<Animation>>()
 	val isShowDetail = MutableLiveData<Boolean>()
 	val quota = MutableLiveData<PackageData<SearchQuota>>()

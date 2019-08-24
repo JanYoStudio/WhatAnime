@@ -30,18 +30,17 @@ object FileUtil {
 	/**
 	 * 将Uri的内容克隆到临时文件，然后返回临时文件
 	 *
-	 * @param context 上下文
 	 * @param uri 选择器返回的Uri
 	 *
 	 * @return 临时文件
 	 */
-	fun cloneUriToFile(context: Context, uri: Uri): File? {
-		val parent = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: return null
+	fun cloneUriToFile(uri: Uri): File? {
+		val parent = APP.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: return null
 		if (!parent.exists())
 			parent.mkdirs()
 		if (parent.isDirectory || parent.delete() && parent.mkdirs()) {
 			val file = File(parent, StringTools.instance.sha1(uri.toString()))
-			FileTools.instance.cloneUriToFile(context, uri, file)
+			FileTools.instance.cloneUriToFile(APP.context, uri, file)
 			return file
 		}
 		return null

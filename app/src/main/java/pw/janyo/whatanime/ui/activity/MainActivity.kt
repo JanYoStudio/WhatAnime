@@ -12,7 +12,6 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,9 +21,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import pw.janyo.whatanime.R
@@ -38,12 +34,11 @@ import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
-import pw.janyo.whatanime.utils.FileUtil
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
-import vip.mystery0.rx.OnlyCompleteObserver
-import vip.mystery0.rx.PackageData
-import vip.mystery0.rx.Status.*
+import vip.mystery0.rx.PackageDataObserver
+import vip.mystery0.rx.content
+import vip.mystery0.tools.toastLong
 import vip.mystery0.tools.utils.PackageTools
 import vip.mystery0.tools.utils.formatTime
 import java.io.File
@@ -74,65 +69,67 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val options = RequestOptions()
 			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
-	private val quotaObserver = Observer<PackageData<SearchQuota>> {
-		when (it.status) {
-			Content -> {
-				val quota = it.data!!
-				searchQuota.text = quota.quota.toString()
-				searchQuotaTtl.text = (quota.quota_ttl * 1000).toLong().formatTime()
-			}
-			Error -> {
-				Logs.wtf("quotaObserver: ", it.error)
-				Toast.makeText(this, it.error?.message, Toast.LENGTH_LONG)
-						.show()
-			}
-			else -> {
-			}
+	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
+		override fun content(data: SearchQuota?) {
+			val quota = data!!
+			searchQuota.text = quota.quota.toString()
+			searchQuotaTtl.text = (quota.quota_ttl * 1000).toLong().formatTime()
+		}
+
+		override fun error(data: SearchQuota?, e: Throwable?) {
+			Logs.wtf("quotaObserver: ", e)
+			e.toastLong(this@MainActivity)
 		}
 	}
 
-	private val animationObserver = Observer<PackageData<Animation>> {
-		when (it.status) {
-			Content -> {
-				mainRecyclerAdapter.items.clear()
-				mainRecyclerAdapter.items.addAll(it.data!!.docs)
-				hideDialog()
-			}
-			Loading -> showDialog()
-			Empty -> {
-				hideDialog()
-				Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_SHORT)
-						.show()
-			}
-			Error -> {
-				Logs.wtf("animationObserver: ", it.error)
-				hideDialog()
-			}
+	private val animationObserver = object : PackageDataObserver<Animation> {
+		override fun content(data: Animation?) {
+			mainRecyclerAdapter.items.clear()
+			mainRecyclerAdapter.items.addAll(data!!.docs)
+			hideDialog()
+		}
+
+		override fun loading() {
+			showDialog()
+		}
+
+		override fun empty(data: Animation?) {
+			hideDialog()
+			Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_SHORT)
+					.show()
+		}
+
+		override fun error(data: Animation?, e: Throwable?) {
+			Logs.wtf("animationObserver: ", e)
+			hideDialog()
+			e.toastLong(this@MainActivity)
 		}
 	}
-	private val imageFileObserver = Observer<File> {
-		if (!it.exists()) {
-			Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
-					.addCallback(object : Snackbar.Callback() {
-						override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-							super.onDismissed(transientBottomBar, event)
-							finish()
-						}
-					})
-					.show()
-			return@Observer
+	private val imageFileObserver = object : PackageDataObserver<File> {
+		override fun content(data: File?) {
+			if (!data!!.exists()) {
+				Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
+						.addCallback(object : Snackbar.Callback() {
+							override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+								super.onDismissed(transientBottomBar, event)
+								finish()
+							}
+						})
+						.show()
+				return
+			}
+			if (isShowDetail && cacheFile != null)
+				Glide.with(this@MainActivity)
+						.load(cacheFile)
+						.apply(options)
+						.into(contentMainBinding.imageView)
+			else
+				Glide.with(this@MainActivity)
+						.load(data.absolutePath)
+						.apply(options)
+						.into(contentMainBinding.imageView)
+			MainRepository.search(data, null, mainViewModel)
 		}
-		if (isShowDetail && cacheFile != null)
-			Glide.with(this)
-					.load(cacheFile)
-					.apply(options)
-					.into(contentMainBinding.imageView)
-		else
-			Glide.with(this)
-					.load(it.absolutePath)
-					.apply(options)
-					.into(contentMainBinding.imageView)
-		MainRepository.search(it, null, mainViewModel)
 	}
 
 	override fun inflateView(layoutId: Int) {
@@ -176,7 +173,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			val originFile: File = intent.getSerializableExtra(INTENT_ORIGIN_FILE) as File
 			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
 			this.cacheFile = cacheFile
-			mainViewModel.imageFile.value = originFile
+			mainViewModel.imageFile.content(originFile)
 			title = intent.getStringExtra(INTENT_TITLE)
 			supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 			binding.toolbar.setNavigationOnClickListener {
@@ -263,62 +260,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		when (requestCode) {
 			REQUEST_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					Observable.create<File> {
-						val fileList = Matisse.obtainPathResult(data)
-						if (fileList.isNotEmpty())
-							it.onNext(File(fileList[0]))
-						it.onComplete()
-					}
-							.subscribeOn(Schedulers.single())
-							.observeOn(AndroidSchedulers.mainThread())
-							.subscribe(object : OnlyCompleteObserver<File>() {
-								override fun onError(e: Throwable) {
-									Logs.wtfm("onError: ", e)
-									Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-											.show()
-								}
-
-								override fun onFinish(data: File?) {
-									if (data != null)
-										mainViewModel.imageFile.value = data
-									else
-										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-												.show()
-								}
-							})
+					MainRepository.parseImageFileByMatisse(mainViewModel, data!!)
 				}
 			}
 			FILE_SELECT_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					Observable.create<File> {
-						val file = FileUtil.cloneUriToFile(this, data?.data!!)
-						if (file != null && file.exists())
-							it.onNext(file)
-						it.onComplete()
-					}
-							.subscribeOn(Schedulers.single())
-							.observeOn(AndroidSchedulers.mainThread())
-							.subscribe(object : OnlyCompleteObserver<File>() {
-								override fun onError(e: Throwable) {
-									if (e is SecurityException) {
-										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-												.show()
-									} else {
-										e.printStackTrace()
-										Snackbar.make(binding.coordinatorLayout, e.message
-												?: getString(R.string.hint_select_file_path_null), Snackbar.LENGTH_LONG)
-												.show()
-									}
-								}
-
-								override fun onFinish(data: File?) {
-									if (data != null)
-										mainViewModel.imageFile.value = data
-									else
-										Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_path_null, Snackbar.LENGTH_LONG)
-												.show()
-								}
-							})
+					MainRepository.parseImageFile(mainViewModel, data!!)
 				}
 			}
 		}

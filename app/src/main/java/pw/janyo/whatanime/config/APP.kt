@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import pw.janyo.whatanime.repository.local.db.DBHelper
 import vip.mystery0.crashhandler.CrashHandler
+import vip.mystery0.rx.DataManager
 
 /**
  * Created by mystery0.
@@ -22,6 +23,7 @@ class APP : Application() {
 			it.setFileNameSuffix("log")
 			it.setDir(externalCacheDir!!)
 		}.initWithContext(this)
+		DataManager.init(5)
 	}
 
 	companion object {
