@@ -1,103 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="@string/category_settings">
-		<CheckBoxPreference
-			android:key="@string/key_hide_sex"
-			android:title="@string/title_hide_sex" />
-		<Preference
-			android:key="@string/key_language"
-			android:title="@string/title_language" />
-		<Preference
-			android:key="@string/key_night_mode"
-			android:title="@string/title_night_mode" />
-		<Preference
-			android:key="@string/key_preview_config"
-			android:title="@string/title_preview_config" />
-		<CheckBoxPreference
-			android:key="@string/key_use_in_app_image_select"
-			android:summary="@string/summary_use_in_app_image_select"
-			android:title="@string/title_use_in_app_image_select" />
-	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/category_about">
-		<Preference
-			android:summary="@string/summary_about_github"
-			android:title="@string/title_about_github">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_about_github" />
-		</Preference>
-		<Preference
-			android:summary="@string/summary_about_license"
-			android:title="@string/title_about_license">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_about_license" />
-		</Preference>
-		<Preference
-			android:key="@string/key_about_open_source_license"
-			android:title="@string/title_about_open_source_license" />
-		<Preference
-			android:summary="@string/summary_about_open_on_play"
-			android:title="@string/title_about_open_on_play">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_about_open_on_play" />
-		</Preference>
-		<Preference
-			android:summary="@string/summary_about_open_on_coolapk"
-			android:title="@string/title_about_open_on_coolapk">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_about_open_on_coolapk" />
-		</Preference>
-		<Preference
-			android:summary="@string/summary_janyo_license"
-			android:title="@string/title_janyo_license">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_janyo_license" />
-		</Preference>
-		<Preference
-			android:summary="@string/app_version_name"
-			android:title="@string/title_version" />
-	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/category_about_whatanime">
-		<Preference
-			android:summary="@string/summary_developer_whatanime"
-			android:title="@string/title_developer_whatanime">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_developer_whatanime" />
-		</Preference>
-		<Preference
-			android:summary="@string/summary_whatanime"
-			android:title="@string/title_whatanime">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_whatanime" />
-		</Preference>
-	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/category_about_janyo">
-		<Preference android:title="@string/dick_light" />
+    <PreferenceCategory android:title="@string/category_settings">
+        <CheckBoxPreference
+            android:key="@string/key_hide_sex"
+            android:title="@string/title_hide_sex" />
+        <Preference
+            android:key="@string/key_language"
+            android:title="@string/title_language" />
+        <Preference
+            android:key="@string/key_night_mode"
+            android:title="@string/title_night_mode" />
+        <Preference
+            android:key="@string/key_preview_config"
+            android:title="@string/title_preview_config" />
+        <CheckBoxPreference
+            android:key="@string/key_use_in_app_image_select"
+            android:summary="@string/summary_use_in_app_image_select"
+            android:title="@string/title_use_in_app_image_select" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/category_about">
+        <Preference
+            android:summary="@string/summary_about_github"
+            android:title="@string/title_about_github">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_about_github" />
+        </Preference>
+        <Preference
+            android:summary="@string/summary_about_license"
+            android:title="@string/title_about_license">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_about_license" />
+        </Preference>
+        <Preference
+            android:key="@string/key_about_open_source_license"
+            android:title="@string/title_about_open_source_license" />
+        <Preference
+            android:summary="@string/summary_about_open_on_play"
+            android:title="@string/title_about_open_on_play">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_about_open_on_play" />
+        </Preference>
+        <Preference
+            android:summary="@string/summary_about_open_on_coolapk"
+            android:title="@string/title_about_open_on_coolapk">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_about_open_on_coolapk" />
+        </Preference>
+        <Preference
+            android:summary="@string/summary_janyo_license"
+            android:title="@string/title_janyo_license">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_janyo_license" />
+        </Preference>
+        <Preference
+            android:summary="@string/app_version_name"
+            android:title="@string/title_version" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/category_about_whatanime">
+        <Preference
+            android:summary="@string/summary_developer_whatanime"
+            android:title="@string/title_developer_whatanime">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_developer_whatanime" />
+        </Preference>
+        <Preference
+            android:summary="@string/summary_whatanime"
+            android:title="@string/title_whatanime">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_whatanime" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/category_about_janyo">
+        <Preference android:title="@string/dick_light" />
 
-		<Preference
-			android:summary="@string/link_zh_lyh"
-			android:title="@string/zh_lyh">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_zh_lyh" />
-		</Preference>
+        <Preference
+            android:summary="@string/link_zh_lyh"
+            android:title="@string/zh_lyh">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_zh_lyh" />
+        </Preference>
 
-		<Preference android:title="@string/cieyget" />
+        <Preference android:title="@string/cieyget" />
 
-		<Preference
-			android:summary="@string/link_mystery0"
-			android:title="@string/mystery0">
-			<intent
-				android:action="android.intent.action.VIEW"
-				android:data="@string/link_mystery0" />
-		</Preference>
+        <Preference
+            android:summary="@string/link_mystery0"
+            android:title="@string/mystery0">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/link_mystery0" />
+        </Preference>
 
-		<Preference android:title="@string/gsoy" />
-	</PreferenceCategory>
+        <Preference android:title="@string/gsoy" />
+    </PreferenceCategory>
 </PreferenceScreen>

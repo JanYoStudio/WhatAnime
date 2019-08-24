@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="key_hide_sex" translatable="false">key_hide_sex</string>
-	<string name="key_language" translatable="false">key_language</string>
-	<string name="key_night_mode" translatable="false">key_night_mode</string>
-	<string name="key_preview_config" translatable="false">key_preview_config</string>
-	<string name="key_use_in_app_image_select" translatable="false">key_use_in_app_image_select</string>
+    <string name="key_hide_sex" translatable="false">key_hide_sex</string>
+    <string name="key_language" translatable="false">key_language</string>
+    <string name="key_night_mode" translatable="false">key_night_mode</string>
+    <string name="key_preview_config" translatable="false">key_preview_config</string>
+    <string name="key_use_in_app_image_select" translatable="false">key_use_in_app_image_select</string>
 
-	<string name="title_language">Language</string>
+    <string name="title_language">Language</string>
 
-	<string name="title_night_mode">Night Mode</string>
+    <string name="title_night_mode">Night Mode</string>
 
-	<string name="title_preview_config">Previews</string>
+    <string name="title_preview_config">Previews</string>
 
-	<string name="title_use_in_app_image_select">Use in-app image selector</string>
-	<string name="summary_use_in_app_image_select">READ_EXTERNAL_STORAGE permission required</string>
+    <string name="title_use_in_app_image_select">Use in-app image selector</string>
+    <string name="summary_use_in_app_image_select">READ_EXTERNAL_STORAGE permission required</string>
 
-	<string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
-	<string name="link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
+    <string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
+    <string name="link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
 
-	<string name="summary_about_license" translatable="false">Apache License 2.0</string>
-	<string name="link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
+    <string name="summary_about_license" translatable="false">Apache License 2.0</string>
+    <string name="link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
 
-	<string name="key_about_open_source_license" translatable="false">key_open_source_license_about</string>
+    <string name="key_about_open_source_license" translatable="false">key_open_source_license_about</string>
 
-	<string name="title_about_open_on_play">Google Play Store</string>
-	<string name="link_about_open_on_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
+    <string name="title_about_open_on_play">Google Play Store</string>
+    <string name="link_about_open_on_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
 
-	<string name="link_about_open_on_coolapk" translatable="false">https://www.coolapk.com/apk/pw.janyo.whatanime</string>
+    <string name="link_about_open_on_coolapk" translatable="false">https://www.coolapk.com/apk/pw.janyo.whatanime</string>
 
-	<string name="title_janyo_license">License</string>
-	<string name="summary_janyo_license">JanYo Studio License</string>
-	<string name="link_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
+    <string name="title_janyo_license">License</string>
+    <string name="summary_janyo_license">JanYo Studio License</string>
+    <string name="link_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
 
-	<string name="title_developer_whatanime" translatable="false">soruly</string>
-	<string name="link_developer_whatanime" translatable="false">https://about.me/soruly</string>
+    <string name="title_developer_whatanime" translatable="false">soruly</string>
+    <string name="link_developer_whatanime" translatable="false">https://about.me/soruly</string>
 
-	<string name="title_whatanime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
-	<string name="summary_whatanime" translatable="false">GNU General Public License v3.0</string>
-	<string name="link_whatanime" translatable="false">https://trace.moe/</string>
+    <string name="title_whatanime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
+    <string name="summary_whatanime" translatable="false">GNU General Public License v3.0</string>
+    <string name="link_whatanime" translatable="false">https://trace.moe/</string>
 
 </resources>
