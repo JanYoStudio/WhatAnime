@@ -63,6 +63,7 @@
     <string name="hint_select_browser">Please select a browser:</string>
     <string name="hint_no_browser">Please install a browser first.</string>
     <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
+    <string name="hint_not_share">The file is invalid!</string>
     <string name="summary_about_open_on_coolapk">Rate in CoolAPK</string>
     <string name="summary_about_open_on_play">Rate in Google Play Store</string>
     <string name="summary_developer_whatanime">WhatAnime API Developer</string>
@@ -75,4 +76,5 @@
     <string name="title_change_language">Change Language</string>
     <string name="title_change_preview_config">Change Previews</string>
     <string name="title_version">Version</string>
+    <string name="title_receive_share">Search by WhatAnime</string>
 </resources>

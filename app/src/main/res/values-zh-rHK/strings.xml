@@ -73,4 +73,6 @@
     <string name="hint_search_quota">搜索配额：</string>
     <string name="hint_search_quota_ttl">配额更新时间：</string>
     <string name="hint_show_animation_detail">想查睇更多关于《%1$s》嘅声气咩？</string>
+    <string name="hint_not_share">文件冇效！</string>
+    <string name="title_receive_share">搜索番剧</string>
 </resources>

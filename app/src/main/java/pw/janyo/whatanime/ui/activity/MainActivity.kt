@@ -52,12 +52,19 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_TITLE = "INTENT_TITLE"
+		private const val INTENT_URI = "INTENT_URI"
 
 		fun showDetail(context: Context, originFile: File, cacheFile: File, title: String) {
 			val intent = Intent(context, MainActivity::class.java)
 			intent.putExtra(INTENT_ORIGIN_FILE, originFile)
 			intent.putExtra(INTENT_CACHE_FILE, cacheFile)
 			intent.putExtra(INTENT_TITLE, title)
+			context.startActivity(intent)
+		}
+
+		fun receiveShare(context: Context, uri: Uri) {
+			val intent = Intent(context, MainActivity::class.java)
+			intent.putExtra(INTENT_URI, uri)
 			context.startActivity(intent)
 		}
 	}
@@ -173,10 +180,10 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	@SuppressLint("RestrictedApi")
 	private fun initIntent() {
-		if (intent.action == Intent.ACTION_SEND && intent.type != null && intent.type!!.startsWith("image/")) {
+		if (intent.hasExtra(INTENT_URI)) {
 			//接收其他来源的图片
 			try {
-				val uri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+				val uri = intent.getParcelableExtra<Uri>(INTENT_URI)
 				intent.data = uri
 				MainRepository.parseImageFile(mainViewModel, intent)
 			} catch (e: Exception) {
