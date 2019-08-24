@@ -94,7 +94,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val animationObserver = Observer<PackageData<Animation>> {
 		when (it.status) {
 			Content -> {
-				MainRepository.showQuota(mainViewModel)
 				mainRecyclerAdapter.items.clear()
 				mainRecyclerAdapter.items.addAll(it.data!!.docs)
 				hideDialog()
@@ -106,7 +105,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 						.show()
 			}
 			Error -> {
-				MainRepository.showQuota(mainViewModel)
 				Logs.wtf("animationObserver: ", it.error)
 				hideDialog()
 			}
