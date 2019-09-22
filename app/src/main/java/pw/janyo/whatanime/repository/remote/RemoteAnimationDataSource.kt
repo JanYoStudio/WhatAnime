@@ -15,27 +15,28 @@ import java.io.File
 object RemoteAnimationDataSource : AnimationDateSource {
 	private val searchApi = RetrofitFactory.retrofit.create(SearchApi::class.java)
 
-	override suspend fun queryAnimationByImage(file: File, filter: String?): Animation {
-		return withContext(Dispatchers.IO) {
-			val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1000, 10)
+	override suspend fun queryAnimationByImage(file: File, filter: String?): Animation = withContext(Dispatchers.IO) {
+		val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1000, 10)
+		val history = LocalAnimationDataSource.queryByBase64(base64)
+		if (history != null) {
+			history
+		} else {
 			val response = searchApi.search(base64, filter).execute()
 			if (!response.isSuccessful) {
 				throw Exception(response.errorBody()?.string())
 			}
 			val data = response.body()!!
-			LocalAnimationDataSource.saveHistory(file, filter, data)
+			LocalAnimationDataSource.saveHistory(base64, file, filter, data)
 			data
 		}
 	}
 
-	suspend fun showQuota(): SearchQuota {
-		return withContext(Dispatchers.IO) {
-			val response = searchApi.getMe().execute()
-			if (response.isSuccessful) {
-				response.body()!!
-			} else {
-				throw Exception(response.errorBody()?.string())
-			}
+	suspend fun showQuota(): SearchQuota = withContext(Dispatchers.IO) {
+		val response = searchApi.getMe().execute()
+		if (response.isSuccessful) {
+			response.body()!!
+		} else {
+			throw Exception(response.errorBody()?.string())
 		}
 	}
 }

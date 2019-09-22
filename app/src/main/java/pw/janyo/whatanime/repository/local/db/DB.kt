@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import pw.janyo.whatanime.repository.local.dao.HistoryDao
 import pw.janyo.whatanime.model.AnimationHistory
 
-@Database(entities = [(AnimationHistory::class)], version = 1)
+@Database(entities = [(AnimationHistory::class)], version = 2)
 abstract class DB : RoomDatabase() {
 	abstract fun getHistoryDao(): HistoryDao
 }

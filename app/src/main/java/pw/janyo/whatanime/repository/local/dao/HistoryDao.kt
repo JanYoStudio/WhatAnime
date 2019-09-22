@@ -22,4 +22,7 @@ interface HistoryDao {
 
 	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath and animation_filter = :filter LIMIT 1")
 	fun queryHistoryByOriginPathAndFilter(originPath: String, filter: String): AnimationHistory?
+
+	@Query("SELECT * FROM tb_animation_history WHERE base64 = :base64")
+	fun queryHistoryByBase64(base64: String): AnimationHistory?
 }

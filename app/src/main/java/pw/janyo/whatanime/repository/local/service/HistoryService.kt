@@ -12,4 +12,6 @@ interface HistoryService {
 	fun update(animationHistory: AnimationHistory): Int
 
 	fun queryHistoryByOriginPathAndFilter(originPath: String, filter: String?): AnimationHistory?
+
+	fun queryHistoryByBase64(base64: String): AnimationHistory?
 }

@@ -1,7 +1,7 @@
 package pw.janyo.whatanime.repository.local.service
 
-import pw.janyo.whatanime.repository.local.db.DBHelper
 import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.repository.local.db.DBHelper
 
 object HistoryServiceImpl : HistoryService {
 
@@ -21,4 +21,6 @@ object HistoryServiceImpl : HistoryService {
 		else
 			historyDao.queryHistoryByOriginPathAndFilter(originPath, filter)
 	}
+
+	override fun queryHistoryByBase64(base64: String): AnimationHistory? = historyDao.queryHistoryByBase64(base64)
 }
