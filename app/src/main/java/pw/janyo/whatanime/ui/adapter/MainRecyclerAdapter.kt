@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import com.bumptech.glide.Glide
+import coil.api.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.constant.Constant
@@ -22,8 +22,10 @@ class MainRecyclerAdapter(private val context: Context,
 		binding.handler = listener
 		binding.animationDocs = data
 		val requestUrl = "${Constant.baseUrl}thumbnail.php?anilist_id=" + data.anilist_id + "&file=" + URLEncoder.encode(data.filename, "UTF-8") + "&t=" + data.at + "&token=" + data.tokenthumb
-		Glide.with(context).load(requestUrl).placeholder(R.mipmap.janyo_studio)
-				.error(R.drawable.ic_load_failed).into(binding.imageView)
+		binding.imageView.load(requestUrl) {
+			placeholder(R.mipmap.janyo_studio)
+			error(R.drawable.ic_load_failed)
+		}
 		val nativeTitle = "${context.getString(R.string.hint_title_native)}${data.title_native}"
 		val chineseTitle = "${context.getString(R.string.hint_title_chinese)}${data.title_chinese}"
 		val englishTitle = "${context.getString(R.string.hint_title_english)}${data.title_english}"

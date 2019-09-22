@@ -1,9 +1,8 @@
 package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import coil.api.load
+import coil.request.CachePolicy
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ItemHistoryBinding
 import pw.janyo.whatanime.handler.HistoryItemListener
@@ -13,20 +12,20 @@ import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
+import java.io.File
 import java.text.DecimalFormat
 
-class HistoryRecyclerAdapter(private val context: Context,
+class HistoryRecyclerAdapter(context: Context,
 							 private val listener: HistoryItemListener) : BaseBindingRecyclerViewAdapter<AnimationHistory, ItemHistoryBinding>(R.layout.item_history) {
-
-	private val options = RequestOptions()
-			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
 	override fun setItemView(binding: ItemHistoryBinding, position: Int, data: AnimationHistory) {
 		val animation = data.result.fromJson<Animation>()
 		binding.handler = listener
 		binding.animation = animation
 		binding.history = data
-		Glide.with(context).load(data.cachePath).apply(options).into(binding.imageView)
+		binding.imageView.load(File(data.cachePath)) {
+			diskCachePolicy(CachePolicy.DISABLED)
+		}
 		if (animation.docs.isNotEmpty()) {
 			binding.animationDocs = animation.docs[0]
 			binding.textViewTime.text = data.time.getCalendarFromLong().toDateTimeString()

@@ -16,9 +16,8 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import coil.api.load
+import coil.request.CachePolicy
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
@@ -33,7 +32,6 @@ import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.MainRepository
-import pw.janyo.whatanime.ui.CustomGlideEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
@@ -76,8 +74,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private var isShowDetail = false
 	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
-	private val options = RequestOptions()
-			.diskCacheStrategy(DiskCacheStrategy.NONE)
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
@@ -129,15 +125,13 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				return
 			}
 			if (isShowDetail && cacheFile != null)
-				Glide.with(this@MainActivity)
-						.load(cacheFile)
-						.apply(options)
-						.into(contentMainBinding.imageView)
+				contentMainBinding.imageView.load(cacheFile) {
+					diskCachePolicy(CachePolicy.DISABLED)
+				}
 			else
-				Glide.with(this@MainActivity)
-						.load(data.absolutePath)
-						.apply(options)
-						.into(contentMainBinding.imageView)
+				contentMainBinding.imageView.load(data) {
+					diskCachePolicy(CachePolicy.DISABLED)
+				}
 			MainRepository.search(data, null, mainViewModel)
 		}
 
@@ -224,7 +218,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 							.maxSelectable(1)
 							.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 							.thumbnailScale(0.85f)
-							.imageEngine(CustomGlideEngine())
 							.forResult(REQUEST_CODE)
 				} else {
 					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
