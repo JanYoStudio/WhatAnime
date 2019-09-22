@@ -5,6 +5,7 @@ import android.view.View
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.model.Docs
+import vip.mystery0.logs.Logs
 import java.net.URLEncoder
 
 class MainItemListener(activityMainBinding: ActivityMainBinding) {
@@ -33,7 +34,7 @@ class MainItemListener(activityMainBinding: ActivityMainBinding) {
 			}
 			contentMainBinding.videoView.start()
 		} catch (e: Exception) {
-			e.printStackTrace()
+			Logs.wtf("click: ", e)
 			contentMainBinding.progressBar.visibility = View.GONE
 			contentMainBinding.videoView.visibility = View.GONE
 			contentMainBinding.imageView.visibility = View.VISIBLE

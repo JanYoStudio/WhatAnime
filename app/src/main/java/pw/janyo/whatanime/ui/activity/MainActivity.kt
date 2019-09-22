@@ -32,6 +32,7 @@ import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.MainRepository
+import pw.janyo.whatanime.ui.CoilImageEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
@@ -218,6 +219,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 							.maxSelectable(1)
 							.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 							.thumbnailScale(0.85f)
+							.imageEngine(CoilImageEngine())
 							.forResult(REQUEST_CODE)
 				} else {
 					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
