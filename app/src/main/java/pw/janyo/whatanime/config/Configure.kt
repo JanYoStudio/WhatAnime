@@ -1,9 +1,10 @@
 package pw.janyo.whatanime.config
 
 import android.content.Context
+import vip.mystery0.tools.context
 
 object Configure {
-	private val sharedPreference = APP.context.getSharedPreferences("configure", Context.MODE_PRIVATE)
+	private val sharedPreference = context().getSharedPreferences("configure", Context.MODE_PRIVATE)
 
 	var hideSex: Boolean
 		set(value) = sharedPreference.edit().putBoolean("config_hide_sex", value).apply()

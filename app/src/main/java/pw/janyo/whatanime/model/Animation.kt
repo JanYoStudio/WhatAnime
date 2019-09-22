@@ -18,6 +18,6 @@ class Animation {
 	var CacheHit: Boolean = false//是否被缓存
 	var trial: Int = 0//搜索次数
 	var quota: Int = 0//剩余额度
-	var expire: Int = 0//额度重置剩余时间
+	var quota_ttl: Int = 0//额度重置时间
 	lateinit var docs: List<Docs>//结果
 }

@@ -41,8 +41,9 @@ import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
 import vip.mystery0.tools.toast
 import vip.mystery0.tools.toastLong
-import vip.mystery0.tools.utils.PackageTools
+import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.formatTime
+import vip.mystery0.tools.utils.sdkIsBefore
 import java.io.File
 
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -213,7 +214,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun doSelect() {
-		if (Configure.useInAppImageSelect && PackageTools.instance.isBefore(PackageTools.VERSION_Q, exclude = true))
+		if (Configure.useInAppImageSelect && sdkIsBefore(AndroidVersionCode.VERSION_Q, exclude = true))
 			requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) { code, result ->
 				if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
 					Matisse.from(this)

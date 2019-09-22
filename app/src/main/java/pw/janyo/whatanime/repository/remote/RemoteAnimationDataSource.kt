@@ -1,53 +1,41 @@
 package pw.janyo.whatanime.repository.remote
 
 import android.graphics.Bitmap
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import pw.janyo.whatanime.api.SearchApi
-import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.factory.RetrofitFactory
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
-import vip.mystery0.rx.PackageData
-import vip.mystery0.rx.content
-import vip.mystery0.rx.empty
-import vip.mystery0.rx.error
-import vip.mystery0.tools.utils.FileTools
+import vip.mystery0.tools.utils.base64CompressImage
 import java.io.File
 
 object RemoteAnimationDataSource : AnimationDateSource {
 	private val searchApi = RetrofitFactory.retrofit.create(SearchApi::class.java)
 
-	fun showQuota(quotaLiveData: MutableLiveData<PackageData<SearchQuota>>) {
-		val response = searchApi.getMe().execute()
-		if (response.isSuccessful) {
-			quotaLiveData.content(response.body())
-		} else {
-			quotaLiveData.error(Exception(response.errorBody()?.string()))
+	override suspend fun queryAnimationByImage(file: File, filter: String?): Animation {
+		return withContext(Dispatchers.IO) {
+			val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1000, 10)
+			val response = searchApi.search(base64, filter).execute()
+			if (!response.isSuccessful) {
+				throw Exception(response.errorBody()?.string())
+			}
+			val data = response.body()!!
+			LocalAnimationDataSource.saveHistory(file, filter, data)
+			data
 		}
 	}
 
-	override fun queryAnimationByImage(animationLiveData: MutableLiveData<PackageData<Animation>>, quotaLiveData: MutableLiveData<PackageData<SearchQuota>>, file: File, filter: String?) {
-		val base64 = FileTools.instance.compressImage(Bitmap.CompressFormat.JPEG, file, 1000, 10)
-		val response = searchApi.search(base64, filter).execute()
-		if (response.isSuccessful) {
-			val headers = response.headers()
-			val quota = SearchQuota()
-			quota.quota = headers["x-whatanime-quota"]!!.toInt()
-			quota.quota_ttl = headers["x-whatanime-quota-ttl"]!!.toInt()
-			quotaLiveData.content(quota)
-			val data = response.body()!!
-			LocalAnimationDataSource.saveHistory(animationLiveData, file, filter, data)
-			if (data.docs.isEmpty()) {
-				animationLiveData.empty()
+	suspend fun showQuota(): SearchQuota {
+		return withContext(Dispatchers.IO) {
+			val response = searchApi.getMe().execute()
+			if (response.isSuccessful) {
+				response.body()!!
 			} else {
-				if (Configure.hideSex)
-					data.docs = data.docs.filter { !it.is_adult }
-				animationLiveData.content(data)
+				throw Exception(response.errorBody()?.string())
 			}
-		} else {
-			animationLiveData.error(Exception(response.errorBody()?.string()))
 		}
 	}
 }

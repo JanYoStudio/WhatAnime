@@ -3,9 +3,18 @@ package pw.janyo.whatanime.utils
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import pw.janyo.whatanime.config.APP
-import vip.mystery0.tools.utils.FileTools
-import vip.mystery0.tools.utils.StringTools
+import vip.mystery0.rx.PackageData
+import vip.mystery0.rx.error
+import vip.mystery0.tools.context
+import vip.mystery0.tools.doByTry
+import vip.mystery0.tools.utils.cloneToFile
+import vip.mystery0.tools.utils.md5
+import vip.mystery0.tools.utils.sha1
 import java.io.File
 
 object FileUtil {
@@ -17,11 +26,11 @@ object FileUtil {
 	 * @return 缓存文件（需要判断是否存在，如果返回为空说明目录权限有问题）
 	 */
 	fun getCacheFile(file: File): File? {
-		val saveParent = APP.context.getExternalFilesDir(CACHE_IMAGE_FILE_NAME) ?: return null
+		val saveParent = context().getExternalFilesDir(CACHE_IMAGE_FILE_NAME) ?: return null
 		if (!saveParent.exists())
 			saveParent.mkdirs()
 		if (saveParent.isDirectory || saveParent.delete() && saveParent.mkdirs()) {
-			val md5Name = StringTools.instance.md5(file.absolutePath)
+			val md5Name = file.absolutePath.md5()
 			return File(saveParent, md5Name)
 		}
 		return null
@@ -34,13 +43,13 @@ object FileUtil {
 	 *
 	 * @return 临时文件
 	 */
-	fun cloneUriToFile(uri: Uri): File? {
-		val parent = APP.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: return null
+	suspend fun cloneUriToFile(uri: Uri): File? {
+		val parent = context().getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: return null
 		if (!parent.exists())
 			parent.mkdirs()
 		if (parent.isDirectory || parent.delete() && parent.mkdirs()) {
-			val file = File(parent, StringTools.instance.sha1(uri.toString()))
-			FileTools.instance.cloneUriToFile(APP.context, uri, file)
+			val file = File(parent, uri.toString().sha1())
+			uri.cloneToFile(file)
 			return file
 		}
 		return null

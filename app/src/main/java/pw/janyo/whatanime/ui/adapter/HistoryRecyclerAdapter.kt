@@ -11,7 +11,7 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.factory.fromJson
-import vip.mystery0.tools.utils.toCalendar
+import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
 import java.text.DecimalFormat
 
@@ -29,7 +29,7 @@ class HistoryRecyclerAdapter(private val context: Context,
 		Glide.with(context).load(data.cachePath).apply(options).into(binding.imageView)
 		if (animation.docs.isNotEmpty()) {
 			binding.animationDocs = animation.docs[0]
-			binding.textViewTime.text = data.time.toCalendar().toDateTimeString()
+			binding.textViewTime.text = data.time.getCalendarFromLong().toDateTimeString()
 			val similarity = "${DecimalFormat("#.0000").format(animation.docs[0].similarity * 100)}%"
 			binding.textViewSimilarity.text = similarity
 		} else {

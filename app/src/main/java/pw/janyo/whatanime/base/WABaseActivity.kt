@@ -13,7 +13,8 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import vip.mystery0.tools.base.binding.BaseBindingActivity
 import vip.mystery0.tools.getTColor
-import vip.mystery0.tools.utils.PackageTools
+import vip.mystery0.tools.utils.AndroidVersionCode
+import vip.mystery0.tools.utils.sdkIsAfter
 import java.util.*
 
 abstract class WABaseActivity<B : ViewDataBinding>(@LayoutRes layoutId: Int?) : BaseBindingActivity<B>(layoutId) {
@@ -28,7 +29,7 @@ abstract class WABaseActivity<B : ViewDataBinding>(@LayoutRes layoutId: Int?) : 
 
 	@SuppressLint("NewApi")
 	private fun changeLanguage(context: Context): Context {
-		return if (PackageTools.instance.isAfter(PackageTools.VERSION_O)) {
+		return if (sdkIsAfter(AndroidVersionCode.VERSION_O)) {
 			val newLocale: Locale = when (Configure.language) {
 				1 -> Locale.SIMPLIFIED_CHINESE
 				2 -> Locale.TRADITIONAL_CHINESE
