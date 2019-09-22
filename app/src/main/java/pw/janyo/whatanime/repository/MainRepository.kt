@@ -24,11 +24,13 @@ object MainRepository {
 		doByTry {
 			GlobalScope.launch(Dispatchers.Main) {
 				val animation = LocalAnimationDataSource.queryAnimationByImage(file, filter)
-				val searchQuota = SearchQuota()
-				searchQuota.quota = animation.quota
-				searchQuota.quota_ttl = animation.quota_ttl
+				if (animation.quota != -987654 && animation.quota_ttl != -987654) {
+					val searchQuota = SearchQuota()
+					searchQuota.quota = animation.quota
+					searchQuota.quota_ttl = animation.quota_ttl
+					mainViewModel.quota.content(searchQuota)
+				}
 				mainViewModel.resultList.content(animation)
-				mainViewModel.quota.content(searchQuota)
 			}
 		}.dealWith(mainViewModel.resultList)
 	}

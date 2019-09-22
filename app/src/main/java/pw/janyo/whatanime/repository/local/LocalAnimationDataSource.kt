@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.service.HistoryService
 import pw.janyo.whatanime.repository.local.service.HistoryServiceImpl
@@ -22,8 +23,14 @@ object LocalAnimationDataSource : AnimationDateSource {
 	override suspend fun queryAnimationByImage(file: File, filter: String?): Animation {
 		return withContext(Dispatchers.IO) {
 			val animationHistory = historyService.queryHistoryByOriginPathAndFilter(file.absolutePath, filter)
-			animationHistory?.result?.fromJson()
-					?: RemoteAnimationDataSource.queryAnimationByImage(file, filter)
+			val history = animationHistory?.result?.fromJson<Animation>()
+			if (history != null) {
+				history.quota = -987654
+				history.quota_ttl = -987654
+				history
+			} else {
+				RemoteAnimationDataSource.queryAnimationByImage(file, filter)
+			}
 		}
 	}
 
