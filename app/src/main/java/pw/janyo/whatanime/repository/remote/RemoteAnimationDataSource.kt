@@ -3,13 +3,16 @@ package pw.janyo.whatanime.repository.remote
 import android.graphics.Bitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.factory.RetrofitFactory
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
+import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.utils.base64CompressImage
+import vip.mystery0.tools.utils.isConnectInternet
 import java.io.File
 
 object RemoteAnimationDataSource : AnimationDateSource {
@@ -21,6 +24,9 @@ object RemoteAnimationDataSource : AnimationDateSource {
 		if (history != null) {
 			history
 		} else {
+			if (!isConnectInternet()){
+				throw ResourceException(R.string.hint_no_network)
+			}
 			val response = searchApi.search(base64, filter).execute()
 			if (!response.isSuccessful) {
 				throw Exception(response.errorBody()?.string())
@@ -32,6 +38,9 @@ object RemoteAnimationDataSource : AnimationDateSource {
 	}
 
 	suspend fun showQuota(): SearchQuota = withContext(Dispatchers.IO) {
+		if (!isConnectInternet()){
+			throw ResourceException(R.string.hint_no_network)
+		}
 		val response = searchApi.getMe().execute()
 		if (response.isSuccessful) {
 			response.body()!!
