@@ -15,5 +15,6 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 		} else {
 			getString(R.string.hint_not_share).toast(this)
 		}
+		finish()
 	}
 }
