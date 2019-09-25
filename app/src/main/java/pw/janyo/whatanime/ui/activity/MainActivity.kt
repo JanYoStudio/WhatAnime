@@ -38,6 +38,7 @@ import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
+import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.toast
 import vip.mystery0.tools.toastLong
 import vip.mystery0.tools.utils.AndroidVersionCode
@@ -84,7 +85,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		}
 
 		override fun error(data: SearchQuota?, e: Throwable?) {
-			Logs.wtf("quotaObserver: ", e)
+			if (e !is ResourceException)
+				Logs.wtf("quotaObserver: ", e)
 			e.toastLong(this@MainActivity)
 		}
 	}
@@ -107,7 +109,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		}
 
 		override fun error(data: Animation?, e: Throwable?) {
-			Logs.wtf("animationObserver: ", e)
+			if (e !is ResourceException)
+				Logs.wtf("animationObserver: ", e)
 			hideDialog()
 			e.toastLong(this@MainActivity)
 		}
@@ -137,6 +140,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		}
 
 		override fun error(data: File?, e: Throwable?) {
+			if (e !is ResourceException)
+				Logs.wtf("imageFileObserver: ", e)
 			e.toastLong(this@MainActivity)
 		}
 	}

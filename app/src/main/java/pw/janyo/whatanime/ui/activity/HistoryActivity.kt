@@ -16,6 +16,7 @@ import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
+import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.dispatchMessage
 
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
@@ -41,7 +42,8 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 		}
 
 		override fun error(data: List<AnimationHistory>?, e: Throwable?) {
-			Logs.wtf("animationHistoryObserver: ", e)
+			if (e !is ResourceException)
+				Logs.wtf("animationHistoryObserver: ", e)
 			dismissRefresh()
 			Snackbar.make(binding.coordinatorLayout, e.dispatchMessage()
 					?: "", Snackbar.LENGTH_LONG)
