@@ -18,6 +18,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.api.load
 import coil.request.CachePolicy
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
@@ -76,6 +79,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private var isShowDetail = false
 	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
+	private val player by lazy { ExoPlayerFactory.newSimpleInstance(this) }
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
@@ -156,7 +160,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		title = getString(R.string.title_activity_main)
 		setSupportActionBar(binding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		mainRecyclerAdapter = MainRecyclerAdapter(this, MainItemListener(binding))
+		mainRecyclerAdapter = MainRecyclerAdapter(this, MainItemListener(this, player))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
 
@@ -166,6 +170,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		initDialog()
 		MainRepository.showQuota(mainViewModel)
 		initIntent()
+		videoView.player = player
 	}
 
 	private fun initViewModel() {
@@ -211,6 +216,32 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		fab.setOnClickListener {
 			doSelect()
 		}
+		player.addListener(object : Player.EventListener {
+			override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+				Logs.im("onPlayerStateChanged: ", playWhenReady, playbackState)
+				when (playbackState) {
+					Player.STATE_BUFFERING -> {
+						contentMainBinding.imageView.visibility = View.GONE
+						contentMainBinding.videoView.visibility = View.VISIBLE
+						contentMainBinding.progressBar.visibility = View.VISIBLE
+					}
+					Player.STATE_READY -> {
+						contentMainBinding.progressBar.visibility = View.GONE
+					}
+					Player.STATE_ENDED -> {
+						contentMainBinding.videoView.visibility = View.GONE
+						contentMainBinding.imageView.visibility = View.VISIBLE
+					}
+				}
+			}
+
+			override fun onPlayerError(error: ExoPlaybackException?) {
+				Logs.e("onPlayerError: ", error)
+				contentMainBinding.progressBar.visibility = View.GONE
+				contentMainBinding.videoView.visibility = View.GONE
+				contentMainBinding.imageView.visibility = View.VISIBLE
+			}
+		})
 	}
 
 	private fun doSelect() {

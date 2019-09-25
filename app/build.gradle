@@ -95,4 +95,6 @@ dependencies {
     implementation "com.mikepenz:aboutlibraries:7.0.1"
     //Markwon
     implementation 'io.noties.markwon:core:4.1.1'
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.5'
 }
