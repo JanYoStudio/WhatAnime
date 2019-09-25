@@ -84,8 +84,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
 			val quota = data!!
-			searchQuota.text = quota.quota.toString()
-			searchQuotaTtl.text = (quota.quota_ttl * 1000).toLong().formatTime()
+			val quotaString = "${getString(R.string.hint_search_quota)}${quota.quota}    ${getString(R.string.hint_search_quota_ttl)}${(quota.quota_ttl * 1000).toLong().formatTime()}"
+			searchQuota.text = quotaString
 		}
 
 		override fun error(data: SearchQuota?, e: Throwable?) {
@@ -218,7 +218,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		}
 		player.addListener(object : Player.EventListener {
 			override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-				Logs.im("onPlayerStateChanged: ", playWhenReady, playbackState)
 				when (playbackState) {
 					Player.STATE_BUFFERING -> {
 						contentMainBinding.imageView.visibility = View.GONE
@@ -240,6 +239,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				contentMainBinding.progressBar.visibility = View.GONE
 				contentMainBinding.videoView.visibility = View.GONE
 				contentMainBinding.imageView.visibility = View.VISIBLE
+				error.toastLong(this@MainActivity)
 			}
 		})
 	}
