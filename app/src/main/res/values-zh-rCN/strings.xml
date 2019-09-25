@@ -75,4 +75,5 @@
     <string name="hint_show_animation_detail">想查看更多关于《%1$s》的信息吗？</string>
     <string name="hint_not_share">文件无效！</string>
     <string name="title_receive_share">搜索番剧</string>
+    <string name="hint_no_network">网络连接异常，请检查！</string>
 </resources>

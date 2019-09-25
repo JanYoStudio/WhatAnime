@@ -64,6 +64,7 @@
     <string name="hint_no_browser">Please install a browser first.</string>
     <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
     <string name="hint_not_share">The file is invalid!</string>
+    <string name="hint_no_network">The network connection is abnormal, please check!</string>
     <string name="summary_about_open_on_coolapk">Rate in CoolAPK</string>
     <string name="summary_about_open_on_play">Rate in Google Play Store</string>
     <string name="summary_developer_whatanime">WhatAnime API Developer</string>
