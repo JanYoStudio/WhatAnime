@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitFactory {
 	private val client = OkHttpClient.Builder()
-			.connectTimeout(20, TimeUnit.SECONDS)
-			.readTimeout(20, TimeUnit.SECONDS)
+			.connectTimeout(40, TimeUnit.SECONDS)
+			.readTimeout(40, TimeUnit.SECONDS)
 //			.addInterceptor(HttpLoggingInterceptor()
-//					.setLevel(HttpLoggingInterceptor.Level.BODY))
+//					.setLevel(HttpLoggingInterceptor.Level.HEADERS))
 			.build()
 
 	val retrofit: Retrofit = Retrofit.Builder()

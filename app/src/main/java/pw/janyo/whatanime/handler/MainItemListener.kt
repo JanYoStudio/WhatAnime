@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.model.Docs
 import java.net.URLEncoder
 

@@ -8,6 +8,7 @@ import android.os.Environment
 import android.util.Base64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import vip.mystery0.logs.Logs
 import vip.mystery0.tools.context
 import vip.mystery0.tools.utils.cloneToFile
 import vip.mystery0.tools.utils.closeQuietly
@@ -15,6 +16,7 @@ import vip.mystery0.tools.utils.md5
 import vip.mystery0.tools.utils.sha1
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
@@ -81,18 +83,27 @@ suspend fun File.base64CompressImage(compressFormat: Bitmap.CompressFormat, maxS
 	return withContext(Dispatchers.IO) {
 		val outputStream = ByteArrayOutputStream()
 		var option = 100
-		var base64String: String? = null
-		while (option >= 0) {
-			outputStream.reset()
-			val bitmap = zoomBitmap()
-			bitmap.compress(compressFormat, option, outputStream)
-			base64String = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
-			if (base64String.length <= maxSize)
-				break
-			option -= interval
+		val fileInputStream = FileInputStream(this@base64CompressImage)
+		fileInputStream.copyTo(outputStream)
+		fileInputStream.closeQuietly(true)
+		var base64String = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+		Logs.i("base64CompressImage: ${base64String.length}")
+		if (base64String.length <= maxSize)
+			base64String
+		else {
+			while (option >= 0) {
+				outputStream.reset()
+				val bitmap = zoomBitmap()
+				bitmap.compress(compressFormat, option, outputStream)
+				base64String = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+				if (base64String.length <= maxSize)
+					break
+				option -= interval
+			}
+			Logs.i("base64CompressImage: option: $option size: ${base64String.length}")
+			outputStream.closeQuietly(true)
+			base64String!!
 		}
-		outputStream.closeQuietly(true)
-		base64String!!
 	}
 }
 

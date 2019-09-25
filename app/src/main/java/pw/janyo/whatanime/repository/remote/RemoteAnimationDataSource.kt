@@ -19,12 +19,12 @@ object RemoteAnimationDataSource : AnimationDateSource {
 	private val searchApi = RetrofitFactory.retrofit.create(SearchApi::class.java)
 
 	override suspend fun queryAnimationByImage(file: File, filter: String?): Animation = withContext(Dispatchers.IO) {
-		val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1000, 10)
+		val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1024 * 1000, 10)
 		val history = LocalAnimationDataSource.queryByBase64(base64)
 		if (history != null) {
 			history
 		} else {
-			if (!isConnectInternet()){
+			if (!isConnectInternet()) {
 				throw ResourceException(R.string.hint_no_network)
 			}
 			val response = searchApi.search(base64, filter).execute()
@@ -38,7 +38,7 @@ object RemoteAnimationDataSource : AnimationDateSource {
 	}
 
 	suspend fun showQuota(): SearchQuota = withContext(Dispatchers.IO) {
-		if (!isConnectInternet()){
+		if (!isConnectInternet()) {
 			throw ResourceException(R.string.hint_no_network)
 		}
 		val response = searchApi.getMe().execute()
