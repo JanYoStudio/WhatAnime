@@ -66,5 +66,6 @@ object LocalAnimationDataSource : AnimationDateSource {
 
 	suspend fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) = withContext(Dispatchers.IO) {
 		listener(historyService.delete(animationHistory) == 1)
+		File(animationHistory.cachePath).delete()
 	}
 }
