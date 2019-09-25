@@ -9,7 +9,7 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
 import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
-import pw.janyo.whatanime.utils.FileUtil
+import pw.janyo.whatanime.utils.cloneUriToFile
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.content
@@ -51,7 +51,7 @@ object MainRepository {
 
 	fun parseImageFile(mainViewModel: MainViewModel, data: Intent) {
 		GlobalScope.launch(CoroutineExceptionHandler { _, throwable -> mainViewModel.imageFile.error(throwable) }) {
-			val file = FileUtil.cloneUriToFile(data.data!!)
+			val file = data.data!!.cloneUriToFile()
 			if (file != null && file.exists()) {
 				mainViewModel.imageFile.content(file)
 			} else {

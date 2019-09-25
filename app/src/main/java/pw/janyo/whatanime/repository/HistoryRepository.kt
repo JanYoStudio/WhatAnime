@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
-import pw.janyo.whatanime.utils.FileUtil
+import pw.janyo.whatanime.utils.getCacheFile
 import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageData
@@ -33,7 +33,7 @@ object HistoryRepository {
 			listener(false)
 		}) {
 			LocalAnimationDataSource.deleteHistory(animationHistory, listener)
-			val savedFile = FileUtil.getCacheFile(File(animationHistory.cachePath))
+			val savedFile = File(animationHistory.cachePath).getCacheFile()
 			if (savedFile != null && savedFile.exists())
 				savedFile.delete()
 		}

@@ -10,8 +10,8 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
+import pw.janyo.whatanime.utils.base64CompressImage
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.utils.base64CompressImage
 import vip.mystery0.tools.utils.isConnectInternet
 import java.io.File
 

@@ -9,7 +9,7 @@ import pw.janyo.whatanime.repository.dataSource.AnimationDateSource
 import pw.janyo.whatanime.repository.local.service.HistoryService
 import pw.janyo.whatanime.repository.local.service.HistoryServiceImpl
 import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
-import pw.janyo.whatanime.utils.FileUtil
+import pw.janyo.whatanime.utils.getCacheFile
 import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.copyToFile
@@ -46,7 +46,7 @@ object LocalAnimationDataSource : AnimationDateSource {
 	suspend fun saveHistory(base64: String, file: File, filter: String?, animation: Animation) = withContext(Dispatchers.IO) {
 		val animationHistory = AnimationHistory()
 		animationHistory.originPath = file.absolutePath
-		val saveFile = FileUtil.getCacheFile(file) ?: return@withContext
+		val saveFile = file.getCacheFile() ?: return@withContext
 		file.copyToFile(saveFile)
 		animationHistory.cachePath = saveFile.absolutePath
 		animationHistory.base64 = base64

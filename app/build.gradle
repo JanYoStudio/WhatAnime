@@ -71,7 +71,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha10'
     //Mystery0Tools
     implementation 'vip.mystery0.tools:logs:1.4.0'
-    implementation 'vip.mystery0.tools:tools:2.0.8'
+    implementation 'vip.mystery0.tools:tools:2.0.9'
     implementation 'vip.mystery0.tools:crashhandler:1.1.1'
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'

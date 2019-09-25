@@ -7,7 +7,7 @@ import pw.janyo.whatanime.R
 
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityMarkdownBinding
-import pw.janyo.whatanime.utils.FileUtil
+import pw.janyo.whatanime.utils.getMarkdown
 
 class MarkdownActivity : WABaseActivity<ActivityMarkdownBinding>(R.layout.activity_markdown) {
 	private var fileName: String = ""
@@ -49,6 +49,6 @@ class MarkdownActivity : WABaseActivity<ActivityMarkdownBinding>(R.layout.activi
 			return
 		}
 		Markwon.create(this)
-				.setMarkdown(binding.textView, FileUtil.getMarkdown(this, fileName))
+				.setMarkdown(binding.textView, getMarkdown(this, fileName))
 	}
 }
