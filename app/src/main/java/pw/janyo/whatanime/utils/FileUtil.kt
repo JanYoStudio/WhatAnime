@@ -8,7 +8,6 @@ import android.os.Environment
 import android.util.Base64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import vip.mystery0.logs.Logs
 import vip.mystery0.tools.context
 import vip.mystery0.tools.utils.cloneToFile
 import vip.mystery0.tools.utils.closeQuietly
@@ -87,7 +86,6 @@ suspend fun File.base64CompressImage(compressFormat: Bitmap.CompressFormat, maxS
 		fileInputStream.copyTo(outputStream)
 		fileInputStream.closeQuietly(true)
 		var base64String = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
-		Logs.i("base64CompressImage: ${base64String.length}")
 		if (base64String.length <= maxSize)
 			base64String
 		else {
@@ -100,7 +98,6 @@ suspend fun File.base64CompressImage(compressFormat: Bitmap.CompressFormat, maxS
 					break
 				option -= interval
 			}
-			Logs.i("base64CompressImage: option: $option size: ${base64String.length}")
 			outputStream.closeQuietly(true)
 			base64String!!
 		}
