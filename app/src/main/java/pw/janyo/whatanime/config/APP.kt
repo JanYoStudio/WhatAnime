@@ -10,7 +10,6 @@ import vip.mystery0.tools.ToolsClient
  */
 
 class APP : Application() {
-
 	override fun onCreate() {
 		super.onCreate()
 		CrashHandler.config {

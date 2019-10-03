@@ -34,7 +34,6 @@ import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
-import pw.janyo.whatanime.repository.MainRepository
 import pw.janyo.whatanime.ui.CoilImageEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.viewModel.MainViewModel
@@ -140,7 +139,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				contentMainBinding.imageView.load(data) {
 					diskCachePolicy(CachePolicy.DISABLED)
 				}
-			MainRepository.search(data, null, mainViewModel)
+			mainViewModel.search(data, null)
 		}
 
 		override fun error(data: File?, e: Throwable?) {
@@ -168,7 +167,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		super.initData()
 		initViewModel()
 		initDialog()
-		MainRepository.showQuota(mainViewModel)
+		mainViewModel.showQuota()
 		initIntent()
 		videoView.player = player
 	}
@@ -191,7 +190,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			try {
 				val uri = intent.getParcelableExtra<Uri>(INTENT_URI)
 				intent.data = uri
-				MainRepository.parseImageFile(mainViewModel, intent)
+				mainViewModel.parseImageFile(intent)
 			} catch (e: Exception) {
 				getString(R.string.hint_select_file_path_null).toast(this)
 			}
@@ -315,12 +314,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		when (requestCode) {
 			REQUEST_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					MainRepository.parseImageFileByMatisse(mainViewModel, data!!)
+					mainViewModel.parseImageFileByMatisse(data!!)
 				}
 			}
 			FILE_SELECT_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					MainRepository.parseImageFile(mainViewModel, data!!)
+					mainViewModel.parseImageFile(data!!)
 				}
 			}
 		}

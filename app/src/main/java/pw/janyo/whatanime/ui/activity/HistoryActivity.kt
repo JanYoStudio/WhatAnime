@@ -11,7 +11,6 @@ import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
 import pw.janyo.whatanime.handler.HistoryItemListener
 import pw.janyo.whatanime.model.AnimationHistory
-import pw.janyo.whatanime.repository.HistoryRepository
 import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
@@ -76,7 +75,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 			override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 				val position = viewHolder.adapterPosition
 				historyRecyclerAdapter.notifyItemRemoved(position)
-				HistoryRepository.deleteHistory(historyRecyclerAdapter.items.removeAt(position)) {
+				historyViewModel.deleteHistory(historyRecyclerAdapter.items.removeAt(position)) {
 					Snackbar.make(binding.coordinatorLayout, if (it) R.string.hint_history_delete_done else R.string.hint_history_delete_error, Snackbar.LENGTH_SHORT)
 							.show()
 					if (!it)
@@ -104,7 +103,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 	}
 
 	private fun refresh() {
-		HistoryRepository.loadHistory(historyViewModel)
+		historyViewModel.loadHistory()
 	}
 
 	private fun showRefresh() {
