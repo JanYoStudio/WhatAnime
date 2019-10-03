@@ -27,11 +27,7 @@ object RemoteAnimationDataSource : AnimationDateSource {
 			if (!isConnectInternet()) {
 				throw ResourceException(R.string.hint_no_network)
 			}
-			val response = searchApi.search(base64, filter).execute()
-			if (!response.isSuccessful) {
-				throw Exception(response.errorBody()?.string())
-			}
-			val data = response.body()!!
+			val data = searchApi.search(base64, filter)
 			LocalAnimationDataSource.saveHistory(base64, file, filter, data)
 			data
 		}
@@ -41,11 +37,6 @@ object RemoteAnimationDataSource : AnimationDateSource {
 		if (!isConnectInternet()) {
 			throw ResourceException(R.string.hint_no_network)
 		}
-		val response = searchApi.getMe().execute()
-		if (response.isSuccessful) {
-			response.body()!!
-		} else {
-			throw Exception(response.errorBody()?.string())
-		}
+		searchApi.getMe()
 	}
 }
