@@ -17,7 +17,7 @@ class HistoryViewModel : ViewModel() {
 
 	fun loadHistory() {
 		historyList.loading()
-		viewModelScope.launch(dispatchException(historyList)) {
+		launch(historyList) {
 			val list = LocalAnimationDataSource.queryAllHistory()
 			if (list.isNullOrEmpty()) {
 				historyList.empty()

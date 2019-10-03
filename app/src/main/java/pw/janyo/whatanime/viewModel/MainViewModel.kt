@@ -3,9 +3,7 @@ package pw.janyo.whatanime.viewModel
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.zhihu.matisse.Matisse
-import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
@@ -14,7 +12,7 @@ import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
 import pw.janyo.whatanime.utils.cloneUriToFile
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.content
-import vip.mystery0.rx.dispatchException
+import vip.mystery0.rx.launch
 import vip.mystery0.rx.loading
 import vip.mystery0.tools.ResourceException
 import java.io.File
@@ -27,7 +25,7 @@ class MainViewModel : ViewModel() {
 
 	fun search(file: File, filter: String?) {
 		resultList.loading()
-		viewModelScope.launch(dispatchException(resultList)) {
+		launch(resultList) {
 			val animation = LocalAnimationDataSource.queryAnimationByImage(file, filter)
 			if (animation.quota != -987654 && animation.quota_ttl != -987654) {
 				val searchQuota = SearchQuota()
@@ -40,13 +38,13 @@ class MainViewModel : ViewModel() {
 	}
 
 	fun showQuota() {
-		viewModelScope.launch(dispatchException(quota)) {
+		launch(quota) {
 			quota.content(RemoteAnimationDataSource.showQuota())
 		}
 	}
 
 	fun parseImageFileByMatisse(data: Intent) {
-		viewModelScope.launch(dispatchException(imageFile)) {
+		launch(imageFile) {
 			val fileList = Matisse.obtainPathResult(data)
 			if (fileList.isNotEmpty()) {
 				imageFile.content(File(fileList[0]))
@@ -57,7 +55,7 @@ class MainViewModel : ViewModel() {
 	}
 
 	fun parseImageFile(data: Intent) {
-		viewModelScope.launch(dispatchException(imageFile)) {
+		launch(imageFile) {
 			val file = data.data!!.cloneUriToFile()
 			if (file != null && file.exists()) {
 				imageFile.content(file)
