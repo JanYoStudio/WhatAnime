@@ -16,7 +16,6 @@ import pw.janyo.whatanime.viewModel.HistoryViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.dispatchMessage
 
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
@@ -44,7 +43,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 			if (e !is ResourceException)
 				Logs.wtf("animationHistoryObserver: ", e)
 			dismissRefresh()
-			Snackbar.make(binding.coordinatorLayout, e.dispatchMessage()
+			Snackbar.make(binding.coordinatorLayout, e?.message
 					?: "", Snackbar.LENGTH_LONG)
 					.show()
 		}

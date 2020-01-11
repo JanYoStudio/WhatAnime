@@ -16,7 +16,7 @@ class APP : Application() {
 			it.setDirName("log")
 			it.setFileNameSuffix("log")
 			it.setDir(externalCacheDir!!)
-		}.initWithContext(this)
+		}.init()
 		DBHelper.init(this)
 		ToolsClient.initWithContext(this)
 	}
