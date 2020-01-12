@@ -14,18 +14,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.api.load
 import coil.request.CachePolicy
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.koin.androidx.scope.currentScope
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
@@ -73,12 +75,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private lateinit var contentMainBinding: ContentMainBinding
-	private val mainViewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+	private val mainViewModel: MainViewModel by viewModel()
 	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
 	private var isShowDetail = false
 	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
-	private val player by lazy { ExoPlayerFactory.newSimpleInstance(this) }
+	private val player: ExoPlayer by currentScope.inject { parametersOf(this@MainActivity) }
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {

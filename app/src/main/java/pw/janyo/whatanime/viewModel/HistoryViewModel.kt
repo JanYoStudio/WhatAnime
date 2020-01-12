@@ -6,19 +6,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import pw.janyo.whatanime.model.AnimationHistory
-import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
+import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.utils.getCacheFile
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.*
 import java.io.File
 
-class HistoryViewModel : ViewModel() {
+class HistoryViewModel(
+		private val animationRepository: AnimationRepository
+) : ViewModel() {
 	var historyList = MutableLiveData<PackageData<List<AnimationHistory>>>()
 
 	fun loadHistory() {
 		historyList.loading()
 		launch(historyList) {
-			val list = LocalAnimationDataSource.queryAllHistory()
+			val list = animationRepository.queryAllHistory()
 			if (list.isNullOrEmpty()) {
 				historyList.empty()
 			} else {
@@ -32,7 +34,7 @@ class HistoryViewModel : ViewModel() {
 			Logs.wtf("deleteHistory: ", throwable)
 			listener(false)
 		}) {
-			LocalAnimationDataSource.deleteHistory(animationHistory, listener)
+			animationRepository.deleteHistory(animationHistory, listener)
 			val savedFile = File(animationHistory.cachePath).getCacheFile()
 			if (savedFile != null && savedFile.exists())
 				savedFile.delete()

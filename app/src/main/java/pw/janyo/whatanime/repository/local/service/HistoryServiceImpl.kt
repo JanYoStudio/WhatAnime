@@ -1,11 +1,11 @@
 package pw.janyo.whatanime.repository.local.service
 
 import pw.janyo.whatanime.model.AnimationHistory
-import pw.janyo.whatanime.repository.local.db.DBHelper
+import pw.janyo.whatanime.repository.local.dao.HistoryDao
 
-object HistoryServiceImpl : HistoryService {
-
-	private val historyDao = DBHelper.db.getHistoryDao()
+class HistoryServiceImpl(
+		private val historyDao: HistoryDao
+) : HistoryService {
 
 	override fun saveHistory(animationHistory: AnimationHistory): Long = historyDao.saveHistory(animationHistory)
 

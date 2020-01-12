@@ -1,10 +1,10 @@
 package pw.janyo.whatanime.ui.activity
 
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
@@ -19,7 +19,7 @@ import vip.mystery0.tools.ResourceException
 
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
-	private val historyViewModel: HistoryViewModel by lazy { ViewModelProvider(this).get(HistoryViewModel::class.java) }
+	private val historyViewModel: HistoryViewModel by viewModel()
 	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
 
 	private val animationHistoryObserver = object : PackageDataObserver<List<AnimationHistory>> {

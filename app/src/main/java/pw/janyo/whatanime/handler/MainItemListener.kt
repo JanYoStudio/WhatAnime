@@ -2,6 +2,7 @@ package pw.janyo.whatanime.handler
 
 import android.content.Context
 import android.net.Uri
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -11,7 +12,7 @@ import pw.janyo.whatanime.model.Docs
 import java.net.URLEncoder
 
 class MainItemListener(context: Context,
-					   private val player: SimpleExoPlayer) {
+					   private val player: ExoPlayer) {
 	private var nowPlayUrl: String? = null
 	private val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, context.packageName))
 

@@ -7,8 +7,7 @@ import com.zhihu.matisse.Matisse
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
-import pw.janyo.whatanime.repository.local.LocalAnimationDataSource
-import pw.janyo.whatanime.repository.remote.RemoteAnimationDataSource
+import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.utils.cloneUriToFile
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.content
@@ -17,7 +16,9 @@ import vip.mystery0.rx.loading
 import vip.mystery0.tools.ResourceException
 import java.io.File
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+		private val animationRepository: AnimationRepository
+) : ViewModel() {
 	val imageFile = MutableLiveData<PackageData<File>>()
 	val resultList = MutableLiveData<PackageData<Animation>>()
 	val isShowDetail = MutableLiveData<Boolean>()
@@ -26,7 +27,7 @@ class MainViewModel : ViewModel() {
 	fun search(file: File, filter: String?) {
 		resultList.loading()
 		launch(resultList) {
-			val animation = LocalAnimationDataSource.queryAnimationByImage(file, filter)
+			val animation = animationRepository.queryAnimationByImageLocal(file, filter)
 			if (animation.quota != -987654 && animation.quota_ttl != -987654) {
 				val searchQuota = SearchQuota()
 				searchQuota.quota = animation.quota
@@ -39,7 +40,7 @@ class MainViewModel : ViewModel() {
 
 	fun showQuota() {
 		launch(quota) {
-			quota.content(RemoteAnimationDataSource.showQuota())
+			quota.content(animationRepository.showQuota())
 		}
 	}
 
