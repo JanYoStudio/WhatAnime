@@ -79,7 +79,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val player: ExoPlayer by currentScope.inject { parametersOf(this) }
 	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
 	private var isShowDetail = false
-	private lateinit var dialog: Dialog
+	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
 	private val exoDataSourceFactory: DataSource.Factory by inject()
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
@@ -165,7 +165,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	override fun initData() {
 		super.initData()
 		initViewModel()
-		initDialog()
 		mainViewModel.showQuota()
 		initIntent()
 		videoView.player = player
@@ -181,10 +180,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			player.prepare(ProgressiveMediaSource.Factory(exoDataSourceFactory).createMediaSource(Uri.parse(it)))
 			player.playWhenReady = true
 		})
-	}
-
-	private fun initDialog() {
-		dialog = buildZLoadingDialog().create()
 	}
 
 	@SuppressLint("RestrictedApi")

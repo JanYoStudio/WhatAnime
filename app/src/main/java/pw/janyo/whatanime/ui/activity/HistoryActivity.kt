@@ -4,12 +4,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
-import pw.janyo.whatanime.handler.HistoryItemListener
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 import pw.janyo.whatanime.viewModel.HistoryViewModel
@@ -20,7 +21,7 @@ import vip.mystery0.tools.ResourceException
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
 	private val historyViewModel: HistoryViewModel by viewModel()
-	private lateinit var historyRecyclerAdapter: HistoryRecyclerAdapter
+	private val historyRecyclerAdapter: HistoryRecyclerAdapter by currentScope.inject { parametersOf(this) }
 
 	private val animationHistoryObserver = object : PackageDataObserver<List<AnimationHistory>> {
 		override fun content(data: List<AnimationHistory>?) {
@@ -64,7 +65,6 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 			finish()
 		}
 		contentHistoryBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		historyRecyclerAdapter = HistoryRecyclerAdapter(this, HistoryItemListener(this))
 		contentHistoryBinding.recyclerView.adapter = historyRecyclerAdapter
 		ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 			override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
