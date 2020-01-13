@@ -7,7 +7,7 @@ import pw.janyo.whatanime.viewModel.MainViewModel
 
 val viewModelModule = module {
 	viewModel {
-		MainViewModel(get())
+		MainViewModel(get(), get())
 	}
 	viewModel {
 		HistoryViewModel(get())

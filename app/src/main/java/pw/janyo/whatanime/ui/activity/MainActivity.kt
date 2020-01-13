@@ -18,14 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -79,7 +77,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
 	private var isShowDetail = false
 	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
-	private val exoDataSourceFactory: DataSource.Factory by inject()
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
@@ -145,6 +142,21 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			e.toastLong(this@MainActivity)
 		}
 	}
+	private val mediaSourceObserver = object : PackageDataObserver<MediaSource> {
+		override fun content(data: MediaSource?) {
+			super.content(data)
+			if (data == null) {
+				//再次播放当前视频
+				if (!player.isPlaying)
+					player.seekToDefaultPosition()
+			} else {
+				//播放新的视频
+				player.stop(true)
+				player.prepare(data)
+				player.playWhenReady = true
+			}
+		}
+	}
 
 	override fun inflateView(layoutId: Int) {
 		super.inflateView(layoutId)
@@ -172,11 +184,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
 		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })
-		mainViewModel.nowPlayUrl.observe(this, Observer {
-			player.stop(true)
-			player.prepare(ProgressiveMediaSource.Factory(exoDataSourceFactory).createMediaSource(Uri.parse(it)))
-			player.playWhenReady = true
-		})
+		mainViewModel.mediaSource.observe(this, mediaSourceObserver)
 	}
 
 	@SuppressLint("RestrictedApi")

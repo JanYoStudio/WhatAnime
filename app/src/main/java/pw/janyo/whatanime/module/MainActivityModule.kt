@@ -2,7 +2,6 @@ package pw.janyo.whatanime.module
 
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
-import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import pw.janyo.whatanime.handler.MainItemListener
@@ -15,7 +14,7 @@ val mainActivityModule = module {
 			ExoPlayerFactory.newSimpleInstance(context)
 		}
 		scoped { (context: MainActivity) ->
-			MainRecyclerAdapter(context, MainItemListener(get { parametersOf(context) }, get()))
+			MainRecyclerAdapter(context, MainItemListener(get()))
 		}
 	}
 }
