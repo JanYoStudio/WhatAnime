@@ -13,7 +13,7 @@ val historyActivityModule = module {
 			HistoryItemListener(context)
 		}
 		scoped { (context: HistoryActivity) ->
-			HistoryRecyclerAdapter(context, get { parametersOf(context) })
+			HistoryRecyclerAdapter(get { parametersOf(context) })
 		}
 	}
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import pw.janyo.whatanime.module.*
 import vip.mystery0.crashhandler.CrashHandler
 import vip.mystery0.tools.ToolsClient
@@ -16,7 +17,7 @@ class APP : Application() {
 	override fun onCreate() {
 		super.onCreate()
 		startKoin {
-			androidLogger()
+			androidLogger(Level.ERROR)
 			androidContext(this@APP)
 			modules(listOf(databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule, historyActivityModule))
 		}

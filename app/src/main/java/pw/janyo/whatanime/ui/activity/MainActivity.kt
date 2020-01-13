@@ -15,8 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.api.load
-import coil.request.CachePolicy
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
@@ -40,6 +38,7 @@ import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.ui.CoilImageEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
+import pw.janyo.whatanime.utils.loadWithoutCache
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
@@ -135,9 +134,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				return
 			}
 			//图片存在，加载图片显示
-			contentMainBinding.imageView.load(data) {
-				diskCachePolicy(CachePolicy.DISABLED)
-			}
+			contentMainBinding.imageView.loadWithoutCache(data)
 			//搜索图片
 			mainViewModel.search(data, null)
 		}
