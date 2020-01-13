@@ -19,6 +19,7 @@ import java.io.File
 class MainViewModel(
 		private val animationRepository: AnimationRepository
 ) : ViewModel() {
+	val nowPlayUrl = MutableLiveData<String>()
 	val imageFile = MutableLiveData<PackageData<File>>()
 	val resultList = MutableLiveData<PackageData<Animation>>()
 	val isShowDetail = MutableLiveData<Boolean>()
@@ -55,6 +56,9 @@ class MainViewModel(
 		}
 	}
 
+	/**
+	 * 从Intent中获取Uri，将其clone到临时目录
+	 */
 	fun parseImageFile(data: Intent) {
 		launch(imageFile) {
 			val file = data.data!!.cloneUriToFile()

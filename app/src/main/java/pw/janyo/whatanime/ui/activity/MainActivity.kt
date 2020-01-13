@@ -20,11 +20,14 @@ import coil.request.CachePolicy
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.currentScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -33,7 +36,6 @@ import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
-import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.ui.CoilImageEngine
@@ -54,14 +56,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	companion object {
 		private const val REQUEST_CODE = 123
 		private const val FILE_SELECT_CODE = 124
-		private const val INTENT_ORIGIN_FILE = "INTENT_ORIGIN_FILE"
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_TITLE = "INTENT_TITLE"
 		private const val INTENT_URI = "INTENT_URI"
 
-		fun showDetail(context: Context, originFile: File, cacheFile: File, title: String) {
+		fun showDetail(context: Context, cacheFile: File, title: String) {
 			val intent = Intent(context, MainActivity::class.java)
-			intent.putExtra(INTENT_ORIGIN_FILE, originFile)
 			intent.putExtra(INTENT_CACHE_FILE, cacheFile)
 			intent.putExtra(INTENT_TITLE, title)
 			context.startActivity(intent)
@@ -76,11 +76,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	private lateinit var contentMainBinding: ContentMainBinding
 	private val mainViewModel: MainViewModel by viewModel()
-	private lateinit var mainRecyclerAdapter: MainRecyclerAdapter
+	private val player: ExoPlayer by currentScope.inject { parametersOf(this) }
+	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
 	private var isShowDetail = false
-	private var cacheFile: File? = null
 	private lateinit var dialog: Dialog
-	private val player: ExoPlayer by currentScope.inject { parametersOf(this@MainActivity) }
+	private val exoDataSourceFactory: DataSource.Factory by inject()
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
@@ -95,7 +95,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			e.toastLong(this@MainActivity)
 		}
 	}
-
 	private val animationObserver = object : PackageDataObserver<Animation> {
 		override fun content(data: Animation?) {
 			mainRecyclerAdapter.items.clear()
@@ -122,7 +121,9 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 	private val imageFileObserver = object : PackageDataObserver<File> {
 		override fun content(data: File?) {
+			//判断图片文件是否存在
 			if (!data!!.exists()) {
+				//如果不存在，显示错误信息
 				Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
 						.addCallback(object : Snackbar.Callback() {
 							override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
@@ -133,14 +134,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 						.show()
 				return
 			}
-			if (isShowDetail && cacheFile != null)
-				contentMainBinding.imageView.load(cacheFile) {
-					diskCachePolicy(CachePolicy.DISABLED)
-				}
-			else
-				contentMainBinding.imageView.load(data) {
-					diskCachePolicy(CachePolicy.DISABLED)
-				}
+			//图片存在，加载图片显示
+			contentMainBinding.imageView.load(data) {
+				diskCachePolicy(CachePolicy.DISABLED)
+			}
+			//搜索图片
 			mainViewModel.search(data, null)
 		}
 
@@ -161,7 +159,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		title = getString(R.string.title_activity_main)
 		setSupportActionBar(binding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-		mainRecyclerAdapter = MainRecyclerAdapter(this, MainItemListener(this, player))
 		contentMainBinding.recyclerView.adapter = mainRecyclerAdapter
 	}
 
@@ -179,6 +176,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
 		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })
+		mainViewModel.nowPlayUrl.observe(this, Observer {
+			player.stop(true)
+			player.prepare(ProgressiveMediaSource.Factory(exoDataSourceFactory).createMediaSource(Uri.parse(it)))
+			player.playWhenReady = true
+		})
 	}
 
 	private fun initDialog() {
@@ -198,12 +200,13 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			}
 		}
 		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
+			//查看历史记录
 			mainViewModel.isShowDetail.value = true
 			binding.fab.visibility = View.GONE
-			val originFile: File = intent.getSerializableExtra(INTENT_ORIGIN_FILE) as File
-			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
-			this.cacheFile = cacheFile
+			val originFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
+			//加载显示历史记录中的缓存文件
 			mainViewModel.imageFile.content(originFile)
+			//设置标题
 			title = intent.getStringExtra(INTENT_TITLE)
 			supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 			binding.toolbar.setNavigationOnClickListener {

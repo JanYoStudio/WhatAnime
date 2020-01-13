@@ -18,7 +18,7 @@ class APP : Application() {
 		startKoin {
 			androidLogger()
 			androidContext(this@APP)
-			modules(listOf(databaseModule, networkModule, repositoryModule, viewModelModule, mainActivityModule))
+			modules(listOf(databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule))
 		}
 		CrashHandler.config {
 			it.setDirName("log")
