@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ic_launcher_background">@color/design_dark_default_color_on_primary</color>
     <color name="mColorPrimary">@color/design_dark_default_color_primary</color>
     <color name="mColorPrimaryVariant">@color/design_dark_default_color_primary_variant</color>
     <color name="mColorPrimaryDark">@color/design_dark_default_color_primary_dark</color>
