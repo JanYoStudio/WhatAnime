@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 chmod a+x ./gradlew
-./gradlew clean assembleDebug
+./gradlew clean assembleRelease :app:bundleRelease --info
