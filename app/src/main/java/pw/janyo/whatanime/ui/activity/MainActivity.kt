@@ -74,7 +74,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private lateinit var contentMainBinding: ContentMainBinding
 	private val mainViewModel: MainViewModel by viewModel()
 	private val player: ExoPlayer by currentScope.inject { parametersOf(this) }
-	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this, mainViewModel) }
+	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
 	private var isShowDetail = false
 	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
 
@@ -185,7 +185,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun initViewModel() {
-		Logs.i("initViewModel: ")
 		mainViewModel.quota.observe(this, quotaObserver)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
