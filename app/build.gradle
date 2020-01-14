@@ -13,6 +13,20 @@ autoVersion {
     isShowBuild false
 }
 
+def propertiesFile = new File("local.properties")
+Properties properties = new Properties()
+if (propertiesFile != null && propertiesFile.exists()) {
+    properties.load(new FileInputStream(new File("local.properties")))
+}
+def signKeyStoreFile = System.getenv("SIGN_KEY_STORE_FILE")
+signKeyStoreFile = signKeyStoreFile == null ? properties.get("SIGN_KEY_STORE_FILE") : signKeyStoreFile
+def signKeyStorePassword = System.getenv("SIGN_KEY_STORE_PASSWORD")
+signKeyStorePassword = signKeyStorePassword == null ? properties.get("SIGN_KEY_STORE_PASSWORD") : signKeyStorePassword
+def signKeyAlias = System.getenv("SIGN_KEY_ALIAS")
+signKeyAlias = signKeyAlias == null ? properties.get("SIGN_KEY_ALIAS") : signKeyAlias
+def signKeyPassword = System.getenv("SIGN_KEY_PASSWORD")
+signKeyPassword = signKeyPassword == null ? properties.get("SIGN_KEY_PASSWORD") : signKeyPassword
+
 android {
     packagingOptions {
         exclude 'META-INF/library-core_release.kotlin_module'
@@ -36,6 +50,14 @@ android {
             }
         }
     }
+    signingConfigs {
+        release {
+            storeFile file(signKeyStoreFile)
+            storePassword signKeyStorePassword
+            keyAlias signKeyAlias
+            keyPassword signKeyPassword
+        }
+    }
     buildTypes {
         debug {
             resValue "string", "app_version_name", autoVersion.name
@@ -46,11 +68,16 @@ android {
             resValue "string", "app_version_name", autoVersion.name
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        //设置编译的lint开关，程序在buid的时候，会执行lint检查，有任何的错误或者警告提示，都会终止构建
+        abortOnError false
     }
 }
 
