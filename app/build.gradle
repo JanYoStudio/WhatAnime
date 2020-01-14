@@ -8,9 +8,9 @@ autoVersion {
     major 1
     minor 5
     patch 4
-    beta 1
+    beta 0
     alpha 0
-    isShowBuild true
+    isShowBuild beta != 0 || alpha != 0
 }
 
 def propertiesFile = new File("local.properties")
