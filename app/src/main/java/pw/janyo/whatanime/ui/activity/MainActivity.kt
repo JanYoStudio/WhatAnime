@@ -74,7 +74,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private lateinit var contentMainBinding: ContentMainBinding
 	private val mainViewModel: MainViewModel by viewModel()
 	private val player: ExoPlayer by currentScope.inject { parametersOf(this) }
-	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
+	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this, mainViewModel) }
 	private var isShowDetail = false
 	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
 
@@ -144,7 +144,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 	private val mediaSourceObserver = object : PackageDataObserver<MediaSource> {
 		override fun content(data: MediaSource?) {
-			super.content(data)
 			if (data == null) {
 				//再次播放当前视频
 				if (!player.isPlaying)
@@ -155,6 +154,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				player.prepare(data)
 				player.playWhenReady = true
 			}
+		}
+
+		override fun error(data: MediaSource?, e: Throwable?) {
+			if (e !is ResourceException)
+				Logs.wtf("imageFileObserver: ", e)
+			e.toastLong(this@MainActivity)
 		}
 	}
 
@@ -180,6 +185,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun initViewModel() {
+		Logs.i("initViewModel: ")
 		mainViewModel.quota.observe(this, quotaObserver)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)

@@ -85,19 +85,21 @@ class MainViewModel(
 	 * 播放视频
 	 */
 	fun playVideo(docs: Docs) {
-		val requestUrl = when (Configure.previewConfig) {
-			1 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}"
-			2 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}&mute"
-			else -> "https://trace.moe/preview.php?anilist_id=${docs.anilist_id}&file=${URLEncoder.encode(docs.filename, "UTF-8")}&t=${docs.at}&token=${docs.tokenthumb}"
-		}
-		if (nowPlayUrl == requestUrl) {
-			mediaSource.content(null)
-		} else {
-			nowPlayUrl = requestUrl
-			val newMediaSource = mediaSourceMap.getOrPut(nowPlayUrl) {
-				ProgressiveMediaSource.Factory(exoDataSourceFactory).createMediaSource(Uri.parse(nowPlayUrl))
+		launch(mediaSource) {
+			val requestUrl = when (Configure.previewConfig) {
+				1 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}"
+				2 -> "https://media.trace.moe/video/${docs.anilist_id}/${URLEncoder.encode(docs.filename, "UTF-8")}?t=${docs.at}&token=${docs.tokenthumb}&mute"
+				else -> "https://trace.moe/preview.php?anilist_id=${docs.anilist_id}&file=${URLEncoder.encode(docs.filename, "UTF-8")}&t=${docs.at}&token=${docs.tokenthumb}"
 			}
-			mediaSource.content(newMediaSource)
+			if (nowPlayUrl == requestUrl) {
+				mediaSource.content(null)
+			} else {
+				nowPlayUrl = requestUrl
+				val newMediaSource = mediaSourceMap.getOrPut(nowPlayUrl) {
+					ProgressiveMediaSource.Factory(exoDataSourceFactory).createMediaSource(Uri.parse(nowPlayUrl))
+				}
+				mediaSource.content(newMediaSource)
+			}
 		}
 	}
 }
