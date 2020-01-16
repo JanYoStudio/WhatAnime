@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
 class AnimationHistory {
 	@PrimaryKey(autoGenerate = true)
 	var id = 0
-
 	@ColumnInfo(name = "origin_path")
 	lateinit var originPath: String//原始路径
 	@ColumnInfo(name = "cache_path")

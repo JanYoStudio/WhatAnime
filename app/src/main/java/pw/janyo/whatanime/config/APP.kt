@@ -14,6 +14,8 @@ import vip.mystery0.tools.ToolsClient
  */
 
 class APP : Application() {
+	var connectServer: Boolean = false
+
 	override fun onCreate() {
 		super.onCreate()
 		startKoin {

@@ -9,7 +9,7 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".config.APP"
@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".ui.activity.ReceiveShareActivity"
-            android:label="@string/title_receive_share">
+            android:label="@string/title_receive_share"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
