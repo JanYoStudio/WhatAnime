@@ -24,7 +24,8 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
 		val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
-		val useInAppImageSelect: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
+		val useInAppImageSelectPreference: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
+		val cloudCompressPreference: CheckBoxPreference = findPreferenceById(R.string.key_cloud_compress)
 		val openSourceLicenseAboutPreference: Preference = findPreferenceById(R.string.key_about_open_source_license)
 
 		languagePreference.summary = languageArray[Configure.language]
@@ -32,9 +33,9 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
 		if (sdkIsAfter(AndroidVersionCode.VERSION_Q)) {
 			Configure.useInAppImageSelect = false
-			useInAppImageSelect.isEnabled = false
+			useInAppImageSelectPreference.isEnabled = false
 		}
-		useInAppImageSelect.isChecked = Configure.useInAppImageSelect
+		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
 
 		hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
@@ -99,8 +100,12 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		useInAppImageSelect.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-			Configure.useInAppImageSelect = !useInAppImageSelect.isChecked
+		useInAppImageSelectPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+			Configure.useInAppImageSelect = !useInAppImageSelectPreference.isChecked
+			true
+		}
+		cloudCompressPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+			Configure.enableCloudCompress = !cloudCompressPreference.isChecked
 			true
 		}
 		openSourceLicenseAboutPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {

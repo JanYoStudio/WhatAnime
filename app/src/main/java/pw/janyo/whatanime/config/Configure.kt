@@ -27,4 +27,14 @@ object Configure {
 				.putInt("config_preview_config", value)
 				.apply()
 		get() = sharedPreference.getInt("config_preview_config", 0)
+	var enableCloudCompress: Boolean
+		set(value) = sharedPreference.edit()
+				.putBoolean("config_cloud_compress", value)
+				.apply()
+		get() = sharedPreference.getBoolean("config_cloud_compress", true)
+	var deviceID: String
+		set(value) = sharedPreference.edit()
+				.putString("config_device_id", value)
+				.apply()
+		get() = sharedPreference.getString("config_device_id", "")!!
 }

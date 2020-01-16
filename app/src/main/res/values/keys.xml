@@ -5,6 +5,7 @@
     <string name="key_night_mode" translatable="false">key_night_mode</string>
     <string name="key_preview_config" translatable="false">key_preview_config</string>
     <string name="key_use_in_app_image_select" translatable="false">key_use_in_app_image_select</string>
+    <string name="key_cloud_compress" translatable="false">key_cloud_compress</string>
 
     <string name="title_language">Language</string>
 
@@ -14,6 +15,9 @@
 
     <string name="title_use_in_app_image_select">Use in-app image selector</string>
     <string name="summary_use_in_app_image_select">READ_EXTERNAL_STORAGE permission required</string>
+
+    <string name="title_cloud_compress">Server Compression</string>
+    <string name="summary_cloud_compress">Do not perform compression operations locally, upload the original image to the server, and the server compress</string>
 
     <string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
     <string name="link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
