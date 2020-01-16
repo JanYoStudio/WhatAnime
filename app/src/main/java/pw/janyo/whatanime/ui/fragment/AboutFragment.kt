@@ -36,6 +36,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 			useInAppImageSelectPreference.isEnabled = false
 		}
 		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
+		cloudCompressPreference.isChecked = Configure.enableCloudCompress
 
 		hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
