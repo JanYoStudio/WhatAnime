@@ -5,6 +5,6 @@ import pw.janyo.whatanime.repository.AnimationRepository
 
 val repositoryModule = module {
 	single {
-		AnimationRepository(get(), get())
+		AnimationRepository(get(), get(), get())
 	}
 }

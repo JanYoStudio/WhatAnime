@@ -34,6 +34,7 @@ import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.SearchQuota
+import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.CoilImageEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.utils.loadWithoutCache
@@ -54,19 +55,24 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		private const val REQUEST_CODE = 123
 		private const val FILE_SELECT_CODE = 124
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
+		private const val INTENT_ORIGIN_PATH = "INTENT_ORIGIN_PATH"
 		private const val INTENT_TITLE = "INTENT_TITLE"
 		private const val INTENT_URI = "INTENT_URI"
+		private const val INTENT_MIME_TYPE = "INTENT_MIME_TYPE"
 
-		fun showDetail(context: Context, cacheFile: File, title: String) {
+		fun showDetail(context: Context, cacheFile: File, originPath: String, title: String) {
 			val intent = Intent(context, MainActivity::class.java)
 			intent.putExtra(INTENT_CACHE_FILE, cacheFile)
+			intent.putExtra(INTENT_ORIGIN_PATH, originPath)
 			intent.putExtra(INTENT_TITLE, title)
 			context.startActivity(intent)
 		}
 
-		fun receiveShare(context: Context, uri: Uri) {
+		fun receiveShare(context: Context, uri: Uri, mimeType: String) {
+			Logs.i("receiveShare: uri: $uri, mimeType: $mimeType")
 			val intent = Intent(context, MainActivity::class.java)
 			intent.putExtra(INTENT_URI, uri)
+			intent.putExtra(INTENT_MIME_TYPE, mimeType)
 			context.startActivity(intent)
 		}
 	}
@@ -115,10 +121,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			e.toastLong(this@MainActivity)
 		}
 	}
-	private val imageFileObserver = object : PackageDataObserver<File> {
-		override fun content(data: File?) {
+	private val imageFileObserver = object : PackageDataObserver<ShowImage> {
+		override fun content(data: ShowImage?) {
+			val originFile = File(data!!.originPath)
 			//判断图片文件是否存在
-			if (!data!!.exists()) {
+			if (!originFile.exists()) {
 				//如果不存在，显示错误信息
 				Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
 						.addCallback(object : Snackbar.Callback() {
@@ -131,12 +138,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				return
 			}
 			//图片存在，加载图片显示
-			contentMainBinding.imageView.loadWithoutCache(data)
+			contentMainBinding.imageView.loadWithoutCache(originFile)
 			//搜索图片
-			mainViewModel.search(data, null)
+			mainViewModel.search(originFile, null, data.cachePath, data.originPath)
 		}
 
-		override fun error(data: File?, e: Throwable?) {
+		override fun error(data: ShowImage?, e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("imageFileObserver: ", e)
 			e.toastLong(this@MainActivity)
@@ -199,7 +206,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			try {
 				val uri = intent.getParcelableExtra<Uri>(INTENT_URI)
 				intent.data = uri
-				mainViewModel.parseImageFile(intent)
+				mainViewModel.parseImageFile(intent, intent.getStringExtra(INTENT_MIME_TYPE)!!)
 			} catch (e: Exception) {
 				getString(R.string.hint_select_file_path_null).toast(this)
 			}
@@ -208,9 +215,14 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			//查看历史记录
 			mainViewModel.isShowDetail.value = true
 			binding.fab.visibility = View.GONE
-			val originFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
+			val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
+			val originPath = intent.getStringExtra(INTENT_ORIGIN_PATH)!!
 			//加载显示历史记录中的缓存文件
-			mainViewModel.imageFile.content(originFile)
+			val showImage = ShowImage()
+			showImage.mimeType = ""
+			showImage.originPath = originPath
+			showImage.cachePath = cacheFile.absolutePath
+			mainViewModel.imageFile.content(showImage)
 			//设置标题
 			title = intent.getStringExtra(INTENT_TITLE)
 			supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -329,7 +341,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			}
 			FILE_SELECT_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					mainViewModel.parseImageFile(data!!)
+					mainViewModel.parseImageFile(data!!, "")
 				}
 			}
 		}

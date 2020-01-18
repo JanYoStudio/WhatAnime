@@ -41,7 +41,7 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 
 	private fun doNext() {
 		if (intent != null && intent.action == Intent.ACTION_SEND && intent.type != null && intent.type!!.startsWith("image/")) {
-			MainActivity.receiveShare(this, intent.getParcelableExtra(Intent.EXTRA_STREAM)!!)
+			MainActivity.receiveShare(this, intent.getParcelableExtra(Intent.EXTRA_STREAM)!!, intent.type!!)
 		} else {
 			getString(R.string.hint_not_share).toast(this)
 		}
