@@ -3,8 +3,8 @@ package pw.janyo.whatanime.repository
 import android.graphics.Bitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
@@ -23,6 +23,7 @@ import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.isConnectInternet
 import java.io.File
 import java.util.*
+
 
 class AnimationRepository(
 		private val searchApi: SearchApi,
@@ -47,11 +48,12 @@ class AnimationRepository(
 	suspend fun queryAnimationByImageOnlineWithCloud(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?): Animation = withContext(Dispatchers.IO) {
 		val signatureRequest = SignatureRequest(file, mimeType)
 		val signatureResponse = serverApi.signature(signatureRequest).verify()!!
-		val requestFile = file.asRequestBody("multipart/form-data".toMediaType())
-		val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
-		val keyBody = MultipartBody.Part.createFormData("key", signatureResponse.uploadMeta.key)
-		val tokenBody = MultipartBody.Part.createFormData("token", signatureResponse.uploadMeta.signature)
-		val uploadResponse = serverApi.uploadFile(signatureResponse.uploadUrl, keyBody, tokenBody, part).verify()!!
+		val requestBody: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+				.addFormDataPart("key", signatureResponse.uploadMeta.key)
+				.addFormDataPart("token", signatureResponse.uploadMeta.signature)
+				.addFormDataPart("file", file.name, file.asRequestBody())
+				.build()
+		val uploadResponse = serverApi.uploadFile(signatureResponse.uploadUrl, requestBody).verify()!!
 		val data = searchApi.searchByUrl(uploadResponse.url)
 		saveHistory(uploadResponse.url, originPath, cachePath, null, data)
 		data
@@ -64,7 +66,7 @@ class AnimationRepository(
 		searchApi.getMe()
 	}
 
-	suspend fun queryAnimationByImageLocal(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?): Animation = withContext(Dispatchers.IO) {
+	suspend fun queryAnimationByImageLocal(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?, connectServer: Boolean): Animation = withContext(Dispatchers.IO) {
 		val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, filter)
 		val history = animationHistory?.result?.fromJson<Animation>()
 		if (history != null) {
@@ -72,7 +74,7 @@ class AnimationRepository(
 			history.quota_ttl = -987654
 			history
 		} else {
-			if (Configure.enableCloudCompress)
+			if (Configure.enableCloudCompress && connectServer)
 				queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, mimeType, filter)
 			else
 				queryAnimationByImageOnline(file, originPath, cachePath, filter)

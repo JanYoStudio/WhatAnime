@@ -29,6 +29,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
+import pw.janyo.whatanime.config.APP
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
@@ -140,7 +141,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			//图片存在，加载图片显示
 			contentMainBinding.imageView.loadWithoutCache(originFile)
 			//搜索图片
-			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType)
+			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType, (application as APP).connectServer)
 		}
 
 		override fun error(data: ShowImage?, e: Throwable?) {

@@ -47,7 +47,7 @@ class MainViewModel(
 	 * @param originPath 原始路径
 	 * @param mimeType 文件类型
 	 */
-	fun search(file: File, filter: String?, cacheInPath: String?, originPath: String, mimeType: String) {
+	fun search(file: File, filter: String?, cacheInPath: String?, originPath: String, mimeType: String, connectServer: Boolean) {
 		resultList.loading()
 		launch(resultList) {
 			var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
@@ -58,7 +58,7 @@ class MainViewModel(
 				file.copyToFile(saveFile)
 				cachePath = file.absolutePath
 			}
-			val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter)
+			val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter, connectServer)
 			if (animation.quota != -987654 && animation.quota_ttl != -987654) {
 				val searchQuota = SearchQuota()
 				searchQuota.quota = animation.quota
