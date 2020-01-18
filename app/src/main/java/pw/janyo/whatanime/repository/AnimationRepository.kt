@@ -24,7 +24,6 @@ import vip.mystery0.tools.utils.isConnectInternet
 import java.io.File
 import java.util.*
 
-
 class AnimationRepository(
 		private val searchApi: SearchApi,
 		private val serverApi: ServerApi,
@@ -54,7 +53,7 @@ class AnimationRepository(
 				.addFormDataPart("file", file.name, file.asRequestBody())
 				.build()
 		val uploadResponse = serverApi.uploadFile(signatureResponse.uploadUrl, requestBody).verify()!!
-		val data = searchApi.searchByUrl(uploadResponse.url)
+		val data = searchApi.searchByUrl("${uploadResponse.url}-imageslim_upload")
 		saveHistory(uploadResponse.url, originPath, cachePath, null, data)
 		data
 	}
