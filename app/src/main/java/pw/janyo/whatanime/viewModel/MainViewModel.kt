@@ -43,10 +43,11 @@ class MainViewModel(
 	/**
 	 * @param file 要显示的文件，也是要搜索的文件
 	 * @param filter 过滤条件
-	 * @param cachePath 缓存路径，如果为null说明没有缓存或者不知道缓存路径
+	 * @param cacheInPath 缓存路径，如果为null说明没有缓存或者不知道缓存路径
 	 * @param originPath 原始路径
+	 * @param mimeType 文件类型
 	 */
-	fun search(file: File, filter: String?, cacheInPath: String?, originPath: String) {
+	fun search(file: File, filter: String?, cacheInPath: String?, originPath: String, mimeType: String) {
 		resultList.loading()
 		launch(resultList) {
 			var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
@@ -57,7 +58,7 @@ class MainViewModel(
 				file.copyToFile(saveFile)
 				cachePath = file.absolutePath
 			}
-			val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, filter)
+			val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter)
 			if (animation.quota != -987654 && animation.quota_ttl != -987654) {
 				val searchQuota = SearchQuota()
 				searchQuota.quota = animation.quota

@@ -44,8 +44,8 @@ class AnimationRepository(
 		}
 	}
 
-	suspend fun queryAnimationByImageOnlineWithCloud(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
-		val signatureRequest = SignatureRequest(file)
+	suspend fun queryAnimationByImageOnlineWithCloud(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?): Animation = withContext(Dispatchers.IO) {
+		val signatureRequest = SignatureRequest(file, mimeType)
 		val signatureResponse = serverApi.signature(signatureRequest).verify()!!
 		val requestFile = file.asRequestBody("multipart/form-data".toMediaType())
 		val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
@@ -64,7 +64,7 @@ class AnimationRepository(
 		searchApi.getMe()
 	}
 
-	suspend fun queryAnimationByImageLocal(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
+	suspend fun queryAnimationByImageLocal(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?): Animation = withContext(Dispatchers.IO) {
 		val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, filter)
 		val history = animationHistory?.result?.fromJson<Animation>()
 		if (history != null) {
@@ -73,7 +73,7 @@ class AnimationRepository(
 			history
 		} else {
 			if (Configure.enableCloudCompress)
-				queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, filter)
+				queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, mimeType, filter)
 			else
 				queryAnimationByImageOnline(file, originPath, cachePath, filter)
 		}

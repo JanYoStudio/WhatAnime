@@ -140,7 +140,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			//图片存在，加载图片显示
 			contentMainBinding.imageView.loadWithoutCache(originFile)
 			//搜索图片
-			mainViewModel.search(originFile, null, data.cachePath, data.originPath)
+			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType)
 		}
 
 		override fun error(data: ShowImage?, e: Throwable?) {
@@ -341,7 +341,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			}
 			FILE_SELECT_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					mainViewModel.parseImageFile(data!!, "")
+					val type = contentResolver.getType(data!!.data!!)!!
+					mainViewModel.parseImageFile(data, type)
 				}
 			}
 		}
