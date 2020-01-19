@@ -7,8 +7,10 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.module.*
 import vip.mystery0.crashhandler.CrashHandler
+import vip.mystery0.logs.Logs
 import vip.mystery0.tools.ToolsClient
 import vip.mystery0.tools.context
 
@@ -30,6 +32,10 @@ class APP : Application() {
 			it.setFileNameSuffix("log")
 			it.setDir(externalCacheDir!!)
 		}.init()
+		Logs.setConfig {
+			it.commonTag = packageName
+			it.isShowLog = BuildConfig.DEBUG
+		}
 		ToolsClient.initWithContext(this)
 	}
 }
