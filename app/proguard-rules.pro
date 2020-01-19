@@ -89,6 +89,8 @@
 -keep class sun.misc.Unsafe { *; }
 # Application classes that will be serialized/deserialized over Gson  下面替换成自己的实体类
 -keep class pw.janyo.whatanime.model.** { *; }
+-keep class pw.janyo.whatanime.model.request.** { *; }
+-keep class pw.janyo.whatanime.model.response.** { *; }
 
 ###---------Retrofit----------------
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
