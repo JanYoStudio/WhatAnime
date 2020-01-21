@@ -88,6 +88,7 @@
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
 # Application classes that will be serialized/deserialized over Gson  下面替换成自己的实体类
+-keep class vip.mystery0.tools.model.** { *; }
 -keep class pw.janyo.whatanime.model.** { *; }
 -keep class pw.janyo.whatanime.model.request.** { *; }
 -keep class pw.janyo.whatanime.model.response.** { *; }
