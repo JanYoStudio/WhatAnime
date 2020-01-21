@@ -10,7 +10,6 @@ import pw.janyo.whatanime.viewModel.TestViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.toast
 
 class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 	private val testViewModel: TestViewModel by viewModel()
@@ -43,7 +42,7 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 		if (intent != null && intent.action == Intent.ACTION_SEND && intent.type != null && intent.type!!.startsWith("image/")) {
 			MainActivity.receiveShare(this, intent.getParcelableExtra(Intent.EXTRA_STREAM)!!, intent.type!!)
 		} else {
-			getString(R.string.hint_not_share).toast(this)
+			getString(R.string.hint_not_share).toast()
 		}
 		finish()
 	}

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.os.LocaleList
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.databinding.ViewDataBinding
@@ -69,4 +70,17 @@ abstract class WABaseActivity<B : ViewDataBinding>(@LayoutRes layoutId: Int?) : 
 			.setLoadingColor(accentColor)
 			.setHintTextColor(accentColor)
 
+	fun Throwable?.toast() = dispatch(this, false, this@WABaseActivity)
+	fun Throwable?.toastLong() = dispatch(this, true, this@WABaseActivity)
+	fun String?.toast() = newToast(this@WABaseActivity, this, Toast.LENGTH_SHORT)
+	fun String?.toastLong() = newToast(this@WABaseActivity, this, Toast.LENGTH_LONG)
+
+	private fun dispatch(throwable: Throwable?, isLong: Boolean, context: Context = vip.mystery0.tools.context()) {
+		newToast(context, throwable?.message
+				?: getString(R.string.hint_unknow_error), if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
+	}
+
+	private fun newToast(context: Context, message: String?, length: Int) {
+		Toast.makeText(context, message, length).show()
+	}
 }

@@ -17,6 +17,7 @@
 
     <string name="hint_permission_deny">The permissions to read the file are used to get the image, without which the WhatAnime will not be available, please grant WhatAnime this permission! </string>
     <string name="hint_response_error">Response data error!</string>
+    <string name="hint_unknow_error">Operation is abnormal!</string>
 
     <string name="title_activity_main">WhatAnime</string>
     <string name="title_activity_settings">Settings</string>

@@ -76,4 +76,5 @@
     <string name="hint_not_share">文件無效！</string>
     <string name="title_receive_share">搜索番劇</string>
     <string name="hint_no_network">網絡連接異常，請檢查！</string>
+    <string name="hint_unknow_error">操作異常！</string>
 </resources>

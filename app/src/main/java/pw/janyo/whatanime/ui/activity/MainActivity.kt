@@ -44,8 +44,6 @@ import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.toast
-import vip.mystery0.tools.toastLong
 import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.formatTime
 import vip.mystery0.tools.utils.sdkIsBefore
@@ -95,7 +93,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		override fun error(data: SearchQuota?, e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("quotaObserver: ", e)
-			e.toastLong(this@MainActivity)
+			e.toastLong()
 		}
 	}
 	private val animationObserver = object : PackageDataObserver<Animation> {
@@ -119,7 +117,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			if (e !is ResourceException)
 				Logs.wtf("animationObserver: ", e)
 			hideDialog()
-			e.toastLong(this@MainActivity)
+			e.toastLong()
 		}
 	}
 	private val imageFileObserver = object : PackageDataObserver<ShowImage> {
@@ -147,7 +145,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		override fun error(data: ShowImage?, e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("imageFileObserver: ", e)
-			e.toastLong(this@MainActivity)
+			e.toastLong()
 		}
 	}
 	private val mediaSourceObserver = object : PackageDataObserver<MediaSource> {
@@ -167,7 +165,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		override fun error(data: MediaSource?, e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("imageFileObserver: ", e)
-			e.toastLong(this@MainActivity)
+			e.toastLong()
 		}
 	}
 
@@ -209,7 +207,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				intent.data = uri
 				mainViewModel.parseImageFile(intent, intent.getStringExtra(INTENT_MIME_TYPE)!!)
 			} catch (e: Exception) {
-				getString(R.string.hint_select_file_path_null).toast(this)
+				getString(R.string.hint_select_file_path_null).toast()
 			}
 		}
 		if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
@@ -261,7 +259,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				contentMainBinding.progressBar.visibility = View.GONE
 				contentMainBinding.videoView.visibility = View.GONE
 				contentMainBinding.imageView.visibility = View.VISIBLE
-				error.toastLong(this@MainActivity)
+				error.toastLong()
 			}
 		})
 	}

@@ -11,7 +11,6 @@ import pw.janyo.whatanime.viewModel.TestViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.toastLong
 
 class SplashActivity : WABaseActivity<ViewDataBinding>(null) {
 	private val testViewModel: TestViewModel by viewModel()
@@ -39,7 +38,7 @@ class SplashActivity : WABaseActivity<ViewDataBinding>(null) {
 				super.error(data, e)
 				if (e is ResourceException) {
 					//网络异常，打印toast
-					e.toastLong(this@SplashActivity)
+					e.toastLong()
 				} else {
 					Logs.wtf("error: ", e)
 				}
