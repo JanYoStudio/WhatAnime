@@ -2,6 +2,7 @@ package pw.janyo.whatanime.viewModel
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.withTimeoutOrNull
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.ServerApi
 import pw.janyo.whatanime.config.Configure
@@ -26,8 +27,10 @@ class TestViewModel(
 			if (!isConnectInternet()) {
 				throw ResourceException(R.string.hint_no_network)
 			}
-			val response = serverApi.testOp(TestRequest())
-			connectServer.content(response.isSuccessful)
+			val response = withTimeoutOrNull(4000L) {
+				serverApi.testOp(TestRequest())
+			}?.isSuccessful ?: false
+			connectServer.content(response)
 		}
 	}
 }

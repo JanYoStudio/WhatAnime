@@ -31,6 +31,7 @@ class SplashActivity : WABaseActivity<ViewDataBinding>(null) {
 		testViewModel.connectServer.observe(this, object : PackageDataObserver<Boolean> {
 			override fun content(data: Boolean?) {
 				super.content(data)
+				Logs.i("content: $data")
 				(application as APP).connectServer = data ?: false
 				doNext()
 			}
