@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.module
 
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import pw.janyo.whatanime.api.SearchApi
@@ -16,7 +15,6 @@ val networkModule = module {
 		OkHttpClient.Builder()
 				.connectTimeout(40, TimeUnit.SECONDS)
 				.readTimeout(40, TimeUnit.SECONDS)
-				.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
 				.build()
 	}
 	single(named("base")) {
