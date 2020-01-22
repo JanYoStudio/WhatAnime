@@ -77,4 +77,6 @@
     <string name="title_receive_share">搜索番劇</string>
     <string name="hint_no_network">網絡連接異常，請檢查！</string>
     <string name="hint_unknow_error">操作異常！</string>
+    <string name="title_cloud_compress">雲端壓縮</string>
+    <string name="summary_cloud_compress">不在本地進行圖片嘅壓縮，上傳到服務端，通過服務端進行壓縮（效果可能更好一些）</string>
 </resources>

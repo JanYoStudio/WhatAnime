@@ -77,4 +77,6 @@
     <string name="title_receive_share">搜索番剧</string>
     <string name="hint_no_network">网络连接异常，请检查！</string>
     <string name="hint_unknow_error">操作异常！</string>
+    <string name="title_cloud_compress">云端压缩</string>
+    <string name="summary_cloud_compress">不在本地进行图片的压缩，上传到服务端，通过服务端进行压缩（效果可能更好一些）</string>
 </resources>
