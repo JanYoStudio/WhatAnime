@@ -97,7 +97,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     // Koin AndroidX Scope features
     implementation "org.koin:koin-androidx-scope:$koin_version"
     // Koin AndroidX ViewModel features
@@ -111,14 +111,14 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.7.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
     //coil
-    implementation 'io.coil-kt:coil:0.9.1'
-    implementation 'io.coil-kt:coil-gif:0.9.1'
+    implementation 'io.coil-kt:coil:0.9.5'
+    implementation 'io.coil-kt:coil-gif:0.9.5'
     //Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-rc03'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'
-    kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0-rc03'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
     //Room
     implementation 'androidx.room:room-runtime:2.2.3'
     implementation 'androidx.room:room-ktx:2.2.3'
@@ -130,7 +130,7 @@ dependencies {
     //About Library
     implementation "com.mikepenz:aboutlibraries:7.0.3"
     //Markwon
-    implementation 'io.noties.markwon:core:4.2.0'
+    implementation 'io.noties.markwon:core:4.2.1'
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.10.5'
 }
