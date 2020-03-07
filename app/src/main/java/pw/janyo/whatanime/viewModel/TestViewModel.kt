@@ -16,12 +16,12 @@ import vip.mystery0.tools.utils.isConnectInternet
 class TestViewModel(
 		private val serverApi: ServerApi
 ) : ViewModel() {
-	val connectServer = MediatorLiveData<PackageData<Boolean>>()
+	val connectServer = MediatorLiveData<PackageData<Pair<Boolean, Boolean>>>()
 
 	fun doTest() {
 		launch(connectServer) {
 			if (!Configure.enableCloudCompress) {
-				connectServer.content(false)
+				connectServer.content(Pair(first = false, second = false))
 				return@launch
 			}
 			if (!isConnectInternet()) {
@@ -29,8 +29,9 @@ class TestViewModel(
 			}
 			val response = withTimeoutOrNull(4000L) {
 				serverApi.testOp(TestRequest())
-			}?.isSuccessful ?: false
-			connectServer.content(response)
+			}
+			if (response?.isSuccessful != true) connectServer.content(Pair(first = false, second = false))
+			connectServer.content(Pair(first = true, second = response!!.data!!))
 		}
 	}
 }

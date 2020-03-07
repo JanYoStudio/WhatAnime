@@ -19,6 +19,7 @@ import vip.mystery0.tools.context
  */
 class APP : Application() {
 	var connectServer: Boolean = false
+	var inBlackList: Boolean = false
 
 	override fun onCreate() {
 		super.onCreate()

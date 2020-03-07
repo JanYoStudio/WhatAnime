@@ -16,14 +16,15 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 
 	override fun initData() {
 		super.initData()
-		testViewModel.connectServer.observe(this, object : PackageDataObserver<Boolean> {
-			override fun content(data: Boolean?) {
+		testViewModel.connectServer.observe(this, object : PackageDataObserver<Pair<Boolean, Boolean>> {
+			override fun content(data: Pair<Boolean, Boolean>?) {
 				super.content(data)
-				(application as APP).connectServer = data ?: false
+				(application as APP).connectServer = data?.first ?: false
+				(application as APP).inBlackList = data?.second ?: false
 				doNext()
 			}
 
-			override fun error(data: Boolean?, e: Throwable?) {
+			override fun error(data: Pair<Boolean, Boolean>?, e: Throwable?) {
 				super.error(data, e)
 				if (e !is ResourceException) {
 					Logs.wtf("error: ", e)

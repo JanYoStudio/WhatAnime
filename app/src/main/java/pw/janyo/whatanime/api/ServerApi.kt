@@ -13,7 +13,7 @@ import vip.mystery0.tools.model.Response
 
 interface ServerApi {
 	@POST("/api/rest/v1/what/anime/test/op")
-	suspend fun testOp(@Body test: TestRequest): Response<*>
+	suspend fun testOp(@Body test: TestRequest): Response<Boolean>
 
 	@PUT("/api/rest/v1/what/anime/search/signature")
 	suspend fun signature(@Body signature: SignatureRequest): Response<SignatureResponse>

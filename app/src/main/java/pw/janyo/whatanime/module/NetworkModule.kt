@@ -1,8 +1,10 @@
 package pw.janyo.whatanime.module
 
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
 import pw.janyo.whatanime.constant.Constant
@@ -12,10 +14,12 @@ import java.util.concurrent.TimeUnit
 
 val networkModule = module {
 	single {
-		OkHttpClient.Builder()
+		val builder = OkHttpClient.Builder()
 				.connectTimeout(40, TimeUnit.SECONDS)
 				.readTimeout(40, TimeUnit.SECONDS)
-				.build()
+		if (BuildConfig.DEBUG)
+			builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+		builder.build()
 	}
 	single(named("base")) {
 		Retrofit.Builder()
