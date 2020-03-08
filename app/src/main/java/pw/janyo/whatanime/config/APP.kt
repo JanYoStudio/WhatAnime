@@ -18,8 +18,6 @@ import vip.mystery0.tools.context
  * Created by mystery0.
  */
 class APP : Application() {
-	var connectServer: Boolean = false
-	var inBlackList: Boolean = false
 
 	override fun onCreate() {
 		super.onCreate()
@@ -49,3 +47,6 @@ val publicDeviceId: String
 			deviceId = Settings.Secure.getString(context().contentResolver, Settings.Secure.ANDROID_ID)
 		return deviceId
 	}
+
+var connectServer: Boolean = false
+var inBlackList: Boolean = false

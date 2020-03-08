@@ -5,7 +5,8 @@ import androidx.databinding.ViewDataBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
-import pw.janyo.whatanime.config.APP
+import pw.janyo.whatanime.config.connectServer
+import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.viewModel.TestViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
@@ -19,8 +20,8 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 		testViewModel.connectServer.observe(this, object : PackageDataObserver<Pair<Boolean, Boolean>> {
 			override fun content(data: Pair<Boolean, Boolean>?) {
 				super.content(data)
-				(application as APP).connectServer = data?.first ?: false
-				(application as APP).inBlackList = data?.second ?: false
+				connectServer = data?.first ?: false
+				inBlackList = data?.second ?: false
 				doNext()
 			}
 

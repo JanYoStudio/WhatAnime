@@ -19,18 +19,20 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.koin.androidx.scope.currentScope
+import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
-import pw.janyo.whatanime.config.APP
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Animation
@@ -78,8 +80,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	private lateinit var contentMainBinding: ContentMainBinding
 	private val mainViewModel: MainViewModel by viewModel()
-	private val player: ExoPlayer by currentScope.inject { parametersOf(this) }
-	private val mainRecyclerAdapter: MainRecyclerAdapter by currentScope.inject { parametersOf(this) }
+	private val player: ExoPlayer by lifecycleScope.inject { parametersOf(this) }
+	private val mainRecyclerAdapter: MainRecyclerAdapter by lifecycleScope.inject { parametersOf(this) }
 	private var isShowDetail = false
 	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
 
@@ -139,7 +141,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			//图片存在，加载图片显示
 			contentMainBinding.imageView.loadWithoutCache(originFile)
 			//搜索图片
-			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType, (application as APP).connectServer)
+			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType, connectServer)
 		}
 
 		override fun error(data: ShowImage?, e: Throwable?) {
@@ -176,6 +178,19 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	override fun initView() {
 		super.initView()
+//		if (mainViewModel.shouldShowAds) {
+		if (true) {
+			//连接上了服务器并且在黑名单中
+			adView.visibility = View.VISIBLE
+			whyAdTextView.visibility = View.VISIBLE
+			//初始化AdMod
+			MobileAds.initialize(this) {}
+			val adRequest = AdRequest.Builder().build()
+			adView.loadAd(adRequest)
+		} else {
+			adView.visibility = View.GONE
+			whyAdTextView.visibility = View.GONE
+		}
 		title = getString(R.string.title_activity_main)
 		setSupportActionBar(binding.toolbar)
 		contentMainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -194,7 +209,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		mainViewModel.quota.observe(this, quotaObserver)
 		mainViewModel.imageFile.observe(this, imageFileObserver)
 		mainViewModel.resultList.observe(this, animationObserver)
-		mainViewModel.isShowDetail.observe(this, Observer<Boolean> { isShowDetail = it })
+		mainViewModel.isShowDetail.observe(this, Observer { isShowDetail = it })
 		mainViewModel.mediaSource.observe(this, mediaSourceObserver)
 	}
 
@@ -302,9 +317,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			dialog.dismiss()
 	}
 
-	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		if (!isShowDetail)
 			menuInflater.inflate(R.menu.menu_main, menu)
+//		if (mainViewModel.shouldShowAds)
+		if (true)
+			menu.findItem(R.id.action_why_ad).isVisible = true
 		return true
 	}
 

@@ -10,6 +10,8 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.zhihu.matisse.Matisse
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.connectServer
+import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.SearchQuota
@@ -39,6 +41,7 @@ class MainViewModel(
 	val resultList = MutableLiveData<PackageData<Animation>>()
 	val isShowDetail = MutableLiveData<Boolean>()
 	val quota = MutableLiveData<PackageData<SearchQuota>>()
+	val shouldShowAds = connectServer && inBlackList
 
 	/**
 	 * @param file 要显示的文件，也是要搜索的文件
