@@ -84,4 +84,5 @@
     <string name="title_device_id">设备ID</string>
     <string name="hint_copy_device_id">设备ID已经拷贝到剪切板中</string>
     <string name="hint_usage_notice">WhatAnime是一个用于检索动漫番剧的工具应用，检索出来的结果取决于用于检索的图片，如果您选择的是非动漫截图（同人图、自拍、成人影片截图、莫名其妙的图片等），自然检索不到正确的结果。 \n\n 请勿再使用该应用用于检索成人影片（肯定是检索不出来的）！</string>
+    <string name="action_disagree">我不同意</string>
 </resources>

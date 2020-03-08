@@ -35,6 +35,7 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.connectServer
+import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Animation
@@ -52,6 +53,7 @@ import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.formatTime
 import vip.mystery0.tools.utils.sdkIsBefore
 import java.io.File
+import kotlin.system.exitProcess
 
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
@@ -187,7 +189,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	override fun initView() {
 		super.initView()
-		if (mainViewModel.shouldShowAds) {
+		if (inBlackList) {
 			//连接上了服务器并且在黑名单中
 			adView.visibility = View.VISIBLE
 			whyAdImageView.visibility = View.VISIBLE
@@ -211,6 +213,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		mainViewModel.showQuota()
 		initIntent()
 		videoView.player = player
+		showNotice()
 	}
 
 	private fun initViewModel() {
@@ -290,6 +293,24 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		})
 	}
 
+	private fun showNotice() {
+		if (intent.hasExtra(INTENT_URI) || intent.hasExtra(INTENT_CACHE_FILE)) return
+		if (Configure.alreadyReadNotice) return
+		MaterialAlertDialogBuilder(this)
+				.setTitle(R.string.title_usage_notice)
+				.setMessage(R.string.hint_usage_notice)
+				.setPositiveButton(android.R.string.ok) { dialog, _ ->
+					Configure.alreadyReadNotice = true
+					dialog.dismiss()
+				}
+				.setNegativeButton(R.string.action_disagree) { _, _ ->
+					Configure.alreadyReadNotice = false
+					finish()
+					exitProcess(0)
+				}
+				.show()
+	}
+
 	private fun doSelect() {
 		if (Configure.useInAppImageSelect && sdkIsBefore(AndroidVersionCode.VERSION_Q, exclude = true))
 			requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) { code, result ->
@@ -331,7 +352,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		if (!isShowDetail)
 			menuInflater.inflate(R.menu.menu_main, menu)
-		menu.findItem(R.id.action_why_ad).isVisible = mainViewModel.shouldShowAds
+		menu.findItem(R.id.action_why_ad).isVisible = inBlackList
 		return true
 	}
 

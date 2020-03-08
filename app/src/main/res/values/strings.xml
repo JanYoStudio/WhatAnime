@@ -29,6 +29,7 @@
     <string name="action_why_ad">Why do ads appear?</string>
     <string name="action_ad_show_mistake">Mistake?</string>
     <string name="action_re_request_permission">Redo</string>
+    <string name="action_disagree">I disagree</string>
     <string name="category_about">About</string>
     <string name="category_about_janyo">About JanYo Studio</string>
     <string name="category_about_whatanime">About WhatAnime</string>

@@ -31,7 +31,8 @@ class TestViewModel(
 				serverApi.testOp(TestRequest())
 			}
 			if (response?.isSuccessful != true) connectServer.content(Pair(first = false, second = false))
-			connectServer.content(Pair(first = true, second = !response!!.data!!))
+			val inBlackList = !response?.data!!
+			connectServer.content(Pair(first = !inBlackList, second = inBlackList))
 		}
 	}
 }
