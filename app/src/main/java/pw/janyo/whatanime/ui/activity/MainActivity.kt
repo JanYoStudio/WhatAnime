@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -264,6 +265,17 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		}
 		whyAdImageView.setOnClickListener {
 			adsDialog.show()
+		}
+		adView.adListener = object : AdListener() {
+			override fun onAdLoaded() {
+				adView.visibility = View.VISIBLE
+				whyAdImageView.visibility = View.VISIBLE
+			}
+
+			override fun onAdFailedToLoad(errorCode: Int) {
+				adView.visibility = View.GONE
+				whyAdImageView.visibility = View.GONE
+			}
 		}
 		player.addListener(object : Player.EventListener {
 			override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
