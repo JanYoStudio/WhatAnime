@@ -68,18 +68,20 @@
     <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
     <string name="hint_not_share">The file is invalid!</string>
     <string name="hint_no_network">The network connection is abnormal, please check!</string>
-    <string name="hint_why_ads_appear">We detected that we had retrieved adult movies (non-anime) and therefore banned your device. WhatAnime can still run on the device, but there will be ads that don\'t appear as normal. \n\nAgain, WhatAnime is a tool for retrieving anime dramas, not for adult movies!</string>
-    <string name="summary_about_open_on_coolapk">Rate in CoolAPK</string>
+    <string name="hint_why_ads_appear">We detected that we had retrieved adult movies (non-anime) and therefore banned your device. WhatAnime can still run on the device, but there will be ads that don\'t appear as normal. \n\n Again, WhatAnime is a tool for retrieving anime dramas, not for adult movies!</string>
+    <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>
+    <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
     <string name="summary_about_open_on_play">Rate in Google Play Store</string>
     <string name="summary_developer_whatanime">WhatAnime API Developer</string>
     <string name="title_about_github">Open on Github</string>
     <string name="title_about_license">Open Source License</string>
-    <string name="title_about_open_on_coolapk">Open on CoolAPK</string>
     <string name="title_about_open_source_license">Open Source</string>
     <string name="title_activity_history">History</string>
     <string name="title_hide_sex">Hide content of NSFW</string>
     <string name="title_change_language">Change Language</string>
     <string name="title_change_preview_config">Change Previews</string>
     <string name="title_version">Version</string>
+    <string name="title_device_id">Device ID</string>
     <string name="title_receive_share">Search by WhatAnime</string>
+    <string name="title_usage_notice">Usage Notice</string>
 </resources>

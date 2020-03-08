@@ -24,7 +24,7 @@ class APP : Application() {
 		startKoin {
 			androidLogger(Level.ERROR)
 			androidContext(this@APP)
-			modules(listOf(databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule, historyActivityModule))
+			modules(listOf(appModule, databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule, historyActivityModule))
 		}
 		CrashHandler.config {
 			it.setDirName("log")
@@ -42,10 +42,7 @@ class APP : Application() {
 val publicDeviceId: String
 	@SuppressLint("HardwareIds")
 	get() {
-		var deviceId = Configure.deviceID
-		if (deviceId.isBlank())
-			deviceId = Settings.Secure.getString(context().contentResolver, Settings.Secure.ANDROID_ID)
-		return deviceId
+		return Settings.Secure.getString(context().contentResolver, Settings.Secure.ANDROID_ID)
 	}
 
 var connectServer: Boolean = false

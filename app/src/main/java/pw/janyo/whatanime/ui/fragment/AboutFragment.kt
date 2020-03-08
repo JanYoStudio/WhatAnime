@@ -1,5 +1,7 @@
 package pw.janyo.whatanime.ui.fragment
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.preference.CheckBoxPreference
@@ -7,19 +9,23 @@ import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
+import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.publicDeviceId
 import vip.mystery0.tools.base.BasePreferenceFragment
 import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.sdkIsAfter
 
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
+	private val clipboardManager: ClipboardManager by inject()
 	private val languageArray by lazy { resources.getStringArray(R.array.language) }
 	private val nightModeArray by lazy { resources.getStringArray(R.array.night_mode) }
 	private val previewConfigArray by lazy { resources.getStringArray(R.array.preview_config_summary) }
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
+		val deviceIdPreference: Preference = findPreferenceById(R.string.key_device_id)
 		val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
@@ -28,6 +34,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		val cloudCompressPreference: CheckBoxPreference = findPreferenceById(R.string.key_cloud_compress)
 		val openSourceLicenseAboutPreference: Preference = findPreferenceById(R.string.key_about_open_source_license)
 
+		deviceIdPreference.summary = publicDeviceId
 		languagePreference.summary = languageArray[Configure.language]
 		nightModePreference.summary = nightModeArray[Configure.nightMode]
 		previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
@@ -38,6 +45,12 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
 		cloudCompressPreference.isChecked = Configure.enableCloudCompress
 
+		deviceIdPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			val clipData = ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
+			clipboardManager.setPrimaryClip(clipData)
+			toastMessage(getString(R.string.hint_copy_device_id))
+			true
+		}
 		hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.hideSex = !hideSexPreference.isChecked
 			true

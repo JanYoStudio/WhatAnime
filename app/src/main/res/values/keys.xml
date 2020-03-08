@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="key_device_id" translatable="false">key_device_id</string>
     <string name="key_hide_sex" translatable="false">key_hide_sex</string>
     <string name="key_language" translatable="false">key_language</string>
     <string name="key_night_mode" translatable="false">key_night_mode</string>
@@ -29,8 +30,6 @@
 
     <string name="title_about_open_on_play">Google Play Store</string>
     <string name="link_about_open_on_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
-
-    <string name="link_about_open_on_coolapk" translatable="false">https://www.coolapk.com/apk/pw.janyo.whatanime</string>
 
     <string name="title_janyo_license">License</string>
     <string name="summary_janyo_license">JanYo Studio License</string>

@@ -48,13 +48,6 @@
                 android:data="@string/link_about_open_on_play" />
         </Preference>
         <Preference
-            android:summary="@string/summary_about_open_on_coolapk"
-            android:title="@string/title_about_open_on_coolapk">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_about_open_on_coolapk" />
-        </Preference>
-        <Preference
             android:summary="@string/summary_janyo_license"
             android:title="@string/title_janyo_license">
             <intent
@@ -64,6 +57,9 @@
         <Preference
             android:summary="@string/app_version_name"
             android:title="@string/title_version" />
+        <Preference
+            android:key="@string/key_device_id"
+            android:title="@string/title_device_id" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about_whatanime">
         <Preference

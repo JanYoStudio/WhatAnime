@@ -28,13 +28,11 @@
     <string name="hint_title_romaji">羅馬字：</string>
     <string name="hint_ani_list_id">AniList ID: </string>
     <string name="hint_mal_id">MyAnimeList ID: </string>
-    <string name="summary_about_open_on_coolapk">在酷安中五星支援</string>
     <string name="summary_about_open_on_play">在Google Play商店中五星支援</string>
     <string name="summary_developer_whatanime">WhatAnime API開發者</string>
     <string name="summary_janyo_license">JanYo Studio授權解決方案</string>
     <string name="title_about_github">Github地址</string>
     <string name="title_about_license">開源協議</string>
-    <string name="title_about_open_on_coolapk">酷安地址</string>
     <string name="title_about_open_on_play">Google Play Store</string>
     <string name="title_about_open_source_license">開源許可</string>
     <string name="title_activity_history">歷史記錄</string>
@@ -79,7 +77,11 @@
     <string name="hint_unknow_error">操作異常！</string>
     <string name="title_cloud_compress">雲端壓縮</string>
     <string name="summary_cloud_compress">不在本地進行圖片的壓縮，上傳到服務端，通過服務端進行壓縮（效果可能更好一些）</string>
-    <string name="hint_why_ads_appear">我們檢測到曾經檢索過成人影片（非動漫），故此封禁了您的設備。 WhatAnime依舊可以在該設備上運行，但是會出現正常情況不會出現的廣告。 \n\n再次申明，WhatAnime是用於檢索動漫番劇的工具，而不是檢索成人影片的工具！</string>
+    <string name="hint_why_ads_appear">我們檢測到曾經檢索過成人影片（非動漫），故此封禁了您的設備。 WhatAnime依舊可以在該設備上運行，但是會出現正常情況不會出現的廣告。 \n\n 再次申明，WhatAnime是用於檢索動漫番劇的工具，而不是檢索成人影片的工具！</string>
     <string name="action_why_ad">為什麼會顯示廣告?</string>
     <string name="action_ad_show_mistake">弄錯了?</string>
+    <string name="hint_usage_notice">WhatAnime是一個用於檢索動漫番劇的工具應用，檢索出來的結果取決於用於檢索的圖片，如果您選擇的是非動漫截圖（同人圖、自拍、成人影片截圖、莫名其妙的圖片等），自然檢索不到正確的結果。 \n\n 請勿再使用該應用用於檢索成人影片（肯定是檢索不出來的）！</string>
+    <string name="title_device_id">設備ID</string>
+    <string name="title_usage_notice">使用須知</string>
+    <string name="hint_copy_device_id">設備ID已經拷貝到剪切板中</string>
 </resources>
