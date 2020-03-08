@@ -15,7 +15,7 @@ val mainActivityModule = module {
 			ExoPlayerFactory.newSimpleInstance(context)
 		}
 		scoped { (context: MainActivity) ->
-			MainRecyclerAdapter(context, MainItemListener(getViewModel(context)))
+			MainRecyclerAdapter(context, MainItemListener(context.getViewModel()))
 		}
 	}
 }
