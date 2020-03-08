@@ -1,14 +1,21 @@
 package pw.janyo.whatanime.ui.activity
 
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.content_history.*
 import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
+import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.databinding.ActivityHistoryBinding
 import pw.janyo.whatanime.databinding.ContentHistoryBinding
 import pw.janyo.whatanime.model.AnimationHistory
@@ -22,6 +29,13 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
 	private val historyViewModel: HistoryViewModel by viewModel()
 	private val historyRecyclerAdapter: HistoryRecyclerAdapter by lifecycleScope.inject { parametersOf(this) }
+	private val adsDialog: AlertDialog by lazy {
+		MaterialAlertDialogBuilder(this)
+				.setTitle(R.string.action_why_ad)
+				.setMessage(R.string.hint_why_ads_appear)
+				.setPositiveButton(android.R.string.ok, null)
+				.create()
+	}
 
 	private val animationHistoryObserver = object : PackageDataObserver<List<AnimationHistory>> {
 		override fun content(data: List<AnimationHistory>?) {
@@ -57,6 +71,18 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 
 	override fun initView() {
 		super.initView()
+		if (inBlackList) {
+			//连接上了服务器并且在黑名单中
+			adView.visibility = View.VISIBLE
+			whyAdImageView.visibility = View.VISIBLE
+			//初始化AdMod
+			MobileAds.initialize(this) {}
+			val adRequest = AdRequest.Builder().build()
+			adView.loadAd(adRequest)
+		} else {
+			adView.visibility = View.GONE
+			whyAdImageView.visibility = View.GONE
+		}
 		setSupportActionBar(binding.toolbar)
 		supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 		title = getString(R.string.title_activity_history)
@@ -98,6 +124,9 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 		super.monitor()
 		contentHistoryBinding.swipeRefreshLayout.setOnRefreshListener {
 			refresh()
+		}
+		whyAdImageView.setOnClickListener {
+			adsDialog.show()
 		}
 	}
 
