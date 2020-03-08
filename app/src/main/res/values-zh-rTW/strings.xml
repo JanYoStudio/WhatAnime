@@ -79,4 +79,7 @@
     <string name="hint_unknow_error">操作異常！</string>
     <string name="title_cloud_compress">雲端壓縮</string>
     <string name="summary_cloud_compress">不在本地進行圖片的壓縮，上傳到服務端，通過服務端進行壓縮（效果可能更好一些）</string>
+    <string name="hint_why_ads_appear">我們檢測到曾經檢索過成人影片（非動漫），故此封禁了您的設備。 WhatAnime依舊可以在該設備上運行，但是會出現正常情況不會出現的廣告。 \n\n再次申明，WhatAnime是用於檢索動漫番劇的工具，而不是檢索成人影片的工具！</string>
+    <string name="action_why_ad">為什麼會顯示廣告?</string>
+    <string name="action_ad_show_mistake">弄錯了?</string>
 </resources>

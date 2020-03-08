@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -21,6 +22,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
@@ -84,6 +86,13 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	private val mainRecyclerAdapter: MainRecyclerAdapter by lifecycleScope.inject { parametersOf(this) }
 	private var isShowDetail = false
 	private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
+	private val adsDialog: AlertDialog by lazy {
+		MaterialAlertDialogBuilder(this)
+				.setTitle(R.string.action_why_ad)
+				.setMessage(R.string.hint_why_ads_appear)
+				.setPositiveButton(android.R.string.ok, null)
+				.create()
+	}
 
 	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
 		override fun content(data: SearchQuota?) {
@@ -178,18 +187,17 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	override fun initView() {
 		super.initView()
-//		if (mainViewModel.shouldShowAds) {
-		if (true) {
+		if (mainViewModel.shouldShowAds) {
 			//连接上了服务器并且在黑名单中
 			adView.visibility = View.VISIBLE
-			whyAdTextView.visibility = View.VISIBLE
+			whyAdImageView.visibility = View.VISIBLE
 			//初始化AdMod
 			MobileAds.initialize(this) {}
 			val adRequest = AdRequest.Builder().build()
 			adView.loadAd(adRequest)
 		} else {
 			adView.visibility = View.GONE
-			whyAdTextView.visibility = View.GONE
+			whyAdImageView.visibility = View.GONE
 		}
 		title = getString(R.string.title_activity_main)
 		setSupportActionBar(binding.toolbar)
@@ -250,6 +258,9 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 		super.monitor()
 		fab.setOnClickListener {
 			doSelect()
+		}
+		whyAdImageView.setOnClickListener {
+			adsDialog.show()
 		}
 		player.addListener(object : Player.EventListener {
 			override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -320,9 +331,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		if (!isShowDetail)
 			menuInflater.inflate(R.menu.menu_main, menu)
-//		if (mainViewModel.shouldShowAds)
-		if (true)
-			menu.findItem(R.id.action_why_ad).isVisible = true
+		menu.findItem(R.id.action_why_ad).isVisible = mainViewModel.shouldShowAds
 		return true
 	}
 
@@ -342,6 +351,10 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			}
 			R.id.action_faq -> {
 				MarkdownActivity.intentTo(this, "faq.md")
+				true
+			}
+			R.id.action_why_ad -> {
+				adsDialog.show()
 				true
 			}
 			else -> super.onOptionsItemSelected(item)

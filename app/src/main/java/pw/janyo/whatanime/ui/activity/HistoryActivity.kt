@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import org.koin.androidx.scope.currentScope
+import org.koin.androidx.scope.lifecycleScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pw.janyo.whatanime.R
@@ -21,7 +21,7 @@ import vip.mystery0.tools.ResourceException
 class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
 	private lateinit var contentHistoryBinding: ContentHistoryBinding
 	private val historyViewModel: HistoryViewModel by viewModel()
-	private val historyRecyclerAdapter: HistoryRecyclerAdapter by currentScope.inject { parametersOf(this) }
+	private val historyRecyclerAdapter: HistoryRecyclerAdapter by lifecycleScope.inject { parametersOf(this) }
 
 	private val animationHistoryObserver = object : PackageDataObserver<List<AnimationHistory>> {
 		override fun content(data: List<AnimationHistory>?) {
@@ -45,7 +45,7 @@ class HistoryActivity : WABaseActivity<ActivityHistoryBinding>(R.layout.activity
 				Logs.wtf("animationHistoryObserver: ", e)
 			dismissRefresh()
 			Snackbar.make(binding.coordinatorLayout, e?.message
-					?: "", Snackbar.LENGTH_LONG)
+							?: "", Snackbar.LENGTH_LONG)
 					.show()
 		}
 	}
