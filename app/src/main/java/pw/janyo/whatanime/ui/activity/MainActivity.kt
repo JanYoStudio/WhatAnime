@@ -361,10 +361,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			dialog.dismiss()
 	}
 
-	override fun onCreateOptionsMenu(menu: Menu): Boolean {
-		if (!isShowDetail)
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		if (!isShowDetail) {
 			menuInflater.inflate(R.menu.menu_main, menu)
-		menu.findItem(R.id.action_why_ad).isVisible = inBlackList
+			menu!!.findItem(R.id.action_why_ad).isVisible = inBlackList
+		}
 		return true
 	}
 
