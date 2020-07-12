@@ -21,24 +21,28 @@
     <string name="title_cloud_compress">Server Compression</string>
     <string name="summary_cloud_compress">Do not perform compression operations locally, upload the original image to the server, and the server compress</string>
 
+    <string name="key_about_github" translatable="false">key_about_github</string>
     <string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
     <string name="link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
 
+    <string name="key_about_license" translatable="false">key_about_license</string>
     <string name="summary_about_license" translatable="false">Apache License 2.0</string>
     <string name="link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
 
-    <string name="key_about_open_source_license" translatable="false">key_open_source_license_about</string>
-
+    <string name="key_about_open_on_play" translatable="false">key_about_open_on_play</string>
     <string name="title_about_open_on_play">Google Play Store</string>
     <string name="link_about_open_on_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
 
+    <string name="key_janyo_license" translatable="false">key_janyo_license</string>
     <string name="title_janyo_license">License</string>
     <string name="summary_janyo_license">JanYo Studio License</string>
     <string name="link_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
 
+    <string name="key_developer_whatanime" translatable="false">key_developer_whatanime</string>
     <string name="title_developer_whatanime" translatable="false">soruly</string>
     <string name="link_developer_whatanime" translatable="false">https://about.me/soruly</string>
 
+    <string name="key_whatanime" translatable="false">key_whatanime</string>
     <string name="title_whatanime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
     <string name="summary_whatanime" translatable="false">GNU General Public License v3.0</string>
     <string name="link_whatanime" translatable="false">https://trace.moe/</string>

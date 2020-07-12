@@ -11,6 +11,7 @@ import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.publicDeviceId
+import pw.janyo.whatanime.config.toBrowser
 import vip.mystery0.tools.base.BasePreferenceFragment
 import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.sdkIsAfter
@@ -121,6 +122,31 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		cloudCompressPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.enableCloudCompress = !cloudCompressPreference.isChecked
+			true
+		}
+
+		findPreferenceById<Preference>(R.string.key_about_github).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_about_github))
+			true
+		}
+		findPreferenceById<Preference>(R.string.key_about_license).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_about_license))
+			true
+		}
+		findPreferenceById<Preference>(R.string.key_about_open_on_play).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_about_open_on_play))
+			true
+		}
+		findPreferenceById<Preference>(R.string.key_janyo_license).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_janyo_license))
+			true
+		}
+		findPreferenceById<Preference>(R.string.key_developer_whatanime).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_developer_whatanime))
+			true
+		}
+		findPreferenceById<Preference>(R.string.key_whatanime).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+			requireActivity().toBrowser(getString(R.string.link_whatanime))
 			true
 		}
 	}

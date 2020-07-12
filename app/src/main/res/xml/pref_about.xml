@@ -24,33 +24,21 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about">
         <Preference
+            android:key="@string/key_about_github"
             android:summary="@string/summary_about_github"
-            android:title="@string/title_about_github">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_about_github" />
-        </Preference>
+            android:title="@string/title_about_github" />
         <Preference
+            android:key="@string/key_about_license"
             android:summary="@string/summary_about_license"
-            android:title="@string/title_about_license">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_about_license" />
-        </Preference>
+            android:title="@string/title_about_license" />
         <Preference
+            android:key="@string/key_about_open_on_play"
             android:summary="@string/summary_about_open_on_play"
-            android:title="@string/title_about_open_on_play">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_about_open_on_play" />
-        </Preference>
+            android:title="@string/title_about_open_on_play" />
         <Preference
+            android:key="@string/key_janyo_license"
             android:summary="@string/summary_janyo_license"
-            android:title="@string/title_janyo_license">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_janyo_license" />
-        </Preference>
+            android:title="@string/title_janyo_license" />
         <Preference
             android:summary="@string/app_version_name"
             android:title="@string/title_version" />
@@ -60,19 +48,13 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about_whatanime">
         <Preference
+            android:key="@string/key_whatanime"
             android:summary="@string/summary_developer_whatanime"
-            android:title="@string/title_developer_whatanime">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_developer_whatanime" />
-        </Preference>
+            android:title="@string/title_developer_whatanime" />
         <Preference
+            android:key="@string/key_developer_whatanime"
             android:summary="@string/summary_whatanime"
-            android:title="@string/title_whatanime">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/link_whatanime" />
-        </Preference>
+            android:title="@string/title_whatanime" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about_janyo">
         <Preference android:title="@string/dick_light" />
