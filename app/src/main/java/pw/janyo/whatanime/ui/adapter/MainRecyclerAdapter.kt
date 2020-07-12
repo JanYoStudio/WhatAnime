@@ -1,12 +1,10 @@
 package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
 import coil.api.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.config.toBrowser
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.databinding.ItemSearchResultBinding
 import pw.janyo.whatanime.handler.MainItemListener
@@ -43,14 +41,7 @@ class MainRecyclerAdapter(private val context: Context,
 			MaterialAlertDialogBuilder(context)
 					.setTitle(context.getString(R.string.hint_show_animation_detail, data.title_native))
 					.setPositiveButton(android.R.string.ok) { _, _ ->
-						val intent = Intent(Intent.ACTION_VIEW)
-						intent.data = Uri.parse("https://anilist.co/anime/${data.anilist_id}")
-						if (intent.resolveActivity(context.packageManager) != null) {
-							context.startActivity(Intent.createChooser(intent, context.getString(R.string.hint_select_browser)))
-						} else {
-							Toast.makeText(context, R.string.hint_no_browser, Toast.LENGTH_LONG)
-									.show()
-						}
+						context.toBrowser("https://anilist.co/anime/${data.anilist_id}")
 					}
 					.setNegativeButton(android.R.string.cancel, null)
 					.show()

@@ -37,6 +37,7 @@ import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
+import pw.janyo.whatanime.config.toBrowser
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Animation
@@ -380,11 +381,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				true
 			}
 			R.id.action_about -> {
-				MarkdownActivity.intentTo(this, "about.md")
+				toBrowser("https://janyostudio.mystery0.app/wa/index.html")
 				true
 			}
 			R.id.action_faq -> {
-				MarkdownActivity.intentTo(this, "faq.md")
+				toBrowser("https://janyostudio.mystery0.app/wa/faq.html")
 				true
 			}
 			R.id.action_why_ad -> {

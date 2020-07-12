@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pw.janyo.whatanime">
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+    </queries>
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
@@ -52,9 +58,6 @@
         <activity
             android:name=".ui.activity.AboutActivity"
             android:theme="@style/AppTheme.Preference" />
-        <activity
-            android:name=".ui.activity.MarkdownActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
