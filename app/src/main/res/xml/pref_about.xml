@@ -38,9 +38,6 @@
                 android:data="@string/link_about_license" />
         </Preference>
         <Preference
-            android:key="@string/key_about_open_source_license"
-            android:title="@string/title_about_open_source_license" />
-        <Preference
             android:summary="@string/summary_about_open_on_play"
             android:title="@string/title_about_open_on_play">
             <intent

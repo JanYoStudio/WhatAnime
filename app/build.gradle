@@ -129,8 +129,6 @@ dependencies {
     implementation 'com.zyao89:zloading:1.2.0'
     //Matisse
     implementation 'com.zhihu.android:matisse:0.5.2'
-    //About Library
-    implementation "com.mikepenz:aboutlibraries:8.1.6"
     //Markwon
     implementation 'io.noties.markwon:core:4.4.0'
     //ExoPlayer

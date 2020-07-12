@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.aboutlibraries.LibsBuilder
 import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
@@ -31,7 +30,6 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
 		val useInAppImageSelectPreference: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
 		val cloudCompressPreference: CheckBoxPreference = findPreferenceById(R.string.key_cloud_compress)
-		val openSourceLicenseAboutPreference: Preference = findPreferenceById(R.string.key_about_open_source_license)
 
 		deviceIdPreference.summary = publicDeviceId
 		languagePreference.summary = languageArray[Configure.language]
@@ -122,26 +120,6 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		cloudCompressPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
 			Configure.enableCloudCompress = !cloudCompressPreference.isChecked
-			true
-		}
-		openSourceLicenseAboutPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-			LibsBuilder()
-//					.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-					.withAboutAppName(getString(R.string.app_name))
-					.withAboutIconShown(false)
-					.withAboutVersionShown(true)
-					.withLicenseShown(true)
-					.withLicenseDialog(true)
-					.withShowLoadingProgress(true)
-					.withLibraries(
-							"DataBinding",
-							"Lifecycles",
-							"Matisse",
-							"Tools",
-							"Room",
-							"ViewModel",
-							"ZLoading")
-					.start(requireActivity())
 			true
 		}
 	}
