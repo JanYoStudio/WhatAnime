@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
@@ -48,7 +47,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		deviceIdPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			val clipData = ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
 			clipboardManager.setPrimaryClip(clipData)
-			toastMessage(getString(R.string.hint_copy_device_id))
+			toast(getString(R.string.hint_copy_device_id))
 			true
 		}
 		hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
@@ -57,7 +56,8 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		languagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.language
-			MaterialAlertDialogBuilder(activity!!)
+			val activity = requireActivity()
+			MaterialAlertDialogBuilder(activity)
 					.setTitle(R.string.title_change_language)
 					.setSingleChoiceItems(languageArray, select) { _, which ->
 						select = which
@@ -67,10 +67,10 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 						Configure.language = select
 						languagePreference.summary = languageArray[Configure.language]
 						if (needRestart) {
-							val intent = activity!!.packageManager.getLaunchIntentForPackage(activity!!.packageName)
+							val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
 							intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-							activity!!.startActivity(intent)
-							activity!!.finish()
+							activity.startActivity(intent)
+							activity.finish()
 						}
 					}
 					.setNegativeButton(android.R.string.cancel, null)
@@ -79,7 +79,8 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		nightModePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.nightMode
-			MaterialAlertDialogBuilder(activity!!)
+			val activity = requireActivity()
+			MaterialAlertDialogBuilder(activity)
 					.setTitle(" ")
 					.setSingleChoiceItems(nightModeArray, select) { _, which ->
 						select = which
@@ -89,10 +90,10 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 						Configure.nightMode = select
 						nightModePreference.summary = nightModeArray[Configure.nightMode]
 						if (needRestart) {
-							val intent = activity!!.packageManager.getLaunchIntentForPackage(activity!!.packageName)
+							val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
 							intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-							activity!!.startActivity(intent)
-							activity!!.finish()
+							activity.startActivity(intent)
+							activity.finish()
 						}
 					}
 					.setNegativeButton(android.R.string.cancel, null)
@@ -101,7 +102,8 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		previewConfigPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			var select = Configure.previewConfig
-			MaterialAlertDialogBuilder(activity!!)
+			val activity = requireActivity()
+			MaterialAlertDialogBuilder(activity)
 					.setTitle(R.string.title_change_preview_config)
 					.setSingleChoiceItems(R.array.preview_config, select) { _, which ->
 						select = which
@@ -124,7 +126,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		openSourceLicenseAboutPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			LibsBuilder()
-					.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+//					.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
 					.withAboutAppName(getString(R.string.app_name))
 					.withAboutIconShown(false)
 					.withAboutVersionShown(true)
@@ -139,7 +141,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 							"Room",
 							"ViewModel",
 							"ZLoading")
-					.start(activity!!)
+					.start(requireActivity())
 			true
 		}
 	}

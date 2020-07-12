@@ -13,6 +13,7 @@ import vip.mystery0.crashhandler.CrashHandler
 import vip.mystery0.logs.Logs
 import vip.mystery0.tools.ToolsClient
 import vip.mystery0.tools.context
+import java.io.File
 
 /**
  * Created by mystery0.
@@ -27,9 +28,8 @@ class APP : Application() {
 			modules(listOf(appModule, databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule, historyActivityModule))
 		}
 		CrashHandler.config {
-			it.setDirName("log")
-			it.setFileNameSuffix("log")
-			it.setDir(externalCacheDir!!)
+			setFileNameSuffix("log")
+			setDir(File(externalCacheDir, "log"))
 		}.init()
 		Logs.setConfig {
 			it.commonTag = packageName
