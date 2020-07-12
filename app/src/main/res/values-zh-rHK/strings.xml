@@ -85,4 +85,5 @@
     <string name="title_usage_notice">使用須知</string>
     <string name="hint_copy_device_id">設備 ID 已經拷貝到剪切板中</string>
     <string name="action_disagree">我不同意</string>
+    <string name="summary_use_in_app_image_select_disable">需要 READ_EXTERNAL_STORAGE 權限，Android 10以上自動禁用</string>
 </resources>

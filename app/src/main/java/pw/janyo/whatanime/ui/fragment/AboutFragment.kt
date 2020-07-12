@@ -38,6 +38,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		if (sdkIsAfter(AndroidVersionCode.VERSION_Q)) {
 			Configure.useInAppImageSelect = false
 			useInAppImageSelectPreference.isEnabled = false
+			useInAppImageSelectPreference.summary = getString(R.string.summary_use_in_app_image_select_disable)
 		}
 		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
 		cloudCompressPreference.isChecked = Configure.enableCloudCompress

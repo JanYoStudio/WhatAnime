@@ -16,6 +16,7 @@
 
     <string name="title_use_in_app_image_select">Use in-app image selector</string>
     <string name="summary_use_in_app_image_select">READ_EXTERNAL_STORAGE permission required</string>
+    <string name="summary_use_in_app_image_select_disable">READ_EXTERNAL_STORAGE permission required, Android 10 and above are automatically disabled</string>
 
     <string name="title_cloud_compress">Server Compression</string>
     <string name="summary_cloud_compress">Do not perform compression operations locally, upload the original image to the server, and the server compress</string>
