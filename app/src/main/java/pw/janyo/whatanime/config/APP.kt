@@ -57,23 +57,23 @@ val publicDeviceId: String
 var connectServer: Boolean = false
 var inBlackList: Boolean = false
 
-fun Context.toBrowser(url: String) {
+fun Context.toCustomTabs(url: String) {
+	try {
+		val builder = CustomTabsIntent.Builder()
+		val intent = builder.build()
+		intent.launchUrl(this, Uri.parse(url))
+	} catch (e: Exception) {
+		loadInBrowser(url)
+	}
+}
+
+fun Context.loadInBrowser(url: String) {
 	try {
 		val intent = Intent(ACTION_VIEW, Uri.parse(url)).apply {
 			flags = FLAG_ACTIVITY_NEW_TASK
 		}
 		startActivity(intent)
 	} catch (e: ActivityNotFoundException) {
-		loadInCustomTabs(url)
-	}
-}
-
-fun Context.loadInCustomTabs(url: String) {
-	try {
-		val builder = CustomTabsIntent.Builder()
-		val intent = builder.build()
-		intent.launchUrl(this, Uri.parse(url))
-	} catch (e: Exception) {
 		toastLong(R.string.hint_no_browser)
 	}
 }

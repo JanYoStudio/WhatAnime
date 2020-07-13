@@ -4,7 +4,7 @@ import android.content.Context
 import coil.api.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.config.toBrowser
+import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.databinding.ItemSearchResultBinding
 import pw.janyo.whatanime.handler.MainItemListener
@@ -41,7 +41,7 @@ class MainRecyclerAdapter(private val context: Context,
 			MaterialAlertDialogBuilder(context)
 					.setTitle(context.getString(R.string.hint_show_animation_detail, data.title_native))
 					.setPositiveButton(android.R.string.ok) { _, _ ->
-						context.toBrowser("https://anilist.co/anime/${data.anilist_id}")
+						context.toCustomTabs("https://anilist.co/anime/${data.anilist_id}")
 					}
 					.setNegativeButton(android.R.string.cancel, null)
 					.show()
