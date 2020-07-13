@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -52,22 +51,6 @@ suspend fun Uri.cloneUriToFile(): File? {
 		return file
 	}
 	return null
-}
-
-/**
- * 获取Markdown文件的内容
- * @param context 上下文
- * @param fileName 文件名
- *
- * @return 内容
- */
-fun getMarkdown(context: Context, fileName: String): String {
-	val inputStream = context.assets.open(fileName)
-	val length = inputStream.available()
-	val byteArray = ByteArray(length)
-	inputStream.read(byteArray)
-	inputStream.close()
-	return String(byteArray)
 }
 
 /**

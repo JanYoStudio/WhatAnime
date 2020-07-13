@@ -45,7 +45,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		cloudCompressPreference.isChecked = Configure.enableCloudCompress
 		hideSexPreference.isChecked = Configure.hideSex
 
-		deviceIdPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		deviceIdPreference.setOnPreferenceClickListener {
 			val clipData = ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
 			clipboardManager.setPrimaryClip(clipData)
 			toast(getString(R.string.hint_copy_device_id))
@@ -55,7 +55,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 			Configure.hideSex = !hideSexPreference.isChecked
 			true
 		}
-		languagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		languagePreference.setOnPreferenceClickListener {
 			var select = Configure.language
 			val activity = requireActivity()
 			MaterialAlertDialogBuilder(activity)
@@ -78,7 +78,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		nightModePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		nightModePreference.setOnPreferenceClickListener {
 			var select = Configure.nightMode
 			val activity = requireActivity()
 			MaterialAlertDialogBuilder(activity)
@@ -101,7 +101,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		previewConfigPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		previewConfigPreference.setOnPreferenceClickListener {
 			var select = Configure.previewConfig
 			val activity = requireActivity()
 			MaterialAlertDialogBuilder(activity)
@@ -130,33 +130,33 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 			fastClick(5) {
 				MaterialAlertDialogBuilder(requireActivity())
 						.setTitle("debug")
-						.setMessage("connectServer: $connectServer, inBlackList: $inBlackList")
+						.setMessage("connectServer: $connectServer\ninBlackList: $inBlackList\ndeviceId: $publicDeviceId")
 						.setPositiveButton(android.R.string.ok, null)
 						.show()
 			}
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_about_github).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_about_github).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_about_github))
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_about_license).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_about_license).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_about_license))
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_about_open_on_play).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_about_open_on_play).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_about_open_on_play))
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_janyo_license).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_janyo_license).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_janyo_license))
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_developer_whatanime).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_developer_whatanime).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_developer_whatanime))
 			true
 		}
-		findPreferenceById<Preference>(R.string.key_whatanime).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+		findPreferenceById<Preference>(R.string.key_whatanime).setOnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_whatanime))
 			true
 		}

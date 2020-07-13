@@ -109,8 +109,12 @@ dependencies {
     implementation "org.koin:koin-androidx-ext:$koin_version"
     //Mystery0Tools
     implementation 'vip.mystery0.tools:logs:1.4.5'
-    implementation 'vip.mystery0.tools:tools:2.2.8'
+    implementation 'vip.mystery0.tools:tools:2.2.9'
     implementation 'vip.mystery0.tools:crashhandler:1.1.4'
+    //Condom
+    implementation 'com.oasisfeng.condom:library:2.5.0'
+    //MMKV
+    implementation 'com.tencent:mmkv-static:1.2.1'
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

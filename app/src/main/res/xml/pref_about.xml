@@ -40,6 +40,7 @@
             android:summary="@string/summary_janyo_license"
             android:title="@string/title_janyo_license" />
         <Preference
+            android:key="@string/key_app_version"
             android:summary="@string/app_version_name"
             android:title="@string/title_version" />
         <Preference

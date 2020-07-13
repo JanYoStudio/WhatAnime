@@ -10,6 +10,8 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
+import com.oasisfeng.condom.CondomContext
+import com.tencent.mmkv.MMKV
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -21,6 +23,8 @@ import vip.mystery0.crashhandler.CrashHandler
 import vip.mystery0.logs.Logs
 import vip.mystery0.tools.ToolsClient
 import vip.mystery0.tools.context
+import vip.mystery0.tools.utils.sp
+import vip.mystery0.tools.utils.toast
 import vip.mystery0.tools.utils.toastLong
 import java.io.File
 
@@ -45,6 +49,20 @@ class APP : Application() {
 			it.isShowLog = BuildConfig.DEBUG
 		}
 		ToolsClient.initWithContext(this)
+		MMKV.initialize(CondomContext.wrap(this, "mmkv"))
+		if (Configure.lastVersion < BuildConfig.VERSION_CODE) {
+			//数据迁移
+			toast("data convert")
+			val sp = sp("configure", Context.MODE_PRIVATE)
+			Configure.hideSex = sp.getBoolean("config_hide_sex", true)
+			Configure.language = sp.getInt("config_language", 0)
+			Configure.useInAppImageSelect = sp.getBoolean("config_use_in_app_image_select", false)
+			Configure.nightMode = sp.getInt("config_night_mode", 3)
+			Configure.previewConfig = sp.getInt("config_preview_config", 0)
+			Configure.enableCloudCompress = sp.getBoolean("config_cloud_compress", true)
+			Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
+			Configure.lastVersion = BuildConfig.VERSION_CODE
+		}
 	}
 }
 
