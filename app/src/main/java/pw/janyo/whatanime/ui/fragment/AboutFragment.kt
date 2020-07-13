@@ -9,11 +9,10 @@ import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.config.publicDeviceId
-import pw.janyo.whatanime.config.toCustomTabs
+import pw.janyo.whatanime.config.*
 import vip.mystery0.tools.base.BasePreferenceFragment
 import vip.mystery0.tools.utils.AndroidVersionCode
+import vip.mystery0.tools.utils.fastClick
 import vip.mystery0.tools.utils.sdkIsAfter
 
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
@@ -25,6 +24,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		val deviceIdPreference: Preference = findPreferenceById(R.string.key_device_id)
+		val versionPreference: Preference = findPreferenceById(R.string.key_app_version)
 		val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
@@ -43,6 +43,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		}
 		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
 		cloudCompressPreference.isChecked = Configure.enableCloudCompress
+		hideSexPreference.isChecked = Configure.hideSex
 
 		deviceIdPreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			val clipData = ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
@@ -125,6 +126,16 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 			true
 		}
 
+		versionPreference.setOnPreferenceClickListener {
+			fastClick(5) {
+				MaterialAlertDialogBuilder(requireActivity())
+						.setTitle("debug")
+						.setMessage("connectServer: $connectServer, inBlackList: $inBlackList")
+						.setPositiveButton(android.R.string.ok, null)
+						.show()
+			}
+			true
+		}
 		findPreferenceById<Preference>(R.string.key_about_github).onPreferenceClickListener = Preference.OnPreferenceClickListener {
 			requireActivity().toCustomTabs(getString(R.string.link_about_github))
 			true
