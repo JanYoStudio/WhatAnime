@@ -8,7 +8,7 @@ autoVersion {
     major 1
     minor 5
     patch 8
-    beta 3
+    beta 0
     alpha 0
     isShowBuild beta != 0 || alpha != 0
 }
