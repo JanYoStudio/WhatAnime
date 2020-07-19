@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.zhihu.matisse.Matisse
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.ShowImage
@@ -36,7 +35,7 @@ class MainViewModel(
 	val mediaSource = MutableLiveData<PackageData<MediaSource>>()
 	private var nowPlayUrl: String = ""
 	val imageFile = MutableLiveData<PackageData<ShowImage>>()
-	val resultList = MutableLiveData<PackageData<Animation>>()
+	val resultList = MutableLiveData<PackageData<List<Docs>>>()
 	val isShowDetail = MutableLiveData<Boolean>()
 	val quota = MutableLiveData<PackageData<SearchQuota>>()
 
@@ -65,7 +64,12 @@ class MainViewModel(
 				searchQuota.quota_ttl = animation.quota_ttl
 				quota.content(searchQuota)
 			}
-			resultList.content(animation)
+			val result = if (Configure.hideSex) {
+				animation.docs.filter { !it.is_adult }
+			} else {
+				animation.docs
+			}
+			resultList.content(result)
 		}
 	}
 

@@ -40,7 +40,7 @@ import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.databinding.ActivityMainBinding
 import pw.janyo.whatanime.databinding.ContentMainBinding
-import pw.janyo.whatanime.model.Animation
+import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.CoilImageEngine
@@ -48,6 +48,7 @@ import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.utils.loadWithoutCache
 import pw.janyo.whatanime.viewModel.MainViewModel
 import vip.mystery0.logs.Logs
+import vip.mystery0.rx.DataObserver
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
 import vip.mystery0.tools.ResourceException
@@ -111,10 +112,10 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			e.toastLong()
 		}
 	}
-	private val animationObserver = object : PackageDataObserver<Animation> {
-		override fun content(data: Animation?) {
+	private val animationObserver = object : DataObserver<List<Docs>> {
+		override fun contentNoEmpty(data: List<Docs>) {
 			mainRecyclerAdapter.items.clear()
-			mainRecyclerAdapter.items.addAll(data!!.docs)
+			mainRecyclerAdapter.items.addAll(data)
 			hideDialog()
 		}
 
@@ -122,13 +123,13 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			showDialog()
 		}
 
-		override fun empty(data: Animation?) {
+		override fun empty() {
 			hideDialog()
 			Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_SHORT)
 					.show()
 		}
 
-		override fun error(data: Animation?, e: Throwable?) {
+		override fun error(e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("animationObserver: ", e)
 			hideDialog()
