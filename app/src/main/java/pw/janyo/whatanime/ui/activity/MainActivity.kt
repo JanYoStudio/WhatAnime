@@ -1,13 +1,10 @@
 package pw.janyo.whatanime.ui.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.Menu
@@ -25,8 +22,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.koin.androidx.scope.lifecycleScope
@@ -43,7 +38,6 @@ import pw.janyo.whatanime.databinding.ContentMainBinding
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.ShowImage
-import pw.janyo.whatanime.ui.CoilImageEngine
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.utils.loadWithoutCache
 import pw.janyo.whatanime.viewModel.MainViewModel
@@ -52,15 +46,12 @@ import vip.mystery0.rx.DataObserver
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.formatTime
-import vip.mystery0.tools.utils.sdkIsBefore
 import java.io.File
 import kotlin.system.exitProcess
 
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 	companion object {
-		private const val REQUEST_CODE = 123
 		private const val FILE_SELECT_CODE = 124
 		private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
 		private const val INTENT_ORIGIN_PATH = "INTENT_ORIGIN_PATH"
@@ -326,31 +317,9 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	}
 
 	private fun doSelect() {
-		if (Configure.useInAppImageSelect && sdkIsBefore(AndroidVersionCode.VERSION_Q, exclude = true))
-			requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)) { code, result ->
-				if (result.isEmpty() || result[0] == PackageManager.PERMISSION_GRANTED) {
-					Matisse.from(this)
-							.choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.BMP, MimeType.GIF))
-							.showSingleMediaType(true)
-							.countable(false)
-							.maxSelectable(1)
-							.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-							.thumbnailScale(0.85f)
-							.imageEngine(CoilImageEngine())
-							.forResult(REQUEST_CODE)
-				} else {
-					Snackbar.make(binding.coordinatorLayout, R.string.hint_permission_deny, Snackbar.LENGTH_LONG)
-							.setAction(R.string.action_re_request_permission) {
-								reRequestPermission(code)
-							}
-							.show()
-				}
-			}
-		else {
-			val intent = Intent(Intent.ACTION_PICK)
-			intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-			startActivityForResult(intent, FILE_SELECT_CODE)
-		}
+		val intent = Intent(Intent.ACTION_PICK)
+		intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+		startActivityForResult(intent, FILE_SELECT_CODE)
 	}
 
 	private fun showDialog() {
@@ -400,15 +369,14 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		when (requestCode) {
-			REQUEST_CODE -> {
-				if (resultCode == Activity.RESULT_OK) {
-					mainViewModel.parseImageFileByMatisse(data!!)
-				}
-			}
 			FILE_SELECT_CODE -> {
 				if (resultCode == Activity.RESULT_OK) {
-					val type = contentResolver.getType(data!!.data!!)!!
-					mainViewModel.parseImageFile(data, type)
+					val type = contentResolver.getType(data!!.data!!)
+					if (type.isNullOrBlank()) {
+						toast(R.string.hint_select_file_not_exist)
+					} else {
+						mainViewModel.parseImageFile(data, type)
+					}
 				}
 			}
 		}

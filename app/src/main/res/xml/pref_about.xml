@@ -14,10 +14,6 @@
             android:key="@string/key_preview_config"
             android:title="@string/title_preview_config" />
         <CheckBoxPreference
-            android:key="@string/key_use_in_app_image_select"
-            android:summary="@string/summary_use_in_app_image_select"
-            android:title="@string/title_use_in_app_image_select" />
-        <CheckBoxPreference
             android:key="@string/key_cloud_compress"
             android:summary="@string/summary_cloud_compress"
             android:title="@string/title_cloud_compress" />

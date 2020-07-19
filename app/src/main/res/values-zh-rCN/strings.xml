@@ -48,8 +48,6 @@
     <string name="title_language">语言</string>
     <string name="title_change_language">修改语言</string>
     <string name="hint_select_file_uri_not_grant_permission">似乎是因为您使用的图库应用没有对Uri进行授权所以无法获取图片的信息，请尝试使用“应用内图片选择器”或者换一个图库应用。</string>
-    <string name="title_use_in_app_image_select">使用应用内图片选择器</string>
-    <string name="summary_use_in_app_image_select">需要 READ_EXTERNAL_STORAGE 权限</string>
     <string name="action_faq">疑难解答</string>
     <string name="action_about">关于</string>
     <string name="action_more">更多</string>
@@ -85,5 +83,5 @@
     <string name="hint_copy_device_id">设备ID已经拷贝到剪切板中</string>
     <string name="hint_usage_notice">WhatAnime是一个用于检索动漫番剧的工具应用，检索出来的结果取决于用于检索的图片，如果您选择的是非动漫截图（同人图、自拍、成人影片截图、莫名其妙的图片等），自然检索不到正确的结果。 \n\n 请勿再使用该应用用于检索成人影片（肯定是检索不出来的）！</string>
     <string name="action_disagree">我不同意</string>
-    <string name="summary_use_in_app_image_select_disable">需要 READ_EXTERNAL_STORAGE 权限，Android 10以上自动禁用</string>
+    <string name="hint_file_not_support">当前文件不支持，请换一个文件查询！</string>
 </resources>

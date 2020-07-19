@@ -48,8 +48,6 @@
     <string name="title_language">語言</string>
     <string name="title_change_language">修改語言</string>
     <string name="hint_select_file_uri_not_grant_permission">似乎是因為您使用的圖庫應用沒有對Uri進行授權所以無法獲取圖片的信息，請嘗試使用"應用內圖片選擇器"或者換一個圖庫應用。</string>
-    <string name="title_use_in_app_image_select">使用應用內圖片選擇器</string>
-    <string name="summary_use_in_app_image_select">需要 READ_EXTERNAL_STORAGE 權限</string>
     <string name="action_faq">疑難解答</string>
     <string name="action_about">關於</string>
     <string name="action_more">更多</string>
@@ -85,5 +83,5 @@
     <string name="title_usage_notice">使用須知</string>
     <string name="hint_copy_device_id">設備 ID 已經拷貝到剪切板中</string>
     <string name="action_disagree">我不同意</string>
-    <string name="summary_use_in_app_image_select_disable">需要 READ_EXTERNAL_STORAGE 權限，Android 10以上自動禁用</string>
+    <string name="hint_file_not_support">当前文件唔支持，请换一个文件查询！</string>
 </resources>

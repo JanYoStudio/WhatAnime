@@ -56,7 +56,6 @@ class APP : Application() {
 			val sp = sp("configure", Context.MODE_PRIVATE)
 			Configure.hideSex = sp.getBoolean("config_hide_sex", true)
 			Configure.language = sp.getInt("config_language", 0)
-			Configure.useInAppImageSelect = sp.getBoolean("config_use_in_app_image_select", false)
 			Configure.nightMode = sp.getInt("config_night_mode", 3)
 			Configure.previewConfig = sp.getInt("config_preview_config", 0)
 			Configure.enableCloudCompress = sp.getBoolean("config_cloud_compress", true)

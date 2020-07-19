@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
-import com.zhihu.matisse.Matisse
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import pw.janyo.whatanime.R
@@ -23,7 +22,6 @@ import vip.mystery0.rx.content
 import vip.mystery0.rx.launch
 import vip.mystery0.rx.loading
 import vip.mystery0.tools.ResourceException
-import vip.mystery0.tools.factory.mimeType
 import vip.mystery0.tools.utils.copyToFile
 import java.io.File
 import java.net.URLEncoder
@@ -78,22 +76,6 @@ class MainViewModel : ViewModel(), KoinComponent {
 	fun showQuota() {
 		launch(quota) {
 			quota.content(animationRepository.showQuota())
-		}
-	}
-
-	fun parseImageFileByMatisse(data: Intent) {
-		launch(imageFile) {
-			val fileList = Matisse.obtainPathResult(data)
-			if (fileList.isNotEmpty()) {
-				val file = File(fileList[0])
-				val showImage = ShowImage()
-				showImage.mimeType = file.mimeType ?: ""
-				showImage.originPath = fileList[0]
-				showImage.cachePath = null
-				imageFile.content(showImage)
-			} else {
-				throw ResourceException(R.string.hint_select_file_path_null)
-			}
 		}
 	}
 

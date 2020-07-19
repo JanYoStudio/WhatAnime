@@ -11,9 +11,7 @@ import org.koin.android.ext.android.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.*
 import vip.mystery0.tools.base.BasePreferenceFragment
-import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.fastClick
-import vip.mystery0.tools.utils.sdkIsAfter
 
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	private val clipboardManager: ClipboardManager by inject()
@@ -29,19 +27,12 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
 		val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
-		val useInAppImageSelectPreference: CheckBoxPreference = findPreferenceById(R.string.key_use_in_app_image_select)
 		val cloudCompressPreference: CheckBoxPreference = findPreferenceById(R.string.key_cloud_compress)
 
 		deviceIdPreference.summary = publicDeviceId
 		languagePreference.summary = languageArray[Configure.language]
 		nightModePreference.summary = nightModeArray[Configure.nightMode]
 		previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
-		if (sdkIsAfter(AndroidVersionCode.VERSION_Q)) {
-			Configure.useInAppImageSelect = false
-			useInAppImageSelectPreference.isEnabled = false
-			useInAppImageSelectPreference.summary = getString(R.string.summary_use_in_app_image_select_disable)
-		}
-		useInAppImageSelectPreference.isChecked = Configure.useInAppImageSelect
 		cloudCompressPreference.isChecked = Configure.enableCloudCompress
 		hideSexPreference.isChecked = Configure.hideSex
 
@@ -115,10 +106,6 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					}
 					.setNegativeButton(android.R.string.cancel, null)
 					.show()
-			true
-		}
-		useInAppImageSelectPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-			Configure.useInAppImageSelect = !useInAppImageSelectPreference.isChecked
 			true
 		}
 		cloudCompressPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->

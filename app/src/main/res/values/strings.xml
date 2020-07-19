@@ -72,6 +72,7 @@
     <string name="hint_why_ads_appear">We detected that we had retrieved adult movies (non-anime) and therefore banned your device. WhatAnime can still run on the device, but there will be ads that don\'t appear as normal. \n\n Again, WhatAnime is a tool for retrieving anime dramas, not for adult movies!</string>
     <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>
     <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
+    <string name="hint_file_not_support">The current file is not supported, please change to another file for query!</string>
     <string name="summary_about_open_on_play">Rate in Google Play Store</string>
     <string name="summary_developer_whatanime">WhatAnime API Developer</string>
     <string name="title_about_github">Open on Github</string>

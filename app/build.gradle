@@ -132,8 +132,6 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.2.5'
     //ZLoading
     implementation 'com.zyao89:zloading:1.2.0'
-    //Matisse
-    implementation 'com.zhihu.android:matisse:0.5.2'
     //Luban
     implementation 'top.zibin:Luban:1.1.8'
     //ExoPlayer
