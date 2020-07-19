@@ -8,12 +8,12 @@ import pw.janyo.whatanime.viewModel.TestViewModel
 
 val viewModelModule = module {
 	viewModel {
-		TestViewModel(get())
+		TestViewModel()
 	}
 	viewModel {
-		MainViewModel(get(), get())
+		MainViewModel()
 	}
 	viewModel {
-		HistoryViewModel(get())
+		HistoryViewModel()
 	}
 }

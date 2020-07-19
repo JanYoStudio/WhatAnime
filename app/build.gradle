@@ -134,6 +134,8 @@ dependencies {
     implementation 'com.zyao89:zloading:1.2.0'
     //Matisse
     implementation 'com.zhihu.android:matisse:0.5.2'
+    //Luban
+    implementation 'top.zibin:Luban:1.1.8'
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.10.5'
 }

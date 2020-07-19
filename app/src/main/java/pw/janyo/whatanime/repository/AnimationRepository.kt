@@ -1,11 +1,13 @@
 package pw.janyo.whatanime.repository
 
-import android.graphics.Bitmap
+import android.util.Base64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
@@ -16,7 +18,7 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.request.SignatureRequest
 import pw.janyo.whatanime.repository.local.service.HistoryService
-import pw.janyo.whatanime.utils.base64CompressImage
+import top.zibin.luban.Luban
 import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.factory.toJson
@@ -24,13 +26,24 @@ import vip.mystery0.tools.utils.isConnectInternet
 import java.io.File
 import java.util.*
 
-class AnimationRepository(
-		private val searchApi: SearchApi,
-		private val serverApi: ServerApi,
-		private val historyService: HistoryService
-) {
+class AnimationRepository : KoinComponent {
+	private val searchApi: SearchApi by inject()
+	private val serverApi: ServerApi by inject()
+	private val historyService: HistoryService by inject()
+	private val luban: Luban.Builder by inject()
+
 	suspend fun queryAnimationByImageOnline(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
-		val base64 = file.base64CompressImage(Bitmap.CompressFormat.JPEG, 1024 * 1000, 10)
+		fun File.compress(maxSize: Int): String {
+			val base64String = Base64.encodeToString(readBytes(), Base64.DEFAULT)
+			return if (base64String.length <= maxSize)
+				base64String
+			else {
+				val f = luban.load(this).get()[0]
+				Base64.encodeToString(f.readBytes(), Base64.DEFAULT)
+			}
+		}
+
+		val base64 = file.compress(1024 * 1024 * 5)
 		val history = queryByBase64(base64)
 		if (history != null) {
 			history

@@ -30,6 +30,6 @@ val databaseModule = module {
 		get<DB>().getHistoryDao()
 	}
 	single<HistoryService> {
-		HistoryServiceImpl(get())
+		HistoryServiceImpl()
 	}
 }

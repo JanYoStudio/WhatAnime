@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.utils.getCacheFile
@@ -12,9 +14,9 @@ import vip.mystery0.logs.Logs
 import vip.mystery0.rx.*
 import java.io.File
 
-class HistoryViewModel(
-		private val animationRepository: AnimationRepository
-) : ViewModel() {
+class HistoryViewModel : ViewModel(), KoinComponent {
+	private val animationRepository: AnimationRepository by inject()
+
 	var historyList = MutableLiveData<PackageData<List<AnimationHistory>>>()
 
 	fun loadHistory() {

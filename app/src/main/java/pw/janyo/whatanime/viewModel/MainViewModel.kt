@@ -8,6 +8,8 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.zhihu.matisse.Matisse
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.model.Docs
@@ -27,10 +29,10 @@ import java.io.File
 import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
 
-class MainViewModel(
-		private val animationRepository: AnimationRepository,
-		private val exoDataSourceFactory: DataSource.Factory
-) : ViewModel() {
+class MainViewModel : ViewModel(), KoinComponent {
+	private val animationRepository: AnimationRepository by inject()
+	private val exoDataSourceFactory: DataSource.Factory by inject()
+
 	private val mediaSourceMap = ConcurrentHashMap<String, MediaSource>()
 	val mediaSource = MutableLiveData<PackageData<MediaSource>>()
 	private var nowPlayUrl: String = ""

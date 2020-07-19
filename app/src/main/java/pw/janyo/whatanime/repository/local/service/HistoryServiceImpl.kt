@@ -1,11 +1,12 @@
 package pw.janyo.whatanime.repository.local.service
 
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.local.dao.HistoryDao
 
-class HistoryServiceImpl(
-		private val historyDao: HistoryDao
-) : HistoryService {
+class HistoryServiceImpl : HistoryService, KoinComponent {
+	private val historyDao: HistoryDao by inject()
 
 	override fun saveHistory(animationHistory: AnimationHistory): Long = historyDao.saveHistory(animationHistory)
 

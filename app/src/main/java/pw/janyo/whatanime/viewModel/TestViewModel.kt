@@ -3,6 +3,8 @@ package pw.janyo.whatanime.viewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.withTimeoutOrNull
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.ServerApi
 import pw.janyo.whatanime.config.Configure
@@ -13,9 +15,9 @@ import vip.mystery0.rx.launch
 import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.utils.isConnectInternet
 
-class TestViewModel(
-		private val serverApi: ServerApi
-) : ViewModel() {
+class TestViewModel : ViewModel(), KoinComponent {
+	private val serverApi: ServerApi by inject()
+
 	val connectServer = MediatorLiveData<PackageData<Pair<Boolean, Boolean>>>()
 
 	fun doTest() {

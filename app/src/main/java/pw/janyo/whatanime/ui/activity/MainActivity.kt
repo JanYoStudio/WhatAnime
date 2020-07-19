@@ -99,19 +99,19 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				.create()
 	}
 
-	private val quotaObserver = object : PackageDataObserver<SearchQuota> {
-		override fun content(data: SearchQuota?) {
-			val quota = data!!
-			val quotaString = "${getString(R.string.hint_search_quota)}${quota.quota}    ${getString(R.string.hint_search_quota_ttl)}${(quota.quota_ttl * 1000).toLong().formatTime()}"
+	private val quotaObserver = object : DataObserver<SearchQuota> {
+		override fun contentNoEmpty(data: SearchQuota) {
+			val quotaString = "${getString(R.string.hint_search_quota)}${data.quota}    ${getString(R.string.hint_search_quota_ttl)}${(data.quota_ttl * 1000).toLong().formatTime()}"
 			searchQuota.text = quotaString
 		}
 
-		override fun error(data: SearchQuota?, e: Throwable?) {
+		override fun error(e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("quotaObserver: ", e)
 			e.toastLong()
 		}
 	}
+
 	private val animationObserver = object : DataObserver<List<Docs>> {
 		override fun contentNoEmpty(data: List<Docs>) {
 			mainRecyclerAdapter.items.clear()
@@ -136,9 +136,9 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			e.toastLong()
 		}
 	}
-	private val imageFileObserver = object : PackageDataObserver<ShowImage> {
-		override fun content(data: ShowImage?) {
-			val originFile = File(data!!.originPath)
+	private val imageFileObserver = object : DataObserver<ShowImage> {
+		override fun contentNoEmpty(data: ShowImage) {
+			val originFile = File(data.originPath)
 			//判断图片文件是否存在
 			if (!originFile.exists()) {
 				//如果不存在，显示错误信息
@@ -158,7 +158,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 			mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType, connectServer)
 		}
 
-		override fun error(data: ShowImage?, e: Throwable?) {
+		override fun error(e: Throwable?) {
 			if (e !is ResourceException)
 				Logs.wtf("imageFileObserver: ", e)
 			e.toastLong()
