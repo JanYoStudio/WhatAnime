@@ -8,7 +8,7 @@ autoVersion {
     major 1
     minor 5
     patch 8
-    beta 2
+    beta 3
     alpha 0
     isShowBuild beta != 0 || alpha != 0
 }
@@ -118,7 +118,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.0'
     //coil
     implementation 'io.coil-kt:coil:0.11.0'
     implementation 'io.coil-kt:coil-gif:0.11.0'

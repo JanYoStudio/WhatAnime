@@ -32,8 +32,12 @@ class AnimationRepository : KoinComponent {
 	private val historyService: HistoryService by inject()
 	private val luban: Luban.Builder by inject()
 
+	companion object {
+		private const val maxSize: Int = 1024 * 1024 * 5
+	}
+
 	suspend fun queryAnimationByImageOnline(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
-		fun File.compress(maxSize: Int): String {
+		fun File.compress(): String {
 			val base64String = Base64.encodeToString(readBytes(), Base64.DEFAULT)
 			return if (base64String.length <= maxSize)
 				base64String
@@ -43,7 +47,7 @@ class AnimationRepository : KoinComponent {
 			}
 		}
 
-		val base64 = file.compress(1024 * 1024 * 5)
+		val base64 = file.compress()
 		val history = queryByBase64(base64)
 		if (history != null) {
 			history
@@ -66,7 +70,8 @@ class AnimationRepository : KoinComponent {
 				.addFormDataPart("file", file.name, file.asRequestBody())
 				.build()
 		val uploadResponse = serverApi.uploadFile(signatureResponse.uploadUrl, requestBody).verify()!!
-		val data = searchApi.searchByUrl("${uploadResponse.url}-imageslim_upload")
+		val url = if (file.length() > maxSize) "${uploadResponse.url}-imageslim_upload" else uploadResponse.url
+		val data = searchApi.searchByUrl(url)
 		saveHistory(uploadResponse.url, originPath, cachePath, null, data)
 		data
 	}
