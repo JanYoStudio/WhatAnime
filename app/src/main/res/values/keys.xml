@@ -5,7 +5,7 @@
     <string name="key_language" translatable="false">key_language</string>
     <string name="key_night_mode" translatable="false">key_night_mode</string>
     <string name="key_preview_config" translatable="false">key_preview_config</string>
-    <string name="key_cloud_compress" translatable="false">key_cloud_compress</string>
+    <string name="key_request_type" translatable="false">key_request_type</string>
     <string name="key_app_version" translatable="false">key_app_version</string>
 
     <string name="title_language">Language</string>
@@ -14,8 +14,7 @@
 
     <string name="title_preview_config">Previews</string>
 
-    <string name="title_cloud_compress">Server Compression</string>
-    <string name="summary_cloud_compress">Do not perform compression operations locally, upload the original image to the server, and the server compress</string>
+    <string name="title_request_type">Search Request Type</string>
 
     <string name="key_about_github" translatable="false">key_about_github</string>
     <string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>

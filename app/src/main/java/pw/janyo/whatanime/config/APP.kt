@@ -24,7 +24,6 @@ import vip.mystery0.logs.Logs
 import vip.mystery0.tools.ToolsClient
 import vip.mystery0.tools.context
 import vip.mystery0.tools.utils.sp
-import vip.mystery0.tools.utils.toast
 import vip.mystery0.tools.utils.toastLong
 import java.io.File
 
@@ -50,16 +49,19 @@ class APP : Application() {
         }
         ToolsClient.initWithContext(this)
         MMKV.initialize(CondomContext.wrap(this, "mmkv"))
-        if (Configure.lastVersion < BuildConfig.VERSION_CODE) {
-            //数据迁移
-            toast("data convert")
+        if (Configure.lastVersion < 308) {
+            //SP数据迁移到MMKV
             val sp = sp("configure", Context.MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
             Configure.language = sp.getInt("config_language", 0)
             Configure.nightMode = sp.getInt("config_night_mode", 3)
             Configure.previewConfig = sp.getInt("config_preview_config", 0)
-            Configure.enableCloudCompress = sp.getBoolean("config_cloud_compress", true)
             Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
+            Configure.lastVersion = BuildConfig.VERSION_CODE
+        }
+        if (Configure.lastVersion < BuildConfig.VERSION_CODE) {
+            //重置云端压缩策略
+            Configure.requestType = 0
             Configure.lastVersion = BuildConfig.VERSION_CODE
         }
     }
@@ -73,7 +75,7 @@ val publicDeviceId: String
 
 var connectServer: Boolean = false
 var inBlackList: Boolean = false
-var useServerCompress: Boolean = Configure.enableCloudCompress
+var useServerCompress: Boolean = true
 
 fun Context.toCustomTabs(url: String) {
     try {

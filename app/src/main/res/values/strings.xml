@@ -48,6 +48,12 @@
     <string name="array_summary_preview_config_origin">There is a 3 second video preview of the matched scene. (1 seconds before and 2 seconds ahead)</string>
     <string name="array_summary_preview_config_natural_scene_cutting">With trace.moe-media , it can now detect timestamp boundaries of a scene naturally.</string>
     <string name="array_summary_preview_config_mute_natural">With trace.moe-media , it can now detect timestamp boundaries of a scene naturally, getting a mute video.</string>
+    <string name="array_request_type_detect">Automatic Detection</string>
+    <string name="array_request_type_server_compress">Cloud Compress</string>
+    <string name="array_request_type_server_directly">Request Directly</string>
+    <string name="array_summary_request_type_detect">Automatic Detection</string>
+    <string name="array_summary_request_type_server_compress">Transit requests through the server, may be faster for China users</string>
+    <string name="array_summary_request_type_server_directly">Post to the original API, which may not be accessible in China</string>
     <string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
     <string name="hint_episode">Episode: </string>
     <string name="hint_file_copy_error">File copy failed! </string>

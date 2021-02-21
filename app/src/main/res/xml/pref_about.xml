@@ -13,10 +13,9 @@
         <Preference
             android:key="@string/key_preview_config"
             android:title="@string/title_preview_config" />
-        <CheckBoxPreference
-            android:key="@string/key_cloud_compress"
-            android:summary="@string/summary_cloud_compress"
-            android:title="@string/title_cloud_compress" />
+        <Preference
+            android:key="@string/key_request_type"
+            android:title="@string/title_request_type" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about">
         <Preference

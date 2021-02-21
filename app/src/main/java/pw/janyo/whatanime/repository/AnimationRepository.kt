@@ -12,7 +12,7 @@ import org.koin.core.qualifier.named
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
-import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.useServerCompress
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
@@ -97,7 +97,7 @@ class AnimationRepository : KoinComponent {
             history.quota_ttl = -987654
             history
         } else {
-            if (Configure.enableCloudCompress && connectServer)
+            if (useServerCompress && connectServer)
                 queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, mimeType, filter)
             else
                 queryAnimationByImageOnline(file, originPath, cachePath, filter)

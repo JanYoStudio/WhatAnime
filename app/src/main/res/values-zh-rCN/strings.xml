@@ -73,8 +73,7 @@
     <string name="title_receive_share">搜索番剧</string>
     <string name="hint_no_network">网络连接异常，请检查！</string>
     <string name="hint_unknow_error">操作异常！</string>
-    <string name="title_cloud_compress">云端压缩</string>
-    <string name="summary_cloud_compress">不在本地进行图片的压缩，上传到服务端，通过服务端进行压缩（效果可能更好一些）</string>
+    <string name="title_request_type">检索方式</string>
     <string name="action_why_ad">为什么会显示广告？</string>
     <string name="action_ad_show_mistake">弄错了？</string>
     <string name="hint_why_ads_appear">我们检测到曾经检索过成人影片（非动漫），故此封禁了您的设备。WhatAnime依旧可以在该设备上运行，但是会出现正常情况不会出现的广告。\n\n 再次申明，WhatAnime是用于检索动漫番剧的工具，而不是检索成人影片的工具！</string>
@@ -84,4 +83,10 @@
     <string name="hint_usage_notice">WhatAnime是一个用于检索动漫番剧的工具应用，检索出来的结果取决于用于检索的图片，如果您选择的是非动漫截图（同人图、自拍、成人影片截图、莫名其妙的图片等），自然检索不到正确的结果。 \n\n 请勿再使用该应用用于检索成人影片（肯定是检索不出来的）！</string>
     <string name="action_disagree">我不同意</string>
     <string name="hint_file_not_support">当前文件不支持，请换一个文件查询！</string>
+    <string name="array_request_type_detect">自动检测</string>
+    <string name="array_request_type_server_compress">云端压缩</string>
+    <string name="array_request_type_server_directly">直接上传</string>
+    <string name="array_summary_request_type_detect">自动进行检测</string>
+    <string name="array_summary_request_type_server_directly">向原始接口发起请求，国内可能无法访问</string>
+    <string name="array_summary_request_type_server_compress">通过服务器进行中转请求，对于国内用户来说可能会更快一些</string>
 </resources>

@@ -18,6 +18,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 	private val languageArray by lazy { resources.getStringArray(R.array.language) }
 	private val nightModeArray by lazy { resources.getStringArray(R.array.night_mode) }
 	private val previewConfigArray by lazy { resources.getStringArray(R.array.preview_config_summary) }
+	private val requestTypeArray by lazy { resources.getStringArray(R.array.summary_request_type) }
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
@@ -27,13 +28,13 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 		val languagePreference: Preference = findPreferenceById(R.string.key_language)
 		val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
 		val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
-		val cloudCompressPreference: CheckBoxPreference = findPreferenceById(R.string.key_cloud_compress)
+		val requestTypePreference: Preference = findPreferenceById(R.string.key_request_type)
 
 		deviceIdPreference.summary = publicDeviceId
 		languagePreference.summary = languageArray[Configure.language]
 		nightModePreference.summary = nightModeArray[Configure.nightMode]
 		previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
-		cloudCompressPreference.isChecked = Configure.enableCloudCompress
+		requestTypePreference.summary = requestTypeArray[Configure.requestType]
 		hideSexPreference.isChecked = Configure.hideSex
 
 		deviceIdPreference.setOnPreferenceClickListener {
@@ -108,8 +109,20 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 					.show()
 			true
 		}
-		cloudCompressPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-			Configure.enableCloudCompress = !cloudCompressPreference.isChecked
+		requestTypePreference.setOnPreferenceClickListener {
+			var select = Configure.requestType
+			val activity = requireActivity()
+			MaterialAlertDialogBuilder(activity)
+					.setTitle(R.string.title_request_type)
+					.setSingleChoiceItems(R.array.request_type, select) { _, which ->
+						select = which
+					}
+					.setPositiveButton(android.R.string.ok) { _, _ ->
+						Configure.requestType = select
+						requestTypePreference.summary = requestTypeArray[Configure.requestType]
+					}
+					.setNegativeButton(android.R.string.cancel, null)
+					.show()
 			true
 		}
 

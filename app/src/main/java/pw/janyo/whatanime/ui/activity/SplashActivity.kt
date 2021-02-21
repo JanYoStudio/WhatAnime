@@ -38,6 +38,10 @@ class SplashActivity : WABaseActivity<ViewDataBinding>(null) {
                     inBlackList = it.inBlackList
                     useServerCompress = it.useCloudCompress!!
                 }
+                if (Configure.requestType != 0) {
+                    //使用应用的配置项
+                    useServerCompress = Configure.requestType == 1
+                }
                 doNext()
             }
 

@@ -5,6 +5,7 @@ import androidx.databinding.ViewDataBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.useServerCompress
@@ -26,6 +27,10 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
                 data?.let {
                     inBlackList = it.inBlackList
                     useServerCompress = it.useCloudCompress!!
+                }
+                if (Configure.requestType != 0) {
+                    //使用应用的配置项
+                    useServerCompress = Configure.requestType == 1
                 }
                 doNext()
             }
