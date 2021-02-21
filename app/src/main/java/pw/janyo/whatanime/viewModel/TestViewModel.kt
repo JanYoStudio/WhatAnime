@@ -9,6 +9,7 @@ import org.koin.core.qualifier.named
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.IpApi
 import pw.janyo.whatanime.api.ServerApi
+import pw.janyo.whatanime.config.inChina
 import pw.janyo.whatanime.model.request.TestRequest
 import pw.janyo.whatanime.model.response.StatisticsResponse
 import vip.mystery0.logs.Logs
@@ -36,7 +37,7 @@ class TestViewModel : ViewModel(), KoinComponent {
             val geoResponse = withTimeoutOrNull(1000L) {
                 ipApi.getGeoIp()
             }
-            val inChina: Boolean = if (geoResponse == null) {
+            inChina = if (geoResponse == null) {
                 Logs.w("get geo ip timeout")
                 //超时了，大概率是国内的环境
                 true
@@ -45,7 +46,7 @@ class TestViewModel : ViewModel(), KoinComponent {
                 geoResponse.location.country_code.toLowerCase(Locale.getDefault()) == "CN"
             }
             val response = withTimeoutOrNull(2000L) {
-                if (inChina) {
+                if (inChina!!) {
                     serverVipApi.testStatistics(TestRequest())
                 } else {
                     serverAppApi.testStatistics(TestRequest())

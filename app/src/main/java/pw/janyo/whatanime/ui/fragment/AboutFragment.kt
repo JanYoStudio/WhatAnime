@@ -130,7 +130,13 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
 			fastClick(5) {
 				MaterialAlertDialogBuilder(requireActivity())
 						.setTitle("debug")
-						.setMessage("connectServer: $connectServer\ninBlackList: $inBlackList\ndeviceId: $publicDeviceId")
+						.setMessage("""
+							connectServer: $connectServer
+							inBlackList: $inBlackList
+							useServerCompress: $useServerCompress
+							inChina: $inChina
+							deviceId: $publicDeviceId
+						""".trimIndent())
 						.setPositiveButton(android.R.string.ok, null)
 						.show()
 			}

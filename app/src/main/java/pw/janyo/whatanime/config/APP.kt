@@ -76,6 +76,7 @@ val publicDeviceId: String
 var connectServer: Boolean = false
 var inBlackList: Boolean = false
 var useServerCompress: Boolean = true
+var inChina: Boolean? = null
 
 fun Context.toCustomTabs(url: String) {
     try {
