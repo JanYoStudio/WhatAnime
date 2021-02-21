@@ -1,7 +1,7 @@
 package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
-import coil.api.load
+import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.toCustomTabs

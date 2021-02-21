@@ -60,8 +60,8 @@ class MainViewModel : ViewModel(), KoinComponent {
 			val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter, connectServer)
 			if (animation.quota != -987654 && animation.quota_ttl != -987654) {
 				val searchQuota = SearchQuota()
-				searchQuota.quota = animation.quota
-				searchQuota.quota_ttl = animation.quota_ttl
+				searchQuota.user_quota = animation.quota
+				searchQuota.user_quota_ttl = animation.quota_ttl
 				quota.content(searchQuota)
 			}
 			val result = if (Configure.hideSex) {

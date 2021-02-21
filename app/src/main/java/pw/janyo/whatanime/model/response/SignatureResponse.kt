@@ -9,9 +9,5 @@ class SignatureResponse {
 
 class UploadMeta {
 	lateinit var key: String
-	lateinit var policy: String
-	lateinit var ossAccessKeyId: String
-	lateinit var successActionStatus: String
 	lateinit var signature: String
-	lateinit var callback: String
 }

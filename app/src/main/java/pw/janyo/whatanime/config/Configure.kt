@@ -19,10 +19,6 @@ object Configure {
 		set(value) = sharedPreference.use { putInt("config_language", value) }
 		get() = sharedPreference.getInt("config_language", 0)
 
-	var useInAppImageSelect: Boolean
-		set(value) = sharedPreference.use { putBoolean("config_use_in_app_image_select", value) }
-		get() = sharedPreference.getBoolean("config_use_in_app_image_select", false)
-
 	var nightMode: Int
 		set(value) = sharedPreference.use { putInt("config_night_mode", value) }
 		get() = sharedPreference.getInt("config_night_mode", 3)

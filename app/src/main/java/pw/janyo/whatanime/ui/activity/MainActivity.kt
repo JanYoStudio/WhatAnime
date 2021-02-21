@@ -92,7 +92,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
 	private val quotaObserver = object : DataObserver<SearchQuota> {
 		override fun contentNoEmpty(data: SearchQuota) {
-			val quotaString = "${getString(R.string.hint_search_quota)}${data.quota}    ${getString(R.string.hint_search_quota_ttl)}${(data.quota_ttl * 1000).toLong().formatTime()}"
+			val quotaString = "${getString(R.string.hint_search_quota)}${data.user_quota}    ${getString(R.string.hint_search_quota_ttl)}${(data.user_quota_ttl * 1000).toLong().formatTime()}"
 			searchQuota.text = quotaString
 		}
 
@@ -288,7 +288,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				}
 			}
 
-			override fun onPlayerError(error: ExoPlaybackException?) {
+			override fun onPlayerError(error: ExoPlaybackException) {
+				super.onPlayerError(error)
 				Logs.e("onPlayerError: ", error)
 				contentMainBinding.progressBar.visibility = View.GONE
 				contentMainBinding.videoView.visibility = View.GONE

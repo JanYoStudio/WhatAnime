@@ -7,6 +7,8 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
+import pw.janyo.whatanime.config.useServerCompress
+import pw.janyo.whatanime.model.response.StatisticsResponse
 import pw.janyo.whatanime.viewModel.TestViewModel
 import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
@@ -16,23 +18,26 @@ class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
 	private val testViewModel: TestViewModel by viewModel()
 
 	override fun initData() {
-		super.initData()
-		testViewModel.connectServer.observe(this, object : PackageDataObserver<Pair<Boolean, Boolean>> {
-			override fun content(data: Pair<Boolean, Boolean>?) {
-				super.content(data)
-				connectServer = data?.first ?: false
-				inBlackList = data?.second ?: false
-				doNext()
-			}
+        super.initData()
+        testViewModel.connectServer.observe(this, object : PackageDataObserver<StatisticsResponse> {
+            override fun content(data: StatisticsResponse?) {
+                super.content(data)
+                connectServer = data != null
+                data?.let {
+                    inBlackList = it.inBlackList
+                    useServerCompress = it.useCloudCompress!!
+                }
+                doNext()
+            }
 
-			override fun error(data: Pair<Boolean, Boolean>?, e: Throwable?) {
-				super.error(data, e)
-				if (e !is ResourceException) {
-					Logs.wtf("error: ", e)
-				}
-				doNext()
-			}
-		})
+            override fun error(data: StatisticsResponse?, e: Throwable?) {
+                super.error(data, e)
+                if (e !is ResourceException) {
+                    Logs.wtf("error: ", e)
+                }
+                doNext()
+            }
+        })
 	}
 
 	override fun requestData() {
