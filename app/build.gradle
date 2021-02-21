@@ -7,8 +7,8 @@ apply plugin: 'kotlin-kapt'
 autoVersion {
     major 1
     minor 5
-    patch 8
-    beta 0
+    patch 9
+    beta 1
     alpha 0
     isShowBuild beta != 0 || alpha != 0
 }
@@ -124,8 +124,8 @@ dependencies {
     implementation 'io.coil-kt:coil-gif:1.1.1'
     //Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
+    kapt 'androidx.lifecycle:lifecycle-common-java8:2.3.0'
     //Room
     implementation 'androidx.room:room-runtime:2.2.6'
     implementation 'androidx.room:room-ktx:2.2.6'
