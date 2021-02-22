@@ -161,6 +161,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
                 //播放新的视频
                 player.clearMediaItems()
                 player.setMediaSource(data)
+                player.prepare()
                 player.playWhenReady = true
             }
         }
@@ -377,5 +378,10 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        player.release()
+        super.onDestroy()
     }
 }

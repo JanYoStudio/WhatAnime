@@ -38,7 +38,7 @@ val networkModule = module {
     }
     single(named("cloudVip")) {
         Retrofit.Builder()
-                .baseUrl(Constant.cloudAppUrl)
+                .baseUrl(Constant.cloudVipUrl)
                 .client(get())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

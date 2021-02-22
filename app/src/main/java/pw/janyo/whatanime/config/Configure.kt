@@ -25,7 +25,7 @@ object Configure {
 
     var previewConfig: Int
         set(value) = sharedPreference.use { putInt("config_preview_config", value) }
-        get() = sharedPreference.getInt("config_preview_config", 0)
+        get() = sharedPreference.getInt("config_preview_config", 1)
 
     var requestType: Int
         set(value) = sharedPreference.use { putInt("config_request_type", value) }
