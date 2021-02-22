@@ -79,6 +79,13 @@ android {
         //设置编译的lint开关，程序在buid的时候，会执行lint检查，有任何的错误或者警告提示，都会终止构建
         abortOnError false
     }
+    flavorDimensions 'localDebug'
+    productFlavors {
+        localDebug {
+            dimension 'localDebug'
+            applicationIdSuffix '.debug'
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -109,7 +116,7 @@ dependencies {
     implementation "org.koin:koin-androidx-ext:$koin_version"
     //Mystery0Tools
     implementation 'vip.mystery0.tools:logs:1.4.5'
-    implementation 'vip.mystery0.tools:tools:2.2.9'
+    implementation 'vip.mystery0.tools:tools:2.3.0'
     implementation 'vip.mystery0.tools:crashhandler:1.1.4'
     //Condom
     implementation 'com.oasisfeng.condom:library:2.5.0'

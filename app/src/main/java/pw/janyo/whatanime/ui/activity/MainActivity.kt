@@ -352,11 +352,11 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 				true
 			}
 			R.id.action_about -> {
-				toCustomTabs("https://janyostudio.mystery0.app/wa/index.html")
+				toCustomTabs("https://janyostudio.mystery0.vip/wa/index.html")
 				true
 			}
 			R.id.action_faq -> {
-				toCustomTabs("https://janyostudio.mystery0.app/wa/faq.html")
+				toCustomTabs("https://janyostudio.mystery0.vip/wa/faq.html")
 				true
 			}
 			R.id.action_why_ad -> {
