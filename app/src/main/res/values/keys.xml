@@ -31,7 +31,8 @@
     <string name="key_janyo_license" translatable="false">key_janyo_license</string>
     <string name="title_janyo_license">License</string>
     <string name="summary_janyo_license">JanYo Studio License</string>
-    <string name="link_janyo_license" translatable="false">https://janyostudio.mystery0.vip/license.html</string>
+    <string name="link_janyo_license" translatable="false">https://janyostudio.mystery0.app/license.html</string>
+    <string name="link_janyo_license_vip" translatable="false">https://janyostudio.mystery0.vip/license.html</string>
 
     <string name="key_developer_whatanime" translatable="false">key_developer_whatanime</string>
     <string name="title_developer_whatanime" translatable="false">soruly</string>
