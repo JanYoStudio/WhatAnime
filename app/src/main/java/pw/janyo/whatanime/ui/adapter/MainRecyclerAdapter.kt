@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
+import android.view.View
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import pw.janyo.whatanime.R
@@ -40,6 +41,11 @@ class MainRecyclerAdapter(private val context: Context,
         binding.textViewMalId.text = data.mal_id.toString()
         val similarity = "${DecimalFormat("#.000").format(data.similarity * 100)}%"
         binding.textViewSimilarity.text = similarity
+        if (data.similarity < 0.87) {
+            binding.textViewProbablyMistake.visibility = View.VISIBLE
+        } else {
+            binding.textViewProbablyMistake.visibility = View.GONE
+        }
         binding.cardView.setOnClickListener {
             MaterialAlertDialogBuilder(context)
                     .setTitle(context.getString(R.string.hint_show_animation_detail, data.title_native))

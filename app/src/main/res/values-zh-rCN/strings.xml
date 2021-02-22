@@ -90,4 +90,5 @@
     <string name="array_summary_request_type_server_directly">向原始接口发起请求，国内可能无法访问</string>
     <string name="array_summary_request_type_server_compress">通过服务器进行中转请求，对于国内用户来说可能会更快一些</string>
     <string name="hint_file_too_large">文件过大，请手动执行一次压缩！</string>
+    <string name="hint_probably_mistake">可能是错误结果</string>
 </resources>

@@ -90,4 +90,5 @@
     <string name="array_summary_request_type_server_compress">通過服務器進行中轉請求，對於國內用戶嚟講可能會更快一些</string>
     <string name="array_summary_request_type_detect">自動進行檢測</string>
     <string name="hint_file_too_large">文件過大，請手動執行一次壓縮！</string>
+    <string name="hint_probably_mistake">可能系錯誤結果</string>
 </resources>
