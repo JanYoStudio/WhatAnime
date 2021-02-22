@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.viewModel
 
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.exoplayer2.MediaItem
@@ -25,7 +26,6 @@ import vip.mystery0.rx.loading
 import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.utils.copyToFile
 import java.io.File
-import java.net.URLEncoder
 import java.util.concurrent.ConcurrentHashMap
 
 class MainViewModel : ViewModel(), KoinComponent {
@@ -109,15 +109,15 @@ class MainViewModel : ViewModel(), KoinComponent {
         launch(mediaSource) {
             val requestUrl = when (Configure.previewConfig) {
                 1 -> Constant.videoPreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", URLEncoder.encode(docs.filename, "UTF-8"))
+                        .replace("{fileName}", Uri.encode(docs.filename))
                         .replace("{at}", docs.at.toString())
                         .replace("{token}", docs.tokenthumb ?: "")
                 2 -> Constant.videoMutePreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", URLEncoder.encode(docs.filename, "UTF-8"))
+                        .replace("{fileName}", Uri.encode(docs.filename))
                         .replace("{at}", docs.at.toString())
                         .replace("{token}", docs.tokenthumb ?: "")
                 else -> Constant.videoOriginPreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", URLEncoder.encode(docs.filename, "UTF-8"))
+                        .replace("{fileName}", Uri.encode(docs.filename))
                         .replace("{at}", docs.at.toString())
                         .replace("{token}", docs.tokenthumb ?: "")
             }

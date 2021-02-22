@@ -22,6 +22,4 @@ class HistoryServiceImpl : HistoryService, KoinComponent {
 		else
 			historyDao.queryHistoryByOriginPathAndFilter(originPath, filter)
 	}
-
-	override fun queryHistoryByBase64(base64: String): AnimationHistory? = historyDao.queryHistoryByBase64(base64)
 }

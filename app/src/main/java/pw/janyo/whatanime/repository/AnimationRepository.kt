@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.repository
 
-import android.util.Base64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -19,7 +18,6 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.request.SignatureRequest
 import pw.janyo.whatanime.repository.local.service.HistoryService
-import top.zibin.luban.Luban
 import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.factory.toJson
@@ -31,25 +29,13 @@ class AnimationRepository : KoinComponent {
     private val searchApi: SearchApi by inject()
     private val serverVipApi: ServerApi by inject(named("cloudVipApi"))
     private val historyService: HistoryService by inject()
-    private val luban: Luban.Builder by inject()
 
     companion object {
         private const val maxSize: Int = 1024 * 1024 * 5
     }
 
     suspend fun queryAnimationByImageOnline(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
-        fun File.compress(): String {
-            val base64String = Base64.encodeToString(readBytes(), Base64.DEFAULT)
-            return if (base64String.length <= maxSize)
-                base64String
-            else {
-                val f = luban.load(this).get()[0]
-                Base64.encodeToString(f.readBytes(), Base64.DEFAULT)
-            }
-        }
-
-        val base64 = file.compress()
-        val history = queryByBase64(base64)
+        val history = queryByBase64(originPath)
         if (history != null) {
             history
         } else {
@@ -62,7 +48,7 @@ class AnimationRepository : KoinComponent {
                     .addFormDataPart("image", file.name, file.asRequestBody())
                     .build()
             val data = searchApi.search(requestBody)
-            saveHistory(base64, originPath, cachePath, filter, data)
+            saveHistory(originPath, cachePath, filter, data)
             data
         }
     }
@@ -78,7 +64,7 @@ class AnimationRepository : KoinComponent {
         val uploadResponse = serverVipApi.uploadFile(signatureResponse.uploadUrl, requestBody)
         val url = if (file.length() > maxSize) uploadResponse.url else uploadResponse.url
         val data = searchApi.searchByUrl(url)
-        saveHistory(uploadResponse.url, originPath, cachePath, null, data)
+        saveHistory(originPath, cachePath, null, data)
         data
     }
 
@@ -104,8 +90,8 @@ class AnimationRepository : KoinComponent {
         }
     }
 
-    private suspend fun queryByBase64(base64: String): Animation? = withContext(Dispatchers.IO) {
-        val animationHistory = historyService.queryHistoryByBase64(base64)
+    private suspend fun queryByBase64(originPath: String): Animation? = withContext(Dispatchers.IO) {
+        val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, null)
         val history = animationHistory?.result?.fromJson<Animation>()
         if (history != null) {
             history.limit = -987654
@@ -118,11 +104,10 @@ class AnimationRepository : KoinComponent {
 
     suspend fun queryHistoryByOriginPath(originPath: String, filter: String?): AnimationHistory? = withContext(Dispatchers.IO) { historyService.queryHistoryByOriginPathAndFilter(originPath, filter) }
 
-    private suspend fun saveHistory(base64: String, originPath: String, cachePath: String, filter: String?, animation: Animation) = withContext(Dispatchers.IO) {
+    private suspend fun saveHistory(originPath: String, cachePath: String, filter: String?, animation: Animation) = withContext(Dispatchers.IO) {
         val animationHistory = AnimationHistory()
         animationHistory.originPath = originPath
         animationHistory.cachePath = cachePath
-        animationHistory.base64 = base64
         animationHistory.result = animation.toJson()
         animationHistory.time = Calendar.getInstance().timeInMillis
         if (animation.docs.isNotEmpty())

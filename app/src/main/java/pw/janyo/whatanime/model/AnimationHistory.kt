@@ -20,6 +20,4 @@ class AnimationHistory {
 	lateinit var title: String//标题
 	@ColumnInfo(name = "animation_filter")
 	var filter: String? = null//过滤
-	@ColumnInfo(name = "base64")
-	lateinit var base64: String//base64字符串
 }

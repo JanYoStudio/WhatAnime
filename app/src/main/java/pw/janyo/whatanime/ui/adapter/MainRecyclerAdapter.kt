@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.ui.adapter
 
 import android.content.Context
+import android.net.Uri
 import android.view.View
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -12,7 +13,6 @@ import pw.janyo.whatanime.handler.MainItemListener
 import pw.janyo.whatanime.model.Docs
 import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.utils.formatTime
-import java.net.URLEncoder
 import java.text.DecimalFormat
 
 class MainRecyclerAdapter(private val context: Context,
@@ -21,7 +21,7 @@ class MainRecyclerAdapter(private val context: Context,
         binding.handler = listener
         binding.animationDocs = data
         val requestUrl = Constant.previewUrl.replace("{anilist_id}", data.anilist_id.toString())
-                .replace("{fileName}", URLEncoder.encode(data.filename, "UTF-8"))
+                .replace("{fileName}", Uri.encode(data.filename))
                 .replace("{at}", data.at.toString())
                 .replace("{token}", data.tokenthumb ?: "")
         binding.imageView.load(requestUrl) {
