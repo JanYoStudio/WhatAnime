@@ -74,6 +74,7 @@
     <string name="hint_no_browser">Please install a browser first.</string>
     <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
     <string name="hint_not_share">The file is invalid!</string>
+    <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
     <string name="hint_no_network">The network connection is abnormal, please check!</string>
     <string name="hint_why_ads_appear">We detected that we had retrieved adult movies (non-anime) and therefore banned your device. WhatAnime can still run on the device, but there will be ads that don\'t appear as normal. \n\n Again, WhatAnime is a tool for retrieving anime dramas, not for adult movies!</string>
     <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>

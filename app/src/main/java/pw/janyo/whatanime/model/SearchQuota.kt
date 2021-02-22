@@ -1,6 +1,8 @@
 package pw.janyo.whatanime.model
 
 class SearchQuota {
-    var user_quota: Int = 0
-    var user_quota_ttl: Int = 0
+    var limit: Int = 0
+    var limit_ttl: Int = 0
+    var user_limit: Int = 0
+    var user_limit_ttl: Int = 0
 }

@@ -93,8 +93,8 @@ class AnimationRepository : KoinComponent {
         val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, filter)
         val history = animationHistory?.result?.fromJson<Animation>()
         if (history != null) {
-            history.quota = -987654
-            history.quota_ttl = -987654
+            history.limit = -987654
+            history.limit_ttl = -987654
             history
         } else {
             if (useServerCompress && connectServer)
@@ -108,8 +108,8 @@ class AnimationRepository : KoinComponent {
         val animationHistory = historyService.queryHistoryByBase64(base64)
         val history = animationHistory?.result?.fromJson<Animation>()
         if (history != null) {
-            history.quota = -987654
-            history.quota_ttl = -987654
+            history.limit = -987654
+            history.limit_ttl = -987654
             history
         } else {
             null

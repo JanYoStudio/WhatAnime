@@ -88,7 +88,9 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
     private val quotaObserver = object : DataObserver<SearchQuota> {
         override fun contentNoEmpty(data: SearchQuota) {
-            val quotaString = "${getString(R.string.hint_search_quota)}${data.user_quota}    ${getString(R.string.hint_search_quota_ttl)}${(data.user_quota_ttl * 1000).toLong().formatTime()}"
+            val limit = if (data.limit == 0) data.user_limit else data.limit
+            val refreshTime = if (data.limit_ttl == 0) data.user_limit_ttl else data.limit_ttl
+            val quotaString = "${getString(R.string.hint_search_quota)}${limit}    ${getString(R.string.hint_search_quota_ttl)}${(refreshTime * 1000).toLong().formatTime()}"
             searchQuota.text = quotaString
         }
 

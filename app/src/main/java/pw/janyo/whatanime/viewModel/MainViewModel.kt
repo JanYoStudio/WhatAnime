@@ -50,19 +50,23 @@ class MainViewModel : ViewModel(), KoinComponent {
     fun search(file: File, filter: String?, cacheInPath: String?, originPath: String, mimeType: String, connectServer: Boolean) {
         resultList.loading()
         launch(resultList) {
+            if (file.length() > 10485760L) {
+                //大于10M，提示文件过大
+                throw ResourceException(R.string.hint_file_too_large)
+            }
             var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
             animationRepository.queryHistoryByOriginPath(originPath, filter)?.cachePath
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
                         ?: throw ResourceException(R.string.hint_cache_make_dir_error)
                 file.copyToFile(saveFile)
-                cachePath = file.absolutePath
+                cachePath = saveFile.absolutePath
             }
             val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter, connectServer)
-            if (animation.quota != -987654 && animation.quota_ttl != -987654) {
+            if (animation.limit != -987654 && animation.limit_ttl != -987654) {
                 val searchQuota = SearchQuota()
-                searchQuota.user_quota = animation.quota
-                searchQuota.user_quota_ttl = animation.quota_ttl
+                searchQuota.limit = animation.limit
+                searchQuota.limit_ttl = animation.limit_ttl
                 quota.content(searchQuota)
             }
             val result = if (Configure.hideSex) {
