@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
@@ -160,8 +159,8 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
                     player.seekToDefaultPosition()
             } else {
                 //播放新的视频
-                player.stop(true)
-                player.prepare(data)
+                player.clearMediaItems()
+                player.setMediaSource(data)
                 player.playWhenReady = true
             }
         }
@@ -211,7 +210,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         mainViewModel.quota.observe(this, quotaObserver)
         mainViewModel.imageFile.observe(this, imageFileObserver)
         mainViewModel.resultList.observe(this, animationObserver)
-        mainViewModel.isShowDetail.observe(this, Observer { isShowDetail = it })
+        mainViewModel.isShowDetail.observe(this, { isShowDetail = it })
         mainViewModel.mediaSource.observe(this, mediaSourceObserver)
     }
 
