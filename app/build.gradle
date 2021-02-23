@@ -79,13 +79,6 @@ android {
         //设置编译的lint开关，程序在buid的时候，会执行lint检查，有任何的错误或者警告提示，都会终止构建
         abortOnError false
     }
-    flavorDimensions 'localDebug'
-    productFlavors {
-        localDebug {
-            dimension 'localDebug'
-            applicationIdSuffix '.debug'
-        }
-    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -139,8 +132,6 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.2.6'
     //ZLoading
     implementation 'com.zyao89:zloading:1.2.0'
-    //Luban
-    implementation 'top.zibin:Luban:1.1.8'
     //ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.13.0'
 }
