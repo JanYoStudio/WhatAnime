@@ -1,7 +1,7 @@
 package pw.janyo.whatanime.repository.local.service
 
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.local.dao.HistoryDao
 

@@ -8,8 +8,8 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
@@ -47,7 +47,14 @@ class MainViewModel : ViewModel(), KoinComponent {
      * @param originPath 原始路径
      * @param mimeType 文件类型
      */
-    fun search(file: File, filter: String?, cacheInPath: String?, originPath: String, mimeType: String, connectServer: Boolean) {
+    fun search(
+        file: File,
+        filter: String?,
+        cacheInPath: String?,
+        originPath: String,
+        mimeType: String,
+        connectServer: Boolean
+    ) {
         resultList.loading()
         launch(resultList) {
             if (file.length() > 10485760L) {
@@ -58,11 +65,18 @@ class MainViewModel : ViewModel(), KoinComponent {
             animationRepository.queryHistoryByOriginPath(originPath, filter)?.cachePath
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
-                        ?: throw ResourceException(R.string.hint_cache_make_dir_error)
+                    ?: throw ResourceException(R.string.hint_cache_make_dir_error)
                 file.copyToFile(saveFile)
                 cachePath = saveFile.absolutePath
             }
-            val animation = animationRepository.queryAnimationByImageLocal(file, originPath, cachePath!!, mimeType, filter, connectServer)
+            val animation = animationRepository.queryAnimationByImageLocal(
+                file,
+                originPath,
+                cachePath!!,
+                mimeType,
+                filter,
+                connectServer
+            )
             if (animation.limit != -987654 && animation.limit_ttl != -987654) {
                 val searchQuota = SearchQuota()
                 searchQuota.limit = animation.limit
@@ -109,17 +123,23 @@ class MainViewModel : ViewModel(), KoinComponent {
         launch(mediaSource) {
             val requestUrl = when (Configure.previewConfig) {
                 1 -> Constant.videoPreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", Uri.encode(docs.filename))
-                        .replace("{at}", docs.at.toString())
-                        .replace("{token}", docs.tokenthumb ?: "")
-                2 -> Constant.videoMutePreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", Uri.encode(docs.filename))
-                        .replace("{at}", docs.at.toString())
-                        .replace("{token}", docs.tokenthumb ?: "")
-                else -> Constant.videoOriginPreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                        .replace("{fileName}", Uri.encode(docs.filename))
-                        .replace("{at}", docs.at.toString())
-                        .replace("{token}", docs.tokenthumb ?: "")
+                    .replace("{fileName}", Uri.encode(docs.filename))
+                    .replace("{at}", docs.at.toString())
+                    .replace("{token}", docs.tokenthumb ?: "")
+                2 -> Constant.videoMutePreviewUrl.replace(
+                    "{anilist_id}",
+                    docs.anilist_id.toString()
+                )
+                    .replace("{fileName}", Uri.encode(docs.filename))
+                    .replace("{at}", docs.at.toString())
+                    .replace("{token}", docs.tokenthumb ?: "")
+                else -> Constant.videoOriginPreviewUrl.replace(
+                    "{anilist_id}",
+                    docs.anilist_id.toString()
+                )
+                    .replace("{fileName}", Uri.encode(docs.filename))
+                    .replace("{at}", docs.at.toString())
+                    .replace("{token}", docs.tokenthumb ?: "")
             }
             if (nowPlayUrl == requestUrl) {
                 mediaSource.content(null)
@@ -127,10 +147,10 @@ class MainViewModel : ViewModel(), KoinComponent {
                 nowPlayUrl = requestUrl
                 val newMediaSource = mediaSourceMap.getOrPut(nowPlayUrl) {
                     val source = MediaItem.Builder()
-                            .setUri(nowPlayUrl)
-                            .build()
+                        .setUri(nowPlayUrl)
+                        .build()
                     ProgressiveMediaSource.Factory(exoDataSourceFactory)
-                            .createMediaSource(source)
+                        .createMediaSource(source)
                 }
                 mediaSource.content(newMediaSource)
             }

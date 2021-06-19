@@ -5,7 +5,7 @@ import com.tencent.mmkv.MMKV
 import vip.mystery0.tools.utils.use
 
 object Configure {
-    private val sharedPreference = MMKV.mmkvWithID("configure", Context.MODE_PRIVATE)
+    private val sharedPreference = MMKV.mmkvWithID("configure", Context.MODE_PRIVATE)!!
 
     var lastVersion: Int
         set(value) = sharedPreference.use { putInt("config_last_version", value) }

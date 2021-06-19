@@ -3,6 +3,7 @@ package pw.janyo.whatanime.ui.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.ViewDataBinding
+import com.orhanobut.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.Configure
@@ -11,7 +12,6 @@ import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.useServerCompress
 import pw.janyo.whatanime.model.response.StatisticsResponse
 import pw.janyo.whatanime.viewModel.TestViewModel
-import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.tools.ResourceException
 
@@ -51,7 +51,7 @@ class SplashActivity : WABaseActivity<ViewDataBinding>(null) {
                     //网络异常，打印toast
                     e.toastLong()
                 } else {
-                    Logs.wtf("error: ", e)
+                    Logger.wtf("error: ", e)
                 }
                 doNext()
             }

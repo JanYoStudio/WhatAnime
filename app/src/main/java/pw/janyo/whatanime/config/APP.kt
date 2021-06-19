@@ -11,6 +11,9 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
 import com.oasisfeng.condom.CondomContext
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import com.tencent.mmkv.MMKV
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -19,13 +22,11 @@ import org.koin.core.logger.Level
 import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.module.*
-import vip.mystery0.crashhandler.CrashHandler
-import vip.mystery0.logs.Logs
 import vip.mystery0.tools.ToolsClient
 import vip.mystery0.tools.context
 import vip.mystery0.tools.utils.sp
 import vip.mystery0.tools.utils.toastLong
-import java.io.File
+
 
 /**
  * Created by mystery0.
@@ -37,16 +38,27 @@ class APP : Application() {
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@APP)
-            modules(listOf(appModule, databaseModule, networkModule, repositoryModule, viewModelModule, exoModule, mainActivityModule, historyActivityModule))
+            modules(
+                listOf(
+                    appModule,
+                    databaseModule,
+                    networkModule,
+                    repositoryModule,
+                    viewModelModule,
+                    exoModule,
+                    mainActivityModule,
+                    historyActivityModule
+                )
+            )
         }
-        CrashHandler.config {
-            setFileNameSuffix("log")
-            setDir(File(externalCacheDir, "log"))
-        }.init()
-        Logs.setConfig {
-            it.commonTag = packageName
-            it.isShowLog = BuildConfig.DEBUG
-        }
+        Logger.addLogAdapter(object : AndroidLogAdapter(
+            PrettyFormatStrategy.newBuilder()
+                .showThreadInfo(BuildConfig.DEBUG)
+                .tag(packageName)
+                .build()
+        ) {
+            override fun isLoggable(priority: Int, tag: String?): Boolean = BuildConfig.DEBUG
+        })
         ToolsClient.initWithContext(this)
         MMKV.initialize(CondomContext.wrap(this, "mmkv"))
         if (Configure.lastVersion < 308) {

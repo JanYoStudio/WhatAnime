@@ -5,8 +5,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
@@ -34,7 +34,12 @@ class AnimationRepository : KoinComponent {
         private const val maxSize: Int = 1024 * 1024 * 5
     }
 
-    suspend fun queryAnimationByImageOnline(file: File, originPath: String, cachePath: String, filter: String?): Animation = withContext(Dispatchers.IO) {
+    suspend fun queryAnimationByImageOnline(
+        file: File,
+        originPath: String,
+        cachePath: String,
+        filter: String?
+    ): Animation = withContext(Dispatchers.IO) {
         val history = queryByBase64(originPath)
         if (history != null) {
             history
@@ -43,24 +48,30 @@ class AnimationRepository : KoinComponent {
                 throw ResourceException(R.string.hint_no_network)
             }
             val requestBody: RequestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("filter", filter ?: "")
-                    .addFormDataPart("image", file.name, file.asRequestBody())
-                    .build()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("filter", filter ?: "")
+                .addFormDataPart("image", file.name, file.asRequestBody())
+                .build()
             val data = searchApi.search(requestBody)
             saveHistory(originPath, cachePath, filter, data)
             data
         }
     }
 
-    suspend fun queryAnimationByImageOnlineWithCloud(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?): Animation = withContext(Dispatchers.IO) {
+    suspend fun queryAnimationByImageOnlineWithCloud(
+        file: File,
+        originPath: String,
+        cachePath: String,
+        mimeType: String,
+        filter: String?
+    ): Animation = withContext(Dispatchers.IO) {
         val signatureRequest = SignatureRequest(file, mimeType)
         val signatureResponse = serverVipApi.signature(signatureRequest)
         val requestBody: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("key", signatureResponse.uploadMeta.key)
-                .addFormDataPart("token", signatureResponse.uploadMeta.signature)
-                .addFormDataPart("file", file.name, file.asRequestBody())
-                .build()
+            .addFormDataPart("key", signatureResponse.uploadMeta.key)
+            .addFormDataPart("token", signatureResponse.uploadMeta.signature)
+            .addFormDataPart("file", file.name, file.asRequestBody())
+            .build()
         val uploadResponse = serverVipApi.uploadFile(signatureResponse.uploadUrl, requestBody)
         val url = if (file.length() > maxSize) uploadResponse.url else uploadResponse.url
         val data = searchApi.searchByUrl(url)
@@ -75,7 +86,14 @@ class AnimationRepository : KoinComponent {
         searchApi.getMe()
     }
 
-    suspend fun queryAnimationByImageLocal(file: File, originPath: String, cachePath: String, mimeType: String, filter: String?, connectServer: Boolean): Animation = withContext(Dispatchers.IO) {
+    suspend fun queryAnimationByImageLocal(
+        file: File,
+        originPath: String,
+        cachePath: String,
+        mimeType: String,
+        filter: String?,
+        connectServer: Boolean
+    ): Animation = withContext(Dispatchers.IO) {
         val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, filter)
         val history = animationHistory?.result?.fromJson<Animation>()
         if (history != null) {
@@ -90,21 +108,34 @@ class AnimationRepository : KoinComponent {
         }
     }
 
-    private suspend fun queryByBase64(originPath: String): Animation? = withContext(Dispatchers.IO) {
-        val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, null)
-        val history = animationHistory?.result?.fromJson<Animation>()
-        if (history != null) {
-            history.limit = -987654
-            history.limit_ttl = -987654
-            history
-        } else {
-            null
+    private suspend fun queryByBase64(originPath: String): Animation? =
+        withContext(Dispatchers.IO) {
+            val animationHistory =
+                historyService.queryHistoryByOriginPathAndFilter(originPath, null)
+            val history = animationHistory?.result?.fromJson<Animation>()
+            if (history != null) {
+                history.limit = -987654
+                history.limit_ttl = -987654
+                history
+            } else {
+                null
+            }
         }
-    }
 
-    suspend fun queryHistoryByOriginPath(originPath: String, filter: String?): AnimationHistory? = withContext(Dispatchers.IO) { historyService.queryHistoryByOriginPathAndFilter(originPath, filter) }
+    suspend fun queryHistoryByOriginPath(originPath: String, filter: String?): AnimationHistory? =
+        withContext(Dispatchers.IO) {
+            historyService.queryHistoryByOriginPathAndFilter(
+                originPath,
+                filter
+            )
+        }
 
-    private suspend fun saveHistory(originPath: String, cachePath: String, filter: String?, animation: Animation) = withContext(Dispatchers.IO) {
+    private suspend fun saveHistory(
+        originPath: String,
+        cachePath: String,
+        filter: String?,
+        animation: Animation
+    ) = withContext(Dispatchers.IO) {
         val animationHistory = AnimationHistory()
         animationHistory.originPath = originPath
         animationHistory.cachePath = cachePath
@@ -122,8 +153,9 @@ class AnimationRepository : KoinComponent {
         historyService.queryAllHistory()
     }
 
-    suspend fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) = withContext(Dispatchers.IO) {
-        listener(historyService.delete(animationHistory) == 1)
-        File(animationHistory.cachePath).delete()
-    }
+    suspend fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) =
+        withContext(Dispatchers.IO) {
+            listener(historyService.delete(animationHistory) == 1)
+            File(animationHistory.cachePath).delete()
+        }
 }

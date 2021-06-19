@@ -2,9 +2,10 @@ package pw.janyo.whatanime.viewModel
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.withTimeoutOrNull
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.IpApi
@@ -12,7 +13,6 @@ import pw.janyo.whatanime.api.ServerApi
 import pw.janyo.whatanime.config.inChina
 import pw.janyo.whatanime.model.request.TestRequest
 import pw.janyo.whatanime.model.response.StatisticsResponse
-import vip.mystery0.logs.Logs
 import vip.mystery0.rx.PackageData
 import vip.mystery0.rx.content
 import vip.mystery0.rx.launch
@@ -38,12 +38,12 @@ class TestViewModel : ViewModel(), KoinComponent {
                 ipApi.getGeoIp()
             }
             inChina = if (geoResponse == null) {
-                Logs.w("get geo ip timeout")
+                Logger.w("get geo ip timeout")
                 //超时了，大概率是国内的环境
                 true
             } else {
                 //查询到了ip地址信息，判断是否是国内
-                geoResponse.location.country_code.toLowerCase(Locale.getDefault()) == "CN"
+                geoResponse.location.country_code.lowercase(Locale.getDefault()) == "CN"
             }
             val response = withTimeoutOrNull(2000L) {
                 if (inChina!!) {
@@ -53,7 +53,12 @@ class TestViewModel : ViewModel(), KoinComponent {
                 }
             }
             if (response == null) {
-                connectServer.content(StatisticsResponse(inBlackList = false, useCloudCompress = false))
+                connectServer.content(
+                    StatisticsResponse(
+                        inBlackList = false,
+                        useCloudCompress = false
+                    )
+                )
                 return@launch
             }
             if (response.useCloudCompress == null) {

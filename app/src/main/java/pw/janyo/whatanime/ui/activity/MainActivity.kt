@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -18,14 +19,17 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import org.koin.androidx.scope.lifecycleScope
+import com.orhanobut.logger.Logger
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import org.koin.core.scope.Scope
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.WABaseActivity
 import pw.janyo.whatanime.config.*
@@ -37,7 +41,6 @@ import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.adapter.MainRecyclerAdapter
 import pw.janyo.whatanime.utils.loadWithoutCache
 import pw.janyo.whatanime.viewModel.MainViewModel
-import vip.mystery0.logs.Logs
 import vip.mystery0.rx.DataObserver
 import vip.mystery0.rx.PackageDataObserver
 import vip.mystery0.rx.content
@@ -46,9 +49,11 @@ import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import kotlin.system.exitProcess
 
-class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main),
+    AndroidScopeComponent {
+    override val scope: Scope by activityScope()
+
     companion object {
-        private const val FILE_SELECT_CODE = 124
         private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
         private const val INTENT_ORIGIN_PATH = "INTENT_ORIGIN_PATH"
         private const val INTENT_TITLE = "INTENT_TITLE"
@@ -64,7 +69,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         }
 
         fun receiveShare(context: Context, uri: Uri, mimeType: String) {
-            Logs.i("receiveShare: uri: $uri, mimeType: $mimeType")
+            Logger.i("receiveShare: uri: $uri, mimeType: $mimeType")
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtra(INTENT_URI, uri)
             intent.putExtra(INTENT_MIME_TYPE, mimeType)
@@ -74,29 +79,32 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
     private lateinit var contentMainBinding: ContentMainBinding
     private val mainViewModel: MainViewModel by viewModel()
-    private val player: ExoPlayer by lifecycleScope.inject { parametersOf(this) }
-    private val mainRecyclerAdapter: MainRecyclerAdapter by lifecycleScope.inject { parametersOf(this) }
+    private val player: ExoPlayer by inject { parametersOf(this) }
+    private val mainRecyclerAdapter: MainRecyclerAdapter by inject { parametersOf(this) }
     private var isShowDetail = false
     private val dialog: Dialog by lazy { buildZLoadingDialog().create() }
     private val adsDialog: AlertDialog by lazy {
         MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.action_why_ad)
-                .setMessage(R.string.hint_why_ads_appear)
-                .setPositiveButton(android.R.string.ok, null)
-                .create()
+            .setTitle(R.string.action_why_ad)
+            .setMessage(R.string.hint_why_ads_appear)
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
     }
 
     private val quotaObserver = object : DataObserver<SearchQuota> {
         override fun contentNoEmpty(data: SearchQuota) {
             val limit = if (data.limit == 0) data.user_limit else data.limit
             val refreshTime = if (data.limit_ttl == 0) data.user_limit_ttl else data.limit_ttl
-            val quotaString = "${getString(R.string.hint_search_quota)}${limit}    ${getString(R.string.hint_search_quota_ttl)}${(refreshTime * 1000).toLong().formatTime()}"
-            searchQuota.text = quotaString
+            val quotaString =
+                "${getString(R.string.hint_search_quota)}${limit}    ${getString(R.string.hint_search_quota_ttl)}${
+                    (refreshTime * 1000).toLong().formatTime()
+                }"
+            contentMainBinding.searchQuota.text = quotaString
         }
 
         override fun error(e: Throwable?) {
             if (e !is ResourceException)
-                Logs.wtf("quotaObserver: ", e)
+                Logger.wtf("quotaObserver: ", e)
             e.toastLong()
         }
     }
@@ -115,12 +123,12 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         override fun empty() {
             hideDialog()
             Snackbar.make(binding.coordinatorLayout, R.string.hint_no_result, Snackbar.LENGTH_SHORT)
-                    .show()
+                .show()
         }
 
         override fun error(e: Throwable?) {
             if (e !is ResourceException)
-                Logs.wtf("animationObserver: ", e)
+                Logger.wtf("animationObserver: ", e)
             hideDialog()
             e.toastLong()
         }
@@ -131,25 +139,36 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
             //判断图片文件是否存在
             if (!originFile.exists()) {
                 //如果不存在，显示错误信息
-                Snackbar.make(binding.coordinatorLayout, R.string.hint_select_file_not_exist, Snackbar.LENGTH_LONG)
-                        .addCallback(object : Snackbar.Callback() {
-                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                super.onDismissed(transientBottomBar, event)
-                                finish()
-                            }
-                        })
-                        .show()
+                Snackbar.make(
+                    binding.coordinatorLayout,
+                    R.string.hint_select_file_not_exist,
+                    Snackbar.LENGTH_LONG
+                )
+                    .addCallback(object : Snackbar.Callback() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            super.onDismissed(transientBottomBar, event)
+                            finish()
+                        }
+                    })
+                    .show()
                 return
             }
             //图片存在，加载图片显示
             contentMainBinding.imageView.loadWithoutCache(originFile)
             //搜索图片
-            mainViewModel.search(originFile, null, data.cachePath, data.originPath, data.mimeType, connectServer)
+            mainViewModel.search(
+                originFile,
+                null,
+                data.cachePath,
+                data.originPath,
+                data.mimeType,
+                connectServer
+            )
         }
 
         override fun error(e: Throwable?) {
             if (e !is ResourceException)
-                Logs.wtf("imageFileObserver: ", e)
+                Logger.wtf("imageFileObserver: ", e)
             e.toastLong()
         }
     }
@@ -170,7 +189,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
         override fun error(data: MediaSource?, e: Throwable?) {
             if (e !is ResourceException)
-                Logs.wtf("imageFileObserver: ", e)
+                Logger.wtf("imageFileObserver: ", e)
             e.toastLong()
         }
     }
@@ -184,15 +203,15 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         super.initView()
         if (inBlackList) {
             //连接上了服务器并且在黑名单中
-            adView.visibility = View.VISIBLE
-            whyAdImageView.visibility = View.VISIBLE
+            contentMainBinding.adView.visibility = View.VISIBLE
+            contentMainBinding.whyAdImageView.visibility = View.VISIBLE
             //初始化AdMod
             MobileAds.initialize(this) {}
             val adRequest = AdRequest.Builder().build()
-            adView.loadAd(adRequest)
+            contentMainBinding.adView.loadAd(adRequest)
         } else {
-            adView.visibility = View.GONE
-            whyAdImageView.visibility = View.GONE
+            contentMainBinding.adView.visibility = View.GONE
+            contentMainBinding.whyAdImageView.visibility = View.GONE
         }
         title = getString(R.string.title_activity_main)
         setSupportActionBar(binding.toolbar)
@@ -205,7 +224,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         initViewModel()
         mainViewModel.showQuota()
         initIntent()
-        videoView.player = player
+        contentMainBinding.videoView.player = player
         showNotice()
     }
 
@@ -252,26 +271,27 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
     override fun monitor() {
         super.monitor()
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             doSelect()
         }
-        whyAdImageView.setOnClickListener {
+        contentMainBinding.whyAdImageView.setOnClickListener {
             adsDialog.show()
         }
-        adView.adListener = object : AdListener() {
+        contentMainBinding.adView.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                adView.visibility = View.VISIBLE
-                whyAdImageView.visibility = View.VISIBLE
+                contentMainBinding.adView.visibility = View.VISIBLE
+                contentMainBinding.whyAdImageView.visibility = View.VISIBLE
             }
 
-            override fun onAdFailedToLoad(errorCode: Int) {
-                adView.visibility = View.GONE
-                whyAdImageView.visibility = View.GONE
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                contentMainBinding.adView.visibility = View.GONE
+                contentMainBinding.whyAdImageView.visibility = View.GONE
             }
         }
-        player.addListener(object : Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when (playbackState) {
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                super.onPlaybackStateChanged(state)
+                when (state) {
                     Player.STATE_BUFFERING -> {
                         contentMainBinding.imageView.visibility = View.GONE
                         contentMainBinding.videoView.visibility = View.VISIBLE
@@ -289,7 +309,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
 
             override fun onPlayerError(error: ExoPlaybackException) {
                 super.onPlayerError(error)
-                Logs.e("onPlayerError: ", error)
+                Logger.e("onPlayerError: ", error)
                 contentMainBinding.progressBar.visibility = View.GONE
                 contentMainBinding.videoView.visibility = View.GONE
                 contentMainBinding.imageView.visibility = View.VISIBLE
@@ -302,24 +322,33 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
         if (intent.hasExtra(INTENT_URI) || intent.hasExtra(INTENT_CACHE_FILE)) return
         if (Configure.alreadyReadNotice) return
         MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.title_usage_notice)
-                .setMessage(R.string.hint_usage_notice)
-                .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    Configure.alreadyReadNotice = true
-                    dialog.dismiss()
-                }
-                .setNegativeButton(R.string.action_disagree) { _, _ ->
-                    Configure.alreadyReadNotice = false
-                    finish()
-                    exitProcess(0)
-                }
-                .show()
+            .setTitle(R.string.title_usage_notice)
+            .setMessage(R.string.hint_usage_notice)
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                Configure.alreadyReadNotice = true
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.action_disagree) { _, _ ->
+                Configure.alreadyReadNotice = false
+                finish()
+                exitProcess(0)
+            }
+            .show()
     }
 
     private fun doSelect() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-        startActivityForResult(intent, FILE_SELECT_CODE)
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val type = contentResolver.getType(it.data!!.data!!)
+                if (type.isNullOrBlank()) {
+                    toast(R.string.hint_select_file_not_exist)
+                } else {
+                    mainViewModel.parseImageFile(it.data!!, type)
+                }
+            }
+        }
     }
 
     private fun showDialog() {
@@ -363,22 +392,6 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            FILE_SELECT_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val type = contentResolver.getType(data!!.data!!)
-                    if (type.isNullOrBlank()) {
-                        toast(R.string.hint_select_file_not_exist)
-                    } else {
-                        mainViewModel.parseImageFile(data, type)
-                    }
-                }
-            }
         }
     }
 
