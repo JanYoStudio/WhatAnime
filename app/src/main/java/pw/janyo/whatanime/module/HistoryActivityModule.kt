@@ -9,6 +9,6 @@ import pw.janyo.whatanime.ui.adapter.HistoryRecyclerAdapter
 val historyActivityModule = module {
     scope(named<HistoryActivity>()) {
         scoped { HistoryItemListener(get()) }
-        scoped { HistoryRecyclerAdapter() }
+        scoped { HistoryRecyclerAdapter(get()) }
     }
 }

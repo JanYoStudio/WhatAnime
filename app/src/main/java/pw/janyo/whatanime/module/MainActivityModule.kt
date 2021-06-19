@@ -14,9 +14,9 @@ val mainActivityModule = module {
             SimpleExoPlayer.Builder(get())
                 .build()
         }
-        scoped {
-            MainRecyclerAdapter(get())
-        }
         scoped { MainItemListener() }
+        scoped {
+            MainRecyclerAdapter(get(), get())
+        }
     }
 }

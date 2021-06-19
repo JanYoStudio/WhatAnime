@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.ui.adapter
 
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.databinding.ItemHistoryBinding
 import pw.janyo.whatanime.handler.HistoryItemListener
@@ -15,10 +14,9 @@ import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
 import java.text.DecimalFormat
 
-class HistoryRecyclerAdapter :
+class HistoryRecyclerAdapter(private val listener: HistoryItemListener) :
     BaseBindingRecyclerViewAdapter<AnimationHistory, ItemHistoryBinding>(R.layout.item_history),
     KoinComponent {
-    private val listener: HistoryItemListener by inject()
 
     override fun setItemView(binding: ItemHistoryBinding, position: Int, data: AnimationHistory) {
         val animation = data.result.fromJson<Animation>()

@@ -1,61 +1,46 @@
 package pw.janyo.whatanime.ui.activity
 
 import android.content.Intent
-import androidx.databinding.ViewDataBinding
-import com.orhanobut.logger.Logger
+import android.os.Bundle
+import androidx.compose.runtime.Composable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.base.WABaseActivity
-import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.config.connectServer
-import pw.janyo.whatanime.config.inBlackList
-import pw.janyo.whatanime.config.useServerCompress
-import pw.janyo.whatanime.model.response.StatisticsResponse
+import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.viewModel.TestViewModel
-import vip.mystery0.rx.PackageDataObserver
-import vip.mystery0.tools.ResourceException
 
-class ReceiveShareActivity : WABaseActivity<ViewDataBinding>(null) {
-	private val testViewModel: TestViewModel by viewModel()
+class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
 
-	override fun initData() {
-        super.initData()
-        testViewModel.connectServer.observe(this, object : PackageDataObserver<StatisticsResponse> {
-            override fun content(data: StatisticsResponse?) {
-                super.content(data)
-                connectServer = data != null
-                data?.let {
-                    inBlackList = it.inBlackList
-                    useServerCompress = it.useCloudCompress!!
-                }
-                if (Configure.requestType != 0) {
-                    //使用应用的配置项
-                    useServerCompress = Configure.requestType == 1
-                }
-                doNext()
-            }
+    override val viewModel: TestViewModel by viewModel()
 
-            override fun error(data: StatisticsResponse?, e: Throwable?) {
-                super.error(data, e)
-                if (e !is ResourceException) {
-                    Logger.wtf("error: ", e)
-                }
-                doNext()
-            }
+    @Composable
+    override fun BuildContent() {
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.exceptionData.observe(this, {
+            doNext()
         })
-	}
+        viewModel.completeTest.observe(this, {
+            doNext()
+        })
+        viewModel.doTest()
+    }
 
-	override fun requestData() {
-		super.requestData()
-		testViewModel.doTest()
-	}
-
-	private fun doNext() {
-		if (intent != null && intent.action == Intent.ACTION_SEND && intent.type != null && intent.type!!.startsWith("image/")) {
-			MainActivity.receiveShare(this, intent.getParcelableExtra(Intent.EXTRA_STREAM)!!, intent.type!!)
-		} else {
-			getString(R.string.hint_not_share).toast()
-		}
-		finish()
-	}
+    private fun doNext() {
+        if (intent != null &&
+            intent.action == Intent.ACTION_SEND &&
+            intent.type != null &&
+            intent.type!!.startsWith("image/")
+        ) {
+            MainActivity.receiveShare(
+                this,
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)!!,
+                intent.type!!
+            )
+        } else {
+            getString(R.string.hint_not_share).toast()
+        }
+        finish()
+    }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="mColorPrimary">@color/design_dark_default_color_primary</color>
-    <color name="mColorPrimaryVariant">@color/design_dark_default_color_primary_variant</color>
-    <color name="mColorPrimaryDark">@color/design_dark_default_color_primary_dark</color>
-    <color name="mColorOnPrimary">@color/design_dark_default_color_on_primary</color>
-    <color name="mColorSecondary">@color/design_dark_default_color_secondary</color>
-    <color name="mColorSecondaryVariant">@color/design_dark_default_color_secondary_variant</color>
-    <color name="mColorOnSecondary">@color/design_dark_default_color_on_secondary</color>
-    <color name="mColorSurface">@color/design_dark_default_color_background</color>
-    <color name="mColorOnSurface">#FFFFFF</color>
+    <color name="mColorPrimary">#FFBA86FC</color>
+    <color name="mColorPrimaryVariant">#FF3700B3</color>
+    <color name="mColorPrimaryDark">#FF000000</color>
+    <color name="mColorOnPrimary">#FF000000</color>
+    <color name="mColorSecondary">#FF03DAC6</color>
+    <color name="mColorSecondaryVariant">#FF03DAC6</color>
+    <color name="mColorOnSecondary">#FF000000</color>
+    <color name="mColorSurface">#FF000000</color>
+    <color name="mColorOnSurface">#FFFFFFFF</color>
 </resources>

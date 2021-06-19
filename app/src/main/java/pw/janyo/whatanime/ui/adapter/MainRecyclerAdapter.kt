@@ -6,7 +6,6 @@ import android.view.View
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
@@ -17,10 +16,12 @@ import vip.mystery0.tools.base.binding.BaseBindingRecyclerViewAdapter
 import vip.mystery0.tools.utils.formatTime
 import java.text.DecimalFormat
 
-class MainRecyclerAdapter(private val context: Context) :
+class MainRecyclerAdapter(
+    private val context: Context,
+    private val listener: MainItemListener
+) :
     BaseBindingRecyclerViewAdapter<Docs, ItemSearchResultBinding>(R.layout.item_search_result),
     KoinComponent {
-    private val listener: MainItemListener by inject()
 
     override fun setItemView(binding: ItemSearchResultBinding, position: Int, data: Docs) {
         binding.handler = listener

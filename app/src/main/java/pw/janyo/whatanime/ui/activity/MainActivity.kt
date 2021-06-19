@@ -49,6 +49,72 @@ import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import kotlin.system.exitProcess
 
+//class MainActivity : BaseComponentActivity() {
+//    private val mainViewModel: MainViewModel by viewModel()
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            MyApplicationTheme {
+//                BuildContent()
+//            }
+//        }
+//    }
+//
+//    @Composable
+//    fun BuildContent() {
+//        val resultList = mainViewModel.resultList.observeAsState()
+//        Column {
+//            Image(painter = painterResource(id = R.mipmap.janyo_studio), contentDescription = null)
+//            BuildList(resultList = resultList)
+//        }
+//    }
+//
+//    @Composable
+//    fun BuildList(resultList: State<List<Docs>?>) {
+//        Column {
+//            resultList.value?.forEach {
+//                BuildResultItem(docs = it)
+//            }
+//        }
+//    }
+//
+//    @Composable
+//    fun BuildResultItem(docs: Docs) {
+//        val requestUrl = Constant.previewUrl.replace("{anilist_id}", docs.anilist_id.toString())
+//            .replace("{fileName}", Uri.encode(docs.filename))
+//            .replace("{at}", docs.at.toString())
+//            .replace("{token}", docs.tokenthumb ?: "")
+//
+//        Column {
+//            if (docs.similarity < 0.87) {
+//                Row(horizontalArrangement = Arrangement.End) {
+//                    Text(text = stringResource(id = R.string.hint_probably_mistake))
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_probably_mistake),
+//                        contentDescription = null
+//                    )
+//                }
+//            }
+//            Text(text = "${stringResource(id = R.string.hint_title_native)}${docs.title_native ?: ""}")
+//            Text(text = "${stringResource(id = R.string.hint_title_chinese)}${docs.title_chinese ?: ""}")
+//            Text(text = "${stringResource(id = R.string.hint_title_english)}${docs.title_english ?: ""}")
+//            Text(text = "${stringResource(id = R.string.hint_title_romaji)}${docs.title_romaji ?: ""}")
+//            Text(text = "${stringResource(id = R.string.hint_title_native)}${docs.title_native ?: ""}")
+//            Row {
+//                Image(painter = rememberCoilPainter(request = requestUrl), contentDescription = null)
+//                Column {
+//                    Text(text = "${stringResource(id = R.string.hint_time)}${(docs.at.toLong() * 1000).formatTime()}")
+//                    Text(text = "${stringResource(id = R.string.hint_episode)}${docs.episode}")
+//                    Text(text = "${stringResource(id = R.string.hint_ani_list_id)}${docs.anilist_id}")
+//                    Text(text = "${stringResource(id = R.string.hint_mal_id)}${docs.mal_id}")
+//                    Text(text = "${stringResource(id = R.string.hint_similarity)}${"${DecimalFormat("#.000").format(docs.similarity * 100)}%"}")
+//                }
+//            }
+//        }
+//    }
+//}
+
 class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main),
     AndroidScopeComponent {
     override val scope: Scope by activityScope()
@@ -90,6 +156,17 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
             .setPositiveButton(android.R.string.ok, null)
             .create()
     }
+    private val selectIntent =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val type = contentResolver.getType(it.data!!.data!!)
+                if (type.isNullOrBlank()) {
+                    toast(R.string.hint_select_file_not_exist)
+                } else {
+                    mainViewModel.parseImageFile(it.data!!, type)
+                }
+            }
+        }
 
     private val quotaObserver = object : DataObserver<SearchQuota> {
         override fun contentNoEmpty(data: SearchQuota) {
@@ -339,16 +416,7 @@ class MainActivity : WABaseActivity<ActivityMainBinding>(R.layout.activity_main)
     private fun doSelect() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val type = contentResolver.getType(it.data!!.data!!)
-                if (type.isNullOrBlank()) {
-                    toast(R.string.hint_select_file_not_exist)
-                } else {
-                    mainViewModel.parseImageFile(it.data!!, type)
-                }
-            }
-        }
+        selectIntent.launch(intent)
     }
 
     private fun showDialog() {
