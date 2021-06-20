@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -16,23 +17,20 @@ import vip.mystery0.tools.utils.fastClick
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
     private val clipboardManager: ClipboardManager by inject()
     private val languageArray by lazy { resources.getStringArray(R.array.language) }
-    private val nightModeArray by lazy { resources.getStringArray(R.array.night_mode) }
     private val previewConfigArray by lazy { resources.getStringArray(R.array.preview_config_summary) }
     private val requestTypeArray by lazy { resources.getStringArray(R.array.summary_request_type) }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val deviceIdPreference: Preference = findPreferenceById(R.string.key_device_id)
         val versionPreference: Preference = findPreferenceById(R.string.key_app_version)
         val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
         val languagePreference: Preference = findPreferenceById(R.string.key_language)
-        val nightModePreference: Preference = findPreferenceById(R.string.key_night_mode)
         val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
         val requestTypePreference: Preference = findPreferenceById(R.string.key_request_type)
 
         deviceIdPreference.summary = publicDeviceId
         languagePreference.summary = languageArray[Configure.language]
-        nightModePreference.summary = nightModeArray[Configure.nightMode]
         previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
         requestTypePreference.summary = requestTypeArray[Configure.requestType]
         hideSexPreference.isChecked = Configure.hideSex
@@ -59,29 +57,6 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
                         val needRestart = select != Configure.language
                         Configure.language = select
                         languagePreference.summary = languageArray[Configure.language]
-                        if (needRestart) {
-                            val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
-                            intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            activity.startActivity(intent)
-                            activity.finish()
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
-            true
-        }
-        nightModePreference.setOnPreferenceClickListener {
-            var select = Configure.nightMode
-            val activity = requireActivity()
-            MaterialAlertDialogBuilder(activity)
-                    .setTitle(" ")
-                    .setSingleChoiceItems(nightModeArray, select) { _, which ->
-                        select = which
-                    }
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        val needRestart = select != Configure.nightMode
-                        Configure.nightMode = select
-                        nightModePreference.summary = nightModeArray[Configure.nightMode]
                         if (needRestart) {
                             val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
                             intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

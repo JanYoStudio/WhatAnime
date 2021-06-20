@@ -9,8 +9,8 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_info"
-        android:icon="@drawable/ic_info_outline"
-        android:title="@string/action_info"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/action_settings"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_more"

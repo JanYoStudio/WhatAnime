@@ -2,12 +2,12 @@
 <resources>
     <string name="app_name">WhatAnime</string>
     <string name="action_history">歷史記錄</string>
-    <string name="action_info">資訊</string>
+    <string name="action_settings">設定</string>
     <string name="action_re_request_permission">重新請求</string>
     <string name="category_about">關於</string>
     <string name="category_about_janyo">關於JanYo Studio</string>
     <string name="category_about_whatanime">關於WhatAnime</string>
-    <string name="category_settings">設定</string>
+    <string name="category_settings">應用設定</string>
     <string name="hint_cache_make_dir_error">快取目錄建立失敗，請檢查應用許可權！</string>
     <string name="hint_episode">集數：</string>
     <string name="hint_file_copy_error">檔案拷貝失敗！</string>
@@ -37,7 +37,7 @@
     <string name="title_about_open_source_license">開源許可</string>
     <string name="title_activity_history">歷史記錄</string>
     <string name="title_activity_main">以圖搜番</string>
-    <string name="title_activity_settings">關於</string>
+    <string name="title_activity_settings">設定</string>
     <string name="title_hide_sex">隱藏可能引起不適的內容</string>
     <string name="title_janyo_license">授權管理</string>
     <string name="title_version">當前版本</string>
@@ -51,15 +51,10 @@
     <string name="action_faq">疑難解答</string>
     <string name="action_about">關於</string>
     <string name="action_more">更多</string>
-    <string name="array_night_mode_auto">自動</string>
-    <string name="array_night_mode_follow_system">跟隨系統</string>
-    <string name="array_night_mode_off">關</string>
-    <string name="array_night_mode_on">開</string>
     <string name="array_preview_config_mute_natural">自然場景切割視訊預覽（靜音）</string>
     <string name="array_preview_config_natural_scene_cutting">自然場景切割視訊預覽</string>
     <string name="array_preview_config_origin">原始視訊預覽</string>
     <string name="title_change_preview_config">更改視訊預覽選項</string>
-    <string name="title_night_mode">夜間模式</string>
     <string name="title_preview_config">視訊預覽</string>
     <string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界，得到一個靜音的視訊預覽。</string>
     <string name="array_summary_preview_config_natural_scene_cutting">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>

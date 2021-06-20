@@ -8,9 +8,6 @@
             android:key="@string/key_language"
             android:title="@string/title_language" />
         <Preference
-            android:key="@string/key_night_mode"
-            android:title="@string/title_night_mode" />
-        <Preference
             android:key="@string/key_preview_config"
             android:title="@string/title_preview_config" />
         <Preference

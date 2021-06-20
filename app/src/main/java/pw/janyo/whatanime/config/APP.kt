@@ -47,7 +47,6 @@ class APP : Application() {
                     viewModelModule,
                     exoModule,
                     mainActivityModule,
-                    historyActivityModule
                 )
             )
         }
@@ -66,7 +65,6 @@ class APP : Application() {
             val sp = sp("configure", Context.MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
             Configure.language = sp.getInt("config_language", 0)
-            Configure.nightMode = sp.getInt("config_night_mode", 3)
             Configure.previewConfig = sp.getInt("config_preview_config", 0)
             Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
             Configure.lastVersion = BuildConfig.VERSION_CODE

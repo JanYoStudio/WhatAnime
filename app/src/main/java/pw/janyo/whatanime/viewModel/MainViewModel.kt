@@ -3,42 +3,38 @@ package pw.janyo.whatanime.viewModel
 import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import pw.janyo.whatanime.R
+import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.constant.Constant
+import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.utils.cloneUriToFile
 import pw.janyo.whatanime.utils.getCacheFile
-import vip.mystery0.rx.PackageData
-import vip.mystery0.rx.content
-import vip.mystery0.rx.launch
-import vip.mystery0.rx.loading
-import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.utils.copyToFile
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-class MainViewModel : ViewModel(), KoinComponent {
+class MainViewModel : ComposeViewModel(), KoinComponent {
     private val animationRepository: AnimationRepository by inject()
     private val exoDataSourceFactory: DataSource.Factory by inject()
 
     private val mediaSourceMap = ConcurrentHashMap<String, MediaSource>()
-    val mediaSource = MutableLiveData<PackageData<MediaSource>>()
-    private var nowPlayUrl: String = ""
-    val imageFile = MutableLiveData<PackageData<ShowImage>>()
-    val resultList = MutableLiveData<PackageData<List<Docs>>>()
-    val isShowDetail = MutableLiveData<Boolean>()
-    val quota = MutableLiveData<PackageData<SearchQuota>>()
+    val quota = MutableLiveData<SearchQuota>()
+    val imageFile = MutableLiveData<ShowImage>()
+    val resultList = MutableLiveData<List<Docs>>()
+    val clickDocs = MutableLiveData<Docs>()
+    val mediaSource = MutableLiveData<MediaSource>()
+    val loadingVideo = MutableLiveData(false)
 
     /**
      * @param file 要显示的文件，也是要搜索的文件
@@ -55,17 +51,16 @@ class MainViewModel : ViewModel(), KoinComponent {
         mimeType: String,
         connectServer: Boolean
     ) {
-        resultList.loading()
-        launch(resultList) {
+        launchLoadData {
             if (file.length() > 10485760L) {
                 //大于10M，提示文件过大
-                throw ResourceException(R.string.hint_file_too_large)
+                throw Exception(StringConstant.hint_file_too_large)
             }
             var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
             animationRepository.queryHistoryByOriginPath(originPath, filter)?.cachePath
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
-                    ?: throw ResourceException(R.string.hint_cache_make_dir_error)
+                    ?: throw Exception(StringConstant.hint_cache_make_dir_error)
                 file.copyToFile(saveFile)
                 cachePath = saveFile.absolutePath
             }
@@ -81,20 +76,20 @@ class MainViewModel : ViewModel(), KoinComponent {
                 val searchQuota = SearchQuota()
                 searchQuota.limit = animation.limit
                 searchQuota.limit_ttl = animation.limit_ttl
-                quota.content(searchQuota)
+                quota.postValue(searchQuota)
             }
             val result = if (Configure.hideSex) {
                 animation.docs.filter { !it.is_adult }
             } else {
                 animation.docs
             }
-            resultList.content(result)
+            resultList.postValue(result)
         }
     }
 
     fun showQuota() {
-        launch(quota) {
-            quota.content(animationRepository.showQuota())
+        launch {
+            quota.postValue(animationRepository.showQuota())
         }
     }
 
@@ -102,17 +97,27 @@ class MainViewModel : ViewModel(), KoinComponent {
      * 从Intent中获取Uri，将其clone到临时目录
      */
     fun parseImageFile(data: Intent, mimeType: String) {
-        launch(imageFile) {
+        launch {
+            refreshState(true)
             val file = data.data!!.cloneUriToFile()
             if (file != null && file.exists()) {
                 val showImage = ShowImage()
                 showImage.mimeType = mimeType
                 showImage.originPath = file.absolutePath
                 showImage.cachePath = null
-                imageFile.content(showImage)
+                imageFile.postValue(showImage)
             } else {
-                throw ResourceException(R.string.hint_select_file_path_null)
+                throw Exception(StringConstant.hint_select_file_path_null)
             }
+            //搜索图片
+            search(
+                file,
+                null,
+                null,
+                file.absolutePath,
+                mimeType,
+                connectServer
+            )
         }
     }
 
@@ -120,40 +125,28 @@ class MainViewModel : ViewModel(), KoinComponent {
      * 播放视频
      */
     fun playVideo(docs: Docs) {
-        launch(mediaSource) {
+        fun getUrl(format: String) = String.format(
+            format,
+            docs.anilist_id,
+            Uri.encode(docs.filename),
+            docs.at,
+            docs.tokenthumb ?: ""
+        )
+        launch {
             val requestUrl = when (Configure.previewConfig) {
-                1 -> Constant.videoPreviewUrl.replace("{anilist_id}", docs.anilist_id.toString())
-                    .replace("{fileName}", Uri.encode(docs.filename))
-                    .replace("{at}", docs.at.toString())
-                    .replace("{token}", docs.tokenthumb ?: "")
-                2 -> Constant.videoMutePreviewUrl.replace(
-                    "{anilist_id}",
-                    docs.anilist_id.toString()
-                )
-                    .replace("{fileName}", Uri.encode(docs.filename))
-                    .replace("{at}", docs.at.toString())
-                    .replace("{token}", docs.tokenthumb ?: "")
-                else -> Constant.videoOriginPreviewUrl.replace(
-                    "{anilist_id}",
-                    docs.anilist_id.toString()
-                )
-                    .replace("{fileName}", Uri.encode(docs.filename))
-                    .replace("{at}", docs.at.toString())
-                    .replace("{token}", docs.tokenthumb ?: "")
+                1 -> getUrl(Constant.videoPreviewUrl)
+                2 -> getUrl(Constant.videoMutePreviewUrl)
+                else -> getUrl(Constant.videoOriginPreviewUrl)
             }
-            if (nowPlayUrl == requestUrl) {
-                mediaSource.content(null)
-            } else {
-                nowPlayUrl = requestUrl
-                val newMediaSource = mediaSourceMap.getOrPut(nowPlayUrl) {
-                    val source = MediaItem.Builder()
-                        .setUri(nowPlayUrl)
-                        .build()
-                    ProgressiveMediaSource.Factory(exoDataSourceFactory)
-                        .createMediaSource(source)
-                }
-                mediaSource.content(newMediaSource)
+            val newMediaSource = mediaSourceMap.getOrPut(requestUrl) {
+                val source = MediaItem.Builder()
+                    .setUri(requestUrl)
+                    .build()
+                ProgressiveMediaSource.Factory(exoDataSourceFactory)
+                    .createMediaSource(source)
             }
+            mediaSource.postValue(newMediaSource)
+            loadingVideo.postValue(true)
         }
     }
 }

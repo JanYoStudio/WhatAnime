@@ -66,13 +66,14 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        useIR = true
     }
     buildFeatures {
         compose = true
-        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
+        kotlinCompilerVersion = "1.4.32"
     }
 }
 
@@ -113,7 +114,7 @@ dependencies {
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
     //coil
     implementation("io.coil-kt:coil:1.2.2")
     implementation("io.coil-kt:coil-gif:1.2.2")
@@ -121,8 +122,6 @@ dependencies {
     implementation("androidx.room:room-runtime:2.3.0")
     implementation("androidx.room:room-ktx:2.3.0")
     kapt("androidx.room:room-compiler:2.3.0")
-    //ZLoading
-    implementation("com.zyao89:zloading:1.2.0")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.1")
 }

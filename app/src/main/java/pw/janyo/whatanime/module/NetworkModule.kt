@@ -1,10 +1,8 @@
 package pw.janyo.whatanime.module
 
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.api.IpApi
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
@@ -15,40 +13,38 @@ import java.util.concurrent.TimeUnit
 
 val networkModule = module {
     single {
-        val builder = OkHttpClient.Builder()
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS)
-        if (BuildConfig.DEBUG)
-            builder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        builder.build()
+        OkHttpClient.Builder()
+            .connectTimeout(40, TimeUnit.SECONDS)
+            .readTimeout(40, TimeUnit.SECONDS)
+            .build()
     }
     single(named("base")) {
         Retrofit.Builder()
-                .baseUrl(Constant.baseUrl)
-                .client(get())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Constant.baseUrl)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
     single(named("cloudApp")) {
         Retrofit.Builder()
-                .baseUrl(Constant.cloudAppUrl)
-                .client(get())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Constant.cloudAppUrl)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
     single(named("cloudVip")) {
         Retrofit.Builder()
-                .baseUrl(Constant.cloudVipUrl)
-                .client(get())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Constant.cloudVipUrl)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
     single(named("ip")) {
         Retrofit.Builder()
-                .baseUrl(Constant.ipUrl)
-                .client(get())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Constant.ipUrl)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
     single {
         get<Retrofit>(named("base")).create(SearchApi::class.java)

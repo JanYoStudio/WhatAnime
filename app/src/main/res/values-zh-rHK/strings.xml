@@ -2,12 +2,12 @@
 <resources>
     <string name="app_name">WhatAnime</string>
     <string name="action_history">歷史記錄</string>
-    <string name="action_info">信息</string>
+    <string name="action_settings">設置</string>
     <string name="action_re_request_permission">重新請求</string>
     <string name="category_about">關於</string>
     <string name="category_about_janyo">關於JanYo Studio</string>
     <string name="category_about_whatanime">關於WhatAnime</string>
-    <string name="category_settings">設置</string>
+    <string name="category_settings">應用設置</string>
     <string name="hint_cache_make_dir_error">緩存目錄創建失敗，請檢查設備權限！</string>
     <string name="hint_episode">集數：</string>
     <string name="hint_file_copy_error">文件拷貝失敗！</string>
@@ -37,7 +37,7 @@
     <string name="title_about_open_source_license">開源許可</string>
     <string name="title_activity_history">歷史記錄</string>
     <string name="title_activity_main">以圖搜番</string>
-    <string name="title_activity_settings">關於</string>
+    <string name="title_activity_settings">設置</string>
     <string name="title_hide_sex">隱藏可能引起不適的內容</string>
     <string name="title_janyo_license">授權管理</string>
     <string name="title_version">當前版本</string>
@@ -51,15 +51,10 @@
     <string name="action_faq">疑難解答</string>
     <string name="action_about">關於</string>
     <string name="action_more">更多</string>
-    <string name="array_night_mode_auto">自動</string>
-    <string name="array_night_mode_follow_system">跟隨系統</string>
-    <string name="array_night_mode_off">關</string>
-    <string name="array_night_mode_on">開</string>
     <string name="array_preview_config_mute_natural">自然場景切割視頻預覽（靜音）</string>
     <string name="array_preview_config_natural_scene_cutting">自然場景切割視頻預覽</string>
     <string name="array_preview_config_origin">原始視頻預覽</string>
     <string name="title_change_preview_config">更改視頻預覽選項</string>
-    <string name="title_night_mode">夜間模式</string>
     <string name="title_preview_config">視頻預覽</string>
     <string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>
     <string name="array_summary_preview_config_natural_scene_cutting">透过 trace.moe-media 自动检测预览嘅时间戳边界。</string>
@@ -76,7 +71,7 @@
     <string name="title_request_type">檢索方式</string>
     <string name="hint_why_ads_appear">我哋檢測到試過檢索過成人影片 (非動漫), 故此封禁了您的設備。 whatanime 依舊可以喺該設備上運行, 但係會出現正常情況唔會出現嘅廣告。 \n\n 再次申明, whatanime 係用於檢索動漫番劇嘅工具, 而唔係檢索成人影片嘅工具!</string>
     <string name="action_why_ad">为什么会显示广告？</string>
-    <string name="action_ad_show_mistake">弄错了？</string>
+    <string name="action_ad_show_mistake">弄錯了?</string>
     <string name="hint_usage_notice">whatanime 是一個用于檢索動漫番劇嘅工具應用, 檢索出嚟嘅結果取決於用于檢索的圖, 如果你揀嘅是非動漫截图 (同人圖、自拍、成人影片截图、莫名其妙的圖等), 自然檢索不到正確的結果。 \n\n 請勿再使用該應用用于檢索成人影片 (肯定係檢索唔出嚟嘅)!</string>
     <string name="title_device_id">設備ID</string>
     <string name="title_usage_notice">使用須知</string>

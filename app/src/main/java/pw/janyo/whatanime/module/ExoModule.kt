@@ -8,6 +8,9 @@ import org.koin.dsl.module
 
 val exoModule = module {
     single<DataSource.Factory> {
-        DefaultDataSourceFactory(androidContext(), Util.getUserAgent(androidContext(), androidContext().packageName))
+        DefaultDataSourceFactory(
+            androidContext(),
+            Util.getUserAgent(androidContext(), androidContext().packageName)
+        )
     }
 }

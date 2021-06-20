@@ -1,19 +1,26 @@
 package pw.janyo.whatanime.base
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
+import android.os.LocaleList
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.LayoutRes
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.annotation.StringRes
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import com.orhanobut.logger.Logger
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.config.Configure
+import vip.mystery0.tools.utils.AndroidVersionCode
+import vip.mystery0.tools.utils.sdkIsAfter
+import java.util.*
+import kotlin.reflect.KClass
 
 abstract class BaseComposeActivity<V : ComposeViewModel>(
     @LayoutRes val contentLayoutId: Int = 0
@@ -23,6 +30,7 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initIntent()
         setContent {
             BuildContent()
         }
@@ -34,35 +42,40 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
         })
     }
 
+    open fun initIntent() {}
+
     @Composable
     abstract fun BuildContent()
 
-    @Composable
-    protected fun BuildAppBar(
-        homePage: Boolean = false,
-        content: @Composable (PaddingValues) -> Unit,
-    ) {
-        val colors = MaterialTheme.colors
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = title.toString()) },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            finish()
-                        }) {
-                            if (homePage) {
-                                Icon(Icons.Filled.Menu, "")
-                            } else {
-                                Icon(Icons.Filled.ArrowBack, "")
-                            }
-                        }
-                    },
-                    backgroundColor = colors.primary,
-                    contentColor = colors.onPrimary,
-                )
-            }, content = content
-        )
+    override fun attachBaseContext(newBase: Context) {
+        val language = Configure.language
+        if (language == 0) {
+            super.attachBaseContext(newBase)
+            return
+        }
+        super.attachBaseContext(changeLanguage(newBase))
+    }
+
+    @SuppressLint("NewApi")
+    private fun changeLanguage(context: Context): Context {
+        return if (sdkIsAfter(AndroidVersionCode.VERSION_O)) {
+            val newLocale: Locale = when (Configure.language) {
+                1 -> Locale.SIMPLIFIED_CHINESE
+                2 -> Locale.TRADITIONAL_CHINESE
+                3 -> Locale.forLanguageTag("zh-Hant-HK")
+                else -> Locale.getDefault()
+            }
+            val configuration = Resources.getSystem().configuration
+            configuration.setLocale(newLocale)
+            configuration.setLocales(LocaleList(newLocale))
+            context.createConfigurationContext(configuration)
+        } else {
+            context
+        }
+    }
+
+    fun <T : Activity> intentTo(clazz: KClass<T>) {
+        startActivity(Intent(this, clazz.java))
     }
 
     fun Throwable?.toast() = dispatch(this, false)
@@ -85,4 +98,6 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
     private fun newToast(context: Context, message: String?, length: Int) {
         Toast.makeText(context, message, length).show()
     }
+
+    fun @receiver:StringRes Int.asString(): String = getString(this)
 }

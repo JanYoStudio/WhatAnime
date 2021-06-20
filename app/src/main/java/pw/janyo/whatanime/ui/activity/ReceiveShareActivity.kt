@@ -9,7 +9,6 @@ import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.viewModel.TestViewModel
 
 class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
-
     override val viewModel: TestViewModel by viewModel()
 
     @Composable

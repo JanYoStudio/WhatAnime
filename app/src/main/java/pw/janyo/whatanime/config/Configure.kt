@@ -19,10 +19,6 @@ object Configure {
         set(value) = sharedPreference.use { putInt("config_language", value) }
         get() = sharedPreference.getInt("config_language", 0)
 
-    var nightMode: Int
-        set(value) = sharedPreference.use { putInt("config_night_mode", value) }
-        get() = sharedPreference.getInt("config_night_mode", 3)
-
     var previewConfig: Int
         set(value) = sharedPreference.use { putInt("config_preview_config", value) }
         get() = sharedPreference.getInt("config_preview_config", 1)
