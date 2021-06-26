@@ -8,17 +8,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -41,18 +41,19 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.ads.*
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.inChina
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.Docs
-import pw.janyo.whatanime.model.ShowImage
+import pw.janyo.whatanime.ui.state.AlertDialog
+import pw.janyo.whatanime.ui.state.DialogShowState
+import pw.janyo.whatanime.ui.state.observerAsShowState
+import pw.janyo.whatanime.ui.state.rememberDialogShowState
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.viewModel.MainViewModel
@@ -63,7 +64,6 @@ import java.text.DecimalFormat
 class MainActivity : BaseComposeActivity<MainViewModel>() {
     override val viewModel: MainViewModel by viewModel()
 
-    private var homePage = true
     private val selectIntent =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -83,19 +83,8 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     }
 
     companion object {
-        private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
-        private const val INTENT_ORIGIN_PATH = "INTENT_ORIGIN_PATH"
-        private const val INTENT_TITLE = "INTENT_TITLE"
         private const val INTENT_URI = "INTENT_URI"
         private const val INTENT_MIME_TYPE = "INTENT_MIME_TYPE"
-
-        fun showDetail(context: Context, cacheFile: File, originPath: String, title: String) {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra(INTENT_CACHE_FILE, cacheFile)
-            intent.putExtra(INTENT_ORIGIN_PATH, originPath)
-            intent.putExtra(INTENT_TITLE, title)
-            context.startActivity(intent)
-        }
 
         fun receiveShare(context: Context, uri: Uri, mimeType: String) {
             Logger.i("receiveShare: uri: $uri, mimeType: $mimeType")
@@ -118,112 +107,49 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 R.string.hint_select_file_path_null.asString().toast()
             }
         }
-        if (intent.hasExtra(INTENT_CACHE_FILE) && intent.hasExtra(INTENT_TITLE)) {
-            //查看历史记录
-            val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
-            val originPath = intent.getStringExtra(INTENT_ORIGIN_PATH)!!
-            //加载显示历史记录中的缓存文件
-            val showImage = ShowImage()
-            showImage.mimeType = ""
-            showImage.originPath = originPath
-            showImage.cachePath = cacheFile.absolutePath
-            viewModel.imageFile.postValue(showImage)
-            //设置标题
-            title = intent.getStringExtra(INTENT_TITLE)
-            homePage = false
-            val originFile = File(originPath)
-            viewModel.search(
-                originFile,
-                null,
-                cacheFile.absolutePath,
-                originPath,
-                "",
-                connectServer
-            )
-        }
-        viewModel.errorMessageState("测试Snackbar")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (homePage) {
-            viewModel.showQuota()
-        }
+        viewModel.showQuota()
     }
 
+    @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
+        val errorMessage by viewModel.errorMessageData.observeAsState()
+        val isRefreshing by viewModel.refreshData.observeValueAsState()
         val adLoadResult = remember { mutableStateOf(true) }
-        val showAdsDialog = remember { mutableStateOf(false) }
+        val adsDialogShowState = rememberDialogShowState<Boolean>(null)
+        val searchQuota by viewModel.quota.observeAsState()
+        val resultList by viewModel.resultList.observeAsState()
         WhatAnimeTheme {
-            var menuActions: @Composable RowScope.() -> Unit = {}
-            if (homePage) {
-                menuActions = {
-
-                }
-            }
-            val navigationIcon: @Composable (() -> Unit)? = if (!homePage) {
-                {
-                    IconButton(onClick = {
-                        finish()
-                    }) {
-                        Icon(Icons.Filled.ArrowBack, "")
-                    }
-                }
-            } else null
             val scaffoldState = rememberScaffoldState()
             val scope = rememberCoroutineScope()
             Scaffold(
                 scaffoldState = scaffoldState,
-//                topBar = {
-//                    TopAppBar(
-//                        title = { Text(text = title.toString()) },
-//                        backgroundColor = MaterialTheme.colors.primary,
-//                        contentColor = MaterialTheme.colors.onPrimary,
-//                        actions = menuActions,
-//                        navigationIcon = navigationIcon,
-//                    )
-//                },
                 bottomBar = {
                     BottomAppBar(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary,
                         cutoutShape = CircleShape
                     ) {
-                        var showDropMenu by remember { mutableStateOf(false) }
                         IconButton(onClick = {
-                            showDropMenu = true
+                            toCustomTabs(if (inChina == true) Constant.indexVipUrl else Constant.indexAppUrl)
                         }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_more),
-                                contentDescription = stringResource(id = R.string.action_more),
+                                painter = painterResource(id = R.drawable.ic_about),
+                                contentDescription = stringResource(id = R.string.action_about),
                                 tint = MaterialTheme.colors.onPrimary
                             )
-                            DropdownMenu(
-                                expanded = showDropMenu,
-                                onDismissRequest = { showDropMenu = false }) {
-                                DropdownMenuItem(onClick = {
-                                    toCustomTabs(if (inChina == true) Constant.indexVipUrl else Constant.indexAppUrl)
-                                    showDropMenu = false
-                                }) {
-                                    Text(text = stringResource(id = R.string.action_about))
-                                }
-                                DropdownMenuItem(onClick = {
-                                    toCustomTabs(if (inChina == true) Constant.faqVipUrl else Constant.faqAppUrl)
-                                    showDropMenu = false
-                                }) {
-                                    Text(text = stringResource(id = R.string.action_faq))
-                                }
-                                if (!adLoadResult.value) {
-                                    DropdownMenuItem(onClick = {
-                                        showAdsDialog.value = true
-                                        showDropMenu = false
-                                    }) {
-                                        Text(text = stringResource(id = R.string.action_faq))
-                                    }
-                                }
-                            }
+                        }
+                        IconButton(onClick = {
+                            toCustomTabs(if (inChina == true) Constant.faqVipUrl else Constant.faqAppUrl)
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_faq),
+                                contentDescription = stringResource(id = R.string.action_faq),
+                                tint = MaterialTheme.colors.onPrimary
+                            )
                         }
                         IconButton(onClick = {
                             intentTo(HistoryActivity::class)
@@ -243,62 +169,71 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                                 tint = MaterialTheme.colors.onPrimary
                             )
                         }
-                    }
-                },
-                floatingActionButton = {
-                    if (homePage) {
-                        FloatingActionButton(onClick = {
-                            val intent = Intent(Intent.ACTION_PICK)
-                            intent.setDataAndType(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                "image/*"
-                            )
-                            selectIntent.launch(intent)
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_search),
-                                contentDescription = null
-                            )
+                        if (!adLoadResult.value) {
+                            IconButton(onClick = {
+                                adsDialogShowState.show(true)
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_why_show_ad),
+                                    contentDescription = stringResource(id = R.string.action_why_ad),
+                                    tint = MaterialTheme.colors.onPrimary
+                                )
+                            }
                         }
                     }
                 },
+                floatingActionButton = {
+                    FloatingActionButton(onClick = {
+                        val intent = Intent(Intent.ACTION_PICK)
+                        intent.setDataAndType(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            "image/*"
+                        )
+                        selectIntent.launch(intent)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = null
+                        )
+                    }
+                },
                 isFloatingActionButtonDocked = true,
-            ) {
-                Column {
+            ) { innerPadding ->
+                Column(modifier = Modifier.padding(innerPadding)) {
                     if (inBlackList) {
-                        BuildAdLayout(adLoadResult, showAdsDialog)
+                        BuildAdLayout(adLoadResult, adsDialogShowState)
                     }
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(8.dp)
+                            .animateContentSize(),
                         border = BorderStroke(
-                            1.dp,
+                            2.dp,
                             colorResource(id = R.color.outlined_stroke_color)
                         ),
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = 2.dp,
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = 0.dp,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(196.dp)
+                                    .height(180.dp)
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 val mediaSource by viewModel.mediaSource.observeAsState()
-                                val loadingVideo by viewModel.loadingVideo.observeValueAsState()
                                 if (mediaSource == null) {
                                     BuildImage()
                                 } else {
                                     BuildPlayer(mediaSource)
                                 }
+                                val loadingVideo by viewModel.loadingVideo.observeValueAsState()
                                 if (loadingVideo) {
                                     CircularProgressIndicator()
                                 }
                             }
-                            val searchQuota by viewModel.quota.observeAsState()
                             searchQuota?.let {
                                 val limit = if (it.limit == 0) it.user_limit else it.limit
                                 val refreshTime =
@@ -329,35 +264,36 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             }
                         }
                     }
-                    BuildList()
+                    BuildList(resultList)
                 }
-                BuiltSnackbar(scope, scaffoldState)
             }
-            BuildRefreshDialog()
+            BuildAdDialog(adsDialogShowState)
+            BuildRefreshDialog(isRefreshing)
             BuildAlertDialog()
+            errorMessage?.let {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(it)
+                }
+            }
         }
     }
 
     @Composable
-    fun BuildAdLayout(adLoadResult: MutableState<Boolean>, showAdsDialog: MutableState<Boolean>) {
-        //初始化AdMod
-        MobileAds.initialize(this) {}
-        val adRequest = AdRequest.Builder().build()
+    fun BuildAdLayout(
+        adLoadResult: MutableState<Boolean>,
+        adsDialogShowState: DialogShowState<Boolean>
+    ) {
         if (!adLoadResult.value) {
             return
         }
-        if (showAdsDialog.value) {
-            AlertDialog(onDismissRequest = {
-                showAdsDialog.value = false
-            }, title = {
-                Text(text = stringResource(id = R.string.action_why_ad))
-            }, text = {
-                Text(text = stringResource(id = R.string.hint_why_ads_appear))
-            }, confirmButton = {})
-        }
+        //初始化AdMod
+        MobileAds.initialize(this) {}
+        val adRequest = AdRequest.Builder().build()
         Row {
             AndroidView(
-                modifier = Modifier.fillMaxWidth(), // Occupy the max size in the Compose UI tree
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 180.dp),
                 factory = { context ->
                     AdView(context).apply {
                         this.adSize = AdSize.BANNER
@@ -372,7 +308,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 }
             )
             IconButton(onClick = {
-                showAdsDialog.value = true
+                adsDialogShowState.show(true)
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_why_show_ad),
@@ -383,66 +319,70 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     }
 
     @Composable
-    fun BuildRefreshDialog() {
-        val isRefreshing by viewModel.refreshData.observeValueAsState()
-        Logger.i("isRefreshing, $isRefreshing")
+    fun BuildRefreshDialog(isRefreshing: Boolean) {
         if (!isRefreshing) return
         Dialog(
             onDismissRequest = { viewModel.refreshState(false) },
             DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .wrapContentSize()
-                    .background(
-                        MaterialTheme.colors.onBackground,
-                        shape = RoundedCornerShape(16.dp)
-                    )
+            Card(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(16.dp),
             ) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Loading...")
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Loading...", color = MaterialTheme.colors.onBackground)
+                }
             }
         }
     }
 
     @Composable
     fun BuildAlertDialog() {
-        val clickDocs by viewModel.clickDocs.observeAsState()
-        clickDocs?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clickDocs.postValue(null) },
-                title = {
-                    Text(
-                        text = stringResource(
-                            id = R.string.hint_show_animation_detail,
-                            it.title_native ?: ""
-                        )
+        AlertDialog(
+            dialogShowState = viewModel.clickDocs.observerAsShowState(this),
+            title = {
+                Text(
+                    text = stringResource(
+                        id = R.string.hint_show_animation_detail,
+                        requiredData().title_native ?: ""
                     )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            toCustomTabs("https://anilist.co/anime/${it.anilist_id}")
-                            viewModel.clickDocs.postValue(null)
-                        }
-                    ) {
-                        Text(stringResource(id = android.R.string.ok))
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        toCustomTabs("https://anilist.co/anime/${requiredData().anilist_id}")
+                        dismiss()
                     }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            viewModel.clickDocs.postValue(null)
-                        }
-                    ) {
-                        Text(stringResource(id = android.R.string.cancel))
-                    }
+                ) {
+                    Text(stringResource(id = android.R.string.ok))
                 }
-            )
-        }
+            },
+            dismissButton = {
+                TextButton(onClick = { dismiss() }) {
+                    Text(stringResource(id = android.R.string.cancel))
+                }
+            }
+        )
+    }
+
+    @Composable
+    fun BuildAdDialog(adsDialogShowState: DialogShowState<Boolean>) {
+        AlertDialog(
+            dialogShowState = adsDialogShowState,
+            confirmButton = {
+                TextButton(onClick = { dismiss() }) {
+                    Text(stringResource(id = android.R.string.ok))
+                }
+            },
+            title = {
+                Text(text = stringResource(id = R.string.action_why_ad))
+            }, text = {
+                Text(text = stringResource(id = R.string.hint_why_ads_appear))
+            }
+        )
     }
 
     @Composable
@@ -508,40 +448,28 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
         }
     }
 
+    @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun BuildList() {
-        val list by viewModel.resultList.observeAsState()
-        list?.let {
-            if (it.isEmpty()) {
-                viewModel.errorMessageState(stringResource(id = R.string.hint_no_result))
-                return
-            }
-            LazyColumn {
-                it.forEach {
-                    item {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            border = BorderStroke(
-                                1.dp,
-                                colorResource(id = R.color.outlined_stroke_color)
-                            ),
-                            elevation = 2.dp,
-                            shape = RoundedCornerShape(8.dp),
-                            onClick = {
-                                viewModel.clickDocs.postValue(it)
-                            }
-                        ) {
-                            BuildResultItem(docs = it)
-                        }
-                    }
+    fun BuildList(resultList: List<Docs>?) {
+        if (resultList != null && resultList.isEmpty()) {
+            viewModel.errorMessageState(stringResource(id = R.string.hint_no_result))
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            resultList?.let {
+                items(it) { item: Docs ->
+                    BuildResultItem(docs = item)
                 }
             }
         }
     }
 
+    @ExperimentalMaterialApi
     @Composable
     fun BuildResultItem(docs: Docs) {
         val requestUrl = String.format(
@@ -551,73 +479,78 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
             docs.at,
             docs.tokenthumb ?: ""
         )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+        Card(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            border = BorderStroke(
+                1.dp,
+                colorResource(id = R.color.outlined_stroke_color)
+            ),
+            shape = RoundedCornerShape(8.dp),
+            onClick = {
+                viewModel.clickDocs.postValue(docs)
+            }
         ) {
-            if (docs.similarity < 0.87) {
-                Text(
-                    text = stringResource(id = R.string.hint_probably_mistake),
-                    color = MaterialTheme.colors.secondary,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-            Row {
-                Column {
-                    BuildText(stringResource(id = R.string.hint_title_native))
-                    BuildText(stringResource(id = R.string.hint_title_chinese))
-                    BuildText(stringResource(id = R.string.hint_title_english))
-                    BuildText(stringResource(id = R.string.hint_title_romaji))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                if (docs.similarity < 0.87) {
+                    Text(
+                        text = stringResource(id = R.string.hint_probably_mistake),
+                        color = MaterialTheme.colors.secondary,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    BuildText(docs.title_native ?: "")
-                    BuildText(docs.title_chinese ?: "")
-                    BuildText(docs.title_english ?: "")
-                    BuildText(docs.title_romaji ?: "")
+                Row {
+                    Column {
+                        BuildText(stringResource(id = R.string.hint_title_native))
+                        BuildText(stringResource(id = R.string.hint_title_chinese))
+                        BuildText(stringResource(id = R.string.hint_title_english))
+                        BuildText(stringResource(id = R.string.hint_title_romaji))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        BuildText(docs.title_native ?: "")
+                        BuildText(docs.title_chinese ?: "")
+                        BuildText(docs.title_english ?: "")
+                        BuildText(docs.title_romaji ?: "")
+                    }
                 }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = rememberCoilPainter(request = requestUrl, imageLoader = imageLoader),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(90.dp)
-                        .width(160.dp)
-                        .clickable(onClick = {
-                            viewModel.playVideo(docs)
-                        })
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    BuildText(stringResource(id = R.string.hint_time))
-                    BuildText(stringResource(id = R.string.hint_episode))
-                    BuildText(stringResource(id = R.string.hint_ani_list_id))
-                    BuildText(stringResource(id = R.string.hint_mal_id))
-                    BuildText(stringResource(id = R.string.hint_similarity))
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = rememberCoilPainter(
+                            request = requestUrl,
+                            imageLoader = imageLoader
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(90.dp)
+                            .width(160.dp)
+                            .clickable(onClick = {
+                                viewModel.playVideo(docs)
+                            })
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        BuildText(stringResource(id = R.string.hint_time))
+                        BuildText(stringResource(id = R.string.hint_episode))
+                        BuildText(stringResource(id = R.string.hint_ani_list_id))
+                        BuildText(stringResource(id = R.string.hint_mal_id))
+                        BuildText(stringResource(id = R.string.hint_similarity))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        BuildText((docs.at.toLong() * 1000).formatTime())
+                        BuildText("${docs.episode}")
+                        BuildText("${docs.anilist_id}")
+                        BuildText("${docs.mal_id}")
+                        BuildText("${DecimalFormat("#.000").format(docs.similarity * 100)}%")
+                    }
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    BuildText((docs.at.toLong() * 1000).formatTime())
-                    BuildText("${docs.episode}")
-                    BuildText("${docs.anilist_id}")
-                    BuildText("${docs.mal_id}")
-                    BuildText("${DecimalFormat("#.000").format(docs.similarity * 100)}%")
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun BuiltSnackbar(scope: CoroutineScope, scaffoldState: ScaffoldState) {
-        val errorMessage by viewModel.errorMessageData.observeAsState()
-        errorMessage?.let {
-            scope.launch {
-                scaffoldState.snackbarHostState.showSnackbar(it)
             }
         }
     }

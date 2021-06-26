@@ -82,10 +82,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.5.0")
     implementation("androidx.appcompat:appcompat:1.3.0")
     implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation("androidx.activity:activity-compose:1.3.0-beta02")
@@ -95,6 +91,17 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.browser:browser:1.3.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    //compose
+    implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.foundation:foundation-layout:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.material:material-icons-extended:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.foundation:foundation:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.animation:animation:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
+
     //accompanist
     implementation("com.google.accompanist:accompanist-swiperefresh:0.12.0")
     implementation("com.google.accompanist:accompanist-coil:0.12.0")

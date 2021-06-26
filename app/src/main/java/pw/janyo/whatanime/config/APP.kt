@@ -46,7 +46,6 @@ class APP : Application() {
                     repositoryModule,
                     viewModelModule,
                     exoModule,
-                    mainActivityModule,
                 )
             )
         }
