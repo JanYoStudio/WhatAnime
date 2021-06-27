@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -30,9 +32,6 @@ import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
-import pw.janyo.whatanime.ui.state.AlertDialog
-import pw.janyo.whatanime.ui.state.DialogShowState
-import pw.janyo.whatanime.ui.state.rememberDialogShowState
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.viewModel.HistoryViewModel
@@ -54,7 +53,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     @Composable
     override fun BuildContent() {
         val errorMessage by viewModel.errorMessageData.observeAsState()
-        val adsDialogShowState = rememberDialogShowState<Boolean>(null)
+        val adsDialogShowState = remember { mutableStateOf(false) }
         val isRefreshing by viewModel.refreshData.observeValueAsState()
         val historyList by viewModel.historyList.observeAsState()
         WhatAnimeTheme {
@@ -98,7 +97,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     }
 
     @Composable
-    fun BuildAdLayout(adsDialogShowState: DialogShowState<Boolean>) {
+    fun BuildAdLayout(adsDialogShowState: MutableState<Boolean>) {
         var adLoadResult by remember { mutableStateOf(true) }
         if (!adLoadResult) {
             return
@@ -125,10 +124,10 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                 }
             )
             IconButton(onClick = {
-                adsDialogShowState.show(true)
+                adsDialogShowState.value = true
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_why_show_ad),
+                    painter = painterResource(R.drawable.ic_why_show_ad),
                     contentDescription = null
                 )
             }
@@ -136,18 +135,19 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     }
 
     @Composable
-    fun BuildAdDialog(adsDialogShowState: DialogShowState<Boolean>) {
+    fun BuildAdDialog(adsDialogShowState: MutableState<Boolean>) {
+        if (!adsDialogShowState.value) return
         AlertDialog(
-            dialogShowState = adsDialogShowState,
+            onDismissRequest = { adsDialogShowState.value = false },
             confirmButton = {
-                TextButton(onClick = { dismiss() }) {
-                    Text(stringResource(id = android.R.string.ok))
+                TextButton(onClick = { adsDialogShowState.value = false }) {
+                    Text(stringResource(android.R.string.ok))
                 }
             },
             title = {
-                Text(text = stringResource(id = R.string.action_why_ad))
+                Text(text = stringResource(R.string.action_why_ad))
             }, text = {
-                Text(text = stringResource(id = R.string.hint_why_ads_appear))
+                Text(text = stringResource(R.string.hint_why_ads_appear))
             }
         )
     }
@@ -159,7 +159,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
             return
         }
         if (list.isEmpty()) {
-            viewModel.errorMessageState(stringResource(id = R.string.hint_no_result))
+            viewModel.errorMessageState(stringResource(R.string.hint_no_result))
             return
         }
         LazyColumn(
@@ -187,7 +187,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
             modifier = Modifier.padding(horizontal = 8.dp),
             border = BorderStroke(
                 1.dp,
-                colorResource(id = R.color.outlined_stroke_color)
+                colorResource(R.color.outlined_stroke_color)
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
@@ -206,11 +206,11 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         .width(160.dp)
                 )
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                    BuildText(text = stringResource(id = R.string.hint_time_history))
-                    BuildText(text = stringResource(id = R.string.hint_title_native))
-                    BuildText(text = stringResource(id = R.string.hint_title_chinese))
-                    BuildText(text = stringResource(id = R.string.hint_episode))
-                    BuildText(text = stringResource(id = R.string.hint_similarity))
+                    BuildText(stringResource(R.string.hint_time_history))
+                    BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
+                    BuildText(stringResource(R.string.hint_title_chinese))
+                    BuildText(stringResource(R.string.hint_episode))
+                    BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
                 }
                 Column(
                     modifier = Modifier
@@ -218,22 +218,24 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         .fillMaxWidth()
                 ) {
                     BuildText(history.time.getCalendarFromLong().toDateTimeString())
-                    BuildText(animationDocs?.title_native ?: "")
+                    BuildText(animationDocs?.title_native ?: "", FontWeight.Bold)
                     BuildText(animationDocs?.title_chinese ?: "")
                     BuildText(animationDocs?.episode ?: "")
-                    BuildText(similarity)
+                    BuildText(similarity, FontWeight.Bold)
                 }
             }
         }
     }
 
     @Composable
-    fun BuildText(text: String) {
+    fun BuildText(text: String, fontWeight: FontWeight? = null) {
         Text(
             text = text,
             color = MaterialTheme.colors.onSurface,
             fontSize = 12.sp,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = fontWeight
         )
     }
 }

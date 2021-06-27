@@ -35,6 +35,7 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
     val clickDocs = MutableLiveData<Docs>()
     val mediaSource = MutableLiveData<MediaSource>()
     val loadingVideo = MutableLiveData(false)
+    val showFloatDialog = MutableLiveData(true)
 
     /**
      * @param file 要显示的文件，也是要搜索的文件
@@ -148,5 +149,9 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
             mediaSource.postValue(newMediaSource)
             loadingVideo.postValue(true)
         }
+    }
+
+    fun changeFloatDialogVisibility() {
+        showFloatDialog.postValue(!showFloatDialog.value!!)
     }
 }

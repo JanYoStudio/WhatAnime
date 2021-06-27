@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,16 +24,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import coil.ImageLoader
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.gms.ads.*
 import com.orhanobut.logger.Logger
@@ -46,12 +49,9 @@ import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.ShowImage
-import pw.janyo.whatanime.ui.state.AlertDialog
-import pw.janyo.whatanime.ui.state.DialogShowState
-import pw.janyo.whatanime.ui.state.observerAsShowState
-import pw.janyo.whatanime.ui.state.rememberDialogShowState
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
+import pw.janyo.whatanime.utils.firstNotNull
 import pw.janyo.whatanime.viewModel.DetailViewModel
 import vip.mystery0.tools.utils.formatTime
 import java.io.File
@@ -66,6 +66,42 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             .error(R.mipmap.load_failed)
             .build()
     }
+    private val exoPlayer: SimpleExoPlayer by lazy {
+        SimpleExoPlayer.Builder(this).build().apply {
+            addListener(object : Player.Listener {
+                override fun onPlaybackStateChanged(state: Int) {
+                    super.onPlaybackStateChanged(state)
+                    when (state) {
+                        Player.STATE_BUFFERING -> {
+                            viewModel.loadingVideo.postValue(true)
+                        }
+                        Player.STATE_READY -> {
+                            viewModel.loadingVideo.postValue(false)
+                        }
+                        Player.STATE_ENDED -> {
+                            viewModel.mediaSource.postValue(null)
+                        }
+                        Player.STATE_IDLE -> {
+                        }
+                    }
+                }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    super.onPlayerError(error)
+                    Logger.e("onPlayerError: ", error)
+                    viewModel.loadingVideo.postValue(false)
+                    viewModel.mediaSource.postValue(null)
+                    viewModel.errorMessageState(
+                        firstNotNull(
+                            getString(R.string.hint_unknow_error),
+                            error.cause?.message,
+                            error.message,
+                        )
+                    )
+                }
+            })
+        }
+    }
 
     companion object {
         private const val INTENT_CACHE_FILE = "INTENT_CACHE_FILE"
@@ -73,11 +109,11 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
         private const val INTENT_TITLE = "INTENT_TITLE"
 
         fun showDetail(context: Context, cacheFile: File, originPath: String, title: String) {
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(INTENT_CACHE_FILE, cacheFile)
-            intent.putExtra(INTENT_ORIGIN_PATH, originPath)
-            intent.putExtra(INTENT_TITLE, title)
-            context.startActivity(intent)
+            context.startActivity(Intent(context, DetailActivity::class.java).apply {
+                putExtra(INTENT_CACHE_FILE, cacheFile)
+                putExtra(INTENT_ORIGIN_PATH, originPath)
+                putExtra(INTENT_TITLE, title)
+            })
         }
     }
 
@@ -87,11 +123,11 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
         val cacheFile: File = intent.getSerializableExtra(INTENT_CACHE_FILE) as File
         val originPath = intent.getStringExtra(INTENT_ORIGIN_PATH)!!
         //加载显示历史记录中的缓存文件
-        val showImage = ShowImage()
-        showImage.mimeType = ""
-        showImage.originPath = originPath
-        showImage.cachePath = cacheFile.absolutePath
-        viewModel.imageFile.postValue(showImage)
+        viewModel.imageFile.postValue(ShowImage().apply {
+            this.mimeType = ""
+            this.originPath = originPath
+            this.cachePath = cacheFile.absolutePath
+        })
         //设置标题
         title = intent.getStringExtra(INTENT_TITLE)
         val originFile = File(originPath)
@@ -110,7 +146,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
     @Composable
     override fun BuildContent() {
         val errorMessage by viewModel.errorMessageData.observeAsState()
-        val adsDialogShowState = rememberDialogShowState<Boolean>(null)
+        val adsDialogShowState = remember { mutableStateOf(false) }
         val showFloatDialog by viewModel.showFloatDialog.observeValueAsState()
         WhatAnimeTheme {
             val scaffoldState = rememberScaffoldState()
@@ -134,7 +170,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                                 viewModel.changeFloatDialogVisibility()
                             }) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_preview),
+                                    painter = painterResource(R.drawable.ic_preview),
                                     contentDescription = "",
                                     tint = MaterialTheme.colors.onPrimary
                                 )
@@ -143,15 +179,17 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     )
                 },
             ) {
-                Box(contentAlignment = Alignment.TopEnd) {
-                    if (inBlackList) {
-                        BuildAdLayout(adsDialogShowState)
-                    }
+                if (inBlackList) {
+                    BuildAdLayout(adsDialogShowState)
+                }
+                Box {
                     BuildList()
 
                     Crossfade(
                         targetState = showFloatDialog,
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.TopEnd),
                     ) {
                         if (it) {
                             Card(
@@ -162,20 +200,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier.padding(8.dp),
                                 ) {
-                                    val mediaSource by viewModel.mediaSource.observeAsState()
-                                    if (mediaSource == null) {
-                                        BuildImage()
-                                    } else {
-                                        BuildPlayer(mediaSource)
-                                    }
-                                    val loadingVideo by viewModel.loadingVideo.observeValueAsState()
-                                    if (loadingVideo) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .width(320.dp)
-                                                .height(180.dp)
-                                        )
-                                    }
+                                    BuildImage()
                                 }
                             }
                         }
@@ -184,6 +209,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             }
             BuildAdDialog(adsDialogShowState)
             BuildAlertDialog()
+            BuildVideoDialog()
             errorMessage?.let {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(it)
@@ -193,54 +219,95 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
     }
 
     @Composable
-    fun BuildAdDialog(adsDialogShowState: DialogShowState<Boolean>) {
+    fun BuildAdDialog(adsDialogShowState: MutableState<Boolean>) {
+        if (!adsDialogShowState.value) return
         AlertDialog(
-            dialogShowState = adsDialogShowState,
+            onDismissRequest = { adsDialogShowState.value = false },
             confirmButton = {
-                TextButton(onClick = { dismiss() }) {
-                    Text(stringResource(id = android.R.string.ok))
+                TextButton(onClick = { adsDialogShowState.value = false }) {
+                    Text(stringResource(android.R.string.ok))
                 }
             },
             title = {
-                Text(text = stringResource(id = R.string.action_why_ad))
+                Text(text = stringResource(R.string.action_why_ad))
             }, text = {
-                Text(text = stringResource(id = R.string.hint_why_ads_appear))
+                Text(text = stringResource(R.string.hint_why_ads_appear))
             }
         )
     }
 
     @Composable
     fun BuildAlertDialog() {
-        AlertDialog(
-            dialogShowState = viewModel.clickDocs.observerAsShowState(this),
-            title = {
-                Text(
-                    text = stringResource(
-                        id = R.string.hint_show_animation_detail,
-                        requiredData().title_native ?: ""
+        val clickDocs by viewModel.clickDocs.observeAsState()
+        clickDocs?.let {
+            AlertDialog(
+                onDismissRequest = { viewModel.clickDocs.postValue(null) },
+                title = {
+                    Text(
+                        text = stringResource(
+                            R.string.hint_show_animation_detail,
+                            firstNotNull(
+                                "",
+                                it.title_native,
+                                it.title_chinese,
+                                it.title_english,
+                                it.title_romaji,
+                            )
+                        )
                     )
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        toCustomTabs("https://anilist.co/anime/${requiredData().anilist_id}")
-                        dismiss()
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            toCustomTabs("https://anilist.co/anime/${it.anilist_id}")
+                            viewModel.clickDocs.postValue(null)
+                        }
+                    ) {
+                        Text(stringResource(android.R.string.ok))
                     }
-                ) {
-                    Text(stringResource(id = android.R.string.ok))
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.clickDocs.postValue(null) }) {
+                        Text(stringResource(android.R.string.cancel))
+                    }
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { dismiss() }) {
-                    Text(stringResource(id = android.R.string.cancel))
-                }
-            }
-        )
+            )
+        }
     }
 
     @Composable
-    fun BuildAdLayout(adsDialogShowState: DialogShowState<Boolean>) {
+    fun BuildVideoDialog() {
+        val mediaSource by viewModel.mediaSource.observeAsState()
+        mediaSource?.let {
+            Dialog(onDismissRequest = {
+                exoPlayer.stop()
+                viewModel.mediaSource.postValue(null)
+            }, content = {
+                Box(modifier = Modifier.padding(8.dp)) {
+                    AndroidView(modifier = Modifier
+                        .width(320.dp)
+                        .height(180.dp),
+                        factory = { context ->
+                            PlayerView(context).apply {
+                                this.player = exoPlayer
+                                this.useController = false
+                                exoPlayer.clearMediaItems()
+                                exoPlayer.setMediaSource(it)
+                                exoPlayer.prepare()
+                                exoPlayer.playWhenReady = true
+                            }
+                        })
+                    val loadingVideo by viewModel.loadingVideo.observeValueAsState()
+                    if (loadingVideo) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+            })
+        }
+    }
+
+    @Composable
+    fun BuildAdLayout(adsDialogShowState: MutableState<Boolean>) {
         var adLoadResult by remember { mutableStateOf(true) }
         if (!adLoadResult) {
             return
@@ -267,10 +334,10 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 }
             )
             IconButton(onClick = {
-                adsDialogShowState.show(true)
+                adsDialogShowState.value = true
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_why_show_ad),
+                    painter = painterResource(R.drawable.ic_why_show_ad),
                     contentDescription = null
                 )
             }
@@ -285,7 +352,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             //判断图片文件是否存在
             if (!originFile.exists()) {
                 //如果不存在，显示错误信息
-                viewModel.errorMessageState(stringResource(id = R.string.hint_select_file_not_exist))
+                viewModel.errorMessageState(stringResource(R.string.hint_select_file_not_exist))
                 return
             }
             rememberCoilPainter(request = originFile)
@@ -300,57 +367,13 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
         )
     }
 
-    @Composable
-    fun BuildPlayer(mediaSource: MediaSource?) {
-        mediaSource?.let {
-            AndroidView(modifier = Modifier
-                .width(320.dp)
-                .height(180.dp),
-                factory = { context ->
-                    PlayerView(context).apply {
-                        val exoPlayer = SimpleExoPlayer.Builder(context).build()
-                        exoPlayer.addListener(object : Player.Listener {
-                            override fun onPlaybackStateChanged(state: Int) {
-                                super.onPlaybackStateChanged(state)
-                                when (state) {
-                                    Player.STATE_BUFFERING -> {
-                                        viewModel.loadingVideo.postValue(true)
-                                    }
-                                    Player.STATE_READY -> {
-                                        viewModel.loadingVideo.postValue(false)
-                                    }
-                                    Player.STATE_ENDED -> {
-                                        viewModel.mediaSource.postValue(null)
-                                    }
-                                }
-                            }
-
-                            override fun onPlayerError(error: ExoPlaybackException) {
-                                super.onPlayerError(error)
-                                Logger.e("onPlayerError: ", error)
-                                viewModel.loadingVideo.postValue(false)
-                                viewModel.mediaSource.postValue(null)
-                                error.toastLong()
-                            }
-                        })
-                        this.player = exoPlayer
-                        this.useController = false
-                        exoPlayer.clearMediaItems()
-                        exoPlayer.setMediaSource(it)
-                        exoPlayer.prepare()
-                        exoPlayer.playWhenReady = true
-                    }
-                })
-        }
-    }
-
     @ExperimentalMaterialApi
     @Composable
     fun BuildList() {
         val list by viewModel.resultList.observeAsState()
         list?.let {
             if (it.isEmpty()) {
-                viewModel.errorMessageState(stringResource(id = R.string.hint_no_result))
+                viewModel.errorMessageState(stringResource(R.string.hint_no_result))
                 return
             }
 
@@ -379,7 +402,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             modifier = Modifier.padding(horizontal = 8.dp),
             border = BorderStroke(
                 1.dp,
-                colorResource(id = R.color.outlined_stroke_color)
+                colorResource(R.color.outlined_stroke_color)
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
@@ -393,26 +416,29 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             ) {
                 if (docs.similarity < 0.87) {
                     Text(
-                        text = stringResource(id = R.string.hint_probably_mistake),
+                        text = stringResource(R.string.hint_probably_mistake),
                         color = MaterialTheme.colors.secondary,
                         textAlign = TextAlign.End,
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        fontWeight = FontWeight.Bold
                     )
                 }
-                Row {
-                    Column {
-                        BuildText(stringResource(id = R.string.hint_title_native))
-                        BuildText(stringResource(id = R.string.hint_title_chinese))
-                        BuildText(stringResource(id = R.string.hint_title_english))
-                        BuildText(stringResource(id = R.string.hint_title_romaji))
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        BuildText(docs.title_native ?: "")
-                        BuildText(docs.title_chinese ?: "")
-                        BuildText(docs.title_english ?: "")
-                        BuildText(docs.title_romaji ?: "")
+                SelectionContainer {
+                    Row {
+                        Column {
+                            BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
+                            BuildText(stringResource(R.string.hint_title_chinese))
+                            BuildText(stringResource(R.string.hint_title_english))
+                            BuildText(stringResource(R.string.hint_title_romaji))
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            BuildText(docs.title_native ?: "", FontWeight.Bold)
+                            BuildText(docs.title_chinese ?: "")
+                            BuildText(docs.title_english ?: "")
+                            BuildText(docs.title_romaji ?: "")
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -431,20 +457,27 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                             })
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        BuildText(stringResource(id = R.string.hint_time))
-                        BuildText(stringResource(id = R.string.hint_episode))
-                        BuildText(stringResource(id = R.string.hint_ani_list_id))
-                        BuildText(stringResource(id = R.string.hint_mal_id))
-                        BuildText(stringResource(id = R.string.hint_similarity))
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        BuildText((docs.at.toLong() * 1000).formatTime())
-                        BuildText("${docs.episode}")
-                        BuildText("${docs.anilist_id}")
-                        BuildText("${docs.mal_id}")
-                        BuildText("${DecimalFormat("#.000").format(docs.similarity * 100)}%")
+                    SelectionContainer {
+                        Row {
+                            Column {
+                                BuildText(stringResource(R.string.hint_time))
+                                BuildText(stringResource(R.string.hint_episode))
+                                BuildText(stringResource(R.string.hint_ani_list_id))
+                                BuildText(stringResource(R.string.hint_mal_id))
+                                BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                BuildText((docs.at.toLong() * 1000).formatTime())
+                                BuildText("${docs.episode}")
+                                BuildText("${docs.anilist_id}")
+                                BuildText("${docs.mal_id}")
+                                BuildText(
+                                    "${DecimalFormat("#.000").format(docs.similarity * 100)}%",
+                                    FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -452,12 +485,14 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
     }
 
     @Composable
-    fun BuildText(text: String) {
+    fun BuildText(text: String, fontWeight: FontWeight? = null) {
         Text(
             text = text,
             color = MaterialTheme.colors.onSurface,
             fontSize = 12.sp,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = fontWeight
         )
     }
 }

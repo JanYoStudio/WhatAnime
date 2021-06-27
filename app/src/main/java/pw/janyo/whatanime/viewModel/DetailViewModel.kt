@@ -109,8 +109,6 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
     }
 
     fun changeFloatDialogVisibility() {
-        if (!loadingVideo.value!!) {
-            showFloatDialog.postValue(!showFloatDialog.value!!)
-        }
+        showFloatDialog.postValue(!showFloatDialog.value!!)
     }
 }

@@ -17,10 +17,14 @@ class SplashActivity : BaseComposeActivity<TestViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.exceptionData.observe(this, {
-            doNext()
+            if (it != null) {
+                doNext()
+            }
         })
         viewModel.completeTest.observe(this, {
-            doNext()
+            if (it) {
+                doNext()
+            }
         })
         viewModel.doTest()
     }
