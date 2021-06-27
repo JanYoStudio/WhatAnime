@@ -205,7 +205,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                                 tint = MaterialTheme.colors.onPrimary
                             )
                         }
-                        if (adLoadResult.value) {
+                        if (inBlackList && adLoadResult.value) {
                             IconButton(onClick = {
                                 adsDialogShowState.value = true
                             }) {

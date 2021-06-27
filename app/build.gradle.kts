@@ -29,7 +29,7 @@ android {
         minSdk = 21
         targetSdk = 30
         versionCode = gitVersionCode
-        versionName = "1.6.0"
+        versionName = "1.6.0-beta1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,6 +76,14 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
         kotlinCompilerVersion = "1.4.32"
+    }
+    signingConfigs {
+        create("release") {
+            storeFile = file(SignConfig.signKeyStoreFile)
+            storePassword = SignConfig.signKeyStorePassword
+            keyAlias = SignConfig.signKeyAlias
+            keyPassword = SignConfig.signKeyPassword
+        }
     }
 }
 

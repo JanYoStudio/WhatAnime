@@ -28,8 +28,6 @@
 
 #记录生成的日志数据,gradle build时在本项目根目录输出
 
-# apk 包内所有 class 的内部结构
--dump class_files.txt
 # 未混淆的类和成员
 -printseeds seeds.txt
 # 列出从 apk 中删除的代码
@@ -118,8 +116,12 @@
 -dontwarn retrofit2.KotlinExtensions
 -dontwarn retrofit2.KotlinExtensions
 
-
-###-----------------About Library------------------
--keepclasseswithmembers class **.R$* {
-     public static final int define_*;
- }
+-dontwarn org.bouncycastle.jsse.BCSSLParameters
+-dontwarn org.bouncycastle.jsse.BCSSLSocket
+-dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+-dontwarn org.conscrypt.Conscrypt$Version
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.ConscryptHostnameVerifier
+-dontwarn org.openjsse.javax.net.ssl.SSLParameters
+-dontwarn org.openjsse.javax.net.ssl.SSLSocket
+-dontwarn org.openjsse.net.ssl.OpenJSSE
