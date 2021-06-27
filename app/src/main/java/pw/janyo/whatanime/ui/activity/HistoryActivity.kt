@@ -25,11 +25,13 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.ads.*
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.config.inBlackList
+import pw.janyo.whatanime.constant.Constant.ADMOB_ID
 import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
@@ -76,15 +78,17 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                     )
                 },
             ) {
-                if (inBlackList) {
-                    BuildAdLayout(adsDialogShowState)
-                }
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { viewModel.refresh() },
                     modifier = Modifier.fillMaxHeight()
                 ) {
-                    BuildList(historyList)
+                    Column {
+                        if (inBlackList) {
+                            BuildAdLayout(adsDialogShowState)
+                        }
+                        BuildList(historyList)
+                    }
                 }
             }
             BuildAdDialog(adsDialogShowState)
@@ -105,25 +109,31 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
         //初始化AdMod
         MobileAds.initialize(this) {}
         val adRequest = AdRequest.Builder().build()
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .requiredHeight(IntrinsicSize.Min),
+        ) {
             AndroidView(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 180.dp),
+                    .width(320.dp)
+                    .height(50.dp),
                 factory = { context ->
                     AdView(context).apply {
                         this.adSize = AdSize.BANNER
-                        this.adUnitId = "ca-app-pub-6114262658640635/9315758560"
+                        this.adUnitId = ADMOB_ID
                         loadAd(adRequest)
                         this.adListener = object : AdListener() {
-                            override fun onAdFailedToLoad(p0: LoadAdError) {
+                            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                                Logger.w("load ads failed, detail: $loadAdError")
                                 adLoadResult = false
                             }
                         }
                     }
                 }
             )
-            IconButton(onClick = {
+            IconButton(modifier = Modifier.fillMaxHeight(), onClick = {
                 adsDialogShowState.value = true
             }) {
                 Icon(

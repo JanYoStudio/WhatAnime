@@ -14,4 +14,6 @@ object Constant {
     const val indexVipUrl = "https://janyostudio.mystery0.vip/wa/index.html"
     const val faqAppUrl = "https://janyostudio.mystery0.app/wa/faq.html"
     const val faqVipUrl = "https://janyostudio.mystery0.vip/wa/faq.html"
+
+    const val ADMOB_ID = "ca-app-pub-6114262658640635/9315758560"
 }

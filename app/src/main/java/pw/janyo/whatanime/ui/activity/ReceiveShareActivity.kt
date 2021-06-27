@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.config.setSecret
 import pw.janyo.whatanime.viewModel.TestViewModel
 
 class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
@@ -23,9 +24,10 @@ class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
             }
         })
         viewModel.completeTest.observe(this, {
-            if (it) {
-                doNext()
+            if (it.isNotBlank()) {
+                application.setSecret(it)
             }
+            doNext()
         })
         viewModel.doTest()
     }

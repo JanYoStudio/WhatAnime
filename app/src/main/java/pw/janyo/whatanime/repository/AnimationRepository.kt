@@ -11,6 +11,7 @@ import org.koin.core.qualifier.named
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
+import pw.janyo.whatanime.config.trackEvent
 import pw.janyo.whatanime.config.useServerCompress
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Animation
@@ -75,6 +76,7 @@ class AnimationRepository : KoinComponent {
         val uploadResponse = serverVipApi.uploadFile(signatureResponse.uploadUrl, requestBody)
         val url = if (file.length() > maxSize) uploadResponse.url else uploadResponse.url
         val data = searchApi.searchByUrl(url)
+        trackEvent("search image", mapOf("url" to url))
         saveHistory(originPath, cachePath, null, data)
         data
     }

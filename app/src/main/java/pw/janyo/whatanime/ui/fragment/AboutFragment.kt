@@ -9,6 +9,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.inject
+import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.*
 import vip.mystery0.tools.base.BasePreferenceFragment
@@ -34,86 +35,92 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
         previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
         requestTypePreference.summary = requestTypeArray[Configure.requestType]
         hideSexPreference.isChecked = Configure.hideSex
+        versionPreference.summary = BuildConfig.VERSION_NAME
 
         deviceIdPreference.setOnPreferenceClickListener {
-            val clipData = ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
+            val clipData =
+                ClipData.newPlainText(getString(R.string.app_name), deviceIdPreference.summary)
             clipboardManager.setPrimaryClip(clipData)
             toast(getString(R.string.hint_copy_device_id))
             true
         }
-        hideSexPreference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-            Configure.hideSex = !hideSexPreference.isChecked
-            true
-        }
+        hideSexPreference.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, _ ->
+                Configure.hideSex = !hideSexPreference.isChecked
+                true
+            }
         languagePreference.setOnPreferenceClickListener {
             var select = Configure.language
             val activity = requireActivity()
             MaterialAlertDialogBuilder(activity)
-                    .setTitle(R.string.title_change_language)
-                    .setSingleChoiceItems(languageArray, select) { _, which ->
-                        select = which
+                .setTitle(R.string.title_change_language)
+                .setSingleChoiceItems(languageArray, select) { _, which ->
+                    select = which
+                }
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    val needRestart = select != Configure.language
+                    Configure.language = select
+                    languagePreference.summary = languageArray[Configure.language]
+                    if (needRestart) {
+                        val intent =
+                            activity.packageManager.getLaunchIntentForPackage(activity.packageName)
+                        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        activity.startActivity(intent)
+                        activity.finish()
                     }
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        val needRestart = select != Configure.language
-                        Configure.language = select
-                        languagePreference.summary = languageArray[Configure.language]
-                        if (needRestart) {
-                            val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
-                            intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            activity.startActivity(intent)
-                            activity.finish()
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
             true
         }
         previewConfigPreference.setOnPreferenceClickListener {
             var select = Configure.previewConfig
             val activity = requireActivity()
             MaterialAlertDialogBuilder(activity)
-                    .setTitle(R.string.title_change_preview_config)
-                    .setSingleChoiceItems(R.array.preview_config, select) { _, which ->
-                        select = which
-                    }
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        Configure.previewConfig = select
-                        previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                .setTitle(R.string.title_change_preview_config)
+                .setSingleChoiceItems(R.array.preview_config, select) { _, which ->
+                    select = which
+                }
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    Configure.previewConfig = select
+                    previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
             true
         }
         requestTypePreference.setOnPreferenceClickListener {
             var select = Configure.requestType
             val activity = requireActivity()
             MaterialAlertDialogBuilder(activity)
-                    .setTitle(R.string.title_request_type)
-                    .setSingleChoiceItems(R.array.request_type, select) { _, which ->
-                        select = which
-                    }
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        Configure.requestType = select
-                        requestTypePreference.summary = requestTypeArray[Configure.requestType]
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
+                .setTitle(R.string.title_request_type)
+                .setSingleChoiceItems(R.array.request_type, select) { _, which ->
+                    select = which
+                }
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    Configure.requestType = select
+                    requestTypePreference.summary = requestTypeArray[Configure.requestType]
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
             true
         }
 
         versionPreference.setOnPreferenceClickListener {
             fastClick(5) {
                 MaterialAlertDialogBuilder(requireActivity())
-                        .setTitle("debug")
-                        .setMessage("""
+                    .setTitle("debug")
+                    .setMessage(
+                        """
 							connectServer: $connectServer
 							inBlackList: $inBlackList
 							useServerCompress: $useServerCompress
 							inChina: $inChina
 							deviceId: $publicDeviceId
-						""".trimIndent())
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
+						""".trimIndent()
+                    )
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
             }
             true
         }

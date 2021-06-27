@@ -30,4 +30,8 @@ object Configure {
     var alreadyReadNotice: Boolean
         set(value) = sharedPreference.use { putBoolean("config_read_notice", value) }
         get() = sharedPreference.getBoolean("config_read_notice", false)
+
+    var lastAppCenterSecret: String
+        set(value) = sharedPreference.use { putString("config_last_app_center_secret", value) }
+        get() = sharedPreference.getString("config_last_app_center_secret", "")!!
 }

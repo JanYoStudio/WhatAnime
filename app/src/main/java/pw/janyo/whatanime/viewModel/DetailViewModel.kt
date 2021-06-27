@@ -10,6 +10,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Docs
@@ -74,7 +75,7 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
                 animation.docs
             }
             resultList.postValue(result)
-            showFloatDialog.postValue(true)
+            showFloatDialog.postValue(!inBlackList)
         }
     }
 

@@ -10,6 +10,9 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import com.oasisfeng.condom.CondomContext
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -106,4 +109,18 @@ fun Context.loadInBrowser(url: String) {
     } catch (e: ActivityNotFoundException) {
         toastLong(R.string.hint_no_browser)
     }
+}
+
+fun Application.setSecret(secret: String) {
+    if (secret.isNotBlank()) {
+        if (!AppCenter.isConfigured()) {
+            AppCenter.start(this, secret, Analytics::class.java, Crashes::class.java)
+            AppCenter.setUserId(publicDeviceId)
+        }
+        Configure.lastAppCenterSecret = secret
+    }
+}
+
+fun trackEvent(name: String, properties: Map<String, String>) {
+    Analytics.trackEvent(name, properties)
 }

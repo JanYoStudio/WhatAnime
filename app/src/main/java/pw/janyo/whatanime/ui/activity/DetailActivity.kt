@@ -47,6 +47,7 @@ import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
+import pw.janyo.whatanime.constant.Constant.ADMOB_ID
 import pw.janyo.whatanime.model.Docs
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
@@ -179,11 +180,13 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     )
                 },
             ) {
-                if (inBlackList) {
-                    BuildAdLayout(adsDialogShowState)
-                }
                 Box {
-                    BuildList()
+                    Column {
+                        if (inBlackList) {
+                            BuildAdLayout(adsDialogShowState)
+                        }
+                        BuildList()
+                    }
 
                     Crossfade(
                         targetState = showFloatDialog,
@@ -315,25 +318,31 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
         //初始化AdMod
         MobileAds.initialize(this) {}
         val adRequest = AdRequest.Builder().build()
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .requiredHeight(IntrinsicSize.Min),
+        ) {
             AndroidView(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 180.dp),
+                    .width(320.dp)
+                    .height(50.dp),
                 factory = { context ->
                     AdView(context).apply {
                         this.adSize = AdSize.BANNER
-                        this.adUnitId = "ca-app-pub-6114262658640635/9315758560"
+                        this.adUnitId = ADMOB_ID
                         loadAd(adRequest)
                         this.adListener = object : AdListener() {
-                            override fun onAdFailedToLoad(p0: LoadAdError) {
+                            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                                Logger.w("load ads failed, detail: $loadAdError")
                                 adLoadResult = false
                             }
                         }
                     }
                 }
             )
-            IconButton(onClick = {
+            IconButton(modifier = Modifier.fillMaxHeight(), onClick = {
                 adsDialogShowState.value = true
             }) {
                 Icon(

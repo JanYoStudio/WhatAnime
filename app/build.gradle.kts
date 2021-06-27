@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 fun String.runCommand(workingDir: File = file("./")): String {
@@ -17,7 +18,7 @@ fun String.runCommand(workingDir: File = file("./")): String {
 }
 
 val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
-val gitVersionName = "git describe --tags".runCommand()
+val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
 
 android {
     compileSdk = 30
@@ -28,7 +29,7 @@ android {
         minSdk = 21
         targetSdk = 30
         versionCode = gitVersionCode
-        versionName = gitVersionName
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -45,12 +46,12 @@ android {
 
     buildTypes {
         debug {
-            resValue("string", "app_version_name", gitVersionName)
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            versionNameSuffix = ".d$gitVersionCode.$gitVersionName"
         }
         release {
             isMinifyEnabled = true
@@ -58,6 +59,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
         }
     }
     compileOptions {
@@ -85,12 +87,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation("androidx.activity:activity-compose:1.3.0-beta02")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08")
     implementation("androidx.vectordrawable:vectordrawable:1.1.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.browser:browser:1.3.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     //compose
     implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
@@ -106,10 +105,14 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.12.0")
     implementation("com.google.accompanist:accompanist-coil:0.12.0")
 
-    // admod
+    //firebase
     implementation("com.google.android.gms:play-services-ads:20.2.0")
+    implementation("com.google.firebase:firebase-ads:20.2.0")
+    //app center
+    implementation("com.microsoft.appcenter:appcenter-analytics:4.1.0")
+    implementation("com.microsoft.appcenter:appcenter-crashes:4.1.0")
     // Koin AndroidX Scope features
-    implementation("io.insert-koin:koin-android:3.1.0")
+    implementation("io.insert-koin:koin-android:3.1.1")
     //logger
     implementation("com.orhanobut:logger:2.2.0")
     //Mystery0Tools
@@ -117,7 +120,7 @@ dependencies {
     //Condom
     implementation("com.oasisfeng.condom:library:2.5.0")
     //MMKV
-    implementation("com.tencent:mmkv-static:1.2.9")
+    implementation("com.tencent:mmkv-static:1.2.10")
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

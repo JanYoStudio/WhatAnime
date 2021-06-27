@@ -20,14 +20,14 @@ class TestViewModel : ComposeViewModel(), KoinComponent {
     private val serverAppApi: ServerApi by inject(named("cloudAppApi"))
     private val ipApi: IpApi by inject()
 
-    val completeTest = MutableLiveData<Boolean>()
+    val completeTest = MutableLiveData<String>()
 
     fun doTest() {
         launch {
             //判断是否联网
             if (!isConnectInternet()) {
                 errorMessageState(StringConstant.hint_no_network)
-                completeTest.postValue(true)
+                completeTest.postValue("")
                 return@launch
             }
             //先尝试通过ip地址来判断是否是国内用户
@@ -66,7 +66,7 @@ class TestViewModel : ComposeViewModel(), KoinComponent {
                 //使用应用的配置项
                 useServerCompress = Configure.requestType == 1
             }
-            completeTest.postValue(true)
+            completeTest.postValue(response?.appCenterSecret ?: Configure.lastAppCenterSecret)
         }
     }
 }

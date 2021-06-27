@@ -12,6 +12,7 @@ import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.connectServer
+import pw.janyo.whatanime.config.trackEvent
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Docs
@@ -35,7 +36,6 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
     val clickDocs = MutableLiveData<Docs>()
     val mediaSource = MutableLiveData<MediaSource>()
     val loadingVideo = MutableLiveData(false)
-    val showFloatDialog = MutableLiveData(true)
 
     /**
      * @param file 要显示的文件，也是要搜索的文件
@@ -74,10 +74,10 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
                 connectServer
             )
             if (animation.limit != -987654 && animation.limit_ttl != -987654) {
-                val searchQuota = SearchQuota()
-                searchQuota.limit = animation.limit
-                searchQuota.limit_ttl = animation.limit_ttl
-                quota.postValue(searchQuota)
+                quota.postValue(SearchQuota().apply {
+                    limit = animation.limit
+                    limit_ttl = animation.limit_ttl
+                })
             }
             val result = if (Configure.hideSex) {
                 animation.docs.filter { !it.is_adult }
@@ -139,6 +139,7 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
                 2 -> getUrl(Constant.videoMutePreviewUrl)
                 else -> getUrl(Constant.videoOriginPreviewUrl)
             }
+            trackEvent("play video", mapOf("url" to requestUrl))
             val newMediaSource = mediaSourceMap.getOrPut(requestUrl) {
                 val source = MediaItem.Builder()
                     .setUri(requestUrl)
@@ -149,9 +150,5 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
             mediaSource.postValue(newMediaSource)
             loadingVideo.postValue(true)
         }
-    }
-
-    fun changeFloatDialogVisibility() {
-        showFloatDialog.postValue(!showFloatDialog.value!!)
     }
 }

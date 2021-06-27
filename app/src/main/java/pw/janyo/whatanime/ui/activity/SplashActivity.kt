@@ -2,17 +2,13 @@ package pw.janyo.whatanime.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.runtime.Composable
+import androidx.appcompat.app.AppCompatActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.config.setSecret
 import pw.janyo.whatanime.viewModel.TestViewModel
 
-class SplashActivity : BaseComposeActivity<TestViewModel>() {
-    override val viewModel: TestViewModel by viewModel()
-
-    @Composable
-    override fun BuildContent() {
-    }
+class SplashActivity : AppCompatActivity() {
+    private val viewModel: TestViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +18,10 @@ class SplashActivity : BaseComposeActivity<TestViewModel>() {
             }
         })
         viewModel.completeTest.observe(this, {
-            if (it) {
-                doNext()
+            if (it.isNotBlank()) {
+                application.setSecret(it)
             }
+            doNext()
         })
         viewModel.doTest()
     }

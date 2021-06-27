@@ -40,11 +40,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about_whatanime">
         <Preference
-            android:key="@string/key_whatanime"
+            android:key="@string/key_developer_whatanime"
             android:summary="@string/summary_developer_whatanime"
             android:title="@string/title_developer_whatanime" />
         <Preference
-            android:key="@string/key_developer_whatanime"
+            android:key="@string/key_whatanime"
             android:summary="@string/summary_whatanime"
             android:title="@string/title_whatanime" />
     </PreferenceCategory>
