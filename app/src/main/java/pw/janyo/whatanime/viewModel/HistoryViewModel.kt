@@ -26,7 +26,7 @@ class HistoryViewModel : ComposeViewModel(), KoinComponent {
 
     fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Logger.wtf("deleteHistory: ", throwable)
+            Logger.e(throwable, "deleteHistory failed")
             listener(false)
         }) {
             animationRepository.deleteHistory(animationHistory, listener)

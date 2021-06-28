@@ -36,7 +36,7 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
         }
         viewModel.exceptionData.observe(this, {
             it?.let {
-                Logger.wtf("observe: ", it)
+                Logger.e(it, "exception detected")
                 it.toastLong()
             }
         })
