@@ -1,11 +1,31 @@
 package pw.janyo.whatanime.model
 
 class Animation {
-	var RawDocsCount: Int = 0
-	var RawDocsSearchTime: Long = 0L
-	var ReRankSearchTime: Long = 0L
-	var CacheHit: Boolean = false//是否被缓存
-	var limit: Int = 0//剩余额度
-	var limit_ttl: Int = 0//额度重置时间
-	lateinit var docs: List<Docs>//结果
+    var error: String = ""
+    lateinit var result: List<Result>//结果
+}
+
+class Result {
+    lateinit var anilist: Anilist
+    var filename: String = ""
+    var episode: String? = null
+    var from: Double = 0.0//开始
+    var to: Double = 0.0//结束
+    var similarity: Double = 0.0//准确度
+    var video: String = ""
+    var image: String = ""
+}
+
+class Anilist {
+    var id: Long = 0L
+    var idMal: Long = 0L
+    var title: Title? = null
+    var synonyms: List<String>? = null
+    var isAdult: Boolean = false
+}
+
+class Title {
+    var native: String = ""
+    var romaji: String = ""
+    var english: String = ""
 }

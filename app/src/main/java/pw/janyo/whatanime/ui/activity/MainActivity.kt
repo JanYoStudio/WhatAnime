@@ -51,7 +51,7 @@ import pw.janyo.whatanime.config.inChina
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.Constant.ADMOB_ID
-import pw.janyo.whatanime.model.Docs
+import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.utils.firstNotNull
@@ -338,10 +338,10 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             R.string.hint_show_animation_detail,
                             firstNotNull(
                                 "",
-                                it.title_native,
-                                it.title_chinese,
-                                it.title_english,
-                                it.title_romaji,
+                                it.anilist.title?.native,
+                                it.anilist.title?.english,
+                                it.anilist.title?.romaji,
+                                it.anilist.synonyms?.toTypedArray(),
                             )
                         )
                     )
@@ -349,7 +349,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            toCustomTabs("https://anilist.co/anime/${it.anilist_id}")
+                            toCustomTabs("https://anilist.co/anime/${it.anilist.id}")
                             viewModel.clickDocs.postValue(null)
                         }
                     ) {
@@ -443,7 +443,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     @ExperimentalFoundationApi
     @ExperimentalMaterialApi
     @Composable
-    fun BuildList(resultList: List<Docs>?) {
+    fun BuildList(resultList: List<Result>?) {
         val searchQuota by viewModel.quota.observeAsState()
         if (resultList != null && resultList.isEmpty()) {
             viewModel.errorMessageState(stringResource(R.string.hint_no_result))
@@ -468,40 +468,19 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         BuildImage()
                         searchQuota?.let {
-                            val limit =
-                                if (it.limit == 0) it.user_limit else it.limit
-                            val refreshTime =
-                                if (it.limit_ttl == 0) it.user_limit_ttl else it.limit_ttl
-                            Row(
+                            Text(
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .requiredHeight(IntrinsicSize.Min)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.hint_search_quota) + limit,
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Divider(
-                                    color = MaterialTheme.colors.onSurface,
-                                    modifier = Modifier
-                                        .width(1.dp)
-                                        .fillMaxHeight()
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(R.string.hint_search_quota_ttl) + (refreshTime * 1000).toLong()
-                                        .formatTime(),
-                                    color = MaterialTheme.colors.onSurface,
-                                )
-                            }
+                                    .padding(8.dp),
+                                text = stringResource(R.string.hint_search_quota) + "${it.quotaUsed}/${it.quota}",
+                                color = MaterialTheme.colors.onSurface,
+                            )
                         }
                     }
                 }
             }
             resultList?.let {
-                items(it) { item: Docs ->
-                    BuildResultItem(docs = item)
+                items(it) { item: Result ->
+                    BuildResultItem(result = item)
                 }
             }
         }
@@ -509,14 +488,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
 
     @ExperimentalMaterialApi
     @Composable
-    fun BuildResultItem(docs: Docs) {
-        val requestUrl = String.format(
-            Constant.previewUrl,
-            docs.anilist_id,
-            Uri.encode(docs.filename),
-            docs.at,
-            docs.tokenthumb ?: ""
-        )
+    fun BuildResultItem(result: Result) {
         Card(
             modifier = Modifier.padding(horizontal = 8.dp),
             border = BorderStroke(
@@ -525,7 +497,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                viewModel.clickDocs.postValue(docs)
+                viewModel.clickDocs.postValue(result)
             }
         ) {
             Column(
@@ -533,7 +505,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                if (docs.similarity < 0.87) {
+                if (result.similarity < 0.87) {
                     Text(
                         text = stringResource(R.string.hint_probably_mistake),
                         color = MaterialTheme.colors.secondary,
@@ -546,16 +518,14 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                     Row {
                         Column {
                             BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
-                            BuildText(stringResource(R.string.hint_title_chinese))
                             BuildText(stringResource(R.string.hint_title_english))
                             BuildText(stringResource(R.string.hint_title_romaji))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            BuildText(docs.title_native ?: "", FontWeight.Bold)
-                            BuildText(docs.title_chinese ?: "")
-                            BuildText(docs.title_english ?: "")
-                            BuildText(docs.title_romaji ?: "")
+                            BuildText(result.anilist.title?.native ?: "", FontWeight.Bold)
+                            BuildText(result.anilist.title?.english ?: "")
+                            BuildText(result.anilist.title?.romaji ?: "")
                         }
                     }
                 }
@@ -563,7 +533,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = rememberCoilPainter(
-                            request = requestUrl,
+                            request = result.image,
                             imageLoader = imageLoader
                         ),
                         contentDescription = null,
@@ -571,7 +541,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                viewModel.playVideo(docs)
+                                viewModel.playVideo(result)
                             })
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -586,12 +556,12 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                BuildText((docs.at.toLong() * 1000).formatTime())
-                                BuildText("${docs.episode}")
-                                BuildText("${docs.anilist_id}")
-                                BuildText("${docs.mal_id}")
+                                BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
+                                BuildText(result.episode ?: "")
+                                BuildText("${result.anilist.id}")
+                                BuildText("${result.anilist.idMal}")
                                 BuildText(
-                                    "${DecimalFormat("#.000").format(docs.similarity * 100)}%",
+                                    "${DecimalFormat("#.000").format(result.similarity * 100)}%",
                                     FontWeight.Bold
                                 )
                             }

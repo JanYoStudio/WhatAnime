@@ -3,7 +3,6 @@ package pw.janyo.whatanime.ui.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
@@ -46,9 +45,8 @@ import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.toCustomTabs
-import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.Constant.ADMOB_ID
-import pw.janyo.whatanime.model.Docs
+import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
@@ -134,7 +132,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
         val originFile = File(originPath)
         viewModel.search(
             originFile,
-            null,
             cacheFile.absolutePath,
             originPath,
             "",
@@ -251,10 +248,10 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                             R.string.hint_show_animation_detail,
                             firstNotNull(
                                 "",
-                                it.title_native,
-                                it.title_chinese,
-                                it.title_english,
-                                it.title_romaji,
+                                it.anilist.title?.native,
+                                it.anilist.title?.english,
+                                it.anilist.title?.romaji,
+                                it.anilist.synonyms?.toTypedArray(),
                             )
                         )
                     )
@@ -262,7 +259,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            toCustomTabs("https://anilist.co/anime/${it.anilist_id}")
+                            toCustomTabs("https://anilist.co/anime/${it.anilist.id}")
                             viewModel.clickDocs.postValue(null)
                         }
                     ) {
@@ -288,8 +285,8 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             }, content = {
                 Box(modifier = Modifier.padding(8.dp)) {
                     AndroidView(modifier = Modifier
-                        .width(320.dp)
-                        .height(180.dp),
+                        .width(480.dp)
+                        .height(270.dp),
                         factory = { context ->
                             PlayerView(context).apply {
                                 this.player = exoPlayer
@@ -390,8 +387,8 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 modifier = Modifier.padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(it) { item: Docs ->
-                    BuildResultItem(docs = item)
+                items(it) { item: Result ->
+                    BuildResultItem(result = item)
                 }
             }
         }
@@ -399,14 +396,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
 
     @ExperimentalMaterialApi
     @Composable
-    fun BuildResultItem(docs: Docs) {
-        val requestUrl = String.format(
-            Constant.previewUrl,
-            docs.anilist_id,
-            Uri.encode(docs.filename),
-            docs.at,
-            docs.tokenthumb ?: ""
-        )
+    fun BuildResultItem(result: Result) {
         Card(
             modifier = Modifier.padding(horizontal = 8.dp),
             border = BorderStroke(
@@ -415,7 +405,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                viewModel.clickDocs.postValue(docs)
+                viewModel.clickDocs.postValue(result)
             }
         ) {
             Column(
@@ -423,7 +413,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                if (docs.similarity < 0.87) {
+                if (result.similarity < 0.9) {
                     Text(
                         text = stringResource(R.string.hint_probably_mistake),
                         color = MaterialTheme.colors.secondary,
@@ -437,16 +427,14 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     Row {
                         Column {
                             BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
-                            BuildText(stringResource(R.string.hint_title_chinese))
                             BuildText(stringResource(R.string.hint_title_english))
                             BuildText(stringResource(R.string.hint_title_romaji))
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            BuildText(docs.title_native ?: "", FontWeight.Bold)
-                            BuildText(docs.title_chinese ?: "")
-                            BuildText(docs.title_english ?: "")
-                            BuildText(docs.title_romaji ?: "")
+                            BuildText(result.anilist.title?.native ?: "", FontWeight.Bold)
+                            BuildText(result.anilist.title?.english ?: "")
+                            BuildText(result.anilist.title?.romaji ?: "")
                         }
                     }
                 }
@@ -454,7 +442,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = rememberCoilPainter(
-                            request = requestUrl,
+                            request = result.image,
                             imageLoader = imageLoader
                         ),
                         contentDescription = null,
@@ -462,27 +450,40 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                viewModel.playVideo(docs)
+                                viewModel.playVideo(result)
                             })
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     SelectionContainer {
                         Row {
+                            val isValidEpisode = result.episode != ""
                             Column {
                                 BuildText(stringResource(R.string.hint_time))
-                                BuildText(stringResource(R.string.hint_episode))
+                                if (isValidEpisode) {
+                                    BuildText(stringResource(R.string.hint_episode))
+                                }
                                 BuildText(stringResource(R.string.hint_ani_list_id))
                                 BuildText(stringResource(R.string.hint_mal_id))
                                 BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                BuildText((docs.at.toLong() * 1000).formatTime())
-                                BuildText("${docs.episode}")
-                                BuildText("${docs.anilist_id}")
-                                BuildText("${docs.mal_id}")
+                                fun formatTime(seconds: Int): String {
+                                    val mm = seconds / 60
+                                    val ss = seconds % 60
+                                    return "${mm}:${if (ss > 10) ss else "0${ss}"}"
+                                }
+
+                                val fromTime = result.from.toInt()
+                                val toTime = result.to.toInt()
+                                BuildText("${formatTime(fromTime)} ~ ${formatTime(toTime)}")
+                                if (isValidEpisode) {
+                                    BuildText(result.episode ?: "")
+                                }
+                                BuildText("${result.anilist.id}")
+                                BuildText("${result.anilist.idMal}")
                                 BuildText(
-                                    "${DecimalFormat("#.000").format(docs.similarity * 100)}%",
+                                    "${DecimalFormat("#.000").format(result.similarity * 100)}%",
                                     FontWeight.Bold
                                 )
                             }

@@ -39,7 +39,6 @@ class AnimationRepository : KoinComponent {
         file: File,
         originPath: String,
         cachePath: String,
-        filter: String?
     ): Animation = withContext(Dispatchers.IO) {
         val history = queryByBase64(originPath)
         if (history != null) {
@@ -50,11 +49,14 @@ class AnimationRepository : KoinComponent {
             }
             val requestBody: RequestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("filter", filter ?: "")
                 .addFormDataPart("image", file.name, file.asRequestBody())
                 .build()
+            trackEvent("search image")
             val data = searchApi.search(requestBody)
-            saveHistory(originPath, cachePath, filter, data)
+            if (data.error.isNotBlank()) {
+                throw Exception("rest request failed, ${data.error}")
+            }
+            saveHistory(originPath, cachePath, data)
             data
         }
     }
@@ -64,7 +66,6 @@ class AnimationRepository : KoinComponent {
         originPath: String,
         cachePath: String,
         mimeType: String,
-        filter: String?
     ): Animation = withContext(Dispatchers.IO) {
         val signatureRequest = SignatureRequest(file, mimeType)
         val signatureResponse = serverVipApi.signature(signatureRequest)
@@ -75,9 +76,12 @@ class AnimationRepository : KoinComponent {
             .build()
         val uploadResponse = serverVipApi.uploadFile(signatureResponse.uploadUrl, requestBody)
         val url = if (file.length() > maxSize) uploadResponse.url else uploadResponse.url
-        val data = searchApi.searchByUrl(url)
         trackEvent("search image", mapOf("url" to url))
-        saveHistory(originPath, cachePath, null, data)
+        val data = searchApi.searchByUrl(url)
+        if (data.error.isNotBlank()) {
+            throw Exception("rest request failed, ${data.error}")
+        }
+        saveHistory(originPath, cachePath, data)
         data
     }
 
@@ -93,49 +97,31 @@ class AnimationRepository : KoinComponent {
         originPath: String,
         cachePath: String,
         mimeType: String,
-        filter: String?,
         connectServer: Boolean
     ): Animation = withContext(Dispatchers.IO) {
-        val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath, filter)
-        val history = animationHistory?.result?.fromJson<Animation>()
-        if (history != null) {
-            history.limit = -987654
-            history.limit_ttl = -987654
-            history
-        } else {
-            if (useServerCompress && connectServer)
-                queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, mimeType, filter)
+        val animationHistory = historyService.queryHistoryByOriginPathAndFilter(originPath)
+        animationHistory?.result?.fromJson<Animation>()
+            ?: if (useServerCompress && connectServer)
+                queryAnimationByImageOnlineWithCloud(file, originPath, cachePath, mimeType)
             else
-                queryAnimationByImageOnline(file, originPath, cachePath, filter)
-        }
+                queryAnimationByImageOnline(file, originPath, cachePath)
     }
 
     private suspend fun queryByBase64(originPath: String): Animation? =
         withContext(Dispatchers.IO) {
             val animationHistory =
-                historyService.queryHistoryByOriginPathAndFilter(originPath, null)
-            val history = animationHistory?.result?.fromJson<Animation>()
-            if (history != null) {
-                history.limit = -987654
-                history.limit_ttl = -987654
-                history
-            } else {
-                null
-            }
+                historyService.queryHistoryByOriginPathAndFilter(originPath)
+            animationHistory?.result?.fromJson<Animation>()
         }
 
-    suspend fun queryHistoryByOriginPath(originPath: String, filter: String?): AnimationHistory? =
+    suspend fun queryHistoryByOriginPath(originPath: String): AnimationHistory? =
         withContext(Dispatchers.IO) {
-            historyService.queryHistoryByOriginPathAndFilter(
-                originPath,
-                filter
-            )
+            historyService.queryHistoryByOriginPathAndFilter(originPath)
         }
 
     private suspend fun saveHistory(
         originPath: String,
         cachePath: String,
-        filter: String?,
         animation: Animation
     ) = withContext(Dispatchers.IO) {
         val animationHistory = AnimationHistory()
@@ -143,11 +129,15 @@ class AnimationRepository : KoinComponent {
         animationHistory.cachePath = cachePath
         animationHistory.result = animation.toJson()
         animationHistory.time = Calendar.getInstance().timeInMillis
-        if (animation.docs.isNotEmpty())
-            animationHistory.title = animation.docs[0].title_native ?: ""
-        else
+        if (animation.result.isNotEmpty()) {
+            val result = animation.result[0]
+            animationHistory.title = result.anilist.title?.native ?: ""
+            animationHistory.anilistId = result.anilist.id
+            animationHistory.episode = result.episode ?: ""
+            animationHistory.similarity = result.similarity
+        } else {
             animationHistory.title = StringConstant.hint_no_result
-        animationHistory.filter = filter
+        }
         historyService.saveHistory(animationHistory)
     }
 

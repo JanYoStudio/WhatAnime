@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.viewModel
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
@@ -11,9 +10,8 @@ import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.inBlackList
-import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant
-import pw.janyo.whatanime.model.Docs
+import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.utils.getCacheFile
@@ -27,8 +25,8 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
 
     private val mediaSourceMap = ConcurrentHashMap<String, MediaSource>()
     val imageFile = MutableLiveData<ShowImage>()
-    val resultList = MutableLiveData<List<Docs>>()
-    val clickDocs = MutableLiveData<Docs>()
+    val resultList = MutableLiveData<List<Result>>()
+    val clickDocs = MutableLiveData<Result>()
     val mediaSource = MutableLiveData<MediaSource>()
     val loadingVideo = MutableLiveData(false)
     val showFloatDialog = MutableLiveData(false)
@@ -42,7 +40,6 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
      */
     fun search(
         file: File,
-        filter: String?,
         cacheInPath: String?,
         originPath: String,
         mimeType: String,
@@ -54,7 +51,7 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
                 throw Exception(StringConstant.hint_file_too_large)
             }
             var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
-            animationRepository.queryHistoryByOriginPath(originPath, filter)?.cachePath
+            animationRepository.queryHistoryByOriginPath(originPath)?.cachePath
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
                     ?: throw Exception(StringConstant.hint_cache_make_dir_error)
@@ -66,13 +63,12 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
                 originPath,
                 cachePath!!,
                 mimeType,
-                filter,
                 connectServer
             )
             val result = if (Configure.hideSex) {
-                animation.docs.filter { !it.is_adult }
+                animation.result.filter { !it.anilist.isAdult }
             } else {
-                animation.docs
+                animation.result
             }
             resultList.postValue(result)
             showFloatDialog.postValue(!inBlackList)
@@ -82,20 +78,9 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
     /**
      * 播放视频
      */
-    fun playVideo(docs: Docs) {
-        fun getUrl(format: String) = String.format(
-            format,
-            docs.anilist_id,
-            Uri.encode(docs.filename),
-            docs.at,
-            docs.tokenthumb ?: ""
-        )
+    fun playVideo(result: Result) {
         launch {
-            val requestUrl = when (Configure.previewConfig) {
-                1 -> getUrl(Constant.videoPreviewUrl)
-                2 -> getUrl(Constant.videoMutePreviewUrl)
-                else -> getUrl(Constant.videoOriginPreviewUrl)
-            }
+            val requestUrl = "${result.video}&size=l"
             val newMediaSource = mediaSourceMap.getOrPut(requestUrl) {
                 val source = MediaItem.Builder()
                     .setUri(requestUrl)

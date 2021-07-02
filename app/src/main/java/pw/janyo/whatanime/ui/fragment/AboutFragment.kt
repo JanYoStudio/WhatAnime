@@ -27,12 +27,10 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
         val versionPreference: Preference = findPreferenceById(R.string.key_app_version)
         val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
         val languagePreference: Preference = findPreferenceById(R.string.key_language)
-        val previewConfigPreference: Preference = findPreferenceById(R.string.key_preview_config)
         val requestTypePreference: Preference = findPreferenceById(R.string.key_request_type)
 
         deviceIdPreference.summary = publicDeviceId
         languagePreference.summary = languageArray[Configure.language]
-        previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
         requestTypePreference.summary = requestTypeArray[Configure.requestType]
         hideSexPreference.isChecked = Configure.hideSex
         versionPreference.summary = BuildConfig.VERSION_NAME
@@ -68,22 +66,6 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
                         activity.startActivity(intent)
                         activity.finish()
                     }
-                }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
-            true
-        }
-        previewConfigPreference.setOnPreferenceClickListener {
-            var select = Configure.previewConfig
-            val activity = requireActivity()
-            MaterialAlertDialogBuilder(activity)
-                .setTitle(R.string.title_change_preview_config)
-                .setSingleChoiceItems(R.array.preview_config, select) { _, which ->
-                    select = which
-                }
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    Configure.previewConfig = select
-                    previewConfigPreference.summary = previewConfigArray[Configure.previewConfig]
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()

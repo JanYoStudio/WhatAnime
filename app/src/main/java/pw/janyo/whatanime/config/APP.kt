@@ -67,7 +67,6 @@ class APP : Application() {
             val sp = sp("configure", Context.MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
             Configure.language = sp.getInt("config_language", 0)
-            Configure.previewConfig = sp.getInt("config_preview_config", 0)
             Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
             Configure.lastVersion = BuildConfig.VERSION_CODE
         }
@@ -121,6 +120,6 @@ fun Application.setSecret(secret: String) {
     }
 }
 
-fun trackEvent(name: String, properties: Map<String, String>) {
+fun trackEvent(name: String, properties: Map<String, String> = emptyMap()) {
     Analytics.trackEvent(name, properties)
 }

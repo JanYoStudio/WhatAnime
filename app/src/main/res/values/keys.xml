@@ -3,13 +3,10 @@
     <string name="key_device_id" translatable="false">key_device_id</string>
     <string name="key_hide_sex" translatable="false">key_hide_sex</string>
     <string name="key_language" translatable="false">key_language</string>
-    <string name="key_preview_config" translatable="false">key_preview_config</string>
     <string name="key_request_type" translatable="false">key_request_type</string>
     <string name="key_app_version" translatable="false">key_app_version</string>
 
     <string name="title_language">Language</string>
-
-    <string name="title_preview_config">Previews</string>
 
     <string name="title_request_type">Search Request Type</string>
 

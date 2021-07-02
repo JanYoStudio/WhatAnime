@@ -22,9 +22,8 @@
     <string name="hint_similarity">準確度：</string>
     <string name="hint_time">時間：</string>
     <string name="hint_time_history">儲存時間：</string>
-    <string name="hint_title_chinese">中文標題：</string>
     <string name="hint_title_english">英文標題：</string>
-    <string name="hint_title_native">日語標題：</string>
+    <string name="hint_title_native">標題：</string>
     <string name="hint_title_romaji">羅馬字：</string>
     <string name="hint_ani_list_id">AniList ID: </string>
     <string name="hint_mal_id">MyAnimeList ID: </string>
@@ -55,14 +54,12 @@
     <string name="array_preview_config_natural_scene_cutting">自然場景切割視訊預覽</string>
     <string name="array_preview_config_origin">原始視訊預覽</string>
     <string name="title_change_preview_config">更改視訊預覽選項</string>
-    <string name="title_preview_config">視訊預覽</string>
     <string name="array_summary_preview_config_mute_natural">通過 trace.moe-media 自動檢測預覽的時間戳邊界，得到一個靜音的視訊預覽。</string>
     <string name="array_summary_preview_config_natural_scene_cutting">通過 trace.moe-media 自動檢測預覽的時間戳邊界。</string>
     <string name="array_summary_preview_config_origin">截圖時刻前後3秒的視訊預覽。（提前1秒，延後2秒）</string>
     <string name="hint_no_browser">請先安裝一個瀏覽器。</string>
     <string name="hint_select_browser">請選擇一個瀏覽器：</string>
     <string name="hint_search_quota">搜尋配額：</string>
-    <string name="hint_search_quota_ttl">配額更新時間：</string>
     <string name="hint_show_animation_detail">想檢視更多關於《%1$s》的資訊嗎？</string>
     <string name="hint_not_share">檔案無效！</string>
     <string name="title_receive_share">搜尋番劇</string>
@@ -85,5 +82,6 @@
     <string name="array_summary_request_type_server_compress">通過服務器進行中轉請求，對於國內用戶來說可能會更快一些</string>
     <string name="array_summary_request_type_detect">自動進行檢測</string>
     <string name="hint_file_too_large">文件過大，請手動執行一次壓縮！</string>
-    <string name="hint_probably_mistake">可能是錯誤結果</string>
+    <string name="hint_probably_mistake">結果可能錯誤，請自行判斷</string>
+    <string name="hint_data_convert_no_detail_in_history">因為數據結構變更，無法再查看該條記錄的相關信息，請刪除該記錄</string>
 </resources>

@@ -8,9 +8,6 @@
             android:key="@string/key_language"
             android:title="@string/title_language" />
         <Preference
-            android:key="@string/key_preview_config"
-            android:title="@string/title_preview_config" />
-        <Preference
             android:key="@string/key_request_type"
             android:title="@string/title_request_type" />
     </PreferenceCategory>

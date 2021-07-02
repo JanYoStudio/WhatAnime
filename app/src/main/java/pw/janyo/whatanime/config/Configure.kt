@@ -19,9 +19,9 @@ object Configure {
         set(value) = sharedPreference.use { putInt("config_language", value) }
         get() = sharedPreference.getInt("config_language", 0)
 
-    var previewConfig: Int
-        set(value) = sharedPreference.use { putInt("config_preview_config", value) }
-        get() = sharedPreference.getInt("config_preview_config", 1)
+//    var previewConfig: Int
+//        set(value) = sharedPreference.use { putInt("config_preview_config", value) }
+//        get() = sharedPreference.getInt("config_preview_config", 1)
 
     var requestType: Int
         set(value) = sharedPreference.use { putInt("config_request_type", value) }

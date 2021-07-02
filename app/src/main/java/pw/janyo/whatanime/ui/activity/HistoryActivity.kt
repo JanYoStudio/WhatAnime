@@ -32,12 +32,10 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.constant.Constant.ADMOB_ID
-import pw.janyo.whatanime.model.Animation
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.viewModel.HistoryViewModel
-import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
@@ -187,12 +185,9 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     @ExperimentalMaterialApi
     @Composable
     fun BuildResultItem(history: AnimationHistory) {
-        val animation: Animation = history.result.fromJson()
-        val animationDocs = if (animation.docs.isNotEmpty()) animation.docs[0] else null
-        val similarity = if (animationDocs == null)
-            "0%"
-        else
-            "${DecimalFormat("#.0000").format(animationDocs.similarity * 100)}%"
+        val similarity = "${DecimalFormat("#.0000").format(history.similarity * 100)}%"
+        val isOldData =
+            history.episode == "old" || history.similarity == 0.0
         Card(
             modifier = Modifier.padding(horizontal = 8.dp),
             border = BorderStroke(
@@ -201,10 +196,14 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                DetailActivity.showDetail(
-                    this@HistoryActivity,
-                    File(history.cachePath), history.originPath, history.title
-                )
+                if (isOldData) {
+                    getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
+                } else {
+                    DetailActivity.showDetail(
+                        this@HistoryActivity,
+                        File(history.cachePath), history.originPath, history.title
+                    )
+                }
             }
         ) {
             Row(modifier = Modifier.padding(8.dp)) {
@@ -215,12 +214,19 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         .height(90.dp)
                         .width(160.dp)
                 )
+                val isValidEpisode = history.episode != ""
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     BuildText(stringResource(R.string.hint_time_history))
                     BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
-                    BuildText(stringResource(R.string.hint_title_chinese))
-                    BuildText(stringResource(R.string.hint_episode))
-                    BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                    if (!isOldData) {
+                        BuildText(stringResource(R.string.hint_ani_list_id))
+                    }
+                    if (!isOldData && isValidEpisode) {
+                        BuildText(stringResource(R.string.hint_episode))
+                    }
+                    if (!isOldData) {
+                        BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                    }
                 }
                 Column(
                     modifier = Modifier
@@ -228,10 +234,16 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         .fillMaxWidth()
                 ) {
                     BuildText(history.time.getCalendarFromLong().toDateTimeString())
-                    BuildText(animationDocs?.title_native ?: "", FontWeight.Bold)
-                    BuildText(animationDocs?.title_chinese ?: "")
-                    BuildText(animationDocs?.episode ?: "")
-                    BuildText(similarity, FontWeight.Bold)
+                    BuildText(history.title, FontWeight.Bold)
+                    if (!isOldData) {
+                        BuildText(history.anilistId.toString())
+                    }
+                    if (!isOldData && isValidEpisode) {
+                        BuildText(history.episode)
+                    }
+                    if (!isOldData) {
+                        BuildText(similarity, FontWeight.Bold)
+                    }
                 }
             }
         }

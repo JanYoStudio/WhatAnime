@@ -35,6 +35,14 @@ private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
         database.execSQL("drop table _tb_animation_history")
     }
 }
+private val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("alter table tb_animation_history rename to _tb_animation_history")
+        database.execSQL("CREATE TABLE IF NOT EXISTS `tb_animation_history` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `origin_path` TEXT NOT NULL, `cache_path` TEXT NOT NULL, `animation_result` TEXT NOT NULL, `animation_time` INTEGER NOT NULL, `animation_title` TEXT NOT NULL, `animation_anilist_id` INTEGER NOT NULL, `animation_episode` TEXT NOT NULL, `animation_similarity` REAL NOT NULL)")
+        database.execSQL("insert into tb_animation_history select id, origin_path, cache_path, animation_result, animation_time, animation_title, 0, 'old', 0 from _tb_animation_history")
+        database.execSQL("drop table _tb_animation_history")
+    }
+}
 
 val databaseModule = module {
     single {
@@ -42,6 +50,7 @@ val databaseModule = module {
             .addMigrations(MIGRATION_1_2)
             .addMigrations(MIGRATION_2_3)
             .addMigrations(MIGRATION_3_4)
+            .addMigrations(MIGRATION_4_5)
             .build()
     }
     single {

@@ -1,7 +1,6 @@
 package pw.janyo.whatanime.viewModel
 
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
@@ -13,9 +12,8 @@ import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.trackEvent
-import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant
-import pw.janyo.whatanime.model.Docs
+import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.repository.AnimationRepository
@@ -32,8 +30,8 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
     private val mediaSourceMap = ConcurrentHashMap<String, MediaSource>()
     val quota = MutableLiveData<SearchQuota>()
     val imageFile = MutableLiveData<ShowImage>()
-    val resultList = MutableLiveData<List<Docs>>()
-    val clickDocs = MutableLiveData<Docs>()
+    val resultList = MutableLiveData<List<Result>>()
+    val clickDocs = MutableLiveData<Result>()
     val mediaSource = MutableLiveData<MediaSource>()
     val loadingVideo = MutableLiveData(false)
 
@@ -46,7 +44,6 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
      */
     fun search(
         file: File,
-        filter: String?,
         cacheInPath: String?,
         originPath: String,
         mimeType: String,
@@ -58,7 +55,7 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
                 throw Exception(StringConstant.hint_file_too_large)
             }
             var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
-            animationRepository.queryHistoryByOriginPath(originPath, filter)?.cachePath
+            animationRepository.queryHistoryByOriginPath(originPath)?.cachePath
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
                     ?: throw Exception(StringConstant.hint_cache_make_dir_error)
@@ -70,19 +67,12 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
                 originPath,
                 cachePath!!,
                 mimeType,
-                filter,
                 connectServer
             )
-            if (animation.limit != -987654 && animation.limit_ttl != -987654) {
-                quota.postValue(SearchQuota().apply {
-                    limit = animation.limit
-                    limit_ttl = animation.limit_ttl
-                })
-            }
             val result = if (Configure.hideSex) {
-                animation.docs.filter { !it.is_adult }
+                animation.result.filter { !it.anilist.isAdult }
             } else {
-                animation.docs
+                animation.result
             }
             resultList.postValue(result)
         }
@@ -114,7 +104,6 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
             search(
                 file,
                 null,
-                null,
                 file.absolutePath,
                 mimeType,
                 connectServer
@@ -125,20 +114,9 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
     /**
      * 播放视频
      */
-    fun playVideo(docs: Docs) {
-        fun getUrl(format: String) = String.format(
-            format,
-            docs.anilist_id,
-            Uri.encode(docs.filename),
-            docs.at,
-            docs.tokenthumb ?: ""
-        )
+    fun playVideo(result: Result) {
         launch {
-            val requestUrl = when (Configure.previewConfig) {
-                1 -> getUrl(Constant.videoPreviewUrl)
-                2 -> getUrl(Constant.videoMutePreviewUrl)
-                else -> getUrl(Constant.videoOriginPreviewUrl)
-            }
+            val requestUrl = "${result.video}&size=l"
             trackEvent("play video", mapOf("url" to requestUrl))
             val newMediaSource = mediaSourceMap.getOrPut(requestUrl) {
                 val source = MediaItem.Builder()

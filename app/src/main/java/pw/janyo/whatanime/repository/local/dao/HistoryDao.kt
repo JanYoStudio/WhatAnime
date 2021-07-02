@@ -5,21 +5,18 @@ import pw.janyo.whatanime.model.AnimationHistory
 
 @Dao
 interface HistoryDao {
-	@Insert
-	fun saveHistory(animationHistory: AnimationHistory): Long
+    @Insert
+    fun saveHistory(animationHistory: AnimationHistory): Long
 
-	@Delete
-	fun delete(animationHistory: AnimationHistory): Int
+    @Delete
+    fun delete(animationHistory: AnimationHistory): Int
 
-	@Query("SELECT * FROM tb_animation_history")
-	fun queryAllHistory(): List<AnimationHistory>
+    @Query("SELECT * FROM tb_animation_history")
+    fun queryAllHistory(): List<AnimationHistory>
 
-	@Update
-	fun update(animationHistory: AnimationHistory): Int
+    @Update
+    fun update(animationHistory: AnimationHistory): Int
 
-	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath LIMIT 1")
-	fun queryHistoryByOriginPath(originPath: String): AnimationHistory?
-
-	@Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath and animation_filter = :filter LIMIT 1")
-	fun queryHistoryByOriginPathAndFilter(originPath: String, filter: String): AnimationHistory?
+    @Query("SELECT * FROM tb_animation_history WHERE origin_path = :originPath LIMIT 1")
+    fun queryHistoryByOriginPath(originPath: String): AnimationHistory?
 }
