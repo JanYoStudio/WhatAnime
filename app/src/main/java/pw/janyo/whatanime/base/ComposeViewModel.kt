@@ -34,6 +34,11 @@ abstract class ComposeViewModel : ViewModel() {
         }
     }
 
+    fun clear() {
+        _exception.postValue(null)
+        _errorMessage.postValue(null)
+    }
+
     protected fun launch(action: suspend () -> Unit) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             exceptionState(throwable)

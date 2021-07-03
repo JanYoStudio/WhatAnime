@@ -19,6 +19,7 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.request.SignatureRequest
 import pw.janyo.whatanime.repository.local.service.HistoryService
+import pw.janyo.whatanime.utils.getCacheFile
 import vip.mystery0.tools.ResourceException
 import vip.mystery0.tools.factory.fromJson
 import vip.mystery0.tools.factory.toJson
@@ -145,9 +146,12 @@ class AnimationRepository : KoinComponent {
         historyService.queryAllHistory()
     }
 
-    suspend fun deleteHistory(animationHistory: AnimationHistory, listener: (Boolean) -> Unit) =
+    suspend fun deleteHistory(historyId: Int) =
         withContext(Dispatchers.IO) {
-            listener(historyService.delete(animationHistory) == 1)
-            File(animationHistory.cachePath).delete()
+            val animationHistory = historyService.getById(historyId)
+            historyService.delete(historyId)
+            animationHistory?.let {
+                File(it.cachePath).delete()
+            }
         }
 }

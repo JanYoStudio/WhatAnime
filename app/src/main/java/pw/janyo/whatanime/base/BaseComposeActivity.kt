@@ -26,6 +26,7 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
     @LayoutRes val contentLayoutId: Int = 0
 ) :
     ComponentActivity(contentLayoutId) {
+    private var toast: Toast? = null
     abstract val viewModel: V
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +35,22 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
         setContent {
             BuildContent()
         }
-        viewModel.exceptionData.observe(this, {
+    }
+
+    protected fun observerErrorMessage(block: (String) -> Unit) {
+        viewModel.exceptionData.observe(this, { e ->
+            e?.let { throwable ->
+                Logger.e(throwable, "exception detected")
+                throwable.message?.let {
+                    block(it)
+                }
+                viewModel.clear()
+            }
+        })
+        viewModel.errorMessageData.observe(this, {
             it?.let {
-                Logger.e(it, "exception detected")
-                it.toastLong()
+                block(it)
+                viewModel.clear()
             }
         })
     }
@@ -78,10 +91,8 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
         startActivity(Intent(this, clazz.java))
     }
 
-    fun Throwable?.toast() = dispatch(this, false)
-    fun Throwable?.toastLong() = dispatch(this, true)
-    fun String?.toast() = newToast(this@BaseComposeActivity, this, Toast.LENGTH_SHORT)
-    fun String?.toastLong() = newToast(this@BaseComposeActivity, this, Toast.LENGTH_LONG)
+    fun String.toast() = newToast(this@BaseComposeActivity, this, Toast.LENGTH_SHORT)
+    fun String.toastLong() = newToast(this@BaseComposeActivity, this, Toast.LENGTH_LONG)
 
     private fun dispatch(
         throwable: Throwable?,
@@ -96,7 +107,9 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
     }
 
     private fun newToast(context: Context, message: String?, length: Int) {
-        Toast.makeText(context, message, length).show()
+        toast?.cancel()
+        toast = Toast.makeText(context, message, length)
+        toast?.show()
     }
 
     fun @receiver:StringRes Int.asString(): String = getString(this)

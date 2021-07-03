@@ -1,8 +1,11 @@
 package pw.janyo.whatanime.ui.activity
 
 import android.os.Bundle
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,14 +13,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.twotone.ContactSupport
+import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,7 +34,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.gms.ads.*
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
@@ -40,25 +47,30 @@ import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
 import java.text.DecimalFormat
+import kotlin.math.roundToInt
 
 class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     override val viewModel: HistoryViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        observerErrorMessage {
+            it.toastLong()
+        }
         viewModel.refresh()
     }
 
+    @ExperimentalAnimationApi
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val errorMessage by viewModel.errorMessageData.observeAsState()
         val adsDialogShowState = remember { mutableStateOf(false) }
         val isRefreshing by viewModel.refreshData.observeValueAsState()
         val historyList by viewModel.historyList.observeAsState()
+        val selectedList = remember { mutableStateListOf<Int>() }
+        val selectedMode by remember { derivedStateOf { selectedList.isNotEmpty() } }
         WhatAnimeTheme {
             val scaffoldState = rememberScaffoldState()
-            val scope = rememberCoroutineScope()
             Scaffold(
                 scaffoldState = scaffoldState,
                 topBar = {
@@ -68,12 +80,32 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                             IconButton(onClick = {
                                 finish()
                             }) {
-                                Icon(Icons.Filled.ArrowBack, "")
+                                Icon(
+                                    Icons.Filled.ArrowBack,
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colors.onPrimary
+                                )
                             }
                         },
                         backgroundColor = MaterialTheme.colors.primary,
                         contentColor = MaterialTheme.colors.onPrimary,
                     )
+                },
+                floatingActionButton = {
+                    AnimatedVisibility(
+                        visible = selectedMode,
+                        enter = slideInVertically(initialOffsetY = { it }),
+                        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                    ) {
+                        FloatingActionButton(onClick = {
+                            viewModel.deleteHistory(selectedList)
+                        }) {
+                            Icon(
+                                imageVector = Icons.TwoTone.DeleteSweep,
+                                contentDescription = null
+                            )
+                        }
+                    }
                 },
             ) {
                 SwipeRefresh(
@@ -85,16 +117,11 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         if (inBlackList) {
                             BuildAdLayout(adsDialogShowState)
                         }
-                        BuildList(historyList)
+                        BuildList(historyList, selectedList)
                     }
                 }
             }
             BuildAdDialog(adsDialogShowState)
-            errorMessage?.let {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(it)
-                }
-            }
         }
     }
 
@@ -135,7 +162,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                 adsDialogShowState.value = true
             }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_why_show_ad),
+                    imageVector = Icons.TwoTone.ContactSupport,
                     contentDescription = null
                 )
             }
@@ -162,7 +189,10 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
 
     @ExperimentalMaterialApi
     @Composable
-    fun BuildList(list: List<AnimationHistory>?) {
+    fun BuildList(
+        list: List<AnimationHistory>?,
+        selectedList: SnapshotStateList<Int>
+    ) {
         if (list == null) {
             return
         }
@@ -177,36 +207,81 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(list) { item: AnimationHistory ->
-                BuildResultItem(history = item)
+                BuildResultItem(history = item, selectedList = selectedList)
             }
         }
     }
 
     @ExperimentalMaterialApi
     @Composable
-    fun BuildResultItem(history: AnimationHistory) {
+    fun BuildResultItem(
+        history: AnimationHistory,
+        selectedList: SnapshotStateList<Int>,
+    ) {
         val similarity = "${DecimalFormat("#.0000").format(history.similarity * 100)}%"
         val isOldData =
             history.episode == "old" || history.similarity == 0.0
-        Card(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            border = BorderStroke(
+
+        fun reverseState() {
+            if (selectedList.contains(history.id)) {
+                selectedList.remove(history.id)
+            } else {
+                selectedList.add(history.id)
+            }
+        }
+
+        val cardBorder = if (selectedList.contains(history.id))
+            BorderStroke(
+                4.dp,
+                MaterialTheme.colors.secondary
+            )
+        else
+            BorderStroke(
                 1.dp,
                 colorResource(R.color.outlined_stroke_color)
-            ),
-            shape = RoundedCornerShape(8.dp),
-            onClick = {
-                if (isOldData) {
-                    getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
-                } else {
-                    DetailActivity.showDetail(
-                        this@HistoryActivity,
-                        File(history.cachePath), history.originPath, history.title
+            )
+        val swipeableState = rememberSwipeableState(0,
+            confirmStateChange = {
+                if (it != 0) {
+                    reverseState()
+                }
+                false
+            })
+        val sizePx = with(LocalDensity.current) { 48.dp.toPx() }
+        val anchors = mapOf(-sizePx to -1, 0f to 0, sizePx to 1)
+
+        Card(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = { reverseState() },
+                        onTap = {
+                            when {
+                                selectedList.isNotEmpty() -> reverseState()
+                                isOldData -> getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
+                                else -> DetailActivity.showDetail(
+                                    this@HistoryActivity,
+                                    File(history.cachePath), history.originPath, history.title
+                                )
+                            }
+                        },
                     )
                 }
-            }
+                .swipeable(
+                    state = swipeableState,
+                    anchors = anchors,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Horizontal
+                ),
+            border = cardBorder,
+            shape = RoundedCornerShape(8.dp),
         ) {
-            Row(modifier = Modifier.padding(8.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+            ) {
                 Image(
                     painter = rememberCoilPainter(request = File(history.cachePath)),
                     contentDescription = null,

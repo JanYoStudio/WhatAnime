@@ -11,8 +11,10 @@ class HistoryServiceImpl : HistoryService, KoinComponent {
     override fun saveHistory(animationHistory: AnimationHistory): Long =
         historyDao.saveHistory(animationHistory)
 
-    override fun delete(animationHistory: AnimationHistory): Int =
-        historyDao.delete(animationHistory)
+    override fun getById(historyId: Int): AnimationHistory? = historyDao.getById(historyId)
+
+    override fun delete(historyId: Int): Int =
+        historyDao.delete(historyId)
 
     override fun queryAllHistory(): List<AnimationHistory> = historyDao.queryAllHistory()
 

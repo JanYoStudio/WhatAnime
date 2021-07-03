@@ -11,6 +11,7 @@ object StringConstant {
     val hint_file_too_large = getString(R.string.hint_file_too_large)
     val hint_cache_make_dir_error = getString(R.string.hint_cache_make_dir_error)
     val hint_select_file_path_null = getString(R.string.hint_select_file_path_null)
+    val hint_history_delete_done = getString(R.string.hint_history_delete_done)
 
     private fun getString(@StringRes id: Int): String = context().getString(id)
 }

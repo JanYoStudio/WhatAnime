@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.twotone.ContactSupport
+import androidx.compose.material.icons.twotone.Preview
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -52,7 +54,6 @@ import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.utils.firstNotNull
 import pw.janyo.whatanime.viewModel.DetailViewModel
-import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import java.text.DecimalFormat
 
@@ -143,7 +144,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val errorMessage by viewModel.errorMessageData.observeAsState()
         val adsDialogShowState = remember { mutableStateOf(false) }
         val showFloatDialog by viewModel.showFloatDialog.observeValueAsState()
         WhatAnimeTheme {
@@ -168,7 +168,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                                 viewModel.changeFloatDialogVisibility()
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_preview),
+                                    imageVector = Icons.TwoTone.Preview,
                                     contentDescription = "",
                                     tint = MaterialTheme.colors.onPrimary
                                 )
@@ -210,7 +210,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             BuildAdDialog(adsDialogShowState)
             BuildAlertDialog()
             BuildVideoDialog()
-            errorMessage?.let {
+            observerErrorMessage {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(it)
                 }
@@ -343,7 +343,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 adsDialogShowState.value = true
             }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_why_show_ad),
+                    imageVector = Icons.TwoTone.ContactSupport,
                     contentDescription = null
                 )
             }

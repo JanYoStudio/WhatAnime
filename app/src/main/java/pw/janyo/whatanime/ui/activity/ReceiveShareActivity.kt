@@ -19,8 +19,9 @@ class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.exceptionData.observe(this, {
-            if (it != null) {
+            it?.let {
                 doNext()
+                viewModel.clear()
             }
         })
         viewModel.completeTest.observe(this, {

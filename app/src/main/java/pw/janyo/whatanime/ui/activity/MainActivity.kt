@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -153,7 +155,6 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val errorMessage by viewModel.errorMessageData.observeAsState()
         val isRefreshing by viewModel.refreshData.observeValueAsState()
         val adLoadResult = remember { mutableStateOf(true) }
         val adsDialogShowState = remember { mutableStateOf(false) }
@@ -173,7 +174,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             toCustomTabs(if (inChina == true) Constant.indexVipUrl else Constant.indexAppUrl)
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_about),
+                                imageVector = Icons.TwoTone.Info,
                                 contentDescription = stringResource(R.string.action_about),
                                 tint = MaterialTheme.colors.onPrimary
                             )
@@ -182,7 +183,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             toCustomTabs(if (inChina == true) Constant.faqVipUrl else Constant.faqAppUrl)
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_faq),
+                                imageVector = Icons.TwoTone.HelpCenter,
                                 contentDescription = stringResource(R.string.action_faq),
                                 tint = MaterialTheme.colors.onPrimary
                             )
@@ -191,7 +192,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             intentTo(HistoryActivity::class)
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_history),
+                                imageVector = Icons.TwoTone.Plagiarism,
                                 contentDescription = stringResource(R.string.action_history),
                                 tint = MaterialTheme.colors.onPrimary
                             )
@@ -200,7 +201,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             intentTo(AboutActivity::class)
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_settings),
+                                imageVector = Icons.TwoTone.Settings,
                                 contentDescription = stringResource(R.string.action_settings),
                                 tint = MaterialTheme.colors.onPrimary
                             )
@@ -210,7 +211,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                                 adsDialogShowState.value = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_why_show_ad),
+                                    imageVector = Icons.TwoTone.ContactSupport,
                                     contentDescription = stringResource(R.string.action_why_ad),
                                     tint = MaterialTheme.colors.onPrimary
                                 )
@@ -228,7 +229,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                         selectIntent.launch(intent)
                     }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_search),
+                            imageVector = Icons.TwoTone.ImageSearch,
                             contentDescription = null
                         )
                     }
@@ -250,7 +251,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
             BuildRefreshDialog(isRefreshing)
             BuildAlertDialog()
             BuildVideoDialog()
-            errorMessage?.let {
+            observerErrorMessage {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(it)
                 }
@@ -297,7 +298,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 adsDialogShowState.value = true
             }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_why_show_ad),
+                    imageVector = Icons.TwoTone.ContactSupport,
                     contentDescription = null
                 )
             }
