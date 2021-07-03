@@ -21,9 +21,9 @@ class HistoryViewModel : ComposeViewModel(), KoinComponent {
 
     fun deleteHistory(list: MutableList<Int>) {
         launch {
-//            list.forEach {
-//                animationRepository.deleteHistory(it)
-//            }
+            list.forEach {
+                animationRepository.deleteHistory(it)
+            }
             list.clear()
             errorMessageState(StringConstant.hint_history_delete_done)
             refreshState(true)
