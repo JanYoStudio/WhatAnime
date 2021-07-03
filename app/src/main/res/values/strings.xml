@@ -30,6 +30,8 @@
     <string name="action_re_request_permission">Redo</string>
     <string name="action_disagree">I disagree</string>
     <string name="action_delete">Delete</string>
+    <string name="action_donate">Go to Donate</string>
+    <string name="action_about_quota">About Quota</string>
     <string name="category_about">About</string>
     <string name="category_about_janyo">About JanYo Studio</string>
     <string name="category_about_whatanime">About WhatAnime</string>
@@ -41,9 +43,6 @@
     <string name="array_preview_config_origin">Origin</string>
     <string name="array_preview_config_natural_scene_cutting">Preview with Natural Scene Cutting</string>
     <string name="array_preview_config_mute_natural">Preview with Natural Scene Cutting (Mute)</string>
-    <string name="array_summary_preview_config_origin">There is a 3 second video preview of the matched scene. (1 seconds before and 2 seconds ahead)</string>
-    <string name="array_summary_preview_config_natural_scene_cutting">With trace.moe-media , it can now detect timestamp boundaries of a scene naturally.</string>
-    <string name="array_summary_preview_config_mute_natural">With trace.moe-media , it can now detect timestamp boundaries of a scene naturally, getting a mute video.</string>
     <string name="array_request_type_detect">Automatic Detection</string>
     <string name="array_request_type_server_compress">Cloud Compress</string>
     <string name="array_request_type_server_directly">Request Directly</string>

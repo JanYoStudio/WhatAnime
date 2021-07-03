@@ -11,11 +11,6 @@
         <item>@string/array_preview_config_natural_scene_cutting</item>
         <item>@string/array_preview_config_mute_natural</item>
     </string-array>
-    <string-array name="preview_config_summary">
-        <item>@string/array_summary_preview_config_origin</item>
-        <item>@string/array_summary_preview_config_natural_scene_cutting</item>
-        <item>@string/array_summary_preview_config_mute_natural</item>
-    </string-array>
     <string-array name="request_type">
         <item>@string/array_request_type_detect</item>
         <item>@string/array_request_type_server_compress</item>

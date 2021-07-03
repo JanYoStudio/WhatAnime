@@ -107,11 +107,13 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         }
                     }
                 },
-            ) {
+            ) { innerPadding ->
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(isRefreshing),
                     onRefresh = { viewModel.refresh() },
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(innerPadding)
                 ) {
                     Column {
                         if (inBlackList) {

@@ -376,8 +376,8 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
             }, content = {
                 Box(modifier = Modifier.padding(8.dp)) {
                     AndroidView(modifier = Modifier
-                        .width(320.dp)
-                        .height(180.dp),
+                        .width(480.dp)
+                        .height(270.dp),
                         factory = { context ->
                             PlayerView(context).apply {
                                 this.player = exoPlayer

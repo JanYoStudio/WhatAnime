@@ -2,10 +2,7 @@ package pw.janyo.whatanime.module
 
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import pw.janyo.whatanime.viewModel.DetailViewModel
-import pw.janyo.whatanime.viewModel.HistoryViewModel
-import pw.janyo.whatanime.viewModel.MainViewModel
-import pw.janyo.whatanime.viewModel.TestViewModel
+import pw.janyo.whatanime.viewModel.*
 
 val viewModelModule = module {
     viewModel {
@@ -19,5 +16,8 @@ val viewModelModule = module {
     }
     viewModel {
         DetailViewModel()
+    }
+    viewModel {
+        SettingsViewModel()
     }
 }

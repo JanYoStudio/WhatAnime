@@ -1,25 +1,31 @@
 package pw.janyo.whatanime.ui.fragment
 
+import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.preference.CheckBoxPreference
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.*
+import pw.janyo.whatanime.constant.Constant
+import pw.janyo.whatanime.viewModel.SettingsViewModel
 import vip.mystery0.tools.base.BasePreferenceFragment
 import vip.mystery0.tools.utils.fastClick
 
 class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
     private val clipboardManager: ClipboardManager by inject()
+    private val settingsViewModel: SettingsViewModel by viewModel()
     private val languageArray by lazy { resources.getStringArray(R.array.language) }
-    private val previewConfigArray by lazy { resources.getStringArray(R.array.preview_config_summary) }
     private val requestTypeArray by lazy { resources.getStringArray(R.array.summary_request_type) }
+    private val progressDialog by lazy { ProgressDialog(requireActivity()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,12 +34,43 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
         val hideSexPreference: CheckBoxPreference = findPreferenceById(R.string.key_hide_sex)
         val languagePreference: Preference = findPreferenceById(R.string.key_language)
         val requestTypePreference: Preference = findPreferenceById(R.string.key_request_type)
+        val apiKeyPreference: EditTextPreference = findPreferenceById(R.string.key_api_key)
+        val checkApiKeyPreference: Preference = findPreferenceById(R.string.key_check_api_key)
 
         deviceIdPreference.summary = publicDeviceId
         languagePreference.summary = languageArray[Configure.language]
         requestTypePreference.summary = requestTypeArray[Configure.requestType]
         hideSexPreference.isChecked = Configure.hideSex
         versionPreference.summary = BuildConfig.VERSION_NAME
+        apiKeyPreference.text = Configure.apiKey
+
+        settingsViewModel.refreshData.observe(requireActivity()) {
+            if (it) {
+                progressDialog.show()
+            } else {
+                progressDialog.dismiss()
+            }
+        }
+        settingsViewModel.searchQuota.observe(requireActivity()) { quota ->
+            MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(R.string.title_check_api_key)
+                .setMessage(
+                    """
+                    Priority:       ${quota.priority}
+                    Concurrency:    ${quota.concurrency}
+                    Quota:          ${quota.quota}
+                    QuotaUsed:      ${quota.quotaUsed}
+                """.trimIndent()
+                )
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(R.string.action_donate) { _, _ ->
+                    requireActivity().loadInBrowser(Constant.donateUrl)
+                }
+                .setNeutralButton(R.string.action_about_quota) { _, _ ->
+                    requireActivity().loadInBrowser(Constant.quotaInfoUrl)
+                }
+                .show()
+        }
 
         deviceIdPreference.setOnPreferenceClickListener {
             val clipData =
@@ -85,6 +122,13 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
+            true
+        }
+        apiKeyPreference.setOnBindEditTextListener {
+            Configure.apiKey = it.text.toString()
+        }
+        checkApiKeyPreference.setOnPreferenceClickListener {
+            settingsViewModel.showQuota()
             true
         }
 

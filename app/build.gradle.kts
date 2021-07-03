@@ -94,7 +94,7 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("androidx.activity:activity-compose:1.3.0-beta02")
+    implementation("androidx.activity:activity-compose:1.3.0-rc01")
     implementation("androidx.vectordrawable:vectordrawable:1.1.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.browser:browser:1.3.0")
@@ -110,17 +110,17 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
 
     //accompanist
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.12.0")
-    implementation("com.google.accompanist:accompanist-coil:0.12.0")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.13.0")
+    implementation("com.google.accompanist:accompanist-coil:0.13.0")
 
     //firebase
     implementation("com.google.android.gms:play-services-ads:20.2.0")
     implementation("com.google.firebase:firebase-ads:20.2.0")
     //app center
-    implementation("com.microsoft.appcenter:appcenter-analytics:4.1.0")
-    implementation("com.microsoft.appcenter:appcenter-crashes:4.1.0")
+    implementation("com.microsoft.appcenter:appcenter-analytics:4.2.0")
+    implementation("com.microsoft.appcenter:appcenter-crashes:4.2.0")
     // Koin AndroidX Scope features
-    implementation("io.insert-koin:koin-android:3.1.1")
+    implementation("io.insert-koin:koin-android:3.1.2")
     //logger
     implementation("com.orhanobut:logger:2.2.0")
     //Mystery0Tools

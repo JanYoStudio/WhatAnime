@@ -10,5 +10,10 @@ object Constant {
     const val faqAppUrl = "https://janyostudio.mystery0.app/wa/faq.html"
     const val faqVipUrl = "https://janyostudio.mystery0.vip/wa/faq.html"
 
+    const val donateUrl = "https://github.com/sponsors/soruly"
+
+    const val quotaInfoUrl =
+        "https://soruly.github.io/trace.moe-api/#/limits?id=api-search-quota-and-limits"
+
     const val ADMOB_ID = "ca-app-pub-6114262658640635/9315758560"
 }

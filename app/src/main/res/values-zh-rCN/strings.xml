@@ -54,9 +54,6 @@
     <string name="array_preview_config_natural_scene_cutting">自然场景切割视频预览</string>
     <string name="array_preview_config_origin">原始视频预览</string>
     <string name="title_change_preview_config">更改视频预览选项</string>
-    <string name="array_summary_preview_config_mute_natural">通过 trace.moe-media 自动检测预览的时间戳边界，得到一个静音的视频预览。</string>
-    <string name="array_summary_preview_config_natural_scene_cutting">通过 trace.moe-media 自动检测预览的时间戳边界。</string>
-    <string name="array_summary_preview_config_origin">截图时刻前后3秒的视频预览。（提前1秒，延后2秒）</string>
     <string name="hint_no_browser">请先安装一个浏览器。</string>
     <string name="hint_select_browser">请选择一个浏览器：</string>
     <string name="hint_search_quota">搜索配额：</string>
@@ -84,4 +81,11 @@
     <string name="hint_file_too_large">文件过大，请手动执行一次压缩！</string>
     <string name="hint_probably_mistake">可能是错误结果，请自行判断</string>
     <string name="hint_data_convert_no_detail_in_history">因为数据结构变更，无法再查看该条记录的相关信息，请删除该记录</string>
+    <string name="title_api_key">自定义Api Key</string>
+    <string name="summary_check_api_key">查询ApiKey的额度信息</string>
+    <string name="title_check_api_key">检查Api Key</string>
+    <string name="action_delete">删除</string>
+    <string name="action_donate">前往捐赠</string>
+    <string name="action_about_quota">关于内容</string>
+    <string name="summary_api_key">如果您捐赠过WhatAnime项目，那么您可以在此处填写获得的ApiKey。<b>请注意，如果输入的ApiKey无效，将会导致无法使用搜索功能。</b></string>
 </resources>

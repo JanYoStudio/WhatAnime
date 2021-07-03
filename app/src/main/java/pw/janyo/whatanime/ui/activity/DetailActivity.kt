@@ -176,8 +176,11 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                         }
                     )
                 },
-            ) {
-                Box {
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                ) {
                     Column {
                         if (inBlackList) {
                             BuildAdLayout(adsDialogShowState)

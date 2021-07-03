@@ -10,6 +10,14 @@
         <Preference
             android:key="@string/key_request_type"
             android:title="@string/title_request_type" />
+        <EditTextPreference
+            android:key="@string/key_api_key"
+            android:summary="@string/summary_api_key"
+            android:title="@string/title_api_key" />
+        <Preference
+            android:key="@string/key_check_api_key"
+            android:summary="@string/summary_check_api_key"
+            android:title="@string/title_check_api_key" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/category_about">
         <Preference

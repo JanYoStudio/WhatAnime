@@ -4,11 +4,19 @@
     <string name="key_hide_sex" translatable="false">key_hide_sex</string>
     <string name="key_language" translatable="false">key_language</string>
     <string name="key_request_type" translatable="false">key_request_type</string>
+    <string name="key_api_key" translatable="false">key_api_key</string>
+    <string name="key_check_api_key" translatable="false">key_check_api_key</string>
     <string name="key_app_version" translatable="false">key_app_version</string>
 
     <string name="title_language">Language</string>
 
     <string name="title_request_type">Search Request Type</string>
+
+    <string name="title_api_key">Custom Api Key</string>
+    <string name="summary_api_key">If you\'ve donated to whatAnime, you can fill in the ApiKey you got here. <b>Note that if the ApiKey you enter is invalid, you will not be able to use the search feature.</b></string>
+
+    <string name="title_check_api_key">Check Api Key</string>
+    <string name="summary_check_api_key">Check ApiKey\'s quota information</string>
 
     <string name="key_about_github" translatable="false">key_about_github</string>
     <string name="summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>

@@ -19,10 +19,6 @@ object Configure {
         set(value) = sharedPreference.use { putInt("config_language", value) }
         get() = sharedPreference.getInt("config_language", 0)
 
-//    var previewConfig: Int
-//        set(value) = sharedPreference.use { putInt("config_preview_config", value) }
-//        get() = sharedPreference.getInt("config_preview_config", 1)
-
     var requestType: Int
         set(value) = sharedPreference.use { putInt("config_request_type", value) }
         get() = sharedPreference.getInt("config_request_type", 0)
@@ -34,4 +30,8 @@ object Configure {
     var lastAppCenterSecret: String
         set(value) = sharedPreference.use { putString("config_last_app_center_secret", value) }
         get() = sharedPreference.getString("config_last_app_center_secret", "")!!
+
+    var apiKey: String
+        set(value) = sharedPreference.use { putString("config_api_key", value) }
+        get() = sharedPreference.getString("config_api_key", "")!!
 }
