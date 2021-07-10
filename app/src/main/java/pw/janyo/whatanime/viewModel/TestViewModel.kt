@@ -24,6 +24,7 @@ class TestViewModel : ComposeViewModel(), KoinComponent {
 
     fun doTest() {
         launch {
+            debugMode.emit(false)
             //判断是否联网
             if (!isConnectInternet()) {
                 errorMessageState(StringConstant.hint_no_network)

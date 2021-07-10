@@ -133,9 +133,9 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
         }
 
         versionPreference.setOnPreferenceClickListener {
-            fastClick(5) {
+            if (debugMode.value) {
                 MaterialAlertDialogBuilder(requireActivity())
-                    .setTitle("debug")
+                    .setTitle("调试模式")
                     .setMessage(
                         """
 							connectServer: $connectServer
@@ -147,6 +147,11 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
                     )
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
+            } else {
+                fastClick(5) {
+                    debugMode.value = true
+                    toastLong("调试模式已开启！")
+                }
             }
             true
         }

@@ -408,7 +408,9 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                viewModel.clickDocs.postValue(result)
+                debugOnClick("将会打开地址 https://anilist.co/anime/${result.anilist.id}") {
+                    viewModel.clickDocs.postValue(result)
+                }
             }
         ) {
             Column(
@@ -453,7 +455,12 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                viewModel.playVideo(result)
+                                debugOnClick("""
+                                    图片地址为 ${result.image}
+                                    将会播放视频 ${result.video}&size=l
+                                """.trimIndent()){
+                                    viewModel.playVideo(result)
+                                }
                             })
                     )
                     Spacer(modifier = Modifier.width(8.dp))

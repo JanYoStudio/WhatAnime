@@ -58,6 +58,7 @@ import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.utils.firstNotNull
 import pw.janyo.whatanime.viewModel.MainViewModel
+import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import java.text.DecimalFormat
@@ -498,7 +499,9 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
             ),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-                viewModel.clickDocs.postValue(result)
+                debugOnClick("将会打开地址 https://anilist.co/anime/${result.anilist.id}") {
+                    viewModel.clickDocs.postValue(result)
+                }
             }
         ) {
             Column(
@@ -542,7 +545,12 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                viewModel.playVideo(result)
+                                debugOnClick("""
+                                    图片地址为 ${result.image}
+                                    将会播放视频 ${result.video}&size=l
+                                """.trimIndent()){
+                                    viewModel.playVideo(result)
+                                }
                             })
                     )
                     Spacer(modifier = Modifier.width(8.dp))

@@ -12,21 +12,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewModelScope
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.config.debugMode
 import vip.mystery0.tools.utils.AndroidVersionCode
 import vip.mystery0.tools.utils.sdkIsAfter
 import java.util.*
 import kotlin.reflect.KClass
+
+typealias Action = () -> Unit
 
 abstract class BaseComposeActivity<V : ComposeViewModel>(
     @LayoutRes val contentLayoutId: Int = 0
 ) :
     ComponentActivity(contentLayoutId) {
     private var toast: Toast? = null
+    private var debugFlow: MutableStateFlow<Pair<String, Action>?> = MutableStateFlow(null)
     abstract val viewModel: V
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +43,10 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
         initIntent()
         setContent {
             BuildContent()
+            val debug by debugMode.collectAsState()
+            if (debug) {
+                BuildDebug()
+            }
         }
     }
 
@@ -113,4 +126,39 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
     }
 
     fun @receiver:StringRes Int.asString(): String = getString(this)
+
+    @Composable
+    private fun BuildDebug() {
+        val actionState by debugFlow.collectAsState()
+        actionState?.let {
+            AlertDialog(
+                onDismissRequest = { debugFlow.value = null },
+                confirmButton = {
+                    TextButton(onClick = {
+                        it.second()
+                        debugFlow.value = null
+                    }) {
+                        Text(stringResource(android.R.string.ok))
+                    }
+                },
+                title = {
+                    Text(text = "调试模式")
+                }, text = {
+                    SelectionContainer {
+                        Text(text = it.first)
+                    }
+                }
+            )
+        }
+    }
+
+    protected fun debugOnClick(message: String, action: () -> Unit) {
+        if (debugMode.value) {
+            viewModel.viewModelScope.launch {
+                debugFlow.emit(message to action)
+            }
+        } else {
+            action()
+        }
+    }
 }

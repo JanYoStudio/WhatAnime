@@ -43,6 +43,7 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.viewModel.HistoryViewModel
+import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
@@ -259,13 +260,15 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                     detectTapGestures(
                         onLongPress = { reverseState() },
                         onTap = {
-                            when {
-                                selectedList.isNotEmpty() -> reverseState()
-                                isOldData -> getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
-                                else -> DetailActivity.showDetail(
-                                    this@HistoryActivity,
-                                    File(history.cachePath), history.originPath, history.title
-                                )
+                            debugOnClick("缓存图片路径 ${history.cachePath}") {
+                                when {
+                                    selectedList.isNotEmpty() -> reverseState()
+                                    isOldData -> getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
+                                    else -> DetailActivity.showDetail(
+                                        this@HistoryActivity,
+                                        File(history.cachePath), history.originPath, history.title
+                                    )
+                                }
                             }
                         },
                     )
