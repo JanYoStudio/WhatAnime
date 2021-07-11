@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.twotone.ContactSupport
 import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,22 +27,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.android.gms.ads.*
-import com.orhanobut.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.inBlackList
-import pw.janyo.whatanime.constant.Constant.ADMOB_ID
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.viewModel.HistoryViewModel
-import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.getCalendarFromLong
 import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
@@ -65,7 +58,6 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val adsDialogShowState = remember { mutableStateOf(false) }
         val isRefreshing by viewModel.refreshData.observeValueAsState()
         val historyList by viewModel.historyList.observeAsState()
         val selectedList = remember { mutableStateListOf<Int>() }
@@ -116,78 +108,10 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                         .fillMaxHeight()
                         .padding(innerPadding)
                 ) {
-                    Column {
-                        if (inBlackList) {
-                            BuildAdLayout(adsDialogShowState)
-                        }
-                        BuildList(historyList, selectedList)
-                    }
+                    BuildList(historyList, selectedList)
                 }
             }
-            BuildAdDialog(adsDialogShowState)
         }
-    }
-
-    @Composable
-    fun BuildAdLayout(adsDialogShowState: MutableState<Boolean>) {
-        var adLoadResult by remember { mutableStateOf(true) }
-        if (!adLoadResult) {
-            return
-        }
-        //初始化AdMod
-        MobileAds.initialize(this) {}
-        val adRequest = AdRequest.Builder().build()
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .requiredHeight(IntrinsicSize.Min),
-        ) {
-            AndroidView(
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp),
-                factory = { context ->
-                    AdView(context).apply {
-                        this.adSize = AdSize.BANNER
-                        this.adUnitId = ADMOB_ID
-                        loadAd(adRequest)
-                        this.adListener = object : AdListener() {
-                            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                                Logger.w("load ads failed, detail: $loadAdError")
-                                adLoadResult = false
-                            }
-                        }
-                    }
-                }
-            )
-            IconButton(modifier = Modifier.fillMaxHeight(), onClick = {
-                adsDialogShowState.value = true
-            }) {
-                Icon(
-                    imageVector = Icons.TwoTone.ContactSupport,
-                    contentDescription = null
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun BuildAdDialog(adsDialogShowState: MutableState<Boolean>) {
-        if (!adsDialogShowState.value) return
-        AlertDialog(
-            onDismissRequest = { adsDialogShowState.value = false },
-            confirmButton = {
-                TextButton(onClick = { adsDialogShowState.value = false }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            title = {
-                Text(text = stringResource(R.string.action_why_ad))
-            }, text = {
-                Text(text = stringResource(R.string.hint_why_ads_appear))
-            }
-        )
     }
 
     @ExperimentalMaterialApi

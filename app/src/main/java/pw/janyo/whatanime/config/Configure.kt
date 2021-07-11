@@ -23,6 +23,9 @@ object Configure {
         set(value) = sharedPreference.use { putInt("config_request_type", value) }
         get() = sharedPreference.getInt("config_request_type", 0)
 
+    val useServerCompress: Boolean
+        get() = requestType == 1
+
     var alreadyReadNotice: Boolean
         set(value) = sharedPreference.use { putBoolean("config_read_notice", value) }
         get() = sharedPreference.getBoolean("config_read_notice", false)

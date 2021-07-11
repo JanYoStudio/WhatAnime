@@ -6,6 +6,7 @@ import org.koin.dsl.module
 import pw.janyo.whatanime.api.IpApi
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.api.ServerApi
+import pw.janyo.whatanime.api.SpeedTestIpApi
 import pw.janyo.whatanime.constant.Constant
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,13 +33,6 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    single(named("cloudVip")) {
-        Retrofit.Builder()
-            .baseUrl(Constant.cloudVipUrl)
-            .client(get())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
     single(named("ip")) {
         Retrofit.Builder()
             .baseUrl(Constant.ipUrl)
@@ -46,16 +40,23 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+    single(named("speedTestIp")) {
+        Retrofit.Builder()
+            .baseUrl(Constant.speedTestIpUrl)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
     single {
         get<Retrofit>(named("base")).create(SearchApi::class.java)
-    }
-    single(named("cloudVipApi")) {
-        get<Retrofit>(named("cloudVip")).create(ServerApi::class.java)
     }
     single(named("cloudAppApi")) {
         get<Retrofit>(named("cloudApp")).create(ServerApi::class.java)
     }
     single {
         get<Retrofit>(named("ip")).create(IpApi::class.java)
+    }
+    single {
+        get<Retrofit>(named("speedTestIp")).create(SpeedTestIpApi::class.java)
     }
 }

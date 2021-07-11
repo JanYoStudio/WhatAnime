@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.twotone.ContactSupport
 import androidx.compose.material.icons.twotone.Preview
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,16 +37,12 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.gms.ads.*
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.connectServer
-import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.config.toCustomTabs
-import pw.janyo.whatanime.constant.Constant.ADMOB_ID
 import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.model.ShowImage
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
@@ -135,8 +130,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
             originFile,
             cacheFile.absolutePath,
             originPath,
-            "",
-            connectServer
+            ""
         )
     }
 
@@ -144,7 +138,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
     @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val adsDialogShowState = remember { mutableStateOf(false) }
         val showFloatDialog by viewModel.showFloatDialog.observeValueAsState()
         WhatAnimeTheme {
             val scaffoldState = rememberScaffoldState()
@@ -181,12 +174,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     modifier = Modifier
                         .padding(innerPadding)
                 ) {
-                    Column {
-                        if (inBlackList) {
-                            BuildAdLayout(adsDialogShowState)
-                        }
-                        BuildList()
-                    }
+                    BuildList()
 
                     Crossfade(
                         targetState = showFloatDialog,
@@ -210,7 +198,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     }
                 }
             }
-            BuildAdDialog(adsDialogShowState)
             BuildAlertDialog()
             BuildVideoDialog()
             observerErrorMessage {
@@ -219,24 +206,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 }
             }
         }
-    }
-
-    @Composable
-    fun BuildAdDialog(adsDialogShowState: MutableState<Boolean>) {
-        if (!adsDialogShowState.value) return
-        AlertDialog(
-            onDismissRequest = { adsDialogShowState.value = false },
-            confirmButton = {
-                TextButton(onClick = { adsDialogShowState.value = false }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            title = {
-                Text(text = stringResource(R.string.action_why_ad))
-            }, text = {
-                Text(text = stringResource(R.string.hint_why_ads_appear))
-            }
-        )
     }
 
     @Composable
@@ -306,50 +275,6 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                     }
                 }
             })
-        }
-    }
-
-    @Composable
-    fun BuildAdLayout(adsDialogShowState: MutableState<Boolean>) {
-        var adLoadResult by remember { mutableStateOf(true) }
-        if (!adLoadResult) {
-            return
-        }
-        //初始化AdMod
-        MobileAds.initialize(this) {}
-        val adRequest = AdRequest.Builder().build()
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .requiredHeight(IntrinsicSize.Min),
-        ) {
-            AndroidView(
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp),
-                factory = { context ->
-                    AdView(context).apply {
-                        this.adSize = AdSize.BANNER
-                        this.adUnitId = ADMOB_ID
-                        loadAd(adRequest)
-                        this.adListener = object : AdListener() {
-                            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                                Logger.w("load ads failed, detail: $loadAdError")
-                                adLoadResult = false
-                            }
-                        }
-                    }
-                }
-            )
-            IconButton(modifier = Modifier.fillMaxHeight(), onClick = {
-                adsDialogShowState.value = true
-            }) {
-                Icon(
-                    imageVector = Icons.TwoTone.ContactSupport,
-                    contentDescription = null
-                )
-            }
         }
     }
 
@@ -455,10 +380,12 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                debugOnClick("""
+                                debugOnClick(
+                                    """
                                     图片地址为 ${result.image}
                                     将会播放视频 ${result.video}&size=l
-                                """.trimIndent()){
+                                """.trimIndent()
+                                ) {
                                     viewModel.playVideo(result)
                                 }
                             })

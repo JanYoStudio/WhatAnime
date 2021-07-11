@@ -4,7 +4,7 @@ import pw.janyo.whatanime.model.response.GeoIpResponse
 import pw.janyo.whatanime.model.response.SpeedTestIpResponse
 import retrofit2.http.GET
 
-interface IpApi {
-    @GET("/cn?json")
-    suspend fun getGeoIp(): GeoIpResponse
+interface SpeedTestIpApi {
+    @GET("/api/location/info")
+    suspend fun getSpeedTestIp(): SpeedTestIpResponse
 }

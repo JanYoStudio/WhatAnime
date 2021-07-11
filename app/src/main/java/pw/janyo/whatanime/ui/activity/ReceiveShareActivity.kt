@@ -2,35 +2,15 @@ package pw.janyo.whatanime.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.runtime.Composable
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.appcompat.app.AppCompatActivity
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.setSecret
-import pw.janyo.whatanime.viewModel.TestViewModel
+import vip.mystery0.tools.toast
 
-class ReceiveShareActivity : BaseComposeActivity<TestViewModel>() {
-    override val viewModel: TestViewModel by viewModel()
-
-    @Composable
-    override fun BuildContent() {
-    }
+class ReceiveShareActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.exceptionData.observe(this, {
-            it?.let {
-                doNext()
-                viewModel.clear()
-            }
-        })
-        viewModel.completeTest.observe(this, {
-            if (it.isNotBlank()) {
-                application.setSecret(it)
-            }
-            doNext()
-        })
-        viewModel.doTest()
+        doNext()
     }
 
     private fun doNext() {

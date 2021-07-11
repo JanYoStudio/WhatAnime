@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("com.google.gms.google-services")
 }
 
 fun String.runCommand(workingDir: File = file("./")): String {
@@ -75,7 +74,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.4.32"
+        kotlinCompilerVersion = "1.5.10"
     }
     signingConfigs {
         create("release") {
@@ -89,9 +88,9 @@ android {
 
 dependencies {
     //androidx
-    implementation("androidx.core:core-ktx:1.5.0")
+    implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.3.0")
-    implementation("com.google.android.material:material:1.3.0")
+    implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation("androidx.activity:activity-compose:1.3.0-rc01")
@@ -113,9 +112,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.13.0")
     implementation("com.google.accompanist:accompanist-coil:0.13.0")
 
-    //firebase
-    implementation("com.google.android.gms:play-services-ads:20.2.0")
-    implementation("com.google.firebase:firebase-ads:20.2.0")
     //app center
     implementation("com.microsoft.appcenter:appcenter-analytics:4.2.0")
     implementation("com.microsoft.appcenter:appcenter-crashes:4.2.0")
@@ -134,8 +130,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     //coil
-    implementation("io.coil-kt:coil:1.2.2")
-    implementation("io.coil-kt:coil-gif:1.2.2")
+    implementation("io.coil-kt:coil:1.3.0")
+    implementation("io.coil-kt:coil-gif:1.3.0")
     //Room
     implementation("androidx.room:room-runtime:2.3.0")
     implementation("androidx.room:room-ktx:2.3.0")

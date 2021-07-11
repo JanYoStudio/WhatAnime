@@ -133,25 +133,9 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
         }
 
         versionPreference.setOnPreferenceClickListener {
-            if (debugMode.value) {
-                MaterialAlertDialogBuilder(requireActivity())
-                    .setTitle("调试模式")
-                    .setMessage(
-                        """
-							connectServer: $connectServer
-							inBlackList: $inBlackList
-							useServerCompress: $useServerCompress
-							inChina: $inChina
-							deviceId: $publicDeviceId
-						""".trimIndent()
-                    )
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
-            } else {
-                fastClick(5) {
-                    debugMode.value = true
-                    toastLong("调试模式已开启！")
-                }
+            fastClick(5) {
+                debugMode.value = true
+                toastLong("调试模式已开启！")
             }
             true
         }
@@ -168,7 +152,7 @@ class AboutFragment : BasePreferenceFragment(R.xml.pref_about) {
             true
         }
         findPreferenceById<Preference>(R.string.key_janyo_license).setOnPreferenceClickListener {
-            if (inChina == true)
+            if (Configure.useServerCompress)
                 requireActivity().toCustomTabs(getString(R.string.link_janyo_license))
             else
                 requireActivity().toCustomTabs(getString(R.string.link_janyo_license_vip))

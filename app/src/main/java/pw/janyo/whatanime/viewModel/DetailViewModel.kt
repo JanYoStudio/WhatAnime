@@ -5,11 +5,12 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.config.inBlackList
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.model.ShowImage
@@ -33,7 +34,6 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
 
     /**
      * @param file 要显示的文件，也是要搜索的文件
-     * @param filter 过滤条件
      * @param cacheInPath 缓存路径，如果为null说明没有缓存或者不知道缓存路径
      * @param originPath 原始路径
      * @param mimeType 文件类型
@@ -42,8 +42,7 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
         file: File,
         cacheInPath: String?,
         originPath: String,
-        mimeType: String,
-        connectServer: Boolean
+        mimeType: String
     ) {
         launchLoadData {
             if (file.length() > 10485760L) {
@@ -55,15 +54,16 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
                     ?: throw Exception(StringConstant.hint_cache_make_dir_error)
-                file.copyToFile(saveFile)
+                withContext(Dispatchers.IO) {
+                    file.copyToFile(saveFile)
+                }
                 cachePath = saveFile.absolutePath
             }
             val animation = animationRepository.queryAnimationByImageLocal(
                 file,
                 originPath,
                 cachePath!!,
-                mimeType,
-                connectServer
+                mimeType
             )
             val result = if (Configure.hideSex) {
                 animation.result.filter { !it.anilist.isAdult }
@@ -71,7 +71,7 @@ class DetailViewModel : ComposeViewModel(), KoinComponent {
                 animation.result
             }
             resultList.postValue(result)
-            showFloatDialog.postValue(!inBlackList)
+            showFloatDialog.postValue(true)
         }
     }
 

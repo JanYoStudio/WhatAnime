@@ -51,7 +51,7 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
     }
 
     protected fun observerErrorMessage(block: (String) -> Unit) {
-        viewModel.exceptionData.observe(this, { e ->
+        viewModel.exceptionData.observe(this) { e ->
             e?.let { throwable ->
                 Logger.e(throwable, "exception detected")
                 throwable.message?.let {
@@ -59,13 +59,13 @@ abstract class BaseComposeActivity<V : ComposeViewModel>(
                 }
                 viewModel.clear()
             }
-        })
-        viewModel.errorMessageData.observe(this, {
+        }
+        viewModel.errorMessageData.observe(this) {
             it?.let {
                 block(it)
                 viewModel.clear()
             }
-        })
+        }
     }
 
     open fun initIntent() {}

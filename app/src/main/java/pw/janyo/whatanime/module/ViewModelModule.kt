@@ -6,9 +6,6 @@ import pw.janyo.whatanime.viewModel.*
 
 val viewModelModule = module {
     viewModel {
-        TestViewModel()
-    }
-    viewModel {
         MainViewModel()
     }
     viewModel {

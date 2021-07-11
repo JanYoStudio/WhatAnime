@@ -25,8 +25,6 @@
     <string name="action_more">More</string>
     <string name="action_about">About</string>
     <string name="action_faq">FAQ</string>
-    <string name="action_why_ad">Why do ads appear?</string>
-    <string name="action_ad_show_mistake">Mistake?</string>
     <string name="action_re_request_permission">Redo</string>
     <string name="action_disagree">I disagree</string>
     <string name="action_delete">Delete</string>
@@ -43,10 +41,8 @@
     <string name="array_preview_config_origin">Origin</string>
     <string name="array_preview_config_natural_scene_cutting">Preview with Natural Scene Cutting</string>
     <string name="array_preview_config_mute_natural">Preview with Natural Scene Cutting (Mute)</string>
-    <string name="array_request_type_detect">Automatic Detection</string>
     <string name="array_request_type_server_compress">Cloud Compress</string>
     <string name="array_request_type_server_directly">Request Directly</string>
-    <string name="array_summary_request_type_detect">Automatic Detection</string>
     <string name="array_summary_request_type_server_compress">Transit requests through the server, may be faster for China users</string>
     <string name="array_summary_request_type_server_directly">Post to the original API, which may not be accessible in China</string>
     <string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
@@ -70,7 +66,6 @@
     <string name="hint_not_share">The file is invalid!</string>
     <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
     <string name="hint_no_network">The network connection is abnormal, please check!</string>
-    <string name="hint_why_ads_appear">We detected that we had retrieved adult movies (non-anime) and therefore banned your device. WhatAnime can still run on the device, but there will be ads that don\'t appear as normal. \n\n Again, WhatAnime is a tool for retrieving anime dramas, not for adult movies!</string>
     <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>
     <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
     <string name="hint_file_not_support">The current file is not supported, please change to another file for query!</string>

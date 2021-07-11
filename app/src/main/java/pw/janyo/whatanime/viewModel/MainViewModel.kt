@@ -6,11 +6,12 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.config.connectServer
 import pw.janyo.whatanime.config.trackEvent
 import pw.janyo.whatanime.constant.StringConstant
 import pw.janyo.whatanime.model.Result
@@ -46,8 +47,7 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
         file: File,
         cacheInPath: String?,
         originPath: String,
-        mimeType: String,
-        connectServer: Boolean
+        mimeType: String
     ) {
         launchLoadData {
             if (file.length() > 10485760L) {
@@ -59,15 +59,16 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
             if (cachePath == null) {
                 val saveFile = file.getCacheFile()
                     ?: throw Exception(StringConstant.hint_cache_make_dir_error)
-                file.copyToFile(saveFile)
+                withContext(Dispatchers.IO) {
+                    file.copyToFile(saveFile)
+                }
                 cachePath = saveFile.absolutePath
             }
             val animation = animationRepository.queryAnimationByImageLocal(
                 file,
                 originPath,
                 cachePath!!,
-                mimeType,
-                connectServer
+                mimeType
             )
             val result = if (Configure.hideSex) {
                 animation.result.filter { !it.anilist.isAdult }
@@ -105,8 +106,7 @@ class MainViewModel : ComposeViewModel(), KoinComponent {
                 file,
                 null,
                 file.absolutePath,
-                mimeType,
-                connectServer
+                mimeType
             )
         }
     }

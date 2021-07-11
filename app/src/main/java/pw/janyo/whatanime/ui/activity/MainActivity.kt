@@ -42,23 +42,19 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.gms.ads.*
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.inBlackList
-import pw.janyo.whatanime.config.inChina
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
-import pw.janyo.whatanime.constant.Constant.ADMOB_ID
 import pw.janyo.whatanime.model.Result
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.observeValueAsState
 import pw.janyo.whatanime.utils.firstNotNull
 import pw.janyo.whatanime.viewModel.MainViewModel
-import vip.mystery0.tools.factory.toJson
 import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import java.text.DecimalFormat
@@ -157,8 +153,6 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     @Composable
     override fun BuildContent() {
         val isRefreshing by viewModel.refreshData.observeValueAsState()
-        val adLoadResult = remember { mutableStateOf(true) }
-        val adsDialogShowState = remember { mutableStateOf(false) }
         val resultList by viewModel.resultList.observeAsState()
         WhatAnimeTheme {
             val scaffoldState = rememberScaffoldState()
@@ -172,7 +166,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                         cutoutShape = CircleShape
                     ) {
                         IconButton(onClick = {
-                            toCustomTabs(if (inChina == true) Constant.indexVipUrl else Constant.indexAppUrl)
+                            toCustomTabs(if (Configure.useServerCompress) Constant.indexVipUrl else Constant.indexAppUrl)
                         }) {
                             Icon(
                                 imageVector = Icons.TwoTone.Info,
@@ -181,7 +175,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             )
                         }
                         IconButton(onClick = {
-                            toCustomTabs(if (inChina == true) Constant.faqVipUrl else Constant.faqAppUrl)
+                            toCustomTabs(if (Configure.useServerCompress) Constant.faqVipUrl else Constant.faqAppUrl)
                         }) {
                             Icon(
                                 imageVector = Icons.TwoTone.HelpCenter,
@@ -207,17 +201,6 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                                 tint = MaterialTheme.colors.onPrimary
                             )
                         }
-                        if (inBlackList && adLoadResult.value) {
-                            IconButton(onClick = {
-                                adsDialogShowState.value = true
-                            }) {
-                                Icon(
-                                    imageVector = Icons.TwoTone.ContactSupport,
-                                    contentDescription = stringResource(R.string.action_why_ad),
-                                    tint = MaterialTheme.colors.onPrimary
-                                )
-                            }
-                        }
                     }
                 },
                 floatingActionButton = {
@@ -242,13 +225,9 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                         .padding(innerPadding)
                         .padding(vertical = 8.dp)
                 ) {
-                    if (inBlackList) {
-                        BuildAdLayout(adLoadResult, adsDialogShowState)
-                    }
                     BuildList(resultList)
                 }
             }
-            BuildAdDialog(adsDialogShowState)
             BuildRefreshDialog(isRefreshing)
             BuildAlertDialog()
             BuildVideoDialog()
@@ -256,52 +235,6 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(it)
                 }
-            }
-        }
-    }
-
-    @Composable
-    fun BuildAdLayout(
-        adLoadResult: MutableState<Boolean>,
-        adsDialogShowState: MutableState<Boolean>
-    ) {
-        if (!adLoadResult.value) {
-            return
-        }
-        //初始化AdMod
-        MobileAds.initialize(this) {}
-        val adRequest = AdRequest.Builder().build()
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .requiredHeight(IntrinsicSize.Min),
-        ) {
-            AndroidView(
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(50.dp),
-                factory = { context ->
-                    AdView(context).apply {
-                        this.adSize = AdSize.BANNER
-                        this.adUnitId = ADMOB_ID
-                        loadAd(adRequest)
-                        this.adListener = object : AdListener() {
-                            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                                Logger.w("load ads failed, detail: $loadAdError")
-                                adLoadResult.value = false
-                            }
-                        }
-                    }
-                }
-            )
-            IconButton(modifier = Modifier.fillMaxHeight(), onClick = {
-                adsDialogShowState.value = true
-            }) {
-                Icon(
-                    imageVector = Icons.TwoTone.ContactSupport,
-                    contentDescription = null
-                )
             }
         }
     }
@@ -396,24 +329,6 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                 }
             })
         }
-    }
-
-    @Composable
-    fun BuildAdDialog(adsDialogShowState: MutableState<Boolean>) {
-        if (!adsDialogShowState.value) return
-        AlertDialog(
-            onDismissRequest = { adsDialogShowState.value = false },
-            confirmButton = {
-                TextButton(onClick = { adsDialogShowState.value = false }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            title = {
-                Text(text = stringResource(R.string.action_why_ad))
-            }, text = {
-                Text(text = stringResource(R.string.hint_why_ads_appear))
-            }
-        )
     }
 
     @Composable
@@ -545,10 +460,12 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                             .height(90.dp)
                             .width(160.dp)
                             .clickable(onClick = {
-                                debugOnClick("""
+                                debugOnClick(
+                                    """
                                     图片地址为 ${result.image}
                                     将会播放视频 ${result.video}&size=l
-                                """.trimIndent()){
+                                """.trimIndent()
+                                ) {
                                     viewModel.playVideo(result)
                                 }
                             })

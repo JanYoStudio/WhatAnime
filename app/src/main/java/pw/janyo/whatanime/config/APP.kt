@@ -69,13 +69,12 @@ class APP : Application() {
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
             Configure.language = sp.getInt("config_language", 0)
             Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
-            Configure.lastVersion = BuildConfig.VERSION_CODE
         }
         if (Configure.lastVersion < BuildConfig.VERSION_CODE) {
             //重置云端压缩策略
             Configure.requestType = 0
-            Configure.lastVersion = BuildConfig.VERSION_CODE
         }
+        Configure.lastVersion = BuildConfig.VERSION_CODE
     }
 }
 
@@ -85,10 +84,6 @@ val publicDeviceId: String
         return Settings.Secure.getString(context().contentResolver, Settings.Secure.ANDROID_ID)
     }
 
-var connectServer: Boolean = false
-var inBlackList: Boolean = false
-var useServerCompress: Boolean = true
-var inChina: Boolean? = null
 var debugMode = MutableStateFlow(false)
 
 fun Context.toCustomTabs(url: String) {
