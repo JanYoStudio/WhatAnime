@@ -20,8 +20,8 @@ val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
 val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
 
 android {
-    compileSdk = 30
-    buildToolsVersion = "30.0.3"
+    compileSdk = 31
+    buildToolsVersion = "31.0.0"
 
     defaultConfig {
         applicationId = "pw.janyo.whatanime"
@@ -93,7 +93,7 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("androidx.activity:activity-compose:1.3.0-rc01")
+    implementation("androidx.activity:activity-compose:1.3.0-rc02")
     implementation("androidx.vectordrawable:vectordrawable:1.1.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.browser:browser:1.3.0")
@@ -109,8 +109,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
 
     //accompanist
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.13.0")
-    implementation("com.google.accompanist:accompanist-coil:0.13.0")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.14.0")
+    implementation("com.google.accompanist:accompanist-coil:0.14.0")
 
     //app center
     implementation("com.microsoft.appcenter:appcenter-analytics:4.2.0")
