@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -212,7 +213,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                     .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
             ) {
                 Image(
-                    painter = rememberCoilPainter(request = File(history.cachePath)),
+                    painter = rememberImagePainter(data = File(history.cachePath)),
                     contentDescription = null,
                     modifier = Modifier
                         .height(90.dp)

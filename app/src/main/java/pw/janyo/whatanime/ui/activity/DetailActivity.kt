@@ -17,8 +17,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.twotone.Preview
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -32,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import coil.ImageLoader
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -289,7 +291,7 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 viewModel.errorMessageState(stringResource(R.string.hint_select_file_not_exist))
                 return
             }
-            rememberCoilPainter(request = originFile)
+            rememberImagePainter(data = originFile)
         } else {
             painterResource(R.mipmap.janyo_studio)
         }
@@ -371,8 +373,8 @@ class DetailActivity : BaseComposeActivity<DetailViewModel>() {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
-                        painter = rememberCoilPainter(
-                            request = result.image,
+                        painter = rememberImagePainter(
+                            data = result.image,
                             imageLoader = imageLoader
                         ),
                         contentDescription = null,

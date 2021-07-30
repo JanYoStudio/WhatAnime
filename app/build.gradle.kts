@@ -89,11 +89,11 @@ android {
 dependencies {
     //androidx
     implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("androidx.activity:activity-compose:1.3.0-rc02")
+    implementation("androidx.activity:activity-compose:1.3.0")
     implementation("androidx.vectordrawable:vectordrawable:1.1.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.browser:browser:1.3.0")
@@ -109,8 +109,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
 
     //accompanist
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.14.0")
-    implementation("com.google.accompanist:accompanist-coil:0.14.0")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.15.0")
+    implementation("com.google.accompanist:accompanist-coil:0.15.0")
 
     //app center
     implementation("com.microsoft.appcenter:appcenter-analytics:4.2.0")
@@ -130,12 +130,12 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     //coil
-    implementation("io.coil-kt:coil:1.3.0")
-    implementation("io.coil-kt:coil-gif:1.3.0")
+    implementation("io.coil-kt:coil:1.3.1")
+    implementation("io.coil-kt:coil-gif:1.3.1")
     //Room
     implementation("androidx.room:room-runtime:2.3.0")
     implementation("androidx.room:room-ktx:2.3.0")
     kapt("androidx.room:room-compiler:2.3.0")
     //ExoPlayer
-    implementation("com.google.android.exoplayer:exoplayer:2.14.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.14.2")
 }
