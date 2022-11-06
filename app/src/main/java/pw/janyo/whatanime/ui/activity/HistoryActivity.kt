@@ -9,17 +9,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.twotone.DeleteSweep
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.swipeable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,6 +48,7 @@ import kotlin.math.roundToInt
 class HistoryActivity : BaseComposeActivity() {
     private val viewModel: HistoryViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.historyListState.collectAsState()
@@ -51,9 +56,10 @@ class HistoryActivity : BaseComposeActivity() {
         val selectedList = remember { mutableStateListOf<Int>() }
         val selectedMode by remember { derivedStateOf { selectedList.isNotEmpty() } }
 
-        val scaffoldState = rememberScaffoldState()
+        val snackbarHostState = remember { SnackbarHostState() }
+
         Scaffold(
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
                     title = { Text(text = title.toString()) },
@@ -64,12 +70,9 @@ class HistoryActivity : BaseComposeActivity() {
                             Icon(
                                 Icons.Filled.ArrowBack,
                                 contentDescription = "",
-                                tint = MaterialTheme.colors.onPrimary
                             )
                         }
                     },
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary,
                 )
             },
             floatingActionButton = {
@@ -139,13 +142,10 @@ class HistoryActivity : BaseComposeActivity() {
         val cardBorder = if (selectedList.contains(history.id))
             BorderStroke(
                 4.dp,
-                MaterialTheme.colors.secondary
+                MaterialTheme.colorScheme.primary
             )
         else
-            BorderStroke(
-                1.dp,
-                colorResource(R.color.outlined_stroke_color)
-            )
+            null
         val swipeState = rememberSwipeableState(0,
             confirmStateChange = {
                 if (it != 0) {
@@ -243,7 +243,6 @@ class HistoryActivity : BaseComposeActivity() {
     fun BuildText(text: String, fontWeight: FontWeight? = null) {
         Text(
             text = text,
-            color = MaterialTheme.colors.onSurface,
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

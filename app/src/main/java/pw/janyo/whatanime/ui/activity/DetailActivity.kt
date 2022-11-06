@@ -4,7 +4,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -13,21 +13,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.twotone.Preview
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -117,8 +106,7 @@ class DetailActivity : BaseComposeActivity() {
         viewModel.loadHistoryDetail(historyId,cacheFile)
     }
 
-    @ExperimentalAnimationApi
-    @ExperimentalMaterialApi
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
@@ -126,14 +114,13 @@ class DetailActivity : BaseComposeActivity() {
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
-        val scaffoldState = rememberScaffoldState()
+        val snackbarHostState = remember { SnackbarHostState() }
+
         Scaffold(
-            scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
                     title = { Text(text = title.toString()) },
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary,
                     navigationIcon = {
                         IconButton(onClick = {
                             finish()
@@ -148,7 +135,6 @@ class DetailActivity : BaseComposeActivity() {
                             Icon(
                                 imageVector = Icons.TwoTone.Preview,
                                 contentDescription = "",
-                                tint = MaterialTheme.colors.onPrimary
                             )
                         }
                     }
@@ -179,7 +165,10 @@ class DetailActivity : BaseComposeActivity() {
                     if (it) {
                         Card(
                             shape = RoundedCornerShape(16.dp),
-                            elevation = 4.dp,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.primary
+                            ),
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -197,7 +186,7 @@ class DetailActivity : BaseComposeActivity() {
 
         if (listState.errorMessage.isNotBlank()) {
             LaunchedEffect("errorMessage") {
-                scaffoldState.snackbarHostState.showSnackbar(listState.errorMessage)
+                snackbarHostState.showSnackbar(listState.errorMessage)
             }
         }
     }

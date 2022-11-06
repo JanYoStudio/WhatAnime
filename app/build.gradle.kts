@@ -98,7 +98,7 @@ dependencies {
     //compose
     val composeVersion = "1.3.0"
     implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha01")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     //accompanist
     val accompanistVersion = "0.27.0"

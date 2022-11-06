@@ -6,16 +6,16 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ImageSearch
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,10 +24,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,9 +44,9 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.toCustomTabs
@@ -139,71 +139,103 @@ class MainActivity : BaseComposeActivity() {
         viewModel.showQuota()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
-        val scaffoldState = rememberScaffoldState()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
 
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                ModalDrawerSheet {
+
+                }
+            },
+        ) {
+
+        }
         Scaffold(
-            scaffoldState = scaffoldState,
-            bottomBar = {
-                BottomAppBar(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary,
-                    cutoutShape = CircleShape
-                ) {
-                    IconButton(onClick = {
-                        toCustomTabs(Constant.indexUrl)
-                    }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Info,
-                            contentDescription = stringResource(R.string.action_about),
-                            tint = MaterialTheme.colors.onPrimary
-                        )
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = title.toString()) },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Menu,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            imageSelectLauncher.launch("image/*")
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ImageSearch,
+                                contentDescription = null
+                            )
+                        }
                     }
-                    IconButton(onClick = {
-                        toCustomTabs(Constant.faqUrl)
-                    }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.HelpCenter,
-                            contentDescription = stringResource(R.string.action_faq),
-                            tint = MaterialTheme.colors.onPrimary
-                        )
-                    }
-                    IconButton(onClick = {
-                        intentTo(HistoryActivity::class)
-                    }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Plagiarism,
-                            contentDescription = stringResource(R.string.action_history),
-                            tint = MaterialTheme.colors.onPrimary
-                        )
-                    }
-                    IconButton(onClick = {
-                        intentTo(AboutActivity::class)
-                    }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Settings,
-                            contentDescription = stringResource(R.string.action_settings),
-                            tint = MaterialTheme.colors.onPrimary
-                        )
-                    }
-                }
+                )
+//                TopAppBar(
+//                    title = { Text(text = title.toString()) },
+//                    actions = {
+//                        IconButton(onClick = {
+//                            intentTo(HistoryActivity::class)
+//                        }) {
+//                            Icon(
+//                                imageVector = Icons.TwoTone.Plagiarism,
+//                                contentDescription = stringResource(R.string.action_history),
+//                            )
+//                        }
+//                        IconButton(onClick = {
+//                            toCustomTabs(Constant.indexUrl)
+//                        }) {
+//                            Icon(
+//                                imageVector = Icons.TwoTone.Info,
+//                                contentDescription = stringResource(R.string.action_about)
+//                            )
+//                        }
+//                        IconButton(onClick = {
+//                            toCustomTabs(Constant.faqUrl)
+//                        }) {
+//                            Icon(
+//                                imageVector = Icons.TwoTone.HelpCenter,
+//                                contentDescription = stringResource(R.string.action_faq),
+//                            )
+//                        }
+//                        IconButton(onClick = {
+//                            intentTo(AboutActivity::class)
+//                        }) {
+//                            Icon(
+//                                imageVector = Icons.TwoTone.Settings,
+//                                contentDescription = stringResource(R.string.action_settings),
+//                            )
+//                        }
+//                    }
+//                )
             },
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    imageSelectLauncher.launch("image/*")
-                }) {
-                    Icon(
-                        imageVector = Icons.TwoTone.ImageSearch,
-                        contentDescription = null
-                    )
-                }
-            },
-            isFloatingActionButtonDocked = true,
+//            floatingActionButton = {
+//                FloatingActionButton(onClick = {
+//                    imageSelectLauncher.launch("image/*")
+//                }) {
+//                    Icon(
+//                        imageVector = Icons.TwoTone.ImageSearch,
+//                        contentDescription = null
+//                    )
+//                }
+//            },
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -222,7 +254,6 @@ class MainActivity : BaseComposeActivity() {
                         Card(
                             modifier = Modifier.padding(8.dp),
                             shape = RoundedCornerShape(16.dp),
-                            elevation = 2.dp,
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 BuildImage(listState.searchImageFile)
@@ -231,7 +262,6 @@ class MainActivity : BaseComposeActivity() {
                                         modifier = Modifier
                                             .padding(8.dp),
                                         text = stringResource(R.string.hint_search_quota) + "${searchQuota.quotaUsed}/${searchQuota.quota}",
-                                        color = MaterialTheme.colors.onSurface,
                                     )
                                 }
                             }
@@ -250,8 +280,8 @@ class MainActivity : BaseComposeActivity() {
         BuildVideoDialog()
 
         if (listState.errorMessage.isNotBlank()) {
-            LaunchedEffect("errorMessage") {
-                scaffoldState.snackbarHostState.showSnackbar(listState.errorMessage)
+            LaunchedEffect(key1 = "errorMessage") {
+                snackbarHostState.showSnackbar(listState.errorMessage)
             }
         }
     }
@@ -353,7 +383,6 @@ class MainActivity : BaseComposeActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BuildResultItem(
     result: SearchAnimeResultItem,
@@ -361,12 +390,12 @@ fun BuildResultItem(
     onClick: () -> Unit,
 ) {
     Card(
-        modifier = Modifier.padding(horizontal = 8.dp),
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .clickable {
+                animeDialogState.value = result
+            },
         shape = RoundedCornerShape(8.dp),
-        onClick = {
-            animeDialogState.value = result
-        },
-        elevation = 2.dp,
     ) {
         Column(
             modifier = Modifier
@@ -376,7 +405,6 @@ fun BuildResultItem(
             if (result.similarity < 0.9) {
                 Text(
                     text = stringResource(R.string.hint_probably_mistake),
-                    color = MaterialTheme.colors.secondary,
                     textAlign = TextAlign.End,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -447,7 +475,6 @@ fun BuildResultItem(
 fun BuildText(text: String, fontWeight: FontWeight? = null) {
     Text(
         text = text,
-        color = MaterialTheme.colors.onSurface,
         fontSize = 12.sp,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
