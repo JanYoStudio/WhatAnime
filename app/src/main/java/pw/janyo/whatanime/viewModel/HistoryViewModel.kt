@@ -1,34 +1,74 @@
 package pw.janyo.whatanime.viewModel
 
-import androidx.lifecycle.MutableLiveData
-import org.koin.core.component.KoinComponent
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.inject
+import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.ComposeViewModel
-import pw.janyo.whatanime.constant.StringConstant
+import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.AnimationRepository
 
-class HistoryViewModel : ComposeViewModel(), KoinComponent {
+class HistoryViewModel : ComposeViewModel() {
     private val animationRepository: AnimationRepository by inject()
 
-    val historyList = MutableLiveData<List<AnimationHistory>?>(null)
+    private val _historyListState = MutableStateFlow(HistoryListState())
+    val historyListState: StateFlow<HistoryListState> = _historyListState
+
+    private val _deleteActionState = MutableStateFlow(false)
+    val deleteActionState: StateFlow<Boolean> = _deleteActionState
+
+    init {
+        refresh()
+    }
 
     fun refresh() {
-        launchLoadData {
-            historyList.postValue(animationRepository.queryAllHistory())
+        viewModelScope.launch {
+            _historyListState.value = _historyListState.value.copy(
+                loading = true,
+                errorMessage = "",
+            )
+            val list = animationRepository.queryAllHistory()
+            if (list.isEmpty()) {
+                _historyListState.value = _historyListState.value.copy(
+                    loading = false,
+                    errorMessage = R.string.hint_no_result.resString(),
+                )
+            } else {
+                _historyListState.value = _historyListState.value.copy(
+                    loading = false,
+                    list = list,
+                )
+            }
         }
     }
 
     fun deleteHistory(list: MutableList<Int>) {
-        launch {
+        viewModelScope.launch {
+            _deleteActionState.value = false
+            _historyListState.value = _historyListState.value.copy(
+                loading = true,
+                errorMessage = "",
+            )
             list.forEach {
                 animationRepository.deleteHistory(it)
             }
             list.clear()
-            errorMessageState(StringConstant.hint_history_delete_done)
-            refreshState(true)
-            historyList.postValue(animationRepository.queryAllHistory())
-            refreshState(false)
+            _deleteActionState.value = true
+            val historyList = animationRepository.queryAllHistory()
+            _historyListState.value = _historyListState.value.copy(
+                loading = false,
+                list = historyList,
+                errorMessage = "",
+            )
         }
     }
 }
+
+data class HistoryListState(
+    val loading: Boolean = false,
+    val list: List<AnimationHistory> = emptyList(),
+    val errorMessage: String = "",
+)

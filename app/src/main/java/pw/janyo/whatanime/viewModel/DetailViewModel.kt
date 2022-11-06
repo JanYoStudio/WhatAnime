@@ -1,100 +1,109 @@
 package pw.janyo.whatanime.viewModel
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.ComposeViewModel
-import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.constant.StringConstant
-import pw.janyo.whatanime.model.Result
-import pw.janyo.whatanime.model.ShowImage
+import pw.janyo.whatanime.constant.StringConstant.resString
+import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.repository.AnimationRepository
-import pw.janyo.whatanime.utils.getCacheFile
-import vip.mystery0.tools.utils.copyToFile
+import pw.janyo.whatanime.trackEvent
+import pw.janyo.whatanime.utils.firstNotNull
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-class DetailViewModel : ComposeViewModel(), KoinComponent {
+class DetailViewModel : ComposeViewModel() {
     private val animationRepository: AnimationRepository by inject()
     private val exoDataSourceFactory: DataSource.Factory by inject()
 
     private val mediaSourceMap = ConcurrentHashMap<String, MediaSource>()
-    val imageFile = MutableLiveData<ShowImage>()
-    val resultList = MutableLiveData<List<Result>>()
-    val clickDocs = MutableLiveData<Result>()
-    val mediaSource = MutableLiveData<MediaSource>()
-    val loadingVideo = MutableLiveData(false)
-    val showFloatDialog = MutableLiveData(false)
 
-    /**
-     * @param file 要显示的文件，也是要搜索的文件
-     * @param cacheInPath 缓存路径，如果为null说明没有缓存或者不知道缓存路径
-     * @param originPath 原始路径
-     * @param mimeType 文件类型
-     */
-    fun search(
-        file: File,
-        cacheInPath: String?,
-        originPath: String,
-        mimeType: String
-    ) {
-        launchLoadData {
-            if (file.length() > 10485760L) {
-                //大于10M，提示文件过大
-                throw Exception(StringConstant.hint_file_too_large)
+    private val _listState = MutableStateFlow(MainListState())
+    val listState: StateFlow<MainListState> = _listState
+
+    private val _playLoading = MutableStateFlow(false)
+    val playLoading: StateFlow<Boolean> = _playLoading
+
+    private val _playMediaSource = MutableStateFlow<MediaSource?>(null)
+    val playMediaSource: StateFlow<MediaSource?> = _playMediaSource
+
+    private val _showFloatDialog = MutableStateFlow(false)
+    val showFloatDialog: StateFlow<Boolean> = _showFloatDialog
+
+    fun loadPlaying(loading: Boolean) {
+        _playLoading.value = loading
+    }
+
+    fun playDone() {
+        _playLoading.value = false
+        _playMediaSource.value = null
+    }
+
+    fun playError(error: PlaybackException) {
+        val errorMessage = firstNotNull(
+            R.string.hint_unknow_error.resString(),
+            error.cause?.message,
+            error.message,
+        )
+        _listState.value = _listState.value.copy(
+            loading = false,
+            errorMessage = errorMessage
+        )
+    }
+
+    fun loadHistoryDetail(historyId: Int, cacheFile: File) {
+        viewModelScope.launch {
+            _listState.value = _listState.value.copy(loading = true)
+            val result = withContext(Dispatchers.IO) {
+                animationRepository.getByHistoryId(historyId)
             }
-            var cachePath = cacheInPath ?: //没有缓存或者不知道缓存
-            animationRepository.queryHistoryByOriginPath(originPath)?.cachePath
-            if (cachePath == null) {
-                val saveFile = file.getCacheFile()
-                    ?: throw Exception(StringConstant.hint_cache_make_dir_error)
-                withContext(Dispatchers.IO) {
-                    file.copyToFile(saveFile)
-                }
-                cachePath = saveFile.absolutePath
+            if (result == null) {
+                _listState.value = _listState.value.copy(
+                    loading = false,
+                    searchImageFile = cacheFile,
+                    errorMessage = R.string.hint_no_result.resString()
+                )
+                return@launch
             }
-            val animation = animationRepository.queryAnimationByImageLocal(
-                file,
-                originPath,
-                cachePath!!,
-                mimeType
+            _listState.value = _listState.value.copy(
+                loading = false,
+                searchImageFile = cacheFile,
+                list = result.result,
+                errorMessage = "",
             )
-            val result = if (Configure.hideSex) {
-                animation.result.filter { !it.anilist.isAdult }
-            } else {
-                animation.result
-            }
-            resultList.postValue(result)
-            showFloatDialog.postValue(true)
         }
     }
 
     /**
      * 播放视频
      */
-    fun playVideo(result: Result) {
-        launch {
+    fun playVideo(result: SearchAnimeResultItem) {
+        viewModelScope.launch {
             val requestUrl = "${result.video}&size=l"
-            val newMediaSource = mediaSourceMap.getOrPut(requestUrl) {
-                val source = MediaItem.Builder()
-                    .setUri(requestUrl)
-                    .build()
+            trackEvent("play video", mapOf("url" to requestUrl))
+            _playMediaSource.value = mediaSourceMap.getOrPut(requestUrl) {
                 ProgressiveMediaSource.Factory(exoDataSourceFactory)
-                    .createMediaSource(source)
+                    .createMediaSource(
+                        MediaItem.Builder()
+                            .setUri(requestUrl)
+                            .build()
+                    )
             }
-            mediaSource.postValue(newMediaSource)
-            loadingVideo.postValue(true)
-            showFloatDialog.postValue(true)
+            _playLoading.value = true
         }
     }
 
     fun changeFloatDialogVisibility() {
-        showFloatDialog.postValue(!showFloatDialog.value!!)
+        _showFloatDialog.value = !_showFloatDialog.value
     }
 }

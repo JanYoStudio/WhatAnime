@@ -20,15 +20,15 @@ val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
 val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
 
 android {
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    compileSdk = 33
+    buildToolsVersion = "33.0.0"
 
     defaultConfig {
         applicationId = "pw.janyo.whatanime"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
         versionCode = gitVersionCode
-        versionName = "1.6.2-beta1"
+        versionName = "1.6.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -42,9 +42,17 @@ android {
             }
         }
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file(SignConfig.signKeyStoreFile)
+            storePassword = SignConfig.signKeyStorePassword
+            keyAlias = SignConfig.signKeyAlias
+            keyPassword = SignConfig.signKeyPassword
+        }
+    }
     buildTypes {
         debug {
+            applicationIdSuffix = ".debug"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -67,75 +75,70 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.5.10"
-    }
-    signingConfigs {
-        create("release") {
-            storeFile = file(SignConfig.signKeyStoreFile)
-            storePassword = SignConfig.signKeyStorePassword
-            keyAlias = SignConfig.signKeyAlias
-            keyPassword = SignConfig.signKeyPassword
-        }
+        kotlinCompilerExtensionVersion = "1.2.0"
     }
 }
 
 dependencies {
     //androidx
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("androidx.activity:activity-compose:1.3.0")
-    implementation("androidx.vectordrawable:vectordrawable:1.1.0")
-    implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.browser:browser:1.3.0")
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("com.google.android.material:material:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.browser:browser:1.4.0")
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
     //compose
-    implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.foundation:foundation-layout:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.material:material-icons-extended:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.foundation:foundation:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.animation:animation:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
-
+    val composeVersion = "1.3.0"
+    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     //accompanist
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.15.0")
-    implementation("com.google.accompanist:accompanist-coil:0.15.0")
-
-    //app center
-    implementation("com.microsoft.appcenter:appcenter-analytics:4.2.0")
-    implementation("com.microsoft.appcenter:appcenter-crashes:4.2.0")
-    // Koin AndroidX Scope features
-    implementation("io.insert-koin:koin-android:3.1.2")
-    //logger
-    implementation("com.orhanobut:logger:2.2.0")
-    //Mystery0Tools
-    implementation("vip.mystery0.tools:tools:2.3.1")
-    //Condom
-    implementation("com.oasisfeng.condom:library:2.5.0")
-    //MMKV
-    implementation("com.tencent:mmkv-static:1.2.10")
-    //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    val accompanistVersion = "0.27.0"
+    implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-insets:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-pager-indicators:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-swiperefresh:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-placeholder-material:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+    //room
+    val roomVersion = "2.4.3"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    //koin
+    val koinVersion = "3.3.0"
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
     //coil
-    implementation("io.coil-kt:coil:1.3.1")
-    implementation("io.coil-kt:coil-gif:1.3.1")
-    //Room
-    implementation("androidx.room:room-runtime:2.3.0")
-    implementation("androidx.room:room-ktx:2.3.0")
-    kapt("androidx.room:room-compiler:2.3.0")
+    val coilVersion = "2.2.2"
+    implementation("io.coil-kt:coil-compose:$coilVersion")
+    implementation("io.coil-kt:coil-gif:$coilVersion")
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    //moshi
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+    //mmkv
+    implementation("com.tencent:mmkv-static:1.2.14")
+    //AppCenter
+    val appCenterSdkVersion = "4.4.5"
+    implementation("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
+    implementation("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
     //ExoPlayer
-    implementation("com.google.android.exoplayer:exoplayer:2.14.2")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.1")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 }

@@ -1,13 +1,13 @@
 package pw.janyo.whatanime.ui.activity
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import pw.janyo.whatanime.R
-import vip.mystery0.tools.toast
+import pw.janyo.whatanime.base.BaseComposeActivity
 
-class ReceiveShareActivity : AppCompatActivity() {
-
+class ReceiveShareActivity : BaseComposeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         doNext()
@@ -19,13 +19,15 @@ class ReceiveShareActivity : AppCompatActivity() {
             intent.type != null &&
             intent.type!!.startsWith("image/")
         ) {
-            MainActivity.receiveShare(
-                this,
-                intent.getParcelableExtra(Intent.EXTRA_STREAM)!!,
-                intent.type!!
-            )
+            @Suppress("DEPRECATION")
+            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent?.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                intent?.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+            intentTo(MainActivity::class, MainActivity.receiveShare(uri!!))
         } else {
-            getString(R.string.hint_not_share).toast()
+            R.string.hint_not_share.toast()
         }
         finish()
     }

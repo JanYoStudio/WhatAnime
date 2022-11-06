@@ -1,0 +1,38 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.WhatAnime" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.WhatAnime.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.WhatAnime.NoActionBar.Immersive">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="Theme.WhatAnime.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.WhatAnime.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- jetpack core splashscreen -->
+    <style name="JetpackSplashBaseTheme" parent="Theme.SplashScreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenBackground">#2196F3</item>
+
+        <!-- 需要配置postSplashScreenTheme属性，主题需要是AppCompat -->
+        <!-- 否则会报异常：You need to use a Theme.AppCompat theme (or descendant) with this activity -->
+        <item name="postSplashScreenTheme">@style/Theme.WhatAnime</item>
+    </style>
+
+    <style name="JetpackSplashTheme" parent="JetpackSplashBaseTheme" />
+</resources>

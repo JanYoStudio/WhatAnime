@@ -1,31 +1,47 @@
 package pw.janyo.whatanime.model
 
-class Animation {
-    var error: String = ""
-    lateinit var result: List<Result>//结果
-}
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class Result {
-    lateinit var anilist: Anilist
-    var filename: String = ""
-    var episode: String? = null
-    var from: Double = 0.0//开始
-    var to: Double = 0.0//结束
-    var similarity: Double = 0.0//准确度
-    var video: String = ""
-    var image: String = ""
-}
+val moshi = Moshi.Builder()
+    .addLast(KotlinJsonAdapterFactory())
+    .build()
 
-class Anilist {
-    var id: Long = 0L
-    var idMal: Long = 0L
-    var title: Title? = null
-    var synonyms: List<String>? = null
-    var isAdult: Boolean = false
-}
+val searchAnimeResultAdapter: JsonAdapter<SearchAnimeResult> =
+    moshi.adapter(SearchAnimeResult::class.java)
 
-class Title {
-    var native: String = ""
-    var romaji: String = ""
-    var english: String = ""
-}
+data class SearchAnimeResult(
+    val error: String = "",
+    val frameCount: Long = 0,
+    val result: List<SearchAnimeResultItem>,
+)
+
+data class SearchAnimeResultItem(
+    @Json(name = "anilist")
+    val aniList: SearchAniListResult,
+    @Json(name = "filename")
+    val fileName: String,
+    val episode: Int? = 0,
+    val from: Double = 0.0,
+    val to: Double = 0.0,
+    val similarity: Double = 0.0,
+    val video: String,
+    val image: String,
+)
+
+data class SearchAniListResult(
+    val id: Long = 0,
+    val idMal: Long = 0,
+    val title: AniListTitleResult,
+    val synonyms: List<String> = emptyList(),
+    @Json(name = "isAdult")
+    val adult: Boolean = false,
+)
+
+data class AniListTitleResult(
+    val native: String? = "",
+    val romaji: String? = "",
+    val english: String? = "",
+)

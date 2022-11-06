@@ -2,33 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pw.janyo.whatanime">
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-        </intent>
-    </queries>
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".config.APP"
+        android:name=".Application"
         android:allowBackup="true"
         android:fullBackupContent="@xml/appcenter_backup_rule"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
-        <meta-data
-            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true" />
+        android:theme="@style/JetpackSplashTheme">
 
         <activity
-            android:name=".ui.activity.SplashActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen.Splash">
+            android:name=".ui.activity.StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +29,7 @@
             android:name=".ui.activity.ReceiveShareActivity"
             android:exported="true"
             android:label="@string/title_receive_share"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen.Splash">
+            android:theme="@style/Theme.WhatAnime.NoActionBar.Immersive">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -53,21 +42,21 @@
             android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.WhatAnime.NoActionBar" />
         <activity
             android:name=".ui.activity.HistoryActivity"
             android:exported="true"
             android:label="@string/title_activity_history"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.WhatAnime.NoActionBar" />
         <activity
             android:name=".ui.activity.DetailActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.WhatAnime.NoActionBar" />
         <activity
             android:name=".ui.activity.AboutActivity"
             android:exported="true"
             android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.Preference" />
+            android:theme="@style/Theme.WhatAnime.NoActionBar" />
     </application>
 
 </manifest>

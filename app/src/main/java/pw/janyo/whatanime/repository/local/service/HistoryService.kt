@@ -13,5 +13,5 @@ interface HistoryService {
 
     fun update(animationHistory: AnimationHistory): Int
 
-    fun queryHistoryByOriginPathAndFilter(originPath: String): AnimationHistory?
+    fun queryHistoryByOriginPath(originPath: String): AnimationHistory?
 }

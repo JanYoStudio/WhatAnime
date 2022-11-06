@@ -21,6 +21,6 @@ class HistoryServiceImpl : HistoryService, KoinComponent {
     override fun update(animationHistory: AnimationHistory): Int =
         historyDao.update(animationHistory)
 
-    override fun queryHistoryByOriginPathAndFilter(originPath: String): AnimationHistory? =
+    override fun queryHistoryByOriginPath(originPath: String): AnimationHistory? =
         historyDao.queryHistoryByOriginPath(originPath)
 }

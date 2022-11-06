@@ -1,9 +1,8 @@
 package pw.janyo.whatanime.ui.activity
 
-import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -15,10 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -27,107 +26,86 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.SubcomposeAsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
-import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
-import pw.janyo.whatanime.ui.theme.observeValueAsState
+import pw.janyo.whatanime.utils.getCalendarFromLong
+import pw.janyo.whatanime.utils.toDateTimeString
 import pw.janyo.whatanime.viewModel.HistoryViewModel
-import vip.mystery0.tools.utils.getCalendarFromLong
-import vip.mystery0.tools.utils.toDateTimeString
 import java.io.File
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
-    override val viewModel: HistoryViewModel by viewModel()
+class HistoryActivity : BaseComposeActivity() {
+    private val viewModel: HistoryViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        observerErrorMessage {
-            it.toastLong()
-        }
-        viewModel.refresh()
-    }
-
-    @ExperimentalAnimationApi
-    @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val isRefreshing by viewModel.refreshData.observeValueAsState()
-        val historyList by viewModel.historyList.observeAsState()
+        val listState by viewModel.historyListState.collectAsState()
+
         val selectedList = remember { mutableStateListOf<Int>() }
         val selectedMode by remember { derivedStateOf { selectedList.isNotEmpty() } }
-        WhatAnimeTheme {
-            val scaffoldState = rememberScaffoldState()
-            Scaffold(
-                scaffoldState = scaffoldState,
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = title.toString()) },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                finish()
-                            }) {
-                                Icon(
-                                    Icons.Filled.ArrowBack,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colors.onPrimary
-                                )
-                            }
-                        },
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary,
-                    )
-                },
-                floatingActionButton = {
-                    AnimatedVisibility(
-                        visible = selectedMode,
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-                    ) {
-                        FloatingActionButton(onClick = {
-                            viewModel.deleteHistory(selectedList)
+
+        val scaffoldState = rememberScaffoldState()
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = title.toString()) },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            finish()
                         }) {
                             Icon(
-                                imageVector = Icons.TwoTone.DeleteSweep,
-                                contentDescription = null
+                                Icons.Filled.ArrowBack,
+                                contentDescription = "",
+                                tint = MaterialTheme.colors.onPrimary
                             )
                         }
-                    }
-                },
-            ) { innerPadding ->
-                SwipeRefresh(
-                    state = rememberSwipeRefreshState(isRefreshing),
-                    onRefresh = { viewModel.refresh() },
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(innerPadding)
+                    },
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.onPrimary,
+                )
+            },
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visible = selectedMode,
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                 ) {
-                    BuildList(historyList, selectedList)
+                    FloatingActionButton(onClick = {
+                        viewModel.deleteHistory(selectedList)
+                    }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.DeleteSweep,
+                            contentDescription = null
+                        )
+                    }
                 }
+            },
+        ) { innerPadding ->
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(listState.loading),
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(innerPadding)
+            ) {
+                BuildList(listState.list, selectedList)
             }
         }
     }
 
-    @ExperimentalMaterialApi
     @Composable
     fun BuildList(
-        list: List<AnimationHistory>?,
+        list: List<AnimationHistory>,
         selectedList: SnapshotStateList<Int>
     ) {
-        if (list == null) {
-            return
-        }
-        if (list.isEmpty()) {
-            viewModel.errorMessageState(stringResource(R.string.hint_no_result))
-            return
-        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxHeight()
@@ -140,7 +118,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
         }
     }
 
-    @ExperimentalMaterialApi
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun BuildResultItem(
         history: AnimationHistory,
@@ -168,7 +146,7 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                 1.dp,
                 colorResource(R.color.outlined_stroke_color)
             )
-        val swipeableState = rememberSwipeableState(0,
+        val swipeState = rememberSwipeableState(0,
             confirmStateChange = {
                 if (it != 0) {
                     reverseState()
@@ -185,21 +163,24 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
                     detectTapGestures(
                         onLongPress = { reverseState() },
                         onTap = {
-                            debugOnClick("缓存图片路径 ${history.cachePath}") {
-                                when {
-                                    selectedList.isNotEmpty() -> reverseState()
-                                    isOldData -> getString(R.string.hint_data_convert_no_detail_in_history).toastLong()
-                                    else -> DetailActivity.showDetail(
-                                        this@HistoryActivity,
-                                        File(history.cachePath), history.originPath, history.title
+                            when {
+                                selectedList.isNotEmpty() ->
+                                    reverseState()
+
+                                isOldData ->
+                                    R.string.hint_data_convert_no_detail_in_history.toast(true)
+
+                                else ->
+                                    intentTo(
+                                        DetailActivity::class,
+                                        DetailActivity.showDetail(history)
                                     )
-                                }
                             }
                         },
                     )
                 }
                 .swipeable(
-                    state = swipeableState,
+                    state = swipeState,
                     anchors = anchors,
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                     orientation = Orientation.Horizontal
@@ -210,14 +191,18 @@ class HistoryActivity : BaseComposeActivity<HistoryViewModel>() {
             Row(
                 modifier = Modifier
                     .padding(8.dp)
-                    .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                    .offset { IntOffset(swipeState.offset.value.roundToInt(), 0) }
             ) {
-                Image(
-                    painter = rememberImagePainter(data = File(history.cachePath)),
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(File(history.cachePath))
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.DISABLED)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .height(90.dp)
-                        .width(160.dp)
+                        .width(160.dp),
                 )
                 val isValidEpisode = history.episode != ""
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {

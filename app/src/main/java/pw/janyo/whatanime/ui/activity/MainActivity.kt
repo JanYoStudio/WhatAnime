@@ -1,16 +1,12 @@
 package pw.janyo.whatanime.ui.activity
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,13 +18,16 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,108 +36,98 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import coil.ImageLoader
-import coil.compose.rememberImagePainter
-import com.google.android.exoplayer2.ExoPlaybackException
+import coil.compose.SubcomposeAsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ui.PlayerView
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.Configure
-import pw.janyo.whatanime.config.toCustomTabs
 import pw.janyo.whatanime.constant.Constant
-import pw.janyo.whatanime.model.Result
-import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
-import pw.janyo.whatanime.ui.theme.observeValueAsState
-import pw.janyo.whatanime.utils.firstNotNull
+import pw.janyo.whatanime.model.SearchAnimeResultItem
+import pw.janyo.whatanime.model.SearchQuota
+import pw.janyo.whatanime.toCustomTabs
+import pw.janyo.whatanime.ui.activity.contract.ImagePickResultContract
+import pw.janyo.whatanime.utils.firstNotBlank
+import pw.janyo.whatanime.utils.formatTime
 import pw.janyo.whatanime.viewModel.MainViewModel
-import vip.mystery0.tools.utils.formatTime
 import java.io.File
 import java.text.DecimalFormat
 
-class MainActivity : BaseComposeActivity<MainViewModel>() {
-    override val viewModel: MainViewModel by viewModel()
+class MainActivity : BaseComposeActivity() {
+    companion object {
+        private const val TAG = "MainActivity"
+        private const val INTENT_URI = "INTENT_URI"
 
-    private val selectIntent =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val type = contentResolver.getType(it.data!!.data!!)
-                if (type.isNullOrBlank()) {
-                    R.string.hint_select_file_not_exist.asString().toast()
-                } else {
-                    viewModel.parseImageFile(it.data!!, type)
-                }
+        fun receiveShare(uri: Uri): Intent.() -> Unit {
+            Log.d(TAG, "receiveShare: uri: $uri")
+            return {
+                putExtra(INTENT_URI, uri)
             }
         }
-    private val imageLoader by lazy {
-        ImageLoader.Builder(this)
-            .placeholder(R.mipmap.janyo_studio)
-            .error(R.mipmap.load_failed)
-            .build()
     }
-    private val exoPlayer: SimpleExoPlayer by lazy {
-        SimpleExoPlayer.Builder(this).build().apply {
+
+    private val viewModel: MainViewModel by viewModels()
+
+    private val imageSelectLauncher =
+        registerForActivityResult(ImagePickResultContract()) { intent ->
+            if (intent == null) {
+                return@registerForActivityResult
+            }
+            val type = contentResolver.getType(intent.data!!)
+            if (type.isNullOrBlank()) {
+                R.string.hint_select_file_not_exist.asString().toast()
+            } else {
+                viewModel.searchImageFile(intent)
+            }
+        }
+    private val exoPlayer: ExoPlayer by lazy {
+        ExoPlayer.Builder(this).build().apply {
             addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(state: Int) {
                     super.onPlaybackStateChanged(state)
                     when (state) {
                         Player.STATE_BUFFERING -> {
-                            viewModel.loadingVideo.postValue(true)
+                            viewModel.loadPlaying(true)
                         }
+
                         Player.STATE_READY -> {
-                            viewModel.loadingVideo.postValue(false)
+                            viewModel.loadPlaying(false)
                         }
+
                         Player.STATE_ENDED -> {
-                            viewModel.mediaSource.postValue(null)
+                            viewModel.playDone()
                         }
+
                         Player.STATE_IDLE -> {
                         }
                     }
                 }
 
-                override fun onPlayerError(error: ExoPlaybackException) {
+                override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
-                    Logger.e("onPlayerError: ", error)
-                    viewModel.loadingVideo.postValue(false)
-                    viewModel.mediaSource.postValue(null)
-                    viewModel.errorMessageState(
-                        firstNotNull(
-                            getString(R.string.hint_unknow_error),
-                            error.cause?.message,
-                            error.message,
-                        )
-                    )
+                    Log.e(TAG, "onPlayerError: ")
+                    viewModel.playError(error)
                 }
             })
         }
     }
 
-    companion object {
-        private const val INTENT_URI = "INTENT_URI"
-        private const val INTENT_MIME_TYPE = "INTENT_MIME_TYPE"
-
-        fun receiveShare(context: Context, uri: Uri, mimeType: String) {
-            Logger.i("receiveShare: uri: $uri, mimeType: $mimeType")
-            context.startActivity(Intent(context, MainActivity::class.java).apply {
-                putExtra(INTENT_URI, uri)
-                putExtra(INTENT_MIME_TYPE, mimeType)
-            })
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
     override fun initIntent() {
         if (intent.hasExtra(INTENT_URI)) {
             //接收其他来源的图片
             try {
-                val uri = intent.getParcelableExtra<Uri>(INTENT_URI)
+                @Suppress("DEPRECATION")
+                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent?.getParcelableExtra(INTENT_URI, Uri::class.java)
+                } else {
+                    intent?.getParcelableExtra(INTENT_URI)
+                }
                 intent.data = uri
-                viewModel.parseImageFile(intent, intent.getStringExtra(INTENT_MIME_TYPE)!!)
+                viewModel.searchImageFile(intent)
             } catch (e: Exception) {
                 R.string.hint_select_file_path_null.asString().toast()
             }
@@ -150,173 +139,178 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
         viewModel.showQuota()
     }
 
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
     @Composable
     override fun BuildContent() {
-        val isRefreshing by viewModel.refreshData.observeValueAsState()
-        val resultList by viewModel.resultList.observeAsState()
-        WhatAnimeTheme {
-            val scaffoldState = rememberScaffoldState()
-            val scope = rememberCoroutineScope()
-            Scaffold(
-                scaffoldState = scaffoldState,
-                bottomBar = {
-                    BottomAppBar(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary,
-                        cutoutShape = CircleShape
-                    ) {
-                        IconButton(onClick = {
-                            toCustomTabs(if (Configure.useServerCompress) Constant.indexVipUrl else Constant.indexAppUrl)
-                        }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.Info,
-                                contentDescription = stringResource(R.string.action_about),
-                                tint = MaterialTheme.colors.onPrimary
-                            )
-                        }
-                        IconButton(onClick = {
-                            toCustomTabs(if (Configure.useServerCompress) Constant.faqVipUrl else Constant.faqAppUrl)
-                        }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.HelpCenter,
-                                contentDescription = stringResource(R.string.action_faq),
-                                tint = MaterialTheme.colors.onPrimary
-                            )
-                        }
-                        IconButton(onClick = {
-                            intentTo(HistoryActivity::class)
-                        }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.Plagiarism,
-                                contentDescription = stringResource(R.string.action_history),
-                                tint = MaterialTheme.colors.onPrimary
-                            )
-                        }
-                        IconButton(onClick = {
-                            intentTo(AboutActivity::class)
-                        }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.Settings,
-                                contentDescription = stringResource(R.string.action_settings),
-                                tint = MaterialTheme.colors.onPrimary
-                            )
-                        }
-                    }
-                },
-                floatingActionButton = {
-                    FloatingActionButton(onClick = {
-                        val intent = Intent(Intent.ACTION_PICK)
-                        intent.setDataAndType(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            "image/*"
-                        )
-                        selectIntent.launch(intent)
+        val listState by viewModel.listState.collectAsState()
+
+        val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
+
+        val scaffoldState = rememberScaffoldState()
+
+        Scaffold(
+            scaffoldState = scaffoldState,
+            bottomBar = {
+                BottomAppBar(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.onPrimary,
+                    cutoutShape = CircleShape
+                ) {
+                    IconButton(onClick = {
+                        toCustomTabs(Constant.indexUrl)
                     }) {
                         Icon(
-                            imageVector = Icons.TwoTone.ImageSearch,
-                            contentDescription = null
+                            imageVector = Icons.TwoTone.Info,
+                            contentDescription = stringResource(R.string.action_about),
+                            tint = MaterialTheme.colors.onPrimary
                         )
                     }
-                },
-                isFloatingActionButtonDocked = true,
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(vertical = 8.dp)
-                ) {
-                    BuildList(resultList)
+                    IconButton(onClick = {
+                        toCustomTabs(Constant.faqUrl)
+                    }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.HelpCenter,
+                            contentDescription = stringResource(R.string.action_faq),
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                    IconButton(onClick = {
+                        intentTo(HistoryActivity::class)
+                    }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Plagiarism,
+                            contentDescription = stringResource(R.string.action_history),
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                    IconButton(onClick = {
+                        intentTo(AboutActivity::class)
+                    }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Settings,
+                            contentDescription = stringResource(R.string.action_settings),
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
                 }
-            }
-            BuildRefreshDialog(isRefreshing)
-            BuildAlertDialog()
-            BuildVideoDialog()
-            observerErrorMessage {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(it)
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {
+                    imageSelectLauncher.launch("image/*")
+                }) {
+                    Icon(
+                        imageVector = Icons.TwoTone.ImageSearch,
+                        contentDescription = null
+                    )
                 }
-            }
-        }
-    }
-
-    @Composable
-    fun BuildRefreshDialog(isRefreshing: Boolean) {
-        if (!isRefreshing) return
-        Dialog(
-            onDismissRequest = { viewModel.refreshState(false) },
-            DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
+            },
+            isFloatingActionButtonDocked = true,
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(vertical = 8.dp)
             ) {
-                Column(
+                val searchQuota by viewModel.searchQuota.collectAsState()
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(32.dp),
                 ) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "Loading...", color = MaterialTheme.colors.onBackground)
+                    item {
+                        Card(
+                            modifier = Modifier.padding(8.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            elevation = 2.dp,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                BuildImage(listState.searchImageFile)
+                                if (searchQuota != SearchQuota.EMPTY) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(8.dp),
+                                        text = stringResource(R.string.hint_search_quota) + "${searchQuota.quotaUsed}/${searchQuota.quota}",
+                                        color = MaterialTheme.colors.onSurface,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    items(listState.list) {
+                        BuildResultItem(it, animeDialogState) {
+                            viewModel.playVideo(it)
+                        }
+                    }
                 }
+            }
+        }
+        ShowProgressDialog(show = listState.loading, text = "TODO 加载中……")
+        BuildAlertDialog(animeDialogState)
+        BuildVideoDialog()
+
+        if (listState.errorMessage.isNotBlank()) {
+            LaunchedEffect("errorMessage") {
+                scaffoldState.snackbarHostState.showSnackbar(listState.errorMessage)
             }
         }
     }
 
     @Composable
-    fun BuildAlertDialog() {
-        val clickDocs by viewModel.clickDocs.observeAsState()
-        clickDocs?.let {
-            AlertDialog(
-                onDismissRequest = { viewModel.clickDocs.postValue(null) },
-                title = {
-                    Text(
-                        text = stringResource(
-                            R.string.hint_show_animation_detail,
-                            firstNotNull(
-                                "",
-                                it.anilist.title?.native,
-                                it.anilist.title?.english,
-                                it.anilist.title?.romaji,
-                                it.anilist.synonyms?.toTypedArray(),
-                            )
+    fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultItem?>) {
+        if (animeDialogState.value == null) return
+        val item = animeDialogState.value!!
+        AlertDialog(
+            onDismissRequest = { animeDialogState.value = null },
+            title = {
+                Text(
+                    text = stringResource(
+                        R.string.hint_show_animation_detail,
+                        firstNotBlank(
+                            "",
+                            ArrayList<String?>().apply {
+                                add(item.aniList.title.native)
+                                add(item.aniList.title.english)
+                                add(item.aniList.title.romaji)
+                                addAll(item.aniList.synonyms)
+                            },
                         )
                     )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            toCustomTabs("https://anilist.co/anime/${it.anilist.id}")
-                            viewModel.clickDocs.postValue(null)
-                        }
-                    ) {
-                        Text(stringResource(android.R.string.ok))
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        toCustomTabs("https://anilist.co/anime/${item.aniList.id}")
+                        animeDialogState.value = null
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.clickDocs.postValue(null) }) {
-                        Text(stringResource(android.R.string.cancel))
-                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
                 }
-            )
-        }
+            },
+            dismissButton = {
+                TextButton(onClick = { animeDialogState.value = null }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
     }
 
     @Composable
     fun BuildVideoDialog() {
-        val mediaSource by viewModel.mediaSource.observeAsState()
+        val mediaSource by viewModel.playMediaSource.collectAsState()
         mediaSource?.let {
             Dialog(onDismissRequest = {
                 exoPlayer.stop()
-                viewModel.mediaSource.postValue(null)
+                viewModel.playDone()
             }, content = {
                 Box(modifier = Modifier.padding(8.dp)) {
                     AndroidView(modifier = Modifier
                         .width(480.dp)
                         .height(270.dp),
                         factory = { context ->
-                            PlayerView(context).apply {
-                                this.player = exoPlayer
+                            StyledPlayerView(context).apply {
+                                player = exoPlayer
                                 this.useController = false
                                 exoPlayer.clearMediaItems()
                                 exoPlayer.setMediaSource(it)
@@ -324,7 +318,7 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
                                 exoPlayer.playWhenReady = true
                             }
                         })
-                    val loadingVideo by viewModel.loadingVideo.observeValueAsState()
+                    val loadingVideo by viewModel.playLoading.collectAsState()
                     if (loadingVideo) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
@@ -334,181 +328,129 @@ class MainActivity : BaseComposeActivity<MainViewModel>() {
     }
 
     @Composable
-    fun BuildImage() {
-        val imageFile by viewModel.imageFile.observeAsState()
-        val painter = if (imageFile != null) {
-            val originFile = File(imageFile!!.originPath)
-            //判断图片文件是否存在
-            if (!originFile.exists()) {
-                //如果不存在，显示错误信息
-                viewModel.errorMessageState(stringResource(R.string.hint_select_file_not_exist))
-                return
+    fun BuildImage(searchImageFile: File?) {
+        var data: Any = searchImageFile ?: R.mipmap.janyo_studio
+        searchImageFile?.let {
+            if (!it.exists()) {
+                R.string.hint_select_file_not_exist.toast(true)
+                data = R.mipmap.janyo_studio
             }
-            rememberImagePainter(data = originFile)
-        } else {
-            painterResource(R.mipmap.janyo_studio)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painter, contentDescription = null,
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(data)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.DISABLED)
+                    .build(),
+                contentDescription = null,
                 modifier = Modifier
                     .width(320.dp)
                     .height(180.dp)
-                    .padding(8.dp)
+                    .padding(8.dp),
             )
         }
     }
+}
 
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
-    @Composable
-    fun BuildList(resultList: List<Result>?) {
-        val searchQuota by viewModel.quota.observeAsState()
-        if (resultList != null && resultList.isEmpty()) {
-            viewModel.errorMessageState(stringResource(R.string.hint_no_result))
-        }
-        LazyColumn(
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun BuildResultItem(
+    result: SearchAnimeResultItem,
+    animeDialogState: MutableState<SearchAnimeResultItem?>,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        shape = RoundedCornerShape(8.dp),
+        onClick = {
+            animeDialogState.value = result
+        },
+        elevation = 2.dp,
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            item {
-                Card(
+            if (result.similarity < 0.9) {
+                Text(
+                    text = stringResource(R.string.hint_probably_mistake),
+                    color = MaterialTheme.colors.secondary,
+                    textAlign = TextAlign.End,
                     modifier = Modifier
-                        .padding(8.dp),
-                    border = BorderStroke(
-                        2.dp,
-                        colorResource(R.color.outlined_stroke_color)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = 0.dp,
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        BuildImage()
-                        searchQuota?.let {
-                            Text(
-                                modifier = Modifier
-                                    .padding(8.dp),
-                                text = stringResource(R.string.hint_search_quota) + "${it.quotaUsed}/${it.quota}",
-                                color = MaterialTheme.colors.onSurface,
+                        .fillMaxWidth()
+                )
+            }
+            SelectionContainer {
+                Row {
+                    Column {
+                        BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
+                        BuildText(stringResource(R.string.hint_title_english))
+                        BuildText(stringResource(R.string.hint_title_romaji))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        BuildText(result.aniList.title.native ?: "", FontWeight.Bold)
+                        BuildText(result.aniList.title.english ?: "")
+                        BuildText(result.aniList.title.romaji ?: "")
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(result.image)
+                        .build(),
+                    imageLoader = ImageLoader.Builder(LocalContext.current)
+                        .placeholder(R.mipmap.janyo_studio)
+                        .error(R.mipmap.load_failed)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(90.dp)
+                        .width(160.dp)
+                        .clickable(onClick = {
+                            onClick()
+                        })
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                SelectionContainer {
+                    Row {
+                        Column {
+                            BuildText(stringResource(R.string.hint_time))
+                            BuildText(stringResource(R.string.hint_episode))
+                            BuildText(stringResource(R.string.hint_ani_list_id))
+                            BuildText(stringResource(R.string.hint_mal_id))
+                            BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
+                            BuildText((result.episode ?: 0).toString())
+                            BuildText("${result.aniList.id}")
+                            BuildText("${result.aniList.idMal}")
+                            BuildText(
+                                "${DecimalFormat("#.000").format(result.similarity * 100)}%",
+                                FontWeight.Bold
                             )
                         }
                     }
                 }
             }
-            resultList?.let {
-                items(it) { item: Result ->
-                    BuildResultItem(result = item)
-                }
-            }
         }
     }
+}
 
-    @ExperimentalMaterialApi
-    @Composable
-    fun BuildResultItem(result: Result) {
-        Card(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            border = BorderStroke(
-                1.dp,
-                colorResource(R.color.outlined_stroke_color)
-            ),
-            shape = RoundedCornerShape(8.dp),
-            onClick = {
-                debugOnClick("将会打开地址 https://anilist.co/anime/${result.anilist.id}") {
-                    viewModel.clickDocs.postValue(result)
-                }
-            }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                if (result.similarity < 0.87) {
-                    Text(
-                        text = stringResource(R.string.hint_probably_mistake),
-                        color = MaterialTheme.colors.secondary,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-                SelectionContainer {
-                    Row {
-                        Column {
-                            BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
-                            BuildText(stringResource(R.string.hint_title_english))
-                            BuildText(stringResource(R.string.hint_title_romaji))
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            BuildText(result.anilist.title?.native ?: "", FontWeight.Bold)
-                            BuildText(result.anilist.title?.english ?: "")
-                            BuildText(result.anilist.title?.romaji ?: "")
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = rememberImagePainter(
-                            data = result.image,
-                            imageLoader = imageLoader
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .height(90.dp)
-                            .width(160.dp)
-                            .clickable(onClick = {
-                                debugOnClick(
-                                    """
-                                    图片地址为 ${result.image}
-                                    将会播放视频 ${result.video}&size=l
-                                """.trimIndent()
-                                ) {
-                                    viewModel.playVideo(result)
-                                }
-                            })
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    SelectionContainer {
-                        Row {
-                            Column {
-                                BuildText(stringResource(R.string.hint_time))
-                                BuildText(stringResource(R.string.hint_episode))
-                                BuildText(stringResource(R.string.hint_ani_list_id))
-                                BuildText(stringResource(R.string.hint_mal_id))
-                                BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                                BuildText(result.episode ?: "")
-                                BuildText("${result.anilist.id}")
-                                BuildText("${result.anilist.idMal}")
-                                BuildText(
-                                    "${DecimalFormat("#.000").format(result.similarity * 100)}%",
-                                    FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun BuildText(text: String, fontWeight: FontWeight? = null) {
-        Text(
-            text = text,
-            color = MaterialTheme.colors.onSurface,
-            fontSize = 12.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontWeight = fontWeight
-        )
-    }
+@Composable
+fun BuildText(text: String, fontWeight: FontWeight? = null) {
+    Text(
+        text = text,
+        color = MaterialTheme.colors.onSurface,
+        fontSize = 12.sp,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        fontWeight = fontWeight
+    )
 }

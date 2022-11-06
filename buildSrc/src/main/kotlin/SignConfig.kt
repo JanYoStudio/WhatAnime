@@ -23,5 +23,5 @@ object SignConfig {
     val signKeyPassword: String
         get() = get("SIGN_KEY_PASSWORD")
 
-    private fun get(key: String): String = System.getenv(key) ?: properties.getProperty(key)
+    private fun get(key: String): String = System.getenv(key) ?: properties.getProperty(key) ?: ""
 }
