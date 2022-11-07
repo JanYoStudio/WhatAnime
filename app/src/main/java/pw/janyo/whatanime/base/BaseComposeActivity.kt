@@ -16,8 +16,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,17 +26,18 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import org.koin.core.component.KoinComponent
+import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import java.util.*
 import kotlin.reflect.KClass
 
-abstract class BaseComposeActivity(
-    private val setSystemUiColor: Boolean = true,
-    private val registerEventBus: Boolean = false,
-) :
+abstract class BaseComposeActivity :
     ComponentActivity(), KoinComponent {
     private var toast: Toast? = null
 
@@ -43,7 +45,7 @@ abstract class BaseComposeActivity(
         super.onCreate(savedInstanceState)
         initIntent()
         setContent {
-            BuildContent()
+            BuildContentWindow()
         }
     }
 
@@ -52,15 +54,6 @@ abstract class BaseComposeActivity(
     @Composable
     open fun BuildContentWindow() {
         WhatAnimeTheme {
-            if (setSystemUiColor) {
-                val systemUiController = rememberSystemUiController()
-                val systemBarColor = MaterialTheme.colors.primary
-                val isLight = MaterialTheme.colors.isLight
-                SideEffect {
-                    systemUiController.setSystemBarsColor(systemBarColor, darkIcons = isLight)
-                    systemUiController.setNavigationBarColor(systemBarColor, darkIcons = isLight)
-                }
-            }
             BuildContent()
         }
     }
@@ -144,6 +137,9 @@ abstract class BaseComposeActivity(
         text: String,
         fontSize: TextUnit = TextUnit.Unspecified,
     ) {
+        val compositionLoading by rememberLottieComposition(
+            LottieCompositionSpec.RawRes(R.raw.animation_loading)
+        )
         if (!show) {
             return
         }
@@ -161,12 +157,16 @@ abstract class BaseComposeActivity(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(32.dp),
                 ) {
-                    CircularProgressIndicator()
+                    LottieAnimation(
+                        composition = compositionLoading,
+                        iterations = LottieConstants.IterateForever,
+                        modifier = Modifier.size(196.dp)
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = text,
                         fontSize = fontSize,
-                        color = MaterialTheme.colors.onBackground
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

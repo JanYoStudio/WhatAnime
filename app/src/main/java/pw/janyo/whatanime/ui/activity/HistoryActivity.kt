@@ -61,7 +61,7 @@ class HistoryActivity : BaseComposeActivity() {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     title = { Text(text = title.toString()) },
                     navigationIcon = {
                         IconButton(onClick = {

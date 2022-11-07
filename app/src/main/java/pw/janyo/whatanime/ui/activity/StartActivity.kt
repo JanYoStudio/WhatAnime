@@ -4,7 +4,6 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -12,11 +11,7 @@ import androidx.core.animation.doOnEnd
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.registerAppCenter
 
-class StartActivity : BaseComposeActivity(setSystemUiColor = false) {
-    companion object{
-        private const val TAG = "StartActivity"
-    }
-
+class StartActivity : BaseComposeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerAppCenter(application)
@@ -34,7 +29,6 @@ class StartActivity : BaseComposeActivity(setSystemUiColor = false) {
     }
 
     private fun goToMainScreen() {
-        Log.i(TAG, "goToMainScreen: ")
         intentTo(MainActivity::class)
         finish()
     }

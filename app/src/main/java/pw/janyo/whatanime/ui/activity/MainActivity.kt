@@ -6,17 +6,23 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Plagiarism
+import androidx.compose.material.icons.outlined.HelpCenter
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -28,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +47,10 @@ import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -47,8 +58,8 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
-import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.activity.contract.ImagePickResultContract
 import pw.janyo.whatanime.utils.firstNotBlank
@@ -154,127 +165,228 @@ class MainActivity : BaseComposeActivity() {
             drawerState = drawerState,
             drawerContent = {
                 ModalDrawerSheet {
-
-                }
-            },
-        ) {
-
-        }
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text(text = title.toString()) },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                drawerState.open()
-                            }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Menu,
-                                contentDescription = null
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier.width(56.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_whatanime),
+                                contentDescription = "logo",
+                                modifier = Modifier.size(24.dp)
                             )
                         }
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            imageSelectLauncher.launch("image/*")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ImageSearch,
-                                contentDescription = null
+                        Text(
+                            text = title.toString(),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Divider(modifier = Modifier.fillMaxWidth())
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(96.dp)
+                            .padding(start = 56.dp),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        val quota by viewModel.searchQuota.collectAsState()
+                        Text(
+                            text = stringResource(R.string.hint_quota_used, quota.quotaUsed),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = stringResource(R.string.hint_quota_total, quota.quota))
+                    }
+                    Divider(modifier = Modifier.fillMaxWidth())
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Filled.Plagiarism, contentDescription = null) },
+                        label = { Text(stringResource(id = R.string.action_history)) },
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                intentTo(HistoryActivity::class)
+                                drawerState.close()
+                            }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
+                        label = { Text(stringResource(id = R.string.action_settings)) },
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Outlined.HelpCenter, contentDescription = null) },
+                        label = { Text(stringResource(id = R.string.action_faq)) },
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                toCustomTabs(Constant.faqUrl)
+                                drawerState.close()
+                            }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                    Spacer(modifier = Modifier.weight(1F))
+                    Divider(modifier = Modifier.fillMaxWidth())
+                    Row(
+                        modifier = Modifier.height(48.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextButton(
+                            modifier = Modifier
+                                .weight(1F),
+                            onClick = {
+                                scope.launch {
+                                    toCustomTabs(Constant.janYoStudioUrl)
+                                    drawerState.close()
+                                }
+                            }) {
+                            Text(
+                                text = stringResource(id = R.string.action_about_janyo),
+                            )
+                        }
+                        Surface(
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp)
+                                .size(4.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        ) {}
+                        TextButton(
+                            modifier = Modifier
+                                .weight(1F),
+                            onClick = {
+                                scope.launch {
+                                    toCustomTabs(Constant.whatAnimeUrl)
+                                    drawerState.close()
+                                }
+                            }) {
+                            Text(
+                                text = stringResource(id = R.string.action_about_whatanime),
                             )
                         }
                     }
-                )
-//                TopAppBar(
-//                    title = { Text(text = title.toString()) },
-//                    actions = {
-//                        IconButton(onClick = {
-//                            intentTo(HistoryActivity::class)
-//                        }) {
-//                            Icon(
-//                                imageVector = Icons.TwoTone.Plagiarism,
-//                                contentDescription = stringResource(R.string.action_history),
-//                            )
-//                        }
-//                        IconButton(onClick = {
-//                            toCustomTabs(Constant.indexUrl)
-//                        }) {
-//                            Icon(
-//                                imageVector = Icons.TwoTone.Info,
-//                                contentDescription = stringResource(R.string.action_about)
-//                            )
-//                        }
-//                        IconButton(onClick = {
-//                            toCustomTabs(Constant.faqUrl)
-//                        }) {
-//                            Icon(
-//                                imageVector = Icons.TwoTone.HelpCenter,
-//                                contentDescription = stringResource(R.string.action_faq),
-//                            )
-//                        }
-//                        IconButton(onClick = {
-//                            intentTo(AboutActivity::class)
-//                        }) {
-//                            Icon(
-//                                imageVector = Icons.TwoTone.Settings,
-//                                contentDescription = stringResource(R.string.action_settings),
-//                            )
-//                        }
-//                    }
-//                )
+                }
             },
-//            floatingActionButton = {
-//                FloatingActionButton(onClick = {
-//                    imageSelectLauncher.launch("image/*")
-//                }) {
-//                    Icon(
-//                        imageVector = Icons.TwoTone.ImageSearch,
-//                        contentDescription = null
-//                    )
-//                }
-//            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(vertical = 8.dp)
-            ) {
-                val searchQuota by viewModel.searchQuota.collectAsState()
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    item {
-                        Card(
-                            modifier = Modifier.padding(8.dp),
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                BuildImage(listState.searchImageFile)
-                                if (searchQuota != SearchQuota.EMPTY) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(8.dp),
-                                        text = stringResource(R.string.hint_search_quota) + "${searchQuota.quotaUsed}/${searchQuota.quota}",
+            content = {
+                Scaffold(
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_whatanime),
+                                        contentDescription = "logo",
+                                        modifier = Modifier.size(24.dp)
                                     )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = title.toString(),
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Menu,
+                                        contentDescription = null
+                                    )
+                                }
+                            },
+                            actions = {
+                                IconButton(onClick = {
+                                    imageSelectLauncher.launch("image/*")
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ImageSearch,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .padding(vertical = 8.dp)
+                    ) {
+                        val compositionListEmpty by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(R.raw.animation_list_empty)
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            item {
+                                Card(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .clickable {
+                                            if (!listState.loading && listState.list.isEmpty()) {
+                                                imageSelectLauncher.launch("image/*")
+                                            }
+                                        },
+                                    shape = RoundedCornerShape(16.dp),
+                                ) {
+                                    BuildImage(listState.searchImageFile)
+                                }
+                            }
+                            when {
+                                listState.list.isEmpty() -> {
+                                    item {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(MaterialTheme.colorScheme.background),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            LottieAnimation(
+                                                composition = compositionListEmpty,
+                                                iterations = LottieConstants.IterateForever,
+                                                modifier = Modifier.size(256.dp)
+                                            )
+                                        }
+                                    }
+                                }
+
+                                else -> {
+                                    items(listState.list) {
+                                        BuildResultItem(it, animeDialogState) {
+                                            viewModel.playVideo(it)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                    items(listState.list) {
-                        BuildResultItem(it, animeDialogState) {
-                            viewModel.playVideo(it)
-                        }
-                    }
                 }
-            }
-        }
+            },
+        )
         ShowProgressDialog(show = listState.loading, text = "TODO 加载中……")
         BuildAlertDialog(animeDialogState)
         BuildVideoDialog()
@@ -366,20 +478,18 @@ class MainActivity : BaseComposeActivity() {
                 data = R.mipmap.janyo_studio
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(data)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.DISABLED)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(320.dp)
-                    .height(180.dp)
-                    .padding(8.dp),
-            )
-        }
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(data)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .diskCachePolicy(CachePolicy.DISABLED)
+                .build(),
+            contentDescription = null,
+            modifier = Modifier
+                .width(320.dp)
+                .height(180.dp)
+                .padding(8.dp),
+        )
     }
 }
 

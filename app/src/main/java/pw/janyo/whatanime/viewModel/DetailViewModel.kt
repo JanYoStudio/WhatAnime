@@ -55,6 +55,7 @@ class DetailViewModel : ComposeViewModel() {
             error.cause?.message,
             error.message,
         )
+        _playLoading.value = false
         _listState.value = _listState.value.copy(
             loading = false,
             errorMessage = errorMessage

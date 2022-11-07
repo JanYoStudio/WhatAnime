@@ -98,18 +98,15 @@ dependencies {
     //compose
     val composeVersion = "1.3.0"
     implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha01")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
+    //material
+    implementation("androidx.compose.material:material:1.3.0")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha01")
+    //lottie
+    implementation("com.airbnb.android:lottie-compose:5.2.0")
     //accompanist
     val accompanistVersion = "0.27.0"
-    implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-insets:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-pager-indicators:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-swiperefresh:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-placeholder-material:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
-    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
     //room
     val roomVersion = "2.4.3"
     implementation("androidx.room:room-runtime:$roomVersion")

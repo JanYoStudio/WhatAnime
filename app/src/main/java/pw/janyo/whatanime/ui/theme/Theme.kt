@@ -31,8 +31,8 @@ fun isDarkMode(): Boolean {
 fun WhatAnimeTheme(
     content: @Composable() () -> Unit
 ) {
-//    val colorScheme = if (isDarkMode()) DarkColorPalette else LightColorPalette
-    val colorScheme = LightColorPalette
+    val colorScheme = if (isDarkMode()) DarkColorPalette else LightColorPalette
+//    val colorScheme = LightColorPalette
 
     MaterialTheme(
         colorScheme = colorScheme,
