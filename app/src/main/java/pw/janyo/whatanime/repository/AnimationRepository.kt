@@ -1,5 +1,6 @@
 package pw.janyo.whatanime.repository
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -8,10 +9,14 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.api.AniListChineseApi
 import pw.janyo.whatanime.api.SearchApi
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.DispatcherConfig
 import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.isOnline
+import pw.janyo.whatanime.model.AniListChineseRequest
+import pw.janyo.whatanime.model.AniListChineseRequestVar
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.ResourceException
 import pw.janyo.whatanime.model.SearchAnimeResult
@@ -24,7 +29,12 @@ import java.io.File
 import java.util.Calendar
 
 class AnimationRepository : KoinComponent {
+    companion object {
+        private const val TAG = "AnimationRepository"
+    }
+
     private val searchApi: SearchApi by inject()
+    private val aniListChineseApi: AniListChineseApi by inject()
     private val historyService: HistoryService by inject()
 
     private suspend fun checkNetwork() {
@@ -53,9 +63,17 @@ class AnimationRepository : KoinComponent {
                 .build()
             val data = searchApi.search(requestBody)
             if (data.error.isNotBlank()) {
-                throw Exception("rest request failed, ${data.error}")
+                Log.e(TAG, "http request failed, ${data.error}")
+                throw ResourceException(R.string.hint_search_error)
             }
             data
+        }
+        if (Configure.showChineseTitle) {
+            for (item in data.result) {
+                val request = AniListChineseRequest(AniListChineseRequestVar(item.aniList.id))
+                val info = aniListChineseApi.getAniListInfo(request)
+                item.aniList.title.chinese = info.data.media.title.chinese
+            }
         }
         saveHistory(originPath, cachePath, data)
         return data
@@ -115,7 +133,7 @@ class AnimationRepository : KoinComponent {
                     val result = searchAnimeResult.result[0]
                     this.title = result.aniList.title.native ?: ""
                     this.anilistId = result.aniList.id
-                    this.episode = (result.episode?:0).toString()
+                    this.episode = ""
                     this.similarity = result.similarity
                 } else {
                     this.title = R.string.hint_no_result.resString()

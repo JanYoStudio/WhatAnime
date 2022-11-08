@@ -14,13 +14,13 @@ import androidx.compose.material.FractionalThreshold
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -56,10 +56,7 @@ class HistoryActivity : BaseComposeActivity() {
         val selectedList = remember { mutableStateListOf<Int>() }
         val selectedMode by remember { derivedStateOf { selectedList.isNotEmpty() } }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-
         Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text(text = title.toString()) },
@@ -73,6 +70,13 @@ class HistoryActivity : BaseComposeActivity() {
                             )
                         }
                     },
+                    actions = {
+                        IconButton(onClick = {
+                            R.string.hint_swipe_to_delete.toast()
+                        }) {
+                            Icon(Icons.Outlined.TipsAndUpdates, contentDescription = null)
+                        }
+                    }
                 )
             },
             floatingActionButton = {
@@ -116,7 +120,10 @@ class HistoryActivity : BaseComposeActivity() {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(list) { item: AnimationHistory ->
-                BuildResultItem(history = item, selectedList = selectedList)
+                BuildResultItem(
+                    history = item,
+                    selectedList = selectedList,
+                )
             }
         }
     }
@@ -204,18 +211,14 @@ class HistoryActivity : BaseComposeActivity() {
                         .height(90.dp)
                         .width(160.dp),
                 )
-                val isValidEpisode = history.episode != ""
                 Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                    BuildText(stringResource(R.string.hint_time_history))
-                    BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
+                    BuildText(stringResource(R.string.history_hint_save_time))
+                    BuildText(stringResource(R.string.history_hint_native_title), FontWeight.Bold)
                     if (!isOldData) {
-                        BuildText(stringResource(R.string.hint_ani_list_id))
-                    }
-                    if (!isOldData && isValidEpisode) {
-                        BuildText(stringResource(R.string.hint_episode))
+                        BuildText(stringResource(R.string.history_hint_ani_list_id))
                     }
                     if (!isOldData) {
-                        BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                        BuildText(stringResource(R.string.history_hint_similarity), FontWeight.Bold)
                     }
                 }
                 Column(
@@ -227,9 +230,6 @@ class HistoryActivity : BaseComposeActivity() {
                     BuildText(history.title, FontWeight.Bold)
                     if (!isOldData) {
                         BuildText(history.anilistId.toString())
-                    }
-                    if (!isOldData && isValidEpisode) {
-                        BuildText(history.episode)
                     }
                     if (!isOldData) {
                         BuildText(similarity, FontWeight.Bold)

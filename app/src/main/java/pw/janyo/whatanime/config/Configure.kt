@@ -13,25 +13,16 @@ object Configure {
             kv.encode("config_last_version", value)
         }
         get() = kv.decodeInt("config_last_version", 0)
-
     var hideSex: Boolean
         set(value) {
             kv.encode("config_hide_sex", value)
         }
         get() = kv.decodeBool("config_hide_sex", true)
-
     var language: Int
         set(value) {
             kv.encode("config_language", value)
         }
         get() = kv.decodeInt("config_language", 0)
-
-    var alreadyReadNotice: Boolean
-        set(value) {
-            kv.encode("config_read_notice", value)
-        }
-        get() = kv.decodeBool("config_read_notice", false)
-
     var apiKey: String
         set(value) {
             kv.encode("config_api_key", value)
@@ -50,4 +41,9 @@ object Configure {
             val value = kv.decodeInt("nightMode", NightMode.AUTO.value)
             return NightMode.values().first { it.value == value }
         }
+    var showChineseTitle: Boolean
+        set(value) {
+            kv.encode("showChineseTitle", value)
+        }
+        get() = kv.decodeBool("showChineseTitle", true)
 }

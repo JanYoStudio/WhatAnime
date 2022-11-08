@@ -14,13 +14,6 @@ interface SearchApi {
         @Header("x-trace-key") key: String = Configure.apiKey,
     ): SearchAnimeResult
 
-    @GET("/search")
-    suspend fun searchByUrl(
-        @Query("url") url: String,
-        @Query("anilistInfo") anilistInfo: String = "",
-        @Header("x-trace-key") key: String = Configure.apiKey,
-    ): SearchAnimeResult
-
     @GET("/me")
     suspend fun getMe(@Header("x-trace-key") key: String = Configure.apiKey): SearchQuota
 }

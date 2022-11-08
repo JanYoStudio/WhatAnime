@@ -41,8 +41,7 @@ const val appVersionCodeNumber: Long = BuildConfig.VERSION_CODE.toLong()
 
 fun BaseComposeActivity.toCustomTabs(url: String) {
     if (url.isBlank()) {
-        "跳转地址不能为空".toast(true)
-        return
+        throw IllegalArgumentException("url is blank")
     }
     try {
         val builder = CustomTabsIntent.Builder()

@@ -1,10 +1,10 @@
 package pw.janyo.whatanime.ui.activity
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -49,7 +49,6 @@ import java.io.File
 
 class DetailActivity : BaseComposeActivity() {
     companion object {
-        private const val TAG = "DetailActivity"
         private const val INTENT_HISTORY_ID = "INTENT_HISTORY_ID"
         private const val INTENT_CACHE_PATH = "INTENT_CACHE_PATH"
         private const val INTENT_TITLE = "INTENT_TITLE"
@@ -90,7 +89,6 @@ class DetailActivity : BaseComposeActivity() {
 
                 override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
-                    Log.e(TAG, "onPlayerError: ")
                     viewModel.playError(error)
                 }
             })
@@ -103,14 +101,14 @@ class DetailActivity : BaseComposeActivity() {
         val cacheFile = File(intent.getStringExtra(INTENT_CACHE_PATH)!!)
         //设置标题
         title = intent.getStringExtra(INTENT_TITLE)
-        viewModel.loadHistoryDetail(historyId,cacheFile)
+        viewModel.loadHistoryDetail(historyId, cacheFile)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
-        val showFloatDialog by viewModel.showFloatDialog.collectAsState()
+        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -128,55 +126,16 @@ class DetailActivity : BaseComposeActivity() {
                             Icon(Icons.Filled.ArrowBack, "")
                         }
                     },
-                    actions = {
-                        IconButton(onClick = {
-                            viewModel.changeFloatDialogVisibility()
-                        }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.Preview,
-                                contentDescription = "",
-                            )
-                        }
-                    }
                 )
             },
         ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
+            LazyColumn(
+                modifier = Modifier.padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                LazyColumn(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(listState.list) { item: SearchAnimeResultItem ->
-                        BuildResultItem(item, animeDialogState) {
-                            viewModel.playVideo(item)
-                        }
-                    }
-                }
-
-                Crossfade(
-                    targetState = showFloatDialog,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.TopEnd),
-                ) {
-                    if (it) {
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            border = BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.primary
-                            ),
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.padding(8.dp),
-                            ) {
-                                BuildImage(listState.searchImageFile)
-                            }
-                        }
+                items(listState.list) { item: SearchAnimeResultItem ->
+                    BuildResultItem(item, showChineseTitle, animeDialogState) {
+                        viewModel.playVideo(item)
                     }
                 }
             }
@@ -260,28 +219,5 @@ class DetailActivity : BaseComposeActivity() {
                 }
             })
         }
-    }
-
-
-    @Composable
-    fun BuildImage(searchImageFile: File?) {
-        var data: Any = searchImageFile ?: R.mipmap.janyo_studio
-        searchImageFile?.let {
-            if (!it.exists()) {
-                R.string.hint_select_file_not_exist.toast(true)
-                data = R.mipmap.janyo_studio
-            }
-        }
-        SubcomposeAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(data)
-                .memoryCachePolicy(CachePolicy.ENABLED)
-                .diskCachePolicy(CachePolicy.DISABLED)
-                .build(),
-            contentDescription = null,
-            modifier = Modifier
-                .width(320.dp)
-                .height(180.dp),
-        )
     }
 }

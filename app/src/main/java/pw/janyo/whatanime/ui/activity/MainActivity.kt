@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,11 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,10 +46,6 @@ import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -90,7 +85,7 @@ class MainActivity : BaseComposeActivity() {
             }
             val type = contentResolver.getType(intent.data!!)
             if (type.isNullOrBlank()) {
-                R.string.hint_select_file_not_exist.asString().toast()
+                R.string.hint_select_file_not_exist.toast()
             } else {
                 viewModel.searchImageFile(intent)
             }
@@ -120,7 +115,6 @@ class MainActivity : BaseComposeActivity() {
 
                 override fun onPlayerError(error: PlaybackException) {
                     super.onPlayerError(error)
-                    Log.e(TAG, "onPlayerError: ")
                     viewModel.playError(error)
                 }
             })
@@ -140,7 +134,7 @@ class MainActivity : BaseComposeActivity() {
                 intent.data = uri
                 viewModel.searchImageFile(intent)
             } catch (e: Exception) {
-                R.string.hint_select_file_path_null.asString().toast()
+                R.string.hint_select_file_path_null.toast()
             }
         }
     }
@@ -154,6 +148,7 @@ class MainActivity : BaseComposeActivity() {
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
+        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -164,7 +159,7 @@ class MainActivity : BaseComposeActivity() {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet {
+                ModalDrawerSheet(modifier = Modifier.width(320.dp)) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -210,10 +205,7 @@ class MainActivity : BaseComposeActivity() {
                         label = { Text(stringResource(id = R.string.action_history)) },
                         selected = false,
                         onClick = {
-                            scope.launch {
-                                intentTo(HistoryActivity::class)
-                                drawerState.close()
-                            }
+                            intentTo(HistoryActivity::class)
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -222,9 +214,7 @@ class MainActivity : BaseComposeActivity() {
                         label = { Text(stringResource(id = R.string.action_settings)) },
                         selected = false,
                         onClick = {
-                            scope.launch {
-                                drawerState.close()
-                            }
+                            intentTo(SettingsActivity::class)
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -233,10 +223,7 @@ class MainActivity : BaseComposeActivity() {
                         label = { Text(stringResource(id = R.string.action_faq)) },
                         selected = false,
                         onClick = {
-                            scope.launch {
-                                toCustomTabs(Constant.faqUrl)
-                                drawerState.close()
-                            }
+                            toCustomTabs(Constant.faqUrl)
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -250,10 +237,7 @@ class MainActivity : BaseComposeActivity() {
                             modifier = Modifier
                                 .weight(1F),
                             onClick = {
-                                scope.launch {
-                                    toCustomTabs(Constant.janYoStudioUrl)
-                                    drawerState.close()
-                                }
+                                toCustomTabs(Constant.janYoStudioUrl)
                             }) {
                             Text(
                                 text = stringResource(id = R.string.action_about_janyo),
@@ -270,10 +254,7 @@ class MainActivity : BaseComposeActivity() {
                             modifier = Modifier
                                 .weight(1F),
                             onClick = {
-                                scope.launch {
-                                    toCustomTabs(Constant.whatAnimeUrl)
-                                    drawerState.close()
-                                }
+                                toCustomTabs(Constant.whatAnimeUrl)
                             }) {
                             Text(
                                 text = stringResource(id = R.string.action_about_whatanime),
@@ -332,10 +313,6 @@ class MainActivity : BaseComposeActivity() {
                             .padding(innerPadding)
                             .padding(vertical = 8.dp)
                     ) {
-                        val compositionListEmpty by rememberLottieComposition(
-                            LottieCompositionSpec.RawRes(R.raw.animation_list_empty)
-                        )
-
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize(),
@@ -358,25 +335,25 @@ class MainActivity : BaseComposeActivity() {
                             }
                             when {
                                 listState.list.isEmpty() -> {
-                                    item {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .background(MaterialTheme.colorScheme.background),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            LottieAnimation(
-                                                composition = compositionListEmpty,
-                                                iterations = LottieConstants.IterateForever,
-                                                modifier = Modifier.size(256.dp)
-                                            )
-                                        }
-                                    }
+//                                    item {
+//                                        Box(
+//                                            modifier = Modifier
+//                                                .fillMaxSize()
+//                                                .background(MaterialTheme.colorScheme.background),
+//                                            contentAlignment = Alignment.Center
+//                                        ) {
+//                                            LottieAnimation(
+//                                                composition = compositionListEmpty,
+//                                                iterations = LottieConstants.IterateForever,
+//                                                modifier = Modifier.size(256.dp)
+//                                            )
+//                                        }
+//                                    }
                                 }
 
                                 else -> {
                                     items(listState.list) {
-                                        BuildResultItem(it, animeDialogState) {
+                                        BuildResultItem(it, showChineseTitle, animeDialogState) {
                                             viewModel.playVideo(it)
                                         }
                                     }
@@ -496,6 +473,7 @@ class MainActivity : BaseComposeActivity() {
 @Composable
 fun BuildResultItem(
     result: SearchAnimeResultItem,
+    showChineseTitle: Boolean,
     animeDialogState: MutableState<SearchAnimeResultItem?>,
     onClick: () -> Unit,
 ) {
@@ -512,24 +490,28 @@ fun BuildResultItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            if (result.similarity < 0.9) {
-                Text(
-                    text = stringResource(R.string.hint_probably_mistake),
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
             SelectionContainer {
                 Row {
                     Column {
-                        BuildText(stringResource(R.string.hint_title_native), FontWeight.Bold)
-                        BuildText(stringResource(R.string.hint_title_english))
-                        BuildText(stringResource(R.string.hint_title_romaji))
+                        BuildText(
+                            stringResource(R.string.detail_hint_native_title),
+                            FontWeight.Bold
+                        )
+                        if (showChineseTitle && result.aniList.title.chinese?.isNotBlank() == true) {
+                            BuildText(
+                                stringResource(R.string.detail_hint_chinese_title),
+                                FontWeight.Bold
+                            )
+                        }
+                        BuildText(stringResource(R.string.detail_hint_english_title))
+                        BuildText(stringResource(R.string.detail_hint_romaji_title))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         BuildText(result.aniList.title.native ?: "", FontWeight.Bold)
+                        if (showChineseTitle && result.aniList.title.chinese?.isNotBlank() == true) {
+                            BuildText(result.aniList.title.chinese ?: "", FontWeight.Bold)
+                        }
                         BuildText(result.aniList.title.english ?: "")
                         BuildText(result.aniList.title.romaji ?: "")
                     }
@@ -557,21 +539,28 @@ fun BuildResultItem(
                 SelectionContainer {
                     Row {
                         Column {
-                            BuildText(stringResource(R.string.hint_time))
-                            BuildText(stringResource(R.string.hint_episode))
-                            BuildText(stringResource(R.string.hint_ani_list_id))
-                            BuildText(stringResource(R.string.hint_mal_id))
-                            BuildText(stringResource(R.string.hint_similarity), FontWeight.Bold)
+                            BuildText(stringResource(R.string.detail_hint_time))
+                            BuildText(stringResource(R.string.detail_hint_ani_list_id))
+                            BuildText(stringResource(R.string.detail_hint_my_anime_list_id))
+                            BuildText(
+                                stringResource(R.string.detail_hint_similarity),
+                                FontWeight.Bold
+                            )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
+                        val similarityColor = if (result.similarity < 0.9) {
+                            Color.Red
+                        } else {
+                            Color.Green
+                        }
                         Column {
                             BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                            BuildText((result.episode ?: 0).toString())
                             BuildText("${result.aniList.id}")
                             BuildText("${result.aniList.idMal}")
                             BuildText(
                                 "${DecimalFormat("#.000").format(result.similarity * 100)}%",
-                                FontWeight.Bold
+                                FontWeight.Bold,
+                                similarityColor
                             )
                         }
                     }
@@ -582,12 +571,13 @@ fun BuildResultItem(
 }
 
 @Composable
-fun BuildText(text: String, fontWeight: FontWeight? = null) {
+fun BuildText(text: String, fontWeight: FontWeight? = null, textColor: Color = Color.Unspecified) {
     Text(
         text = text,
         fontSize = 12.sp,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        fontWeight = fontWeight
+        fontWeight = fontWeight,
+        color = textColor,
     )
 }

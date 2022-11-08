@@ -28,7 +28,6 @@ class Application: Application() {
             val sp = getSharedPreferences("configure", Context.MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
             Configure.language = sp.getInt("config_language", 0)
-            Configure.alreadyReadNotice = sp.getBoolean("config_read_notice", false)
         }
         Configure.lastVersion = BuildConfig.VERSION_CODE
     }

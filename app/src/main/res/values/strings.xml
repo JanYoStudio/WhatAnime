@@ -1,14 +1,59 @@
 <resources>
     <string name="app_name">WhatAnime</string>
 
-    <string name="action_about_janyo">About JanYo Studio</string>
-    <string name="action_about_whatanime">About WhatAnime</string>
+    <string name="action_about_janyo">JanYo Studio</string>
+    <string name="action_about_whatanime">WhatAnime</string>
     <string name="action_about_faq">About FAQ</string>
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
 
     <string name="hint_quota_used">Quota Used: %d</string>
     <string name="hint_quota_total">Quota Total: %d</string>
+
+    <string name="history_hint_save_time">Save time: </string>
+    <string name="history_hint_native_title">Native title: </string>
+    <string name="history_hint_ani_list_id">AniList ID: </string>
+    <string name="history_hint_similarity">Similarity: </string>
+
+    <string name="detail_hint_probably_mistake">The Result may be incorrect</string>
+    <string name="detail_hint_native_title">Native title: </string>
+    <string name="detail_hint_chinese_title">Chinese title: </string>
+    <string name="detail_hint_english_title">English title: </string>
+    <string name="detail_hint_romaji_title">Romaji: </string>
+    <string name="detail_hint_time">Time: </string>
+    <string name="detail_hint_ani_list_id">AniList ID: </string>
+    <string name="detail_hint_my_anime_list_id">MyAnimeList ID: </string>
+    <string name="detail_hint_similarity">Similarity: </string>
+
+    <string name="video_play_hint_400">Invalid url param</string>
+    <string name="video_play_hint_403">Invalid token</string>
+    <string name="video_play_hint_404">File not found</string>
+    <string name="video_play_hint_410">Token expired, can`t play</string>
+    <string name="video_play_hint_500">Server error</string>
+    <string name="video_play_hint_unknown">Unknown Error</string>
+
+    <string name="hint_swipe_to_delete">Swipe item to delete</string>
+    <string name="hint_no_network">The network connection is not available, please check the network</string>
+    <string name="hint_no_result">No results</string>
+    <string name="hint_search_error">Search failed</string>
+    <string name="hint_unknown_error">Unknown error</string>
+
+    <string name="settings_group_application">Application Settings</string>
+    <string name="settings_title_hide_sex">Hide content of NSFW</string>
+    <string name="settings_title_api_key">Custom Api Key</string>
+    <string name="settings_summary_api_key">If you\'ve donated to whatAnime, you can fill in the ApiKey you got here. <b>Note that if the ApiKey you enter is invalid, you will not be able to use the search feature.</b></string>
+
+    <string name="title_activity_main">WhatAnime</string>
+    <string name="title_activity_history">History</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!---->
+
+    <string name="hint_similarity">Accuracy: </string>
+    <string name="hint_time">Time: </string>
+    <string name="hint_time_history">Save time: </string>
+    <string name="hint_title_english">English Title: </string>
+    <string name="hint_title_native">"Native Title: "</string>
 
     <string name="dick_light" translatable="false">Dick Light</string>
     <string name="zh_lyh" translatable="false">ZH_LYH</string>
@@ -23,12 +68,6 @@
     <string name="hint_mal_id">MyAnimeList ID: </string>
     <string name="hint_search_quota">Search quota: </string>
 
-    <string name="hint_permission_deny">The permissions to read the file are used to get the image, without which the WhatAnime will not be available, please grant WhatAnime this permission! </string>
-    <string name="hint_response_error">Response data error!</string>
-    <string name="hint_unknow_error">Operation is abnormal!</string>
-
-    <string name="title_activity_main">WhatAnime</string>
-    <string name="title_activity_settings">Settings</string>
     <string name="action_history">History</string>
     <string name="action_more">More</string>
     <string name="action_about">About</string>
@@ -57,22 +96,15 @@
     <string name="hint_file_copy_error">File copy failed! </string>
     <string name="hint_history_delete_done">History delete success! </string>
     <string name="hint_history_delete_error">History delete failed! </string>
-    <string name="hint_no_result">No results.</string>
     <string name="hint_origin_file_null">The image file doesn\'t exist! </string>
     <string name="hint_select_file_not_exist">The selected image file doesn\'t exist! </string>
     <string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
     <string name="hint_select_file_uri_not_grant_permission">It seems that the gallery app you are using does not authorize Uri so you can\'t get the image information. \nTry using the \"in-app image selector\" or changing to a new gallery app.</string>
-    <string name="hint_similarity">Accuracy: </string>
-    <string name="hint_time">Time: </string>
-    <string name="hint_time_history">Save time: </string>
-    <string name="hint_title_english">English Title: </string>
-    <string name="hint_title_native">"Native Title: "</string>
     <string name="hint_select_browser">Please select a browser:</string>
     <string name="hint_no_browser">Please install a browser first.</string>
     <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
     <string name="hint_not_share">The file is invalid!</string>
     <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
-    <string name="hint_no_network">The network connection is abnormal, please check!</string>
     <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>
     <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
     <string name="hint_file_not_support">The current file is not supported, please change to another file for query!</string>
@@ -82,7 +114,6 @@
     <string name="title_about_github">Open on Github</string>
     <string name="title_about_license">Open Source License</string>
     <string name="title_about_open_source_license">Open Source</string>
-    <string name="title_activity_history">History</string>
     <string name="title_hide_sex">Hide content of NSFW</string>
     <string name="title_change_language">Change Language</string>
     <string name="title_change_preview_config">Change Previews</string>

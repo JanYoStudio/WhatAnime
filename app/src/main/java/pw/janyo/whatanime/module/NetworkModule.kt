@@ -1,7 +1,9 @@
 package pw.janyo.whatanime.module
 
 import okhttp3.OkHttpClient
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import pw.janyo.whatanime.api.AniListChineseApi
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.moshi
@@ -16,7 +18,7 @@ val networkModule = module {
             .readTimeout(40, TimeUnit.SECONDS)
             .build()
     }
-    single {
+    single(named("baseUrl")) {
         Retrofit.Builder()
             .baseUrl(Constant.baseUrl)
             .client(get())
@@ -25,7 +27,17 @@ val networkModule = module {
             )
             .build()
     }
+    single(named("aniListChineseUrl")) {
+        Retrofit.Builder()
+            .baseUrl(Constant.aniListChineseUrl)
+            .client(get())
+            .addConverterFactory(
+                MoshiConverterFactory.create(moshi)
+            )
+            .build()
+    }
     single {
-        get<Retrofit>().create(SearchApi::class.java)
+        get<Retrofit>(named("baseUrl")).create(SearchApi::class.java)
+        get<Retrofit>(named("aniListChineseUrl")).create(AniListChineseApi::class.java)
     }
 }

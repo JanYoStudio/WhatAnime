@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -30,10 +32,12 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.core.component.KoinComponent
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
+import pw.janyo.whatanime.ui.theme.isDarkMode
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -54,6 +58,18 @@ abstract class BaseComposeActivity :
     @Composable
     open fun BuildContentWindow() {
         WhatAnimeTheme {
+            // Remember a SystemUiController
+            val systemUiController = rememberSystemUiController()
+            val systemBarColor = MaterialTheme.colorScheme.background
+            val useDarkIcons = !isDarkMode()
+
+            DisposableEffect(systemUiController, useDarkIcons) {
+                systemUiController.setSystemBarsColor(
+                    color = systemBarColor,
+                    darkIcons = useDarkIcons
+                )
+                onDispose {}
+            }
             BuildContent()
         }
     }

@@ -52,7 +52,7 @@
             android:exported="true"
             android:theme="@style/Theme.WhatAnime.NoActionBar" />
         <activity
-            android:name=".ui.activity.AboutActivity"
+            android:name=".ui.activity.SettingsActivity"
             android:exported="true"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.WhatAnime.NoActionBar" />

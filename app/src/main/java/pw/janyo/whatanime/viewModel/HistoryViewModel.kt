@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.ComposeViewModel
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.AnimationRepository
@@ -16,9 +17,6 @@ class HistoryViewModel : ComposeViewModel() {
 
     private val _historyListState = MutableStateFlow(HistoryListState())
     val historyListState: StateFlow<HistoryListState> = _historyListState
-
-    private val _deleteActionState = MutableStateFlow(false)
-    val deleteActionState: StateFlow<Boolean> = _deleteActionState
 
     init {
         refresh()
@@ -47,7 +45,6 @@ class HistoryViewModel : ComposeViewModel() {
 
     fun deleteHistory(list: MutableList<Int>) {
         viewModelScope.launch {
-            _deleteActionState.value = false
             _historyListState.value = _historyListState.value.copy(
                 loading = true,
                 errorMessage = "",
@@ -56,7 +53,6 @@ class HistoryViewModel : ComposeViewModel() {
                 animationRepository.deleteHistory(it)
             }
             list.clear()
-            _deleteActionState.value = true
             val historyList = animationRepository.queryAllHistory()
             _historyListState.value = _historyListState.value.copy(
                 loading = false,
