@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,12 +24,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.alorma.compose.settings.ui.SettingsCheckbox
-import com.alorma.compose.settings.ui.SettingsMenuLink
 import pw.janyo.whatanime.R
+import pw.janyo.whatanime.appVersionName
 import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.constant.StringConstant.resString
+import pw.janyo.whatanime.publicDeviceId
+import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.preference.CheckboxSetting
 import pw.janyo.whatanime.ui.preference.SettingsGroup
+import pw.janyo.whatanime.ui.preference.SettingsMenuLink
+import pw.janyo.whatanime.ui.theme.Icons
+import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.viewModel.SettingsViewModel
 
 class SettingsActivity : BaseComposeActivity() {
@@ -37,6 +43,11 @@ class SettingsActivity : BaseComposeActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
+        val hideSex by viewModel.hideSex.collectAsState()
+        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
+        val allowSendCrashReport by viewModel.allowSendCrashReport.collectAsState()
+        val searchQuota by viewModel.searchQuota.collectAsState()
+
         val snackbarHostState = remember { SnackbarHostState() }
 
         Scaffold(
@@ -48,7 +59,7 @@ class SettingsActivity : BaseComposeActivity() {
                         IconButton(onClick = {
                             finish()
                         }) {
-                            Icon(Icons.Filled.ArrowBack, "")
+                            Icons(Icons.Filled.ArrowBack)
                         }
                     },
                 )
@@ -65,13 +76,123 @@ class SettingsActivity : BaseComposeActivity() {
                         Text(text = stringResource(id = R.string.settings_group_application))
                     },
                     content = {
-                        val hideSex by viewModel.hideSex.collectAsState()
                         CheckboxSetting(
                             title = stringResource(id = R.string.settings_title_hide_sex),
-                            subtitle = "fajfhaf",
+                            subtitle = stringResource(id = R.string.settings_summary_hide_sex),
                             checked = hideSex,
                             onCheckedChange = { newValue ->
                                 viewModel.setHideSex(newValue)
+                            }
+                        )
+                        CheckboxSetting(
+                            title = stringResource(id = R.string.settings_title_show_chinese_title),
+                            subtitle = stringResource(id = R.string.settings_summary_show_chinese_title),
+                            checked = showChineseTitle,
+                            onCheckedChange = { newValue ->
+                                viewModel.setShowChineseTitle(newValue)
+                            }
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_api_key),
+                            subtitle = stringResource(id = R.string.settings_summary_api_key),
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_quota_used),
+                            subtitle = stringResource(
+                                id = R.string.settings_summary_quota_used,
+                                searchQuota.quotaUsed
+                            ),
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_quota_total),
+                            subtitle = stringResource(
+                                id = R.string.settings_summary_quota_total,
+                                searchQuota.quota
+                            ),
+                        )
+                    })
+                SettingsGroup(
+                    title = {
+                        Text(text = stringResource(id = R.string.settings_group_more))
+                    },
+                    content = {
+                        CheckboxSetting(
+                            icon = { Icons(Icons.Outlined.BugReport) },
+                            title = stringResource(id = R.string.settings_title_send_crash_report),
+                            subtitle = stringResource(id = R.string.settings_summary_send_crash_report),
+                            checked = allowSendCrashReport,
+                            onCheckedChange = { newValue ->
+                                viewModel.setAllowSendCrashReport(newValue)
+                            }
+                        )
+                        SettingsMenuLink(
+                            title = "",
+                            subtitle = stringResource(id = R.string.settings_summary_app_center),
+                        )
+                    })
+                SettingsGroup(
+                    title = {
+                        Text(text = stringResource(id = R.string.settings_group_about))
+                    },
+                    content = {
+                        SettingsMenuLink(
+                            icon = { Icons(WaIcons.Settings.github) },
+                            title = stringResource(id = R.string.settings_title_about_github),
+                            subtitle = stringResource(id = R.string.settings_summary_about_github),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_about_github.resString())
+                            }
+                        )
+                        SettingsMenuLink(
+                            icon = { Icons(WaIcons.Settings.license) },
+                            title = stringResource(id = R.string.settings_title_about_license),
+                            subtitle = stringResource(id = R.string.settings_summary_about_license),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_about_license.resString())
+                            }
+                        )
+                        SettingsMenuLink(
+                            icon = { Icons(WaIcons.Settings.googlePlay) },
+                            title = stringResource(id = R.string.settings_title_about_google_play),
+                            subtitle = stringResource(id = R.string.settings_summary_about_google_play),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_about_google_play.resString())
+                            }
+                        )
+                        SettingsMenuLink(
+                            icon = { Icons(WaIcons.Settings.janyoLicense) },
+                            title = stringResource(id = R.string.settings_title_about_janyo_license),
+                            subtitle = stringResource(id = R.string.settings_summary_about_janyo_license),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_about_janyo_license.resString())
+                            }
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_about_version),
+                            subtitle = appVersionName,
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_about_device_id),
+                            subtitle = publicDeviceId,
+                        )
+                    })
+                SettingsGroup(
+                    title = {
+                        Text(text = stringResource(id = R.string.settings_group_about_what_anime))
+                    },
+                    content = {
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_developer_what_anime),
+                            subtitle = stringResource(id = R.string.settings_summary_developer_what_anime),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_developer_what_anime.resString())
+                            }
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.settings_title_what_anime),
+                            subtitle = stringResource(id = R.string.settings_summary_what_anime),
+                            onClick = {
+                                toCustomTabs(R.string.settings_link_what_anime.resString())
                             }
                         )
                     })

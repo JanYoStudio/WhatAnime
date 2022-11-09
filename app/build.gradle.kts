@@ -99,8 +99,6 @@ dependencies {
     val composeVersion = "1.3.0"
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    //compose-settings
-    implementation("com.github.alorma:compose-settings-ui-m3:0.13.0")
     //material
     implementation("androidx.compose.material:material:1.3.0")
     implementation("androidx.compose.material3:material3:1.1.0-alpha01")

@@ -61,7 +61,11 @@ class AnimationRepository : KoinComponent {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.name, file.asRequestBody())
                 .build()
-            val data = searchApi.search(requestBody)
+            val data = if (Configure.cutBorders) {
+                searchApi.search(requestBody)
+            } else {
+                searchApi.searchNoCut(requestBody)
+            }
             if (data.error.isNotBlank()) {
                 Log.e(TAG, "http request failed, ${data.error}")
                 throw ResourceException(R.string.hint_search_error)

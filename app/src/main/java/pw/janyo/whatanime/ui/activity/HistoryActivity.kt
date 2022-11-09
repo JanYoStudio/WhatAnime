@@ -14,6 +14,7 @@ import androidx.compose.material.FractionalThreshold
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.material.rememberSwipeableState
@@ -38,6 +39,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.utils.getCalendarFromLong
 import pw.janyo.whatanime.utils.toDateTimeString
 import pw.janyo.whatanime.viewModel.HistoryViewModel
@@ -64,17 +66,14 @@ class HistoryActivity : BaseComposeActivity() {
                         IconButton(onClick = {
                             finish()
                         }) {
-                            Icon(
-                                Icons.Filled.ArrowBack,
-                                contentDescription = "",
-                            )
+                            Icons(Icons.Filled.ArrowBack)
                         }
                     },
                     actions = {
                         IconButton(onClick = {
                             R.string.hint_swipe_to_delete.toast()
                         }) {
-                            Icon(Icons.Outlined.TipsAndUpdates, contentDescription = null)
+                            Icons(Icons.Outlined.TipsAndUpdates)
                         }
                     }
                 )
@@ -88,10 +87,7 @@ class HistoryActivity : BaseComposeActivity() {
                     FloatingActionButton(onClick = {
                         viewModel.deleteHistory(selectedList)
                     }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.DeleteSweep,
-                            contentDescription = null
-                        )
+                        Icons(Icons.TwoTone.DeleteSweep)
                     }
                 }
             },

@@ -46,4 +46,9 @@ object Configure {
             kv.encode("showChineseTitle", value)
         }
         get() = kv.decodeBool("showChineseTitle", true)
+    var cutBorders: Boolean
+        set(value) {
+            kv.encode("cutBorders", value)
+        }
+        get() = kv.decodeBool("cutBorders", true)
 }

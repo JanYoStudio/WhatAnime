@@ -11,24 +11,24 @@ fun CheckboxSetting(
     title: String,
     subtitle: String? = null,
     icon: (@Composable () -> Unit)? = null,
-    onClick: () -> Unit = {},
+    onClick: (() -> Unit)? = null,
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
     SettingsMenuLink(
         modifier = modifier,
-        title = {
-            Text(text = title)
-        },
-        subtitle = subtitle?.let {
-            {
-                Text(text = it)
-            }
-        },
+        title = title,
+        subtitle = subtitle,
         icon = icon,
         action = {
             Switch(checked = checked, onCheckedChange = onCheckedChange)
         },
-        onClick = onClick,
+        onClick = {
+            if (onClick == null) {
+                onCheckedChange?.invoke(!checked)
+            } else {
+                onClick()
+            }
+        },
     )
 }

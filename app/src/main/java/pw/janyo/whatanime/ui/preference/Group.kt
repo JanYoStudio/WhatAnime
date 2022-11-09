@@ -49,7 +49,7 @@ internal fun SettingsGroupTitle(title: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(36.dp)
-            .padding(start = 24.dp),
+            .padding(start = 64.dp),
         contentAlignment = Alignment.CenterStart
     ) {
         val primary = MaterialTheme.colorScheme.primary

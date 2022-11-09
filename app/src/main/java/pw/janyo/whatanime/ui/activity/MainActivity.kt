@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Plagiarism
+import androidx.compose.material.icons.outlined.AppShortcut
 import androidx.compose.material.icons.outlined.HelpCenter
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Menu
@@ -57,6 +58,7 @@ import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.activity.contract.ImagePickResultContract
+import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.utils.firstNotBlank
 import pw.janyo.whatanime.utils.formatTime
 import pw.janyo.whatanime.viewModel.MainViewModel
@@ -149,6 +151,7 @@ class MainActivity : BaseComposeActivity() {
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
         val showChineseTitle by viewModel.showChineseTitle.collectAsState()
+        val cutBorders by viewModel.cutBorders.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -201,7 +204,7 @@ class MainActivity : BaseComposeActivity() {
                     }
                     Divider(modifier = Modifier.fillMaxWidth())
                     NavigationDrawerItem(
-                        icon = { Icon(Icons.Filled.Plagiarism, contentDescription = null) },
+                        icon = { Icons(Icons.Filled.Plagiarism) },
                         label = { Text(stringResource(id = R.string.action_history)) },
                         selected = false,
                         onClick = {
@@ -210,7 +213,7 @@ class MainActivity : BaseComposeActivity() {
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                     NavigationDrawerItem(
-                        icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
+                        icon = { Icons(Icons.Outlined.Settings) },
                         label = { Text(stringResource(id = R.string.action_settings)) },
                         selected = false,
                         onClick = {
@@ -219,7 +222,20 @@ class MainActivity : BaseComposeActivity() {
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                     NavigationDrawerItem(
-                        icon = { Icon(Icons.Outlined.HelpCenter, contentDescription = null) },
+                        icon = { Icons(Icons.Outlined.AppShortcut) },
+                        label = { Text(stringResource(id = R.string.action_cut_border)) },
+                        badge = {
+                            Switch(checked = cutBorders, onCheckedChange = {
+                                viewModel.changeCutBorders()
+                            })
+                        },
+                        selected = true,
+                        onClick = {
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                    NavigationDrawerItem(
+                        icon = { Icons(Icons.Outlined.HelpCenter) },
                         label = { Text(stringResource(id = R.string.action_faq)) },
                         selected = false,
                         onClick = {
@@ -289,20 +305,14 @@ class MainActivity : BaseComposeActivity() {
                                         drawerState.open()
                                     }
                                 }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Menu,
-                                        contentDescription = null
-                                    )
+                                    Icons(Icons.Outlined.Menu)
                                 }
                             },
                             actions = {
                                 IconButton(onClick = {
                                     imageSelectLauncher.launch("image/*")
                                 }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.ImageSearch,
-                                        contentDescription = null
-                                    )
+                                    Icons(Icons.Outlined.ImageSearch)
                                 }
                             }
                         )

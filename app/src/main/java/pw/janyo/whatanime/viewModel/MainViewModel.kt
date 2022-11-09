@@ -49,6 +49,9 @@ class MainViewModel : ComposeViewModel() {
     private val _showChineseTitle = MutableStateFlow(Configure.showChineseTitle)
     val showChineseTitle: StateFlow<Boolean> = _showChineseTitle
 
+    private val _cutBorders = MutableStateFlow(Configure.cutBorders)
+    val cutBorders: StateFlow<Boolean> = _cutBorders
+
     private val _playLoading = MutableStateFlow(false)
     val playLoading: StateFlow<Boolean> = _playLoading
 
@@ -196,6 +199,13 @@ class MainViewModel : ComposeViewModel() {
                     )
             }
             _playLoading.value = true
+        }
+    }
+
+    fun changeCutBorders() {
+        viewModelScope.launch {
+            Configure.cutBorders = !_cutBorders.value
+            _cutBorders.value = !_cutBorders.value
         }
     }
 }

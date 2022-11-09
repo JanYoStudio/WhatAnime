@@ -38,6 +38,8 @@ val networkModule = module {
     }
     single {
         get<Retrofit>(named("baseUrl")).create(SearchApi::class.java)
+    }
+    single {
         get<Retrofit>(named("aniListChineseUrl")).create(AniListChineseApi::class.java)
     }
 }

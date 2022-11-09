@@ -10,6 +10,14 @@ interface SearchApi {
     @POST("/search")
     suspend fun search(
         @Body body: RequestBody,
+        @Query("cutBorders") cutBorders: String = "",
+        @Query("anilistInfo") anilistInfo: String = "",
+        @Header("x-trace-key") key: String = Configure.apiKey,
+    ): SearchAnimeResult
+
+    @POST("/search")
+    suspend fun searchNoCut(
+        @Body body: RequestBody,
         @Query("anilistInfo") anilistInfo: String = "",
         @Header("x-trace-key") key: String = Configure.apiKey,
     ): SearchAnimeResult

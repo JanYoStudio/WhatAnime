@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.twotone.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,7 @@ import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.toCustomTabs
+import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.utils.firstNotBlank
 import pw.janyo.whatanime.viewModel.DetailViewModel
 import java.io.File
@@ -123,7 +125,7 @@ class DetailActivity : BaseComposeActivity() {
                         IconButton(onClick = {
                             finish()
                         }) {
-                            Icon(Icons.Filled.ArrowBack, "")
+                            Icons(Icons.Filled.ArrowBack)
                         }
                     },
                 )
