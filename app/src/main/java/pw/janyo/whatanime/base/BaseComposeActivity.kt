@@ -1,29 +1,27 @@
 package pw.janyo.whatanime.base
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -35,10 +33,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.core.component.KoinComponent
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 import pw.janyo.whatanime.ui.theme.isDarkMode
-import java.util.*
 import kotlin.reflect.KClass
 
 abstract class BaseComposeActivity :
@@ -78,32 +74,32 @@ abstract class BaseComposeActivity :
     open fun BuildContent() {
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        val language = Configure.language
-        if (language == 0) {
-            super.attachBaseContext(newBase)
-            return
-        }
-        super.attachBaseContext(changeLanguage(newBase))
-    }
+//    override fun attachBaseContext(newBase: Context) {
+//        val language = Configure.language
+//        if (language == 0) {
+//            super.attachBaseContext(newBase)
+//            return
+//        }
+//        super.attachBaseContext(changeLanguage(newBase))
+//    }
 
-    @SuppressLint("NewApi")
-    private fun changeLanguage(context: Context): Context {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val newLocale: Locale = when (Configure.language) {
-                1 -> Locale.SIMPLIFIED_CHINESE
-                2 -> Locale.TRADITIONAL_CHINESE
-                3 -> Locale.forLanguageTag("zh-Hant-HK")
-                else -> Locale.getDefault()
-            }
-            val configuration = Resources.getSystem().configuration
-            configuration.setLocale(newLocale)
-            configuration.setLocales(LocaleList(newLocale))
-            context.createConfigurationContext(configuration)
-        } else {
-            context
-        }
-    }
+//    @SuppressLint("NewApi")
+//    private fun changeLanguage(context: Context): Context {
+//        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val newLocale: Locale = when (Configure.language) {
+//                1 -> Locale.SIMPLIFIED_CHINESE
+//                2 -> Locale.TRADITIONAL_CHINESE
+//                3 -> Locale.forLanguageTag("zh-Hant-HK")
+//                else -> Locale.getDefault()
+//            }
+//            val configuration = Resources.getSystem().configuration
+//            configuration.setLocale(newLocale)
+//            configuration.setLocales(LocaleList(newLocale))
+//            context.createConfigurationContext(configuration)
+//        } else {
+//            context
+//        }
+//    }
 
     fun <T : Activity> intentTo(
         clazz: KClass<T>,

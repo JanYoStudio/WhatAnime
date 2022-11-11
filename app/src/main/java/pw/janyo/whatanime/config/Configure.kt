@@ -18,11 +18,6 @@ object Configure {
             kv.encode("config_hide_sex", value)
         }
         get() = kv.decodeBool("config_hide_sex", true)
-    var language: Int
-        set(value) {
-            kv.encode("config_language", value)
-        }
-        get() = kv.decodeInt("config_language", 0)
     var apiKey: String
         set(value) {
             kv.encode("config_api_key", value)

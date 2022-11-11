@@ -4,6 +4,7 @@
     <string name="action_about_janyo">JanYo Studio</string>
     <string name="action_about_whatanime">WhatAnime</string>
     <string name="action_about_faq">About FAQ</string>
+    <string name="action_history">History</string>
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
     <string name="action_start_search">Start Search</string>
@@ -42,8 +43,17 @@
     <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
     <string name="hint_input_title_api_key">API Key</string>
     <string name="hint_input_api_key">Please enter your API-Key</string>
+    <string name="hint_select_language">Please select your UI language</string>
     <string name="hint_searching">Searching…</string>
     <string name="hint_select_to_search">Click the search button to start your search</string>
+    <string name="hint_no_browser">Please install a browser first</string>
+    <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
+    <string name="hint_data_convert_no_detail_in_history">Because of a change in the data structure, you can no longer view information about the record, please delete the record</string>
+    <string name="hint_select_file_not_exist">The selected image file doesn\'t exist! </string>
+    <string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
+    <string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
+    <string name="hint_not_share">The file is invalid!</string>
+    <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
 
     <string name="settings_group_application">Application Settings</string>
     <string name="settings_title_hide_sex">Hide Sex Content</string>
@@ -56,6 +66,7 @@
     <string name="settings_summary_quota_used">Usage this month: %d</string>
     <string name="settings_title_quota_total">Quota Total</string>
     <string name="settings_summary_quota_total">Total for the month: %d</string>
+    <string name="settings_title_select_language">Select Language</string>
     <string name="settings_group_more">More Settings</string>
     <string name="settings_title_send_crash_report">Allow Send Crash Report</string>
     <string name="settings_summary_send_crash_report">This will help us identify and solve problems faster</string>
@@ -86,78 +97,5 @@
     <string name="title_activity_main">WhatAnime</string>
     <string name="title_activity_history">History</string>
     <string name="title_activity_settings">Settings</string>
-
-    <!---->
-
-    <string name="hint_similarity">Accuracy: </string>
-    <string name="hint_time">Time: </string>
-    <string name="hint_time_history">Save time: </string>
-    <string name="hint_title_english">English Title: </string>
-    <string name="hint_title_native">"Native Title: "</string>
-
-    <string name="dick_light" translatable="false">Dick Light</string>
-    <string name="zh_lyh" translatable="false">ZH_LYH</string>
-    <string name="cieyget" translatable="false">CieyGet</string>
-    <string name="mystery0" translatable="false">Mystery0</string>
-    <string name="gsoy" translatable="false">Gsoy</string>
-    <string name="link_zh_lyh" translatable="false">https://liuyuhong.ml</string>
-    <string name="link_mystery0" translatable="false">https://blog.mystery0.vip</string>
-
-    <string name="hint_title_romaji">Romaji: </string>
-    <string name="hint_ani_list_id">AniList ID: </string>
-    <string name="hint_mal_id">MyAnimeList ID: </string>
-    <string name="hint_search_quota">Search quota: </string>
-
-    <string name="action_history">History</string>
-    <string name="action_more">More</string>
-    <string name="action_about">About</string>
-    <string name="action_re_request_permission">Redo</string>
-    <string name="action_disagree">I disagree</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_about_quota">About Quota</string>
-    <string name="category_about">About</string>
-    <string name="category_about_janyo">About JanYo Studio</string>
-    <string name="category_about_whatanime">About WhatAnime</string>
-    <string name="category_settings">Settings</string>
-    <string name="array_language_default">Default</string>
-    <string name="array_language_chinese_simplified">Chinese (Simplified)</string>
-    <string name="array_language_chinese_traditional">Chinese (Traditional)</string>
-    <string name="array_language_chinese_cantonese">Cantonese</string>
-    <string name="array_preview_config_origin">Origin</string>
-    <string name="array_preview_config_natural_scene_cutting">Preview with Natural Scene Cutting</string>
-    <string name="array_preview_config_mute_natural">Preview with Natural Scene Cutting (Mute)</string>
-    <string name="array_request_type_server_compress">Cloud Compress</string>
-    <string name="array_request_type_server_directly">Request Directly</string>
-    <string name="array_summary_request_type_server_compress">Transit requests through the server, may be faster for China users</string>
-    <string name="array_summary_request_type_server_directly">Post to the original API, which may not be accessible in China</string>
-    <string name="hint_cache_make_dir_error">Cache directory create failed! Please check the permission! </string>
-    <string name="hint_episode">Episode: </string>
-    <string name="hint_file_copy_error">File copy failed! </string>
-    <string name="hint_history_delete_done">History delete success! </string>
-    <string name="hint_history_delete_error">History delete failed! </string>
-    <string name="hint_origin_file_null">The image file doesn\'t exist! </string>
-    <string name="hint_select_file_not_exist">The selected image file doesn\'t exist! </string>
-    <string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
-    <string name="hint_select_file_uri_not_grant_permission">It seems that the gallery app you are using does not authorize Uri so you can\'t get the image information. \nTry using the \"in-app image selector\" or changing to a new gallery app.</string>
-    <string name="hint_select_browser">Please select a browser:</string>
-    <string name="hint_no_browser">Please install a browser first.</string>
-    <string name="hint_show_animation_detail">Do you want to view more details about %1$s ?</string>
-    <string name="hint_not_share">The file is invalid!</string>
-    <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
-    <string name="hint_usage_notice">WhatAnime is a tool application for retrieving anime pan, the results of which depend on the image used to retrieve, if you choose a non-cartoon screenshot (fanart, selfie, adult movie screenshot, inexplicable picture, etc.), naturally can not retrieve the correct results. \n\n Do not use the app to retrieve adult movies (certainly not out of the way)!</string>
-    <string name="hint_file_not_support">The current file is not supported, please change to another file for query!</string>
-    <string name="hint_data_convert_no_detail_in_history">Because of a change in the data structure, you can no longer view information about the record, please delete the record</string>
-    <string name="summary_about_open_on_play">Rate in Google Play Store</string>
-    <string name="summary_developer_whatanime">WhatAnime API Developer</string>
-    <string name="title_about_github">Open on Github</string>
-    <string name="title_about_license">Open Source License</string>
-    <string name="title_about_open_source_license">Open Source</string>
-    <string name="title_hide_sex">Hide content of NSFW</string>
-    <string name="title_change_language">Change Language</string>
-    <string name="title_change_preview_config">Change Previews</string>
-    <string name="title_version">Version</string>
-    <string name="title_device_id">Device ID</string>
-    <string name="title_receive_share">Search by WhatAnime</string>
-    <string name="title_usage_notice">Usage Notice</string>
-    <string name="hint_probably_mistake">The Result may be incorrect</string>
+    <string name="title_activity_receive_share">Search by WhatAnime</string>
 </resources>

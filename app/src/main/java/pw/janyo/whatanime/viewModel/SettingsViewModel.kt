@@ -1,5 +1,7 @@
 package pw.janyo.whatanime.viewModel
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,15 @@ import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.AnimationRepository
 
 class SettingsViewModel : ComposeViewModel() {
+    companion object {
+        private val localeList = listOf(
+            LocaleListCompat.getDefault(),
+            LocaleListCompat.forLanguageTags("en-US"),
+            LocaleListCompat.forLanguageTags("zh-CN"),
+            LocaleListCompat.forLanguageTags("zh-TW"),
+        )
+    }
+
     private val animationRepository: AnimationRepository by inject()
 
     private val _errorMessage = MutableStateFlow("")
@@ -75,6 +86,19 @@ class SettingsViewModel : ComposeViewModel() {
             _errorMessage.value = throwable.message ?: R.string.hint_unknown_error.resString()
         }) {
             _searchQuota.value = animationRepository.showQuota()
+        }
+    }
+
+    fun showLanguageList(): List<Pair<String, Boolean>> {
+        val locale = AppCompatDelegate.getApplicationLocales()
+        return localeList.map {
+            it.get(0)!!.displayName to (it == locale)
+        }
+    }
+
+    fun setLanguageList(select: Int) {
+        viewModelScope.launch {
+            AppCompatDelegate.setApplicationLocales(localeList[select])
         }
     }
 }

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="language">
-        <item>@string/array_language_default</item>
-        <item>@string/array_language_chinese_simplified</item>
-        <item>@string/array_language_chinese_traditional</item>
-        <item>@string/array_language_chinese_cantonese</item>
-    </string-array>
-</resources>

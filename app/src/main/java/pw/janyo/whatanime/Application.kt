@@ -27,7 +27,6 @@ class Application: Application() {
             //SP数据迁移到MMKV
             val sp = getSharedPreferences("configure", Context.MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
-            Configure.language = sp.getInt("config_language", 0)
         }
         Configure.lastVersion = BuildConfig.VERSION_CODE
     }

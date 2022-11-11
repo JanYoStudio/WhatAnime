@@ -3,10 +3,13 @@ package pw.janyo.whatanime.ui.activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,6 +18,7 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -31,9 +35,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.appName
@@ -65,6 +71,7 @@ class SettingsActivity : BaseComposeActivity() {
 
         val snackbarHostState = remember { SnackbarHostState() }
         val inputApiKeyDialogState = remember { mutableStateOf(false) }
+        val selectLanguageDialogState = remember { mutableStateOf(false) }
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -129,6 +136,12 @@ class SettingsActivity : BaseComposeActivity() {
                                 searchQuota.quota
                             ),
                         )
+//                        SettingsMenuLink(
+//                            title = stringResource(id = R.string.settings_title_select_language),
+//                            onClick = {
+//                                selectLanguageDialogState.value = true
+//                            }
+//                        )
                     })
                 SettingsGroup(
                     title = {
@@ -221,6 +234,7 @@ class SettingsActivity : BaseComposeActivity() {
             }
         }
         BuildInputApiKeyDialog(customApiKey, inputApiKeyDialogState)
+        BuildSelectLanguageDialog(selectLanguageDialogState)
 
         val errorMessage by viewModel.errorMessage.collectAsState()
         if (errorMessage.isNotBlank()) {
@@ -270,6 +284,63 @@ class SettingsActivity : BaseComposeActivity() {
                     loadInBrowser("https://github.com/sponsors/soruly")
                 }) {
                     Text(text = stringResource(id = R.string.action_donate))
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun BuildSelectLanguageDialog(show: MutableState<Boolean>) {
+        if (!show.value) return
+        val list = viewModel.showLanguageList()
+        var select by remember { mutableStateOf(list.indexOfFirst { it.second }) }
+        AlertDialog(
+            onDismissRequest = {
+                show.value = false
+            },
+            title = {
+                Text(text = stringResource(id = R.string.hint_select_language))
+            },
+            text = {
+                Column {
+                    list.forEachIndexed { index, pair ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    select = index
+                                }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                modifier = Modifier.size(32.dp),
+                                selected = select == index,
+                                onClick = {
+                                    select = index
+                                }
+                            )
+                            Text(
+                                text = pair.first,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.setLanguageList(select)
+                    show.value = false
+                }) {
+                    Text(text = stringResource(id = android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    show.value = false
+                }) {
+                    Text(text = stringResource(id = android.R.string.cancel))
                 }
             }
         )
