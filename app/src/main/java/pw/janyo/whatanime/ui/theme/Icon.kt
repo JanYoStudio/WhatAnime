@@ -15,15 +15,9 @@ object WaIcons {
         val github: Painter
             @Composable
             get() = painterResource(id = R.drawable.ic_github)
-        val license: Painter
-            @Composable
-            get() = painterResource(id = R.drawable.ic_license)
         val googlePlay: Painter
             @Composable
             get() = painterResource(id = R.drawable.ic_google_play)
-        val janyoLicense: Painter
-            @Composable
-            get() = painterResource(id = R.drawable.ic_janyo_license)
     }
 }
 

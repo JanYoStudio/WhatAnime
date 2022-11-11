@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -38,7 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -69,11 +72,13 @@ class MainActivity : BaseComposeActivity() {
     companion object {
         private const val TAG = "MainActivity"
         private const val INTENT_URI = "INTENT_URI"
+        private const val INTENT_MIME_TYPE = "INTENT_MIME_TYPE"
 
-        fun receiveShare(uri: Uri): Intent.() -> Unit {
+        fun receiveShare(uri: Uri, mimeType: String): Intent.() -> Unit {
             Log.d(TAG, "receiveShare: uri: $uri")
             return {
                 putExtra(INTENT_URI, uri)
+                putExtra(INTENT_MIME_TYPE, mimeType)
             }
         }
     }
@@ -89,7 +94,7 @@ class MainActivity : BaseComposeActivity() {
             if (type.isNullOrBlank()) {
                 R.string.hint_select_file_not_exist.toast()
             } else {
-                viewModel.searchImageFile(intent)
+                viewModel.searchImageFile(intent, type)
             }
         }
     private val exoPlayer: ExoPlayer by lazy {
@@ -133,8 +138,9 @@ class MainActivity : BaseComposeActivity() {
                 } else {
                     intent?.getParcelableExtra(INTENT_URI)
                 }
+                val mimeType = intent?.getStringExtra(INTENT_MIME_TYPE)
                 intent.data = uri
-                viewModel.searchImageFile(intent)
+                viewModel.searchImageFile(intent, mimeType!!)
             } catch (e: Exception) {
                 R.string.hint_select_file_path_null.toast()
             }
@@ -323,50 +329,75 @@ class MainActivity : BaseComposeActivity() {
                             .padding(innerPadding)
                             .padding(vertical = 8.dp)
                     ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            item {
-                                Card(
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                        .clickable {
-                                            if (!listState.loading && listState.list.isEmpty()) {
-                                                imageSelectLauncher.launch("image/*")
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .matchParentSize(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                item {
+                                    Card(
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .clickable {
+                                                if (!listState.loading && listState.list.isEmpty()) {
+                                                    imageSelectLauncher.launch("image/*")
+                                                }
+                                            },
+                                        shape = RoundedCornerShape(16.dp),
+                                    ) {
+                                        BuildImage(listState.searchImageFile)
+                                    }
+                                }
+                                when {
+                                    listState.list.isEmpty() -> {
+                                        item {
+                                            Box(
+                                                modifier = Modifier
+                                                    .height(640.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .width(172.dp),
+                                                    fontSize = 16.sp,
+                                                    text = stringResource(id = R.string.hint_select_to_search),
+                                                    textAlign = TextAlign.Center,
+                                                )
                                             }
-                                        },
-                                    shape = RoundedCornerShape(16.dp),
-                                ) {
-                                    BuildImage(listState.searchImageFile)
-                                }
-                            }
-                            when {
-                                listState.list.isEmpty() -> {
-//                                    item {
-//                                        Box(
-//                                            modifier = Modifier
-//                                                .fillMaxSize()
-//                                                .background(MaterialTheme.colorScheme.background),
-//                                            contentAlignment = Alignment.Center
-//                                        ) {
-//                                            LottieAnimation(
-//                                                composition = compositionListEmpty,
-//                                                iterations = LottieConstants.IterateForever,
-//                                                modifier = Modifier.size(256.dp)
-//                                            )
-//                                        }
-//                                    }
-                                }
-
-                                else -> {
-                                    items(listState.list) {
-                                        BuildResultItem(it, showChineseTitle, animeDialogState) {
-                                            viewModel.playVideo(it)
                                         }
                                     }
+
+                                    else -> {
+                                        items(listState.list) {
+                                            BuildResultItem(
+                                                it,
+                                                showChineseTitle,
+                                                animeDialogState
+                                            ) {
+                                                viewModel.playVideo(it)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Crossfade(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                targetState = listState.list.size,
+                            ) {
+                                if (it == 0) {
+                                    ExtendedFloatingActionButton(
+                                        text = {
+                                            Text(text = stringResource(id = R.string.action_start_search))
+                                        },
+                                        icon = {
+                                            Icons(Icons.Outlined.ImageSearch)
+                                        },
+                                        onClick = {
+                                            imageSelectLauncher.launch("image/*")
+                                        },
+                                    )
                                 }
                             }
                         }
@@ -374,7 +405,10 @@ class MainActivity : BaseComposeActivity() {
                 }
             },
         )
-        ShowProgressDialog(show = listState.loading, text = "TODO 加载中……")
+        ShowProgressDialog(
+            show = listState.loading,
+            text = stringResource(id = R.string.hint_searching)
+        )
         BuildAlertDialog(animeDialogState)
         BuildVideoDialog()
 
@@ -503,27 +537,42 @@ fun BuildResultItem(
             SelectionContainer {
                 Row {
                     Column {
-                        BuildText(
-                            stringResource(R.string.detail_hint_native_title),
-                            FontWeight.Bold
-                        )
-                        if (showChineseTitle && result.aniList.title.chinese?.isNotBlank() == true) {
+                        val nativeTitle = result.aniList.title.native ?: ""
+                        val chineseTitle = result.aniList.title.chinese ?: ""
+                        val englishTitle = result.aniList.title.english ?: ""
+                        val romajiTitle = result.aniList.title.romaji ?: ""
+                        if (nativeTitle.isNotBlank()) {
                             BuildText(
-                                stringResource(R.string.detail_hint_chinese_title),
+                                text = stringResource(
+                                    R.string.detail_hint_native_title,
+                                    nativeTitle
+                                ),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                        if (showChineseTitle && chineseTitle.isNotBlank()) {
+                            BuildText(
+                                stringResource(R.string.detail_hint_chinese_title, chineseTitle),
                                 FontWeight.Bold
                             )
                         }
-                        BuildText(stringResource(R.string.detail_hint_english_title))
-                        BuildText(stringResource(R.string.detail_hint_romaji_title))
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        BuildText(result.aniList.title.native ?: "", FontWeight.Bold)
-                        if (showChineseTitle && result.aniList.title.chinese?.isNotBlank() == true) {
-                            BuildText(result.aniList.title.chinese ?: "", FontWeight.Bold)
+                        if (englishTitle.isNotBlank()) {
+                            BuildText(
+                                stringResource(
+                                    R.string.detail_hint_english_title,
+                                    englishTitle
+                                )
+                            )
                         }
-                        BuildText(result.aniList.title.english ?: "")
-                        BuildText(result.aniList.title.romaji ?: "")
+                        if (romajiTitle.isNotBlank()) {
+                            BuildText(
+                                stringResource(
+                                    R.string.detail_hint_romaji_title,
+                                    romajiTitle
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -568,9 +617,9 @@ fun BuildResultItem(
                             BuildText("${result.aniList.id}")
                             BuildText("${result.aniList.idMal}")
                             BuildText(
-                                "${DecimalFormat("#.000").format(result.similarity * 100)}%",
-                                FontWeight.Bold,
-                                similarityColor
+                                text = "${DecimalFormat("#.000").format(result.similarity * 100)}%",
+                                fontWeight = FontWeight.Bold,
+                                textColor = similarityColor
                             )
                         }
                     }
@@ -581,10 +630,15 @@ fun BuildResultItem(
 }
 
 @Composable
-fun BuildText(text: String, fontWeight: FontWeight? = null, textColor: Color = Color.Unspecified) {
+fun BuildText(
+    text: String,
+    fontWeight: FontWeight? = null,
+    fontSize: TextUnit = 12.sp,
+    textColor: Color = Color.Unspecified
+) {
     Text(
         text = text,
-        fontSize = 12.sp,
+        fontSize = fontSize,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         fontWeight = fontWeight,

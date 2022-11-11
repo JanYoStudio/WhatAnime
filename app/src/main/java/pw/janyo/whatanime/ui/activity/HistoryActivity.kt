@@ -11,14 +11,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.TipsAndUpdates
-import androidx.compose.material.icons.twotone.DeleteSweep
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
@@ -87,7 +86,7 @@ class HistoryActivity : BaseComposeActivity() {
                     FloatingActionButton(onClick = {
                         viewModel.deleteHistory(selectedList)
                     }) {
-                        Icons(Icons.TwoTone.DeleteSweep)
+                        Icons(Icons.Outlined.DeleteSweep)
                     }
                 }
             },

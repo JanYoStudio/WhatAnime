@@ -26,8 +26,5 @@ data class AniListChineseMedia(
 )
 
 data class AniListChineseTitle(
-    val romaji: String,
-    val english: String,
-    val native: String,
-    val chinese: String,
+    val chinese: String? = "",
 )

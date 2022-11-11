@@ -25,7 +25,8 @@ class ReceiveShareActivity : BaseComposeActivity() {
             } else {
                 intent?.getParcelableExtra(Intent.EXTRA_STREAM)
             }
-            intentTo(MainActivity::class, MainActivity.receiveShare(uri!!))
+            val type = contentResolver.getType(intent.data!!)
+            intentTo(MainActivity::class, MainActivity.receiveShare(uri!!, type!!))
         } else {
             R.string.hint_not_share.toast()
         }

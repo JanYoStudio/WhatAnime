@@ -107,7 +107,7 @@ class MainViewModel : ComposeViewModel() {
         }
     }
 
-    fun searchImageFile(data: Intent) {
+    fun searchImageFile(data: Intent, mimeType: String) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Log.w(TAG, "searchImageFile: failed", throwable)
             _listState.value = _listState.value.copy(
@@ -158,7 +158,7 @@ class MainViewModel : ComposeViewModel() {
                 cachePath = cacheFile.absolutePath
             }
             val animation = animationRepository.queryAnimationByImageLocal(
-                file, file.absolutePath, cachePath!!
+                file, file.absolutePath, cachePath!!, mimeType,
             )
             val result = if (Configure.hideSex) {
                 animation.result.filter { !it.aniList.adult }

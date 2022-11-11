@@ -1,6 +1,9 @@
 package pw.janyo.whatanime.module
 
+import android.webkit.WebSettings
+import com.google.common.net.HttpHeaders
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import pw.janyo.whatanime.api.AniListChineseApi
@@ -16,6 +19,21 @@ val networkModule = module {
         OkHttpClient.Builder()
             .connectTimeout(40, TimeUnit.SECONDS)
             .readTimeout(40, TimeUnit.SECONDS)
+            .addInterceptor {
+                val request = it.request()
+                val builder = request.newBuilder()
+                if (request.header(SearchApi.ApiKeyHeader).isNullOrBlank()) {
+                    builder.removeHeader(SearchApi.ApiKeyHeader)
+                }
+                val newRequest = builder
+                    .removeHeader(HttpHeaders.USER_AGENT)
+                    .addHeader(
+                        HttpHeaders.USER_AGENT,
+                        WebSettings.getDefaultUserAgent(androidContext())
+                    )
+                    .build()
+                it.proceed(newRequest)
+            }
             .build()
     }
     single(named("baseUrl")) {

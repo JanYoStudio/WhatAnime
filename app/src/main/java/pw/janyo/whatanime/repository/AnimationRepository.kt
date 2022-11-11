@@ -3,8 +3,6 @@ package pw.janyo.whatanime.repository
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -49,6 +47,7 @@ class AnimationRepository : KoinComponent {
         file: File,
         originPath: String,
         cachePath: String,
+        mimeType: String,
     ): SearchAnimeResult {
         val history = queryByFileMd5(file)
         if (history != null) {
@@ -57,14 +56,10 @@ class AnimationRepository : KoinComponent {
         checkNetwork()
         trackEvent("search image")
         val data = withContext(DispatcherConfig.NETWORK) {
-            val requestBody: RequestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.name, file.asRequestBody())
-                .build()
             val data = if (Configure.cutBorders) {
-                searchApi.search(requestBody)
+                searchApi.search(file.asRequestBody(), mimeType)
             } else {
-                searchApi.searchNoCut(requestBody)
+                searchApi.searchNoCut(file.asRequestBody(), mimeType)
             }
             if (data.error.isNotBlank()) {
                 Log.e(TAG, "http request failed, ${data.error}")
@@ -73,10 +68,15 @@ class AnimationRepository : KoinComponent {
             data
         }
         if (Configure.showChineseTitle) {
-            for (item in data.result) {
-                val request = AniListChineseRequest(AniListChineseRequestVar(item.aniList.id))
+            val aniListIdSet = data.result.map { it.aniList.id }.toSet()
+            val chineseTitleMap = HashMap<Long, String>()
+            aniListIdSet.forEach {
+                val request = AniListChineseRequest(AniListChineseRequestVar(it))
                 val info = aniListChineseApi.getAniListInfo(request)
-                item.aniList.title.chinese = info.data.media.title.chinese
+                chineseTitleMap[it] = info.data.media.title.chinese ?: ""
+            }
+            for (item in data.result) {
+                item.aniList.title.chinese = chineseTitleMap[item.aniList.id] ?: ""
             }
         }
         saveHistory(originPath, cachePath, data)
@@ -94,10 +94,11 @@ class AnimationRepository : KoinComponent {
         file: File,
         originPath: String,
         cachePath: String,
+        mimeType: String,
     ): SearchAnimeResult {
         val animationHistory = withContext(Dispatchers.IO) {
             historyService.queryHistoryByOriginPath(originPath)
-        } ?: return queryAnimationByImageOnline(file, originPath, cachePath)
+        } ?: return queryAnimationByImageOnline(file, originPath, cachePath, mimeType)
         return searchAnimeResultAdapter.fromJson(animationHistory.result)!!
     }
 

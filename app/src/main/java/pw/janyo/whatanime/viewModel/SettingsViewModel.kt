@@ -28,10 +28,16 @@ class SettingsViewModel : ComposeViewModel() {
     private val _allowSendCrashReport = MutableStateFlow(Configure.allowSendCrashReport)
     val allowSendCrashReport: StateFlow<Boolean> = _allowSendCrashReport
 
+    private val _customApiKey = MutableStateFlow("")
+    val customApiKey: StateFlow<String> = _customApiKey
+
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
 
     init {
+        viewModelScope.launch {
+            _customApiKey.value = Configure.apiKey
+        }
         showQuota()
     }
 
@@ -53,6 +59,14 @@ class SettingsViewModel : ComposeViewModel() {
         viewModelScope.launch {
             Configure.allowSendCrashReport = allowSendCrashReport
             _allowSendCrashReport.value = allowSendCrashReport
+        }
+    }
+
+    fun setCustomApiKey(customApiKey: String) {
+        viewModelScope.launch {
+            Configure.apiKey = customApiKey
+            _customApiKey.value = customApiKey
+            showQuota()
         }
     }
 
