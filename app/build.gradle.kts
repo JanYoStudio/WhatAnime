@@ -67,6 +67,7 @@ android {
                 "proguard-rules.pro"
             )
             versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
