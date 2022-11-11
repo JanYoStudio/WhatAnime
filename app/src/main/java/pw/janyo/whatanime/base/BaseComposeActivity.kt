@@ -74,33 +74,6 @@ abstract class BaseComposeActivity :
     open fun BuildContent() {
     }
 
-//    override fun attachBaseContext(newBase: Context) {
-//        val language = Configure.language
-//        if (language == 0) {
-//            super.attachBaseContext(newBase)
-//            return
-//        }
-//        super.attachBaseContext(changeLanguage(newBase))
-//    }
-
-//    @SuppressLint("NewApi")
-//    private fun changeLanguage(context: Context): Context {
-//        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val newLocale: Locale = when (Configure.language) {
-//                1 -> Locale.SIMPLIFIED_CHINESE
-//                2 -> Locale.TRADITIONAL_CHINESE
-//                3 -> Locale.forLanguageTag("zh-Hant-HK")
-//                else -> Locale.getDefault()
-//            }
-//            val configuration = Resources.getSystem().configuration
-//            configuration.setLocale(newLocale)
-//            configuration.setLocales(LocaleList(newLocale))
-//            context.createConfigurationContext(configuration)
-//        } else {
-//            context
-//        }
-//    }
-
     fun <T : Activity> intentTo(
         clazz: KClass<T>,
         block: Intent.() -> Unit = {},
@@ -112,13 +85,6 @@ abstract class BaseComposeActivity :
         newToast(
             this@BaseComposeActivity,
             this,
-            if (showLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
-        )
-
-    fun toastString(message: String, showLong: Boolean = false) =
-        newToast(
-            this@BaseComposeActivity,
-            message,
             if (showLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
         )
 
