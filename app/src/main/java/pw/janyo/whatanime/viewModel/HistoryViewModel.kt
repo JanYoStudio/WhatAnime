@@ -7,7 +7,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.inject
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.ComposeViewModel
-import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.repository.AnimationRepository

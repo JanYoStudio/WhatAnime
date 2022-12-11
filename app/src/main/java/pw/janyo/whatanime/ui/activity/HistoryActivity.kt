@@ -18,8 +18,12 @@ import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.*
+import androidx.compose.material3.pullrefresh.PullRefreshIndicator
+import androidx.compose.material3.pullrefresh.pullRefresh
+import androidx.compose.material3.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -33,8 +37,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
@@ -91,34 +93,46 @@ class HistoryActivity : BaseComposeActivity() {
                 }
             },
         ) { innerPadding ->
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(listState.loading),
-                onRefresh = { viewModel.refresh() },
+            val pullRefreshState = rememberPullRefreshState(
+                refreshing = listState.loading,
+                onRefresh = {
+                    viewModel.refresh()
+                },
+            )
+            Box(
                 modifier = Modifier
-                    .fillMaxHeight()
                     .padding(innerPadding)
+                    .pullRefresh(pullRefreshState)
             ) {
-                BuildList(listState.list, selectedList)
+                BuildList(Modifier.fillMaxSize(), listState.list, selectedList)
+                PullRefreshIndicator(
+                    refreshing = listState.loading,
+                    state = pullRefreshState,
+                    Modifier.align(Alignment.TopCenter),
+                )
             }
         }
     }
 
     @Composable
     fun BuildList(
+        modifier: Modifier,
         list: List<AnimationHistory>,
         selectedList: SnapshotStateList<Int>
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(list) { item: AnimationHistory ->
-                BuildResultItem(
-                    history = item,
-                    selectedList = selectedList,
-                )
+        if (list.isEmpty()) {
+            BuildNoDataLayout(modifier)
+        } else {
+            LazyColumn(
+                modifier = modifier.padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(list) { item: AnimationHistory ->
+                    BuildResultItem(
+                        history = item,
+                        selectedList = selectedList,
+                    )
+                }
             }
         }
     }

@@ -88,7 +88,7 @@ android {
 dependencies {
     //androidx
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.0-rc01")
+    implementation("androidx.appcompat:appcompat:1.7.0-alpha01")
     implementation("com.google.android.material:material:1.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.activity:activity-compose:1.6.1")
@@ -97,17 +97,15 @@ dependencies {
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
     //compose
-    val composeVersion = "1.3.0"
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
+    implementation("androidx.compose.ui:ui:1.3.2")
+    implementation("androidx.compose.material:material-icons-extended:1.3.1")
     //material
-    implementation("androidx.compose.material:material:1.3.0")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha01")
+    implementation("androidx.compose.material:material:1.3.1")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha03")
     //lottie
     implementation("com.airbnb.android:lottie-compose:5.2.0")
     //accompanist
-    val accompanistVersion = "0.27.0"
-    implementation("com.google.accompanist:accompanist-swiperefresh:$accompanistVersion")
+    val accompanistVersion = "0.28.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     //room
     val roomVersion = "2.4.3"
@@ -131,11 +129,11 @@ dependencies {
     //mmkv
     implementation("com.tencent:mmkv-static:1.2.14")
     //AppCenter
-    val appCenterSdkVersion = "4.4.5"
+    val appCenterSdkVersion = "5.0.0"
     implementation("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
     implementation("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
     //ExoPlayer
-    implementation("com.google.android.exoplayer:exoplayer:2.18.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
