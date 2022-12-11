@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.viewModel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
@@ -90,21 +89,29 @@ class DetailViewModel : ComposeViewModel() {
     fun loadHistoryDetail(historyId: Int, cacheFile: File) {
         viewModelScope.launch {
             _listState.value = _listState.value.copy(loading = true)
-            val result = withContext(Dispatchers.IO) {
+            val pair = withContext(Dispatchers.IO) {
                 animationRepository.getByHistoryId(historyId)
             }
+            val result = pair.first
             if (result == null) {
                 _listState.value = _listState.value.copy(
                     loading = false,
                     searchImageFile = cacheFile,
+                    tokenExpired = false,
                     errorMessage = R.string.hint_no_result.resString()
                 )
                 return@launch
             }
+            val list = if (Configure.hideSex) {
+                result.result.filter { !it.aniList.adult }
+            } else {
+                result.result
+            }
             _listState.value = _listState.value.copy(
                 loading = false,
                 searchImageFile = cacheFile,
-                list = result.result,
+                tokenExpired = pair.second + 1000 * 60 * 10 < System.currentTimeMillis(),
+                list = list,
                 errorMessage = "",
             )
         }

@@ -170,6 +170,7 @@ class MainViewModel : ComposeViewModel() {
                 _listState.value = _listState.value.copy(
                     loading = false,
                     searchImageFile = cacheFile,
+                    tokenExpired = false,
                     errorMessage = R.string.hint_no_result.resString()
                 )
                 return@launch
@@ -177,6 +178,7 @@ class MainViewModel : ComposeViewModel() {
             _listState.value = _listState.value.copy(
                 loading = false,
                 searchImageFile = cacheFile,
+                tokenExpired = false,
                 list = result,
                 errorMessage = "",
             )
@@ -213,6 +215,7 @@ class MainViewModel : ComposeViewModel() {
 data class MainListState(
     val loading: Boolean = false,
     val searchImageFile: File? = null,
+    val tokenExpired: Boolean = false,
     val list: List<SearchAnimeResultItem> = emptyList(),
     val errorMessage: String = "",
 )

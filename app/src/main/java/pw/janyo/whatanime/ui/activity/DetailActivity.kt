@@ -42,12 +42,14 @@ import java.io.File
 class DetailActivity : BaseComposeActivity() {
     companion object {
         private const val INTENT_HISTORY_ID = "INTENT_HISTORY_ID"
+        private const val INTENT_HISTORY_EXPIRED = "INTENT_HISTORY_EXPIRED"
         private const val INTENT_CACHE_PATH = "INTENT_CACHE_PATH"
         private const val INTENT_TITLE = "INTENT_TITLE"
 
         fun showDetail(history: AnimationHistory): Intent.() -> Unit {
             return {
                 putExtra(INTENT_HISTORY_ID, history.id)
+                putExtra(INTENT_HISTORY_EXPIRED, history.time)
                 putExtra(INTENT_CACHE_PATH, history.cachePath)
                 putExtra(INTENT_TITLE, history.title)
             }
@@ -127,6 +129,10 @@ class DetailActivity : BaseComposeActivity() {
             ) {
                 items(listState.list) { item: SearchAnimeResultItem ->
                     BuildResultItem(item, showChineseTitle, animeDialogState) {
+                        if (listState.tokenExpired) {
+                            R.string.video_play_hint_410.toast(true)
+                            return@BuildResultItem
+                        }
                         viewModel.playVideo(item)
                     }
                 }

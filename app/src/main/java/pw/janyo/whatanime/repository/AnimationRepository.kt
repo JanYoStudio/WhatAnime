@@ -116,11 +116,11 @@ class AnimationRepository : KoinComponent {
             historyService.queryHistoryByOriginPath(originPath)
         }
 
-    suspend fun getByHistoryId(historyId: Int): SearchAnimeResult? {
+    suspend fun getByHistoryId(historyId: Int): Pair<SearchAnimeResult?, Long> {
         val history = withContext(Dispatchers.IO) {
             historyService.getById(historyId)
-        } ?: return null
-        return searchAnimeResultAdapter.fromJson(history.result)
+        } ?: return null to 0
+        return searchAnimeResultAdapter.fromJson(history.result) to history.time
     }
 
     private suspend fun saveHistory(
