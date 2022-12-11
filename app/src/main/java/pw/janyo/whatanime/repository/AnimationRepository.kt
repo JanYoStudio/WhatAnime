@@ -120,7 +120,8 @@ class AnimationRepository : KoinComponent {
         val history = withContext(Dispatchers.IO) {
             historyService.getById(historyId)
         } ?: return null to 0
-        return searchAnimeResultAdapter.fromJson(history.result) to history.time
+        val result: SearchAnimeResult? = searchAnimeResultAdapter.fromJson(history.result)
+        return result to history.time
     }
 
     private suspend fun saveHistory(

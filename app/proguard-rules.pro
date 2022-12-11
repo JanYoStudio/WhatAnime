@@ -73,6 +73,7 @@
 }
 
 ##混淆保护自己项目的部分代码以及引用的第三方jar包library（想混淆去掉"#"）
+-keep class pw.janyo.whatanime.model.** { *; }
 
 #不混淆资源类
 -keepclassmembers class **.R$* {
