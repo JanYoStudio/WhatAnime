@@ -19,14 +19,6 @@
         tools:targetApi="tiramisu">
 
         <activity
-            android:name=".ui.activity.StartActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ui.activity.ReceiveShareActivity"
             android:exported="true"
             android:label="@string/title_activity_receive_share"
@@ -40,8 +32,12 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
-            android:theme="@style/Theme.WhatAnime.NoActionBar" />
+            android:label="@string/title_activity_main">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.HistoryActivity"
             android:exported="true"

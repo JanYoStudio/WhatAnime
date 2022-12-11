@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
@@ -145,6 +146,7 @@ class MainActivity : BaseComposeActivity() {
                 R.string.hint_select_file_path_null.toast()
             }
         }
+        installSplashScreen()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
