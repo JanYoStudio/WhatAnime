@@ -25,10 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
@@ -189,6 +189,7 @@ class DetailActivity : BaseComposeActivity() {
     }
 
     @Composable
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun BuildVideoDialog() {
         val mediaSource by viewModel.playMediaSource.collectAsState()
         mediaSource?.let {
@@ -201,7 +202,7 @@ class DetailActivity : BaseComposeActivity() {
                         .width(480.dp)
                         .height(270.dp),
                         factory = { context ->
-                            StyledPlayerView(context).apply {
+                            PlayerView(context).apply {
                                 player = exoPlayer
                                 this.useController = false
                                 exoPlayer.clearMediaItems()

@@ -51,10 +51,10 @@ import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
@@ -387,6 +387,7 @@ class MainActivity : BaseComposeActivity() {
                             Crossfade(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 targetState = listState.list.size,
+                                label = "image search button",
                             ) {
                                 if (it == 0) {
                                     ExtendedFloatingActionButton(
@@ -462,6 +463,7 @@ class MainActivity : BaseComposeActivity() {
     }
 
     @Composable
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun BuildVideoDialog() {
         val mediaSource by viewModel.playMediaSource.collectAsState()
         mediaSource?.let {
@@ -474,7 +476,7 @@ class MainActivity : BaseComposeActivity() {
                         .width(480.dp)
                         .height(270.dp),
                         factory = { context ->
-                            StyledPlayerView(context).apply {
+                            PlayerView(context).apply {
                                 player = exoPlayer
                                 this.useController = false
                                 exoPlayer.clearMediaItems()

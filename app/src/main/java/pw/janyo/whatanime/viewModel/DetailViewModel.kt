@@ -1,12 +1,12 @@
 package pw.janyo.whatanime.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.HttpDataSource
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -120,6 +120,7 @@ class DetailViewModel : ComposeViewModel() {
     /**
      * 播放视频
      */
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun playVideo(result: SearchAnimeResultItem) {
         viewModelScope.launch {
             val requestUrl = "${result.video}&size=l"
