@@ -25,10 +25,6 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 class DetailViewModel : ComposeViewModel() {
-    companion object {
-        private const val TAG = "DetailViewModel"
-    }
-
     private val animationRepository: AnimationRepository by inject()
     private val exoDataSourceFactory: DataSource.Factory by inject()
 
