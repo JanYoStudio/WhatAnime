@@ -95,33 +95,33 @@ android {
 
 dependencies {
     //androidx
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.0-alpha03")
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.browser:browser:1.6.0")
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
     //compose
-    implementation("androidx.compose.ui:ui:1.5.0")
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.compose.material:material-icons-extended:1.5.1")
     //material
-    implementation("androidx.compose.material:material:1.5.0")
+    implementation("androidx.compose.material:material:1.5.1")
     implementation("androidx.compose.material3:material3:1.1.1")
     //lottie
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     //accompanist
-    val accompanistVersion = "0.30.1"
+    val accompanistVersion = "0.32.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     //room
     implementation("androidx.room:room-runtime:2.5.2")
     ksp("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
     //koin
-    implementation("io.insert-koin:koin-android:3.4.3")
-    implementation("io.insert-koin:koin-androidx-compose:3.4.6")
+    implementation("io.insert-koin:koin-android:3.5.0")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
     //coil
     val coilVersion = "2.4.0"
     implementation("io.coil-kt:coil-compose:$coilVersion")
