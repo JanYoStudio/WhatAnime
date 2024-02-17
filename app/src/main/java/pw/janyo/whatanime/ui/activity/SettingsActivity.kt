@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +24,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.koin.core.component.inject
@@ -47,13 +46,16 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.appName
 import pw.janyo.whatanime.appVersionName
 import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant.resString
-import pw.janyo.whatanime.loadInBrowser
+import pw.janyo.whatanime.model.entity.NightMode
 import pw.janyo.whatanime.publicDeviceId
 import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.preference.CheckboxSetting
+import pw.janyo.whatanime.ui.preference.ListSetting
 import pw.janyo.whatanime.ui.preference.SettingsGroup
 import pw.janyo.whatanime.ui.preference.SettingsMenuLink
+import pw.janyo.whatanime.ui.preference.TextSettings
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.viewModel.SettingsViewModel
@@ -66,14 +68,13 @@ class SettingsActivity : BaseComposeActivity() {
     @Composable
     override fun BuildContent() {
         val hideSex by viewModel.hideSex.collectAsState()
+        val nightMode by viewModel.nightMode.collectAsState()
         val showChineseTitle by viewModel.showChineseTitle.collectAsState()
         val allowSendCrashReport by viewModel.allowSendCrashReport.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
-        val inputApiKeyDialogState = remember { mutableStateOf(false) }
-        val selectLanguageDialogState = remember { mutableStateOf(false) }
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -109,6 +110,16 @@ class SettingsActivity : BaseComposeActivity() {
                                 viewModel.setHideSex(newValue)
                             }
                         )
+                        ListSetting(
+                            title = stringResource(id = R.string.settings_title_night_mode),
+                            subtitle = stringResource(id = nightMode.title),
+                            defaultValue = nightMode,
+                            values = NightMode.selectList(),
+                            valueToText = { AnnotatedString(it.title.resString()) },
+                            onValueChange = {
+                                viewModel.setNightMode(it)
+                            }
+                        )
                         CheckboxSetting(
                             title = stringResource(id = R.string.settings_title_show_chinese_title),
                             subtitle = stringResource(id = R.string.settings_summary_show_chinese_title),
@@ -117,11 +128,19 @@ class SettingsActivity : BaseComposeActivity() {
                                 viewModel.setShowChineseTitle(newValue)
                             }
                         )
-                        SettingsMenuLink(
+                        TextSettings(
                             title = stringResource(id = R.string.settings_title_api_key),
                             subtitle = stringResource(id = R.string.settings_summary_api_key),
+                            defaultValue = customApiKey,
+                            onValueChange = {
+                                viewModel.setCustomApiKey(it)
+                            }
+                        )
+                        SettingsMenuLink(
+                            title = stringResource(id = R.string.action_donate),
+                            subtitle = Constant.donateUrl,
                             onClick = {
-                                inputApiKeyDialogState.value = true
+                                toCustomTabs(Constant.donateUrl)
                             }
                         )
                         SettingsMenuLink(
@@ -138,12 +157,6 @@ class SettingsActivity : BaseComposeActivity() {
                                 searchQuota.quota
                             ),
                         )
-//                        SettingsMenuLink(
-//                            title = stringResource(id = R.string.settings_title_select_language),
-//                            onClick = {
-//                                selectLanguageDialogState.value = true
-//                            }
-//                        )
                     })
                 SettingsGroup(
                     title = {
@@ -235,8 +248,6 @@ class SettingsActivity : BaseComposeActivity() {
                     })
             }
         }
-        BuildInputApiKeyDialog(customApiKey, inputApiKeyDialogState)
-        BuildSelectLanguageDialog(selectLanguageDialogState)
 
         val errorMessage by viewModel.errorMessage.collectAsState()
         if (errorMessage.isNotBlank()) {
@@ -244,107 +255,5 @@ class SettingsActivity : BaseComposeActivity() {
                 snackbarHostState.showSnackbar(errorMessage)
             }
         }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun BuildInputApiKeyDialog(apiKey: String, show: MutableState<Boolean>) {
-        if (!show.value) return
-        var input by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(apiKey))
-        }
-        AlertDialog(
-            onDismissRequest = {
-                show.value = false
-            },
-            title = {
-                Text(text = stringResource(id = R.string.hint_input_api_key))
-            },
-            text = {
-                TextField(
-                    value = input,
-                    onValueChange = {
-                        input = it
-                    },
-                    label = {
-                        Text(text = stringResource(id = R.string.hint_input_title_api_key))
-                    },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.setCustomApiKey(input.text)
-                    show.value = false
-                }) {
-                    Text(text = stringResource(id = android.R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    loadInBrowser("https://github.com/sponsors/soruly")
-                }) {
-                    Text(text = stringResource(id = R.string.action_donate))
-                }
-            }
-        )
-    }
-
-    @Composable
-    private fun BuildSelectLanguageDialog(show: MutableState<Boolean>) {
-        if (!show.value) return
-        val list = viewModel.showLanguageList()
-        var select by remember { mutableIntStateOf(list.indexOfFirst { it.second }) }
-        AlertDialog(
-            onDismissRequest = {
-                show.value = false
-            },
-            title = {
-                Text(text = stringResource(id = R.string.hint_select_language))
-            },
-            text = {
-                Column {
-                    list.forEachIndexed { index, pair ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    select = index
-                                }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                modifier = Modifier.size(32.dp),
-                                selected = select == index,
-                                onClick = {
-                                    select = index
-                                }
-                            )
-                            Text(
-                                text = pair.first,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.setLanguageList(select)
-                    show.value = false
-                }) {
-                    Text(text = stringResource(id = android.R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    show.value = false
-                }) {
-                    Text(text = stringResource(id = android.R.string.cancel))
-                }
-            }
-        )
     }
 }

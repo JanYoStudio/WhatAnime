@@ -57,6 +57,10 @@
     <string name="settings_title_about_device_id">设备ID</string>
     <string name="settings_group_about_what_anime">关于WhatAnime</string>
     <string name="settings_summary_developer_what_anime">WhatAnime API开发者</string>
+    <string name="settings_title_night_mode">夜间模式</string>
+    <string name="array_night_mode_auto">自动</string>
+    <string name="array_night_mode_always_on">始终开启</string>
+    <string name="array_night_mode_always_off">始终关闭</string>
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_settings">设置</string>
     <string name="action_history">历史记录</string>

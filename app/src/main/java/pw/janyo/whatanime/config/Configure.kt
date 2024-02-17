@@ -34,7 +34,7 @@ object Configure {
         }
         get() {
             val value = kv.decodeInt("nightMode", NightMode.AUTO.value)
-            return NightMode.values().first { it.value == value }
+            return NightMode.entries.first { it.value == value }
         }
     var showChineseTitle: Boolean
         set(value) {

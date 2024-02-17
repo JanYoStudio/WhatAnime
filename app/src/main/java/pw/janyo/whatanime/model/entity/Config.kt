@@ -1,15 +1,18 @@
 package pw.janyo.whatanime.model.entity
 
 import android.os.Build
+import androidx.annotation.StringRes
+import pw.janyo.whatanime.R
 
 enum class NightMode(
     val value: Int,
-    val title: String
+    @StringRes
+    val title: Int,
 ) {
-    AUTO(0, "自动"),
-    ON(1, "始终开启"),
-    OFF(2, "始终关闭"),
-    MATERIAL_YOU(3, "Material You"),
+    AUTO(0, R.string.array_night_mode_auto),
+    ON(1, R.string.array_night_mode_always_on),
+    OFF(2, R.string.array_night_mode_always_off),
+    MATERIAL_YOU(3, R.string.array_night_mode_material_you),
     ;
 
     companion object {
