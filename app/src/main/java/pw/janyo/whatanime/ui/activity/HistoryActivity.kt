@@ -1,26 +1,29 @@
 package pw.janyo.whatanime.ui.activity
 
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.animation.*
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.TipsAndUpdates
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
 import androidx.compose.material3.*
-import androidx.compose.material3.pullrefresh.PullRefreshIndicator
-import androidx.compose.material3.pullrefresh.pullRefresh
-import androidx.compose.material3.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -51,7 +54,7 @@ import kotlin.math.roundToInt
 class HistoryActivity : BaseComposeActivity() {
     private val viewModel: HistoryViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.historyListState.collectAsState()
@@ -67,7 +70,7 @@ class HistoryActivity : BaseComposeActivity() {
                         IconButton(onClick = {
                             finish()
                         }) {
-                            Icons(Icons.Filled.ArrowBack)
+                            Icons(Icons.AutoMirrored.Filled.ArrowBack)
                         }
                     },
                     actions = {
@@ -137,7 +140,7 @@ class HistoryActivity : BaseComposeActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun BuildResultItem(
         history: AnimationHistory,
@@ -162,15 +165,31 @@ class HistoryActivity : BaseComposeActivity() {
             )
         else
             null
-        val swipeState = rememberSwipeableState(0,
-            confirmStateChange = {
-                if (it != 0) {
-                    reverseState()
-                }
-                false
-            })
-        val sizePx = with(LocalDensity.current) { 48.dp.toPx() }
-        val anchors = mapOf(-sizePx to -1, 0f to 0, sizePx to 1)
+        val density = LocalDensity.current
+        val anchors = with(density) {
+            DraggableAnchors {
+                DragState.Start at -48.dp.toPx()
+                DragState.None at 0F
+                DragState.End at 48.dp.toPx()
+            }
+        }
+        val lastState = remember { mutableStateOf(DragState.None) }
+        val state = remember {
+            AnchoredDraggableState(
+                initialValue = DragState.None,
+                anchors = anchors,
+                animationSpec = spring(),
+                confirmValueChange = {
+                    if (it != DragState.None && it != lastState.value) {
+                        reverseState()
+                    }
+                    lastState.value = it
+                    false
+                },
+                positionalThreshold = { it * 0.3F },
+                velocityThreshold = { with(density) { 125.dp.toPx() } },
+            )
+        }
 
         Card(
             modifier = Modifier
@@ -195,11 +214,9 @@ class HistoryActivity : BaseComposeActivity() {
                         },
                     )
                 }
-                .swipeable(
-                    state = swipeState,
-                    anchors = anchors,
-                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                    orientation = Orientation.Horizontal
+                .anchoredDraggable(
+                    state = state,
+                    orientation = Orientation.Horizontal,
                 ),
             border = cardBorder,
             shape = RoundedCornerShape(8.dp),
@@ -207,7 +224,13 @@ class HistoryActivity : BaseComposeActivity() {
             Row(
                 modifier = Modifier
                     .padding(8.dp)
-                    .offset { IntOffset(swipeState.offset.value.roundToInt(), 0) }
+                    .offset {
+                        IntOffset(
+                            state
+                                .requireOffset()
+                                .roundToInt(), 0
+                        )
+                    }
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -258,4 +281,8 @@ class HistoryActivity : BaseComposeActivity() {
             fontWeight = fontWeight
         )
     }
+}
+
+enum class DragState {
+    None, Start, End
 }

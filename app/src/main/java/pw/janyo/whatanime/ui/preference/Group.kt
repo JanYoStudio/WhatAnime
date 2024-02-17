@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
@@ -26,10 +27,10 @@ fun SettingsGroup(
         Column(
             modifier = modifier.fillMaxWidth(),
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
-                thickness = 1.dp,
+                thickness = 1.dp
             )
             Spacer(
                 modifier = Modifier

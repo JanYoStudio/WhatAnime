@@ -14,7 +14,7 @@ enum class NightMode(
 
     companion object {
         fun selectList(): List<NightMode> {
-            val list = NightMode.values().sortedBy { it.value }.toMutableList()
+            val list = entries.sortedBy { it.value }.toMutableList()
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 list.remove(MATERIAL_YOU)
             }

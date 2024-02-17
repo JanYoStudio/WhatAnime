@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.HelpCenter
 import androidx.compose.material.icons.filled.Plagiarism
 import androidx.compose.material.icons.outlined.AppShortcut
 import androidx.compose.material.icons.outlined.HelpCenter
@@ -192,7 +193,7 @@ class MainActivity : BaseComposeActivity() {
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Divider(modifier = Modifier.fillMaxWidth())
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -209,7 +210,7 @@ class MainActivity : BaseComposeActivity() {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(text = stringResource(R.string.hint_quota_total, quota.quota))
                     }
-                    Divider(modifier = Modifier.fillMaxWidth())
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                     NavigationDrawerItem(
                         icon = { Icons(Icons.Filled.Plagiarism) },
                         label = { Text(stringResource(id = R.string.action_history)) },
@@ -242,7 +243,7 @@ class MainActivity : BaseComposeActivity() {
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                     NavigationDrawerItem(
-                        icon = { Icons(Icons.Outlined.HelpCenter) },
+                        icon = { Icons(Icons.AutoMirrored.Outlined.HelpCenter) },
                         label = { Text(stringResource(id = R.string.action_faq)) },
                         selected = false,
                         onClick = {
@@ -251,7 +252,7 @@ class MainActivity : BaseComposeActivity() {
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                     Spacer(modifier = Modifier.weight(1F))
-                    Divider(modifier = Modifier.fillMaxWidth())
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                     Row(
                         modifier = Modifier.height(48.dp),
                         verticalAlignment = Alignment.CenterVertically,

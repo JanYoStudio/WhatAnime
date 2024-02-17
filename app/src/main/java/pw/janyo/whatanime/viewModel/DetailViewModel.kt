@@ -3,6 +3,7 @@ package pw.janyo.whatanime.viewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.source.MediaSource
@@ -116,7 +117,7 @@ class DetailViewModel : ComposeViewModel() {
     /**
      * 播放视频
      */
-    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    @androidx.annotation.OptIn(UnstableApi::class)
     fun playVideo(result: SearchAnimeResultItem) {
         viewModelScope.launch {
             val requestUrl = "${result.video}&size=l"

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.AlertDialog
@@ -31,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -82,7 +84,7 @@ class SettingsActivity : BaseComposeActivity() {
                         IconButton(onClick = {
                             finish()
                         }) {
-                            Icons(Icons.Filled.ArrowBack)
+                            Icons(Icons.AutoMirrored.Filled.ArrowBack)
                         }
                     },
                 )
@@ -293,7 +295,7 @@ class SettingsActivity : BaseComposeActivity() {
     private fun BuildSelectLanguageDialog(show: MutableState<Boolean>) {
         if (!show.value) return
         val list = viewModel.showLanguageList()
-        var select by remember { mutableStateOf(list.indexOfFirst { it.second }) }
+        var select by remember { mutableIntStateOf(list.indexOfFirst { it.second }) }
         AlertDialog(
             onDismissRequest = {
                 show.value = false
