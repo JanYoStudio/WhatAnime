@@ -28,7 +28,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: 构建 APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew bundleRelease
       - name: 解析编译文件路径
         run: |
           versionName=$(cat "${{ env.OUTPUT_DIR }}/output-metadata.json" | jq -r '.elements[0].versionName')
