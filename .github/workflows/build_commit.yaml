@@ -40,6 +40,6 @@ jobs:
       - name: 发布版本
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.apk.outputs.versionName }}
+          tag_name: ${{ env.versionName }}
           files: |
             ${{ env.filePath }}
