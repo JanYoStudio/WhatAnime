@@ -11,6 +11,7 @@ buildscript {
 
 plugins {
     id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
+    id("com.mikepenz.aboutlibraries.plugin") version "10.10.0"
 }
 
 tasks.register("clean", Delete::class) {

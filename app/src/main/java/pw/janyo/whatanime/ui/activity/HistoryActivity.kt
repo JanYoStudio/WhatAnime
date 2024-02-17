@@ -1,6 +1,5 @@
 package pw.janyo.whatanime.ui.activity
 
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.spring

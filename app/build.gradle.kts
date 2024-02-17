@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 fun String.runCommand(workingDir: File = file("./")): String {
@@ -144,6 +145,48 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3Version")
     implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
     implementation("androidx.media3:media3-ui:$media3Version")
+    //AboutLibraries
+    val aboutLibrariesVersion = "10.10.0"
+    implementation("com.mikepenz:aboutlibraries-core:$aboutLibrariesVersion")
+    implementation("com.mikepenz:aboutlibraries-compose-m3:$aboutLibrariesVersion")
+}
+
+aboutLibraries {
+//    // - if the automatic registered android tasks are disabled, a similar thing can be achieved manually
+//    // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`
+//    // - the resulting file can for example be added as part of the SCM
+//    // registerAndroidTasks = false
+//
+//    // define the path configuration files are located in. E.g. additional libraries, licenses to add to the target .json
+//    configPath = "config"
+//    // allow to enable "offline mode", will disable any network check of the plugin (including [fetchRemoteLicense] or pulling spdx license texts)
+//    offlineMode = false
+//    // enable fetching of "remote" licenses. Uses the GitHub API
+//    fetchRemoteLicense = true
+//    // (optional) GitHub token to raise API request limit to allow fetching more licenses
+//    gitHubApiToken = getLocalOrGlobalProperty("github.pat")
+//
+//    // Full license text for license IDs mentioned here will be included, even if no detected dependency uses them.
+//    // additionalLicenses = ["mit", "mpl_2_0"]
+//
+//    // Allows to exclude some fields from the generated meta data field.
+//    // excludeFields = ["developers", "funding"]
+//
+//    // Define the strict mode, will fail if the project uses licenses not allowed
+//    // - This will only automatically fail for Android projects which have `registerAndroidTasks` enabled
+//    // For non Android projects, execute `exportLibraryDefinitions`
+//    strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
+//    // Allowed set of licenses, this project will be able to use without build failure
+//    allowedLicenses = ["Apache-2.0", "asdkl"]
+//    // Enable the duplication mode, allows to merge, or link dependencies which relate
+//    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.LINK
+//    // Configure the duplication rule, to match "duplicates" with
+//    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+//    // Enable pretty printing for the generated JSON file
+//    prettyPrint = true
+//
+//    // Allows to only collect dependencies of specific variants during the `collectDependencies` step.
+//    // filterVariants = ["debug"]
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
