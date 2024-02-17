@@ -32,8 +32,8 @@ jobs:
           sudo apt-get install wget -y
       - name: 解析版本号
         run: |
-          wget -O /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.15.6/bundletool-all-1.15.6.jar
-          filePath=$(ls ${{ env.OUTPUT_DIR }}/*.aab | head -n 1)
+          wget -q -O /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.15.6/bundletool-all-1.15.6.jar
+          filePath=$(ls ${{ env.OUTPUT_DIR }}/ | head -n 1)
           versionName=$(java -jar /tmp/bundletool.jar dump manifest --bundle $filePath --xpath /manifest/@android:versionName)
           echo "versionName=$versionName" >> $GITHUB_ENV
           echo "filePath=$filePath" >> $GITHUB_ENV
