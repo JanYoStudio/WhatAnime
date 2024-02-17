@@ -1,0 +1,45 @@
+name: "Build Commit"
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+env:
+  OUTPUT_DIR: "app/build/outputs/apk/release"
+  SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+  SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD }}
+  SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
+  SIGN_KEY_STORE_FILE: "/tmp/key.jks"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    steps:
+      - uses: actions/checkout@v4
+      - name: 设置JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - name: 设置Android SDK
+        uses: android-actions/setup-android@v3
+      - name: 解密签名
+        run: |
+          echo ${{ secrets.SIGN_KEY_BASE64 }} | base64 --decode > /tmp/key.jks
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: 构建 APK
+        run: ./gradlew assembleRelease
+      - name: 解析编译文件路径
+        run: |
+          versionName=$(cat "${{ env.OUTPUT_DIR }}/output-metadata.json" | jq -r '.elements[0].versionName')
+          versionCode=$(cat "${{ env.OUTPUT_DIR }}/output-metadata.json" | jq -r '.elements[0].versionCode')
+          apkFile=$(cat "${{ env.OUTPUT_DIR }}/output-metadata.json" | jq -r '.elements[0].outputFile')
+          cp "${{ env.OUTPUT_DIR }}/$apkFile" "${{ env.OUTPUT_DIR }}/WhatAnime-$versionName-$versionCode.apk"
+          echo "versionName=$versionName" >> $GITHUB_ENV
+          echo "versionCode=$versionCode" >> $GITHUB_ENV
+      - name: 发布版本
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.apk.outputs.versionName }}
+          files: |
+            ${{ env.OUTPUT_DIR }}/WhatAnime-${{ env.versionName }}-${{ env.versionCode }}.apk
