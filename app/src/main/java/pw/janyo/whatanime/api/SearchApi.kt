@@ -5,7 +5,11 @@ import okhttp3.RequestBody
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.model.SearchAnimeResult
 import pw.janyo.whatanime.model.SearchQuota
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface SearchApi {
     companion object {

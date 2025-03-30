@@ -30,9 +30,6 @@ class SettingsViewModel : ComposeViewModel() {
     private val _showChineseTitle = MutableStateFlow(Configure.showChineseTitle)
     val showChineseTitle: StateFlow<Boolean> = _showChineseTitle
 
-    private val _allowSendCrashReport = MutableStateFlow(Configure.allowSendCrashReport)
-    val allowSendCrashReport: StateFlow<Boolean> = _allowSendCrashReport
-
     private val _customApiKey = MutableStateFlow("")
     val customApiKey: StateFlow<String> = _customApiKey
 
@@ -66,13 +63,6 @@ class SettingsViewModel : ComposeViewModel() {
         viewModelScope.launch {
             Configure.showChineseTitle = showChineseTitle
             _showChineseTitle.value = showChineseTitle
-        }
-    }
-
-    fun setAllowSendCrashReport(allowSendCrashReport: Boolean) {
-        viewModelScope.launch {
-            Configure.allowSendCrashReport = allowSendCrashReport
-            _allowSendCrashReport.value = allowSendCrashReport
         }
     }
 

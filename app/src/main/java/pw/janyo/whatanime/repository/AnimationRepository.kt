@@ -21,7 +21,6 @@ import pw.janyo.whatanime.model.SearchAnimeResult
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.searchAnimeResultAdapter
 import pw.janyo.whatanime.repository.local.service.HistoryService
-import pw.janyo.whatanime.trackEvent
 import pw.janyo.whatanime.utils.md5
 import java.io.File
 import java.util.Calendar
@@ -54,7 +53,6 @@ class AnimationRepository : KoinComponent {
             return history
         }
         checkNetwork()
-        trackEvent("search image")
         val data = withContext(DispatcherConfig.NETWORK) {
             val data = if (Configure.cutBorders) {
                 searchApi.search(file.asRequestBody(), mimeType)

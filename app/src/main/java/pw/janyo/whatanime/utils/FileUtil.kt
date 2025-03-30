@@ -67,19 +67,6 @@ suspend fun Uri.cloneUriToFile(): File? {
     return null
 }
 
-private fun File.zoomBitmap(): Bitmap {
-    val maxHeight = 640
-    val maxWidth = 640
-    val options = BitmapFactory.Options()
-    options.inJustDecodeBounds = true
-    BitmapFactory.decodeFile(absolutePath, options)
-    val scaleW = max(maxWidth, options.outWidth) / (min(maxWidth, options.outWidth) * 1.0) - 0.5
-    val scaleH = max(maxHeight, options.outHeight) / (min(maxHeight, options.outHeight) * 1.0) - 0.5
-    options.inSampleSize = max(scaleW, scaleH).toInt()
-    options.inJustDecodeBounds = false
-    return BitmapFactory.decodeFile(absolutePath, options)
-}
-
 @Throws(IOException::class)
 suspend fun File.md5(): String {
     return withContext(Dispatchers.IO) {

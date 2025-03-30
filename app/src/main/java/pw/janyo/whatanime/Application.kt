@@ -29,6 +29,5 @@ class Application: Application() {
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
         }
         Configure.lastVersion = BuildConfig.VERSION_CODE
-        registerAppCenter(this)
     }
 }

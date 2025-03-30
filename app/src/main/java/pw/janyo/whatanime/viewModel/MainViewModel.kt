@@ -23,7 +23,6 @@ import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.AnimationRepository
-import pw.janyo.whatanime.trackEvent
 import pw.janyo.whatanime.utils.cloneUriToFile
 import pw.janyo.whatanime.utils.firstNotNull
 import pw.janyo.whatanime.utils.getCacheFile
@@ -192,7 +191,6 @@ class MainViewModel : ComposeViewModel() {
     fun playVideo(result: SearchAnimeResultItem) {
         viewModelScope.launch {
             val requestUrl = "${result.video}&size=l"
-            trackEvent("play video", mapOf("url" to requestUrl))
             _playMediaSource.value = mediaSourceMap.getOrPut(requestUrl) {
                 ProgressiveMediaSource.Factory(exoDataSourceFactory)
                     .createMediaSource(

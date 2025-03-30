@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -55,7 +54,6 @@ class SettingsActivity : BaseComposeActivity() {
         val hideSex by viewModel.hideSex.collectAsState()
         val nightMode by viewModel.nightMode.collectAsState()
         val showChineseTitle by viewModel.showChineseTitle.collectAsState()
-        val allowSendCrashReport by viewModel.allowSendCrashReport.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
 
@@ -141,25 +139,6 @@ class SettingsActivity : BaseComposeActivity() {
                                 id = R.string.settings_summary_quota_total,
                                 searchQuota.quota
                             ),
-                        )
-                    })
-                SettingsGroup(
-                    title = {
-                        Text(text = stringResource(id = R.string.settings_group_more))
-                    },
-                    content = {
-                        CheckboxSetting(
-                            icon = { Icons(Icons.Outlined.BugReport) },
-                            title = stringResource(id = R.string.settings_title_send_crash_report),
-                            subtitle = stringResource(id = R.string.settings_summary_send_crash_report),
-                            checked = allowSendCrashReport,
-                            onCheckedChange = { newValue ->
-                                viewModel.setAllowSendCrashReport(newValue)
-                            }
-                        )
-                        SettingsMenuLink(
-                            title = "",
-                            subtitle = stringResource(id = R.string.settings_summary_app_center),
                         )
                     })
                 SettingsGroup(

@@ -9,7 +9,6 @@
         android:name=".Application"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
-        android:fullBackupContent="@xml/appcenter_backup_rule"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"

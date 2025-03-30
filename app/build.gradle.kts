@@ -1,10 +1,9 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
-    id("com.mikepenz.aboutlibraries.plugin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.about.libraries)
 }
 
 fun String.runCommand(workingDir: File = file("./")): String {
@@ -23,14 +22,15 @@ val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
 val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
 val packageName = "pw.janyo.whatanime"
 
+
 android {
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    namespace = packageName
+    compileSdk = 36
 
     defaultConfig {
         applicationId = packageName
-        minSdk = 21
-        targetSdk = 34
+        minSdk = 23
+        targetSdk = 36
         versionCode = gitVersionCode
         versionName = "1.8.1"
 
@@ -81,9 +81,7 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.5"
+        buildConfig = true
     }
     packaging {
         resources {
@@ -91,104 +89,60 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace = packageName
 }
 
 dependencies {
+    implementation(libs.androidx.animation)
     //androidx
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.browser:browser:1.7.0")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.concurrent.futures)
     //compose
-    implementation("androidx.compose:compose-bom:2024.02.00")
-    implementation("androidx.compose.material:material")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.material3:material3-window-size-class")
-    implementation("androidx.activity:activity-compose")
-    implementation("androidx.compose.foundation:foundation")
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.window.size)
+    implementation(libs.androidx.material.icon)
+    implementation(libs.androidx.material.icon.extended)
+    implementation(libs.androidx.foundation)
     //lottie
-    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    implementation(libs.lottie)
     //room
-    implementation("androidx.room:room-runtime:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room)
+    implementation(libs.androidx.room.ktx)
     //koin
-    implementation("io.insert-koin:koin-android:3.5.3")
-    implementation("io.insert-koin:koin-androidx-compose:3.5.3")
+    implementation(libs.koin)
+    implementation(libs.koin.compose)
     //coil
-    val coilVersion = "2.5.0"
-    implementation("io.coil-kt:coil-compose:$coilVersion")
-    implementation("io.coil-kt:coil-gif:$coilVersion")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     //retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi)
     //moshi
-    implementation("com.squareup.moshi:moshi:1.15.1")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
     //mmkv
-    implementation("com.tencent:mmkv-static:1.3.3")
+    implementation(libs.mmkv)
     //preference
-    implementation("me.zhanghai.compose.preference:library:1.0.0")
-    //AppCenter
-    val appCenterSdkVersion = "5.0.4"
-    implementation("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
-    implementation("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
+    implementation(libs.compose.preference)
     //Media3
-    val media3Version = "1.2.1"
-    implementation("androidx.media3:media3-exoplayer:$media3Version")
-    implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
-    implementation("androidx.media3:media3-ui:$media3Version")
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.dash)
+    implementation(libs.media3.ui)
     //AboutLibraries
-    val aboutLibrariesVersion = "10.10.0"
-    implementation("com.mikepenz:aboutlibraries-core:$aboutLibrariesVersion")
-    implementation("com.mikepenz:aboutlibraries-compose-m3:$aboutLibrariesVersion")
+    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.compose)
 }
 
 aboutLibraries {
-//    // - if the automatic registered android tasks are disabled, a similar thing can be achieved manually
-//    // - `./gradlew app:exportLibraryDefinitions -PaboutLibraries.exportPath=src/main/res/raw`
-//    // - the resulting file can for example be added as part of the SCM
-//    // registerAndroidTasks = false
-//
-//    // define the path configuration files are located in. E.g. additional libraries, licenses to add to the target .json
-//    configPath = "config"
-//    // allow to enable "offline mode", will disable any network check of the plugin (including [fetchRemoteLicense] or pulling spdx license texts)
-//    offlineMode = false
-//    // enable fetching of "remote" licenses. Uses the GitHub API
-//    fetchRemoteLicense = true
-//    // (optional) GitHub token to raise API request limit to allow fetching more licenses
-//    gitHubApiToken = getLocalOrGlobalProperty("github.pat")
-//
-//    // Full license text for license IDs mentioned here will be included, even if no detected dependency uses them.
-//    // additionalLicenses = ["mit", "mpl_2_0"]
-//
-//    // Allows to exclude some fields from the generated meta data field.
-//    // excludeFields = ["developers", "funding"]
-//
-//    // Define the strict mode, will fail if the project uses licenses not allowed
-//    // - This will only automatically fail for Android projects which have `registerAndroidTasks` enabled
-//    // For non Android projects, execute `exportLibraryDefinitions`
-//    strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
-//    // Allowed set of licenses, this project will be able to use without build failure
-//    allowedLicenses = ["Apache-2.0", "asdkl"]
-//    // Enable the duplication mode, allows to merge, or link dependencies which relate
-//    duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.LINK
-//    // Configure the duplication rule, to match "duplicates" with
-//    duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
-//    // Enable pretty printing for the generated JSON file
-//    prettyPrint = true
-//
-//    // Allows to only collect dependencies of specific variants during the `collectDependencies` step.
-//    // filterVariants = ["debug"]
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    offlineMode = true
+    fetchRemoteLicense = false
+    fetchRemoteFunding = false
 }

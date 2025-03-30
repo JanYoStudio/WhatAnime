@@ -8,14 +8,10 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.crashes.Crashes
 import org.koin.java.KoinJavaComponent
 import pw.janyo.whatanime.base.BaseComposeActivity
-import pw.janyo.whatanime.config.Configure
+import androidx.core.net.toUri
 
 @SuppressLint("StaticFieldLeak")
 internal lateinit var context: Context
@@ -54,7 +50,7 @@ fun BaseComposeActivity.toCustomTabs(url: String) {
 
 fun BaseComposeActivity.loadInBrowser(url: String) {
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         startActivity(intent)
@@ -69,31 +65,4 @@ fun isOnline(): Boolean {
         KoinJavaComponent.get<ConnectivityManager>(ConnectivityManager::class.java)
     val networkInfo = connectivityManager.activeNetworkInfo
     return networkInfo?.isConnected == true
-}
-
-fun registerAppCenter(application: Application) {
-    if (Configure.allowSendCrashReport) {
-        if (BuildConfig.DEBUG) {
-            AppCenter.setLogLevel(Log.VERBOSE)
-        }
-        AppCenter.setUserId(publicDeviceId)
-        AppCenter.start(
-            application,
-            "0d392422-670e-488b-b62b-b33cb2c15c3c",
-            Analytics::class.java,
-            Crashes::class.java
-        )
-    }
-}
-
-fun trackEvent(event: String, properties: Map<String, String>? = null) {
-    if (AppCenter.isConfigured() && Configure.allowSendCrashReport) {
-        Analytics.trackEvent(event, properties)
-    }
-}
-
-fun trackError(error: Throwable) {
-    if (AppCenter.isConfigured() && Configure.allowSendCrashReport) {
-        Crashes.trackError(error)
-    }
 }

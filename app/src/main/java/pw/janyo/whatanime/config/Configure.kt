@@ -2,11 +2,10 @@ package pw.janyo.whatanime.config
 
 import android.content.Context
 import com.tencent.mmkv.MMKV
-import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.model.entity.NightMode
 
 object Configure {
-    private val kv = MMKV.mmkvWithID("configure", Context.MODE_PRIVATE)!!
+    private val kv = MMKV.mmkvWithID("configure", Context.MODE_PRIVATE)
 
     var lastVersion: Int
         set(value) {
@@ -23,11 +22,6 @@ object Configure {
             kv.encode("config_api_key", value)
         }
         get() = kv.decodeString("config_api_key", "")!!
-    var allowSendCrashReport: Boolean
-        set(value) {
-            kv.encode("allowSendCrashReport", value)
-        }
-        get() = kv.decodeBool("allowSendCrashReport", !BuildConfig.DEBUG)
     var nightMode: NightMode
         set(value) {
             kv.encode("nightMode", value.value)
@@ -40,10 +34,10 @@ object Configure {
         set(value) {
             kv.encode("showChineseTitle", value)
         }
-        get() = kv.decodeBool("showChineseTitle", true)
+        get() = kv.decodeBool("showChineseTitle", false)
     var cutBorders: Boolean
         set(value) {
             kv.encode("cutBorders", value)
         }
-        get() = kv.decodeBool("cutBorders", true)
+        get() = kv.decodeBool("cutBorders", false)
 }

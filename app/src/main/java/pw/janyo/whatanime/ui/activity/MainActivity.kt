@@ -274,15 +274,6 @@ class MainActivity : BaseComposeActivity() {
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
                     NavigationDrawerItem(
-                        icon = { Icons(Icons.AutoMirrored.Outlined.HelpCenter) },
-                        label = { Text(stringResource(id = R.string.action_faq)) },
-                        selected = false,
-                        onClick = {
-                            toCustomTabs(Constant.faqUrl)
-                        },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                    )
-                    NavigationDrawerItem(
                         icon = { Icons(Icons.Filled.AutoAwesome) },
                         label = { Text(stringResource(id = R.string.settings_group_about)) },
                         selected = false,

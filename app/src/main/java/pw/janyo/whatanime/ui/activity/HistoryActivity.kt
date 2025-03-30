@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -14,18 +15,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.*
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -42,6 +40,7 @@ import coil.request.ImageRequest
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.ui.components.SwipeToDeleteContainer
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.utils.getCalendarFromLong
 import pw.janyo.whatanime.utils.toDateTimeString
@@ -53,7 +52,7 @@ import kotlin.math.roundToInt
 class HistoryActivity : BaseComposeActivity() {
     private val viewModel: HistoryViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BuildContent() {
         val listState by viewModel.historyListState.collectAsState()
@@ -95,23 +94,16 @@ class HistoryActivity : BaseComposeActivity() {
                 }
             },
         ) { innerPadding ->
-            val pullRefreshState = rememberPullRefreshState(
-                refreshing = listState.loading,
+            val pullToRefreshState = rememberPullToRefreshState()
+            PullToRefreshBox(
+                modifier = Modifier.padding(innerPadding),
+                isRefreshing = listState.loading,
                 onRefresh = {
                     viewModel.refresh()
                 },
-            )
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .pullRefresh(pullRefreshState)
+                state = pullToRefreshState,
             ) {
                 BuildList(Modifier.fillMaxSize(), listState.list, selectedList)
-                PullRefreshIndicator(
-                    refreshing = listState.loading,
-                    state = pullRefreshState,
-                    Modifier.align(Alignment.TopCenter),
-                )
             }
         }
     }
@@ -130,10 +122,16 @@ class HistoryActivity : BaseComposeActivity() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(list) { item: AnimationHistory ->
-                    BuildResultItem(
-                        history = item,
-                        selectedList = selectedList,
-                    )
+                    SwipeToDeleteContainer(
+                        item = item,
+                        onDelete = {
+
+                        }
+                    ) {
+                        BuildResultItem(
+                            history = item,
+                        )
+                    }
                 }
             }
         }
@@ -143,93 +141,31 @@ class HistoryActivity : BaseComposeActivity() {
     @Composable
     fun BuildResultItem(
         history: AnimationHistory,
-        selectedList: SnapshotStateList<Int>,
     ) {
         val similarity = "${DecimalFormat("#.0000").format(history.similarity * 100)}%"
         val isOldData =
             history.episode == "old" || history.similarity == 0.0
 
-        fun reverseState() {
-            if (selectedList.contains(history.id)) {
-                selectedList.remove(history.id)
-            } else {
-                selectedList.add(history.id)
-            }
-        }
-
-        val cardBorder = if (selectedList.contains(history.id))
-            BorderStroke(
-                4.dp,
-                MaterialTheme.colorScheme.primary
-            )
-        else
-            null
-        val density = LocalDensity.current
-        val anchors = with(density) {
-            DraggableAnchors {
-                DragState.Start at -48.dp.toPx()
-                DragState.None at 0F
-                DragState.End at 48.dp.toPx()
-            }
-        }
-        val lastState = remember { mutableStateOf(DragState.None) }
-        val state = remember {
-            AnchoredDraggableState(
-                initialValue = DragState.None,
-                anchors = anchors,
-                animationSpec = spring(),
-                confirmValueChange = {
-                    if (it != DragState.None && it != lastState.value) {
-                        reverseState()
-                    }
-                    lastState.value = it
-                    false
-                },
-                positionalThreshold = { it * 0.3F },
-                velocityThreshold = { with(density) { 125.dp.toPx() } },
-            )
-        }
-
         Card(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = { reverseState() },
-                        onTap = {
-                            when {
-                                selectedList.isNotEmpty() ->
-                                    reverseState()
+                .clickable {
+                    when {
+                        isOldData ->
+                            R.string.hint_data_convert_no_detail_in_history.toast(true)
 
-                                isOldData ->
-                                    R.string.hint_data_convert_no_detail_in_history.toast(true)
-
-                                else ->
-                                    intentTo(
-                                        DetailActivity::class,
-                                        DetailActivity.showDetail(history)
-                                    )
-                            }
-                        },
-                    )
-                }
-                .anchoredDraggable(
-                    state = state,
-                    orientation = Orientation.Horizontal,
-                ),
-            border = cardBorder,
+                        else ->
+                            intentTo(
+                                DetailActivity::class,
+                                DetailActivity.showDetail(history)
+                            )
+                    }
+                },
             shape = RoundedCornerShape(8.dp),
         ) {
             Row(
                 modifier = Modifier
                     .padding(8.dp)
-                    .offset {
-                        IntOffset(
-                            state
-                                .requireOffset()
-                                .roundToInt(), 0
-                        )
-                    }
             ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -280,8 +216,4 @@ class HistoryActivity : BaseComposeActivity() {
             fontWeight = fontWeight
         )
     }
-}
-
-enum class DragState {
-    None, Start, End
 }
