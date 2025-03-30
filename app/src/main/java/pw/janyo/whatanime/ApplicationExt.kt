@@ -1,7 +1,6 @@
 package pw.janyo.whatanime
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -9,9 +8,9 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import org.koin.java.KoinJavaComponent
 import pw.janyo.whatanime.base.BaseComposeActivity
-import androidx.core.net.toUri
 
 @SuppressLint("StaticFieldLeak")
 internal lateinit var context: Context

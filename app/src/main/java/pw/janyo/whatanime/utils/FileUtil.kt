@@ -1,7 +1,5 @@
 package pw.janyo.whatanime.utils
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +12,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.channels.FileChannel
 import java.security.MessageDigest
-import kotlin.math.max
-import kotlin.math.min
 
 
 private const val CACHE_IMAGE_FILE_NAME = "cacheImage"
