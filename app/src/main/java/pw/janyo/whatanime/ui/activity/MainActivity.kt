@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.AppShortcut
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -88,6 +89,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.BaseComposeActivity
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.toCustomTabs
@@ -171,7 +173,7 @@ class MainActivity : BaseComposeActivity() {
                 val mimeType = intent?.getStringExtra(INTENT_MIME_TYPE)
                 intent.data = uri
                 viewModel.searchImageFile(intent, mimeType!!)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 R.string.hint_select_file_path_null.toast()
             }
         }
@@ -345,10 +347,18 @@ class MainActivity : BaseComposeActivity() {
                                 }
                             },
                             actions = {
-                                IconButton(onClick = {
-                                    imageSelectLauncher.launch("image/*")
-                                }) {
-                                    Icons(Icons.Outlined.ImageSearch)
+                                if (listState.list.isEmpty()) {
+                                    IconButton(onClick = {
+                                        imageSelectLauncher.launch("image/*")
+                                    }) {
+                                        Icons(Icons.Outlined.ImageSearch)
+                                    }
+                                } else {
+                                    IconButton(onClick = {
+                                        R.string.hint_click_to_show_anilist_info.toast()
+                                    }) {
+                                        Icons(Icons.Outlined.TipsAndUpdates)
+                                    }
                                 }
                             }
                         )
@@ -583,6 +593,11 @@ fun BuildResultItem(
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(result.image)
+                        .apply {
+                            if (Configure.preferWebp) {
+                                setHeader("Accept", "image/webp")
+                            }
+                        }
                         .build(),
                     imageLoader = ImageLoader.Builder(LocalContext.current)
                         .placeholder(R.mipmap.janyo_studio)

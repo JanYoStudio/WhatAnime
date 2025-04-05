@@ -24,6 +24,9 @@ class SettingsViewModel : ComposeViewModel() {
     private val _hideSex = MutableStateFlow(Configure.hideSex)
     val hideSex: StateFlow<Boolean> = _hideSex
 
+    private val _preferWebp = MutableStateFlow(Configure.preferWebp)
+    val preferWebp: StateFlow<Boolean> = _preferWebp
+
     private val _nightMode = MutableStateFlow(Configure.nightMode)
     val nightMode: StateFlow<NightMode> = _nightMode
 
@@ -45,6 +48,13 @@ class SettingsViewModel : ComposeViewModel() {
         viewModelScope.launch {
             Configure.hideSex = hideSex
             _hideSex.value = hideSex
+        }
+    }
+
+    fun setPreferWebp(preferWebp: Boolean) {
+        viewModelScope.launch {
+            Configure.preferWebp = preferWebp
+            _preferWebp.value = preferWebp
         }
     }
 

@@ -57,19 +57,15 @@
     <string name="settings_group_application">Application Settings</string>
     <string name="settings_title_hide_sex">Hide Sex Content</string>
     <string name="settings_summary_hide_sex" translatable="false">#NSFW</string>
-    <string name="settings_title_show_chinese_title">Show Chinese Title</string>
-    <string name="settings_summary_show_chinese_title">Additional requests are required and the search takes more time</string>
+    <string name="settings_title_prefer_webp">Prefer WEBP image</string>
+    <string name="settings_summary_prefer_webp">Prioritize the delivery of images in the WEBP format to reduce the data transmission volume of images (please disable this option if your device does not support WEBP)</string>
     <string name="settings_title_api_key">Custom Api Key</string>
     <string name="settings_summary_api_key">If you\'ve donated to whatAnime, you can fill in the ApiKey you got here. <b>Note that if the ApiKey you enter is invalid, you will not be able to use the search feature.</b></string>
     <string name="settings_title_quota_used">Quota Used</string>
     <string name="settings_summary_quota_used">Usage this month: %d</string>
     <string name="settings_title_quota_total">Quota Total</string>
     <string name="settings_summary_quota_total">Total for the month: %d</string>
-    <string name="settings_title_select_language">Select Language</string>
     <string name="settings_group_more">More Settings</string>
-    <string name="settings_title_send_crash_report">Allow Send Crash Report</string>
-    <string name="settings_summary_send_crash_report">This will help us identify and solve problems faster</string>
-    <string name="settings_summary_app_center">We use Visual Studio App Center (provided by Microsoft).\n\nDevice unique identifiers use SSAID. In Android 8.0 (API level 26) and later, SSAID provide an identifier that is common across apps signed by the same developer-signed key.</string>
     <string name="settings_group_about">About</string>
     <string name="settings_title_about_github">Github</string>
     <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
@@ -82,7 +78,7 @@
     <string name="settings_link_about_google_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="settings_title_about_janyo_license">License</string>
     <string name="settings_summary_about_janyo_license">JanYo Studio License</string>
-    <string name="settings_link_about_janyo_license" translatable="false">https://janyostudio.mystery0.vip/license.html</string>
+    <string name="settings_link_about_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
     <string name="settings_title_about_version">Version</string>
     <string name="settings_title_about_device_id">Device ID</string>
     <string name="settings_group_about_what_anime">About WhatAnime</string>

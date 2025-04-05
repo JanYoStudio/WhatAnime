@@ -52,6 +52,7 @@ class SettingsActivity : BaseComposeActivity() {
     @Composable
     override fun BuildContent() {
         val hideSex by viewModel.hideSex.collectAsState()
+        val preferWebp by viewModel.preferWebp.collectAsState()
         val nightMode by viewModel.nightMode.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
@@ -90,6 +91,14 @@ class SettingsActivity : BaseComposeActivity() {
                             checked = hideSex,
                             onCheckedChange = { newValue ->
                                 viewModel.setHideSex(newValue)
+                            }
+                        )
+                        CheckboxSetting(
+                            title = stringResource(id = R.string.settings_title_prefer_webp),
+                            subtitle = stringResource(id = R.string.settings_summary_prefer_webp),
+                            checked = preferWebp,
+                            onCheckedChange = { newValue ->
+                                viewModel.setPreferWebp(newValue)
                             }
                         )
                         ListSetting(

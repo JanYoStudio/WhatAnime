@@ -30,11 +30,11 @@ object Configure {
             val value = kv.decodeInt("nightMode", NightMode.AUTO.value)
             return NightMode.entries.first { it.value == value }
         }
-    var showChineseTitle: Boolean
+    var preferWebp: Boolean
         set(value) {
-            kv.encode("showChineseTitle", value)
+            kv.encode("preferWebp", value)
         }
-        get() = kv.decodeBool("showChineseTitle", false)
+        get() = kv.decodeBool("preferWebp", false)
     var cutBorders: Boolean
         set(value) {
             kv.encode("cutBorders", value)
