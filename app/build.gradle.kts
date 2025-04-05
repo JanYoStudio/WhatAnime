@@ -42,6 +42,10 @@ android {
         ksp {
             arg(RoomSchemaArgProvider(File(projectDir, "schemas")))
         }
+        androidResources.localeFilters.clear()
+        androidResources.localeFilters.add("en")
+        androidResources.localeFilters.add("zh-rCN")
+        androidResources.localeFilters.add("zh-rTW")
     }
     signingConfigs {
         create("release") {

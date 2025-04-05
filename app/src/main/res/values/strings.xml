@@ -40,9 +40,6 @@
     <string name="hint_search_error">Search failed</string>
     <string name="hint_unknown_error">Unknown error</string>
     <string name="hint_copy_device_id">Device ID has been copied to clipboard</string>
-    <string name="hint_input_title_api_key" translatable="false">API Key</string>
-    <string name="hint_input_api_key">Please enter your API-Key</string>
-    <string name="hint_select_language">Please select your UI language</string>
     <string name="hint_searching">Searching…</string>
     <string name="hint_select_to_search">Click the search button to start your search</string>
     <string name="hint_no_browser">Please install a browser first</string>
@@ -65,7 +62,6 @@
     <string name="settings_summary_quota_used">Usage this month: %d</string>
     <string name="settings_title_quota_total">Quota Total</string>
     <string name="settings_summary_quota_total">Total for the month: %d</string>
-    <string name="settings_group_more">More Settings</string>
     <string name="settings_group_about">About</string>
     <string name="settings_title_about_github">Github</string>
     <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
