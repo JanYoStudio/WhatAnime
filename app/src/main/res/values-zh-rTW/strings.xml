@@ -43,7 +43,6 @@
     <string name="settings_summary_quota_used">本月已使用為：%d</string>
     <string name="settings_title_quota_total">總額度</string>
     <string name="settings_summary_quota_total">本月總額度為：%d</string>
-    <string name="settings_group_more">更多設置</string>
     <string name="settings_group_about">關於</string>
     <string name="settings_title_about_github">Github地址</string>
     <string name="settings_title_about_license">開源協議聲明</string>
@@ -68,7 +67,5 @@
     <string name="hint_not_share">文件無效！</string>
     <string name="hint_file_too_large">文件過大，請先手動做一次壓縮！</string>
     <string name="hint_data_convert_no_detail_in_history">因為數據結構變更，您已經無法再查閱這條歷史記錄的詳細信息，請刪除該記錄</string>
-    <string name="hint_input_api_key">請輸入您的API-Key</string>
-    <string name="hint_select_language">請選擇您想要切換的語言</string>
     <string name="title_activity_receive_share">使用WhatAnime進行搜索</string>
 </resources>
