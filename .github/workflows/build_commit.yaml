@@ -40,7 +40,7 @@ jobs:
           echo "versionName=$versionName" >> $GITHUB_ENV
           echo "fileName=$fileName" >> $GITHUB_ENV
       - name: 发布版本
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.versionName }}
           body: |
