@@ -53,7 +53,6 @@ class SettingsActivity : BaseComposeActivity() {
     override fun BuildContent() {
         val hideSex by viewModel.hideSex.collectAsState()
         val nightMode by viewModel.nightMode.collectAsState()
-        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
 
@@ -101,14 +100,6 @@ class SettingsActivity : BaseComposeActivity() {
                             valueToText = { AnnotatedString(it.title.resString()) },
                             onValueChange = {
                                 viewModel.setNightMode(it)
-                            }
-                        )
-                        CheckboxSetting(
-                            title = stringResource(id = R.string.settings_title_show_chinese_title),
-                            subtitle = stringResource(id = R.string.settings_summary_show_chinese_title),
-                            checked = showChineseTitle,
-                            onCheckedChange = { newValue ->
-                                viewModel.setShowChineseTitle(newValue)
                             }
                         )
                         TextSettings(

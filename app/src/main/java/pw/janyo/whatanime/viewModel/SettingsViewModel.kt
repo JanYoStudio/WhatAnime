@@ -27,9 +27,6 @@ class SettingsViewModel : ComposeViewModel() {
     private val _nightMode = MutableStateFlow(Configure.nightMode)
     val nightMode: StateFlow<NightMode> = _nightMode
 
-    private val _showChineseTitle = MutableStateFlow(Configure.showChineseTitle)
-    val showChineseTitle: StateFlow<Boolean> = _showChineseTitle
-
     private val _customApiKey = MutableStateFlow("")
     val customApiKey: StateFlow<String> = _customApiKey
 
@@ -56,13 +53,6 @@ class SettingsViewModel : ComposeViewModel() {
             Configure.nightMode = nightMode
             _nightMode.value = nightMode
             Theme.nightMode.value = nightMode
-        }
-    }
-
-    fun setShowChineseTitle(showChineseTitle: Boolean) {
-        viewModelScope.launch {
-            Configure.showChineseTitle = showChineseTitle
-            _showChineseTitle.value = showChineseTitle
         }
     }
 

@@ -7,14 +7,11 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import pw.janyo.whatanime.R
-import pw.janyo.whatanime.api.AniListChineseApi
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.config.DispatcherConfig
 import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.isOnline
-import pw.janyo.whatanime.model.AniListChineseRequest
-import pw.janyo.whatanime.model.AniListChineseRequestVar
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.ResourceException
 import pw.janyo.whatanime.model.SearchAnimeResult
@@ -31,7 +28,6 @@ class AnimationRepository : KoinComponent {
     }
 
     private val searchApi: SearchApi by inject()
-    private val aniListChineseApi: AniListChineseApi by inject()
     private val historyService: HistoryService by inject()
 
     private suspend fun checkNetwork() {
@@ -64,18 +60,6 @@ class AnimationRepository : KoinComponent {
                 throw ResourceException(R.string.hint_search_error)
             }
             data
-        }
-        if (Configure.showChineseTitle) {
-            val aniListIdSet = data.result.map { it.aniList.id }.toSet()
-            val chineseTitleMap = HashMap<Long, String>()
-            aniListIdSet.forEach {
-                val request = AniListChineseRequest(AniListChineseRequestVar(it))
-                val info = aniListChineseApi.getAniListInfo(request)
-                chineseTitleMap[it] = info.data.media.title.chinese ?: ""
-            }
-            for (item in data.result) {
-                item.aniList.title.chinese = chineseTitleMap[item.aniList.id] ?: ""
-            }
         }
         saveHistory(originPath, cachePath, data)
         return data

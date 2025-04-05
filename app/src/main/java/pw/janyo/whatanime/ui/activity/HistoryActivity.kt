@@ -1,10 +1,6 @@
 package pw.janyo.whatanime.ui.activity
 
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,24 +16,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.TipsAndUpdates
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -67,8 +62,7 @@ class HistoryActivity : BaseComposeActivity() {
     override fun BuildContent() {
         val listState by viewModel.historyListState.collectAsState()
 
-        val selectedList = remember { mutableStateListOf<Int>() }
-        val selectedMode by remember { derivedStateOf { selectedList.isNotEmpty() } }
+        val animeDialogState = remember { mutableStateOf<AnimationHistory?>(null) }
 
         Scaffold(
             topBar = {
@@ -90,19 +84,6 @@ class HistoryActivity : BaseComposeActivity() {
                     }
                 )
             },
-            floatingActionButton = {
-                AnimatedVisibility(
-                    visible = selectedMode,
-                    enter = slideInVertically(initialOffsetY = { it }),
-                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-                ) {
-                    FloatingActionButton(onClick = {
-                        viewModel.deleteHistory(selectedList)
-                    }) {
-                        Icons(Icons.Outlined.DeleteSweep)
-                    }
-                }
-            },
         ) { innerPadding ->
             val pullToRefreshState = rememberPullToRefreshState()
             PullToRefreshBox(
@@ -110,19 +91,55 @@ class HistoryActivity : BaseComposeActivity() {
                 isRefreshing = listState.loading,
                 onRefresh = {
                     viewModel.refresh()
+                    animeDialogState.value = null
                 },
                 state = pullToRefreshState,
             ) {
-                BuildList(Modifier.fillMaxSize(), listState.list, selectedList)
+                BuildList(Modifier.fillMaxSize(), listState.list) {
+                    animeDialogState.value = it
+                }
             }
+            BuildAlertDialog(animeDialogState)
         }
+    }
+
+    @Composable
+    fun BuildAlertDialog(animeDialogState: MutableState<AnimationHistory?>) {
+        if (animeDialogState.value == null) return
+        val item = animeDialogState.value!!
+        AlertDialog(
+            onDismissRequest = { animeDialogState.value = null },
+            title = {
+                Text(
+                    text = stringResource(R.string.hint_delete, item.title)
+                )
+            },
+            text = {
+                Text(text = stringResource(R.string.hint_delete_desc))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteHistory(item.id)
+                        animeDialogState.value = null
+                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { animeDialogState.value = null }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
     }
 
     @Composable
     fun BuildList(
         modifier: Modifier,
         list: List<AnimationHistory>,
-        selectedList: SnapshotStateList<Int>
+        onDelete: (AnimationHistory) -> Unit,
     ) {
         if (list.isEmpty()) {
             BuildNoDataLayout(modifier)
@@ -134,9 +151,7 @@ class HistoryActivity : BaseComposeActivity() {
                 items(list) { item: AnimationHistory ->
                     SwipeToDeleteContainer(
                         item = item,
-                        onDelete = {
-
-                        }
+                        onDelete = onDelete,
                     ) {
                         BuildResultItem(
                             history = item,

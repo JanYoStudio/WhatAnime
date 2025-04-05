@@ -13,14 +13,12 @@
     <string name="hint_quota_total">Quota Total: %d</string>
 
     <string name="history_hint_save_time">Save time: </string>
-    <string name="history_hint_native_title">Native title: </string>
+    <string name="history_hint_native_title">Title: </string>
     <string name="history_hint_ani_list_id" translatable="false">AniList ID: </string>
     <string name="history_hint_similarity">Similarity: </string>
 
-    <string name="detail_hint_native_title">Native title: %s</string>
-    <string name="detail_hint_chinese_title">Chinese title: %s</string>
-    <string name="detail_hint_english_title">English title: %s</string>
-    <string name="detail_hint_romaji_title">Romaji title: %s</string>
+    <string name="detail_hint_native_title">Title: %s</string>
+    <string name="detail_hint_episode">Episode: %s</string>
     <string name="detail_hint_time">Time: </string>
     <string name="detail_hint_ani_list_id" translatable="false">AniList ID: </string>
     <string name="detail_hint_my_anime_list_id" translatable="false">MyAnimeList ID: </string>
@@ -34,6 +32,9 @@
     <string name="video_play_hint_unknown">Unknown Error</string>
 
     <string name="hint_swipe_to_delete">Swipe item to delete</string>
+    <string name="hint_delete">Delete the record of (%s)? </string>
+    <string name="hint_delete_desc">Please note that this action is irreversible.</string>
+    <string name="hint_click_to_show_anilist_info">Click to show AniList info</string>
     <string name="hint_no_network">The network connection is not available, please check the network</string>
     <string name="hint_no_result">No results</string>
     <string name="hint_search_error">Search failed</string>

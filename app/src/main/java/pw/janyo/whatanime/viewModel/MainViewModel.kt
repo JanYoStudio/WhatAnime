@@ -45,9 +45,6 @@ class MainViewModel : ComposeViewModel() {
     private val _listState = MutableStateFlow(MainListState())
     val listState: StateFlow<MainListState> = _listState
 
-    private val _showChineseTitle = MutableStateFlow(Configure.showChineseTitle)
-    val showChineseTitle: StateFlow<Boolean> = _showChineseTitle
-
     private val _cutBorders = MutableStateFlow(Configure.cutBorders)
     val cutBorders: StateFlow<Boolean> = _cutBorders
 

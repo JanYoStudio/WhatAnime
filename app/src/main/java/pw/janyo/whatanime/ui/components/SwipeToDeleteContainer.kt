@@ -4,18 +4,21 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,25 +27,7 @@ fun <T> SwipeToDeleteContainer(
     onDelete: (T) -> Unit,
     content: @Composable (T) -> Unit
 ) {
-    var isRemoved by remember {
-        mutableStateOf(false)
-    }
-    val state = rememberSwipeToDismissBoxState(
-        confirmValueChange = { state ->
-            if (state == SwipeToDismissBoxValue.EndToStart) {
-                isRemoved = true
-                true
-            } else {
-                false
-            }
-        }
-    )
-
-    LaunchedEffect(key1 = isRemoved) {
-        if (isRemoved) {
-            onDelete(item)
-        }
-    }
+    val state = rememberSwipeToDismissBoxState()
 
     SwipeToDismissBox(
         state = state,
@@ -58,8 +43,39 @@ fun <T> SwipeToDeleteContainer(
                 Modifier
                     .fillMaxSize()
                     .background(color)
-            )
+            ) {
+                when (state.targetValue) {
+                    SwipeToDismissBoxValue.EndToStart -> {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(end = 16.dp),
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "delete",
+                            tint = Color.White,
+                        )
+                    }
+
+                    else -> {
+                        // Nothing to do
+                    }
+                }
+            }
         },
         enableDismissFromStartToEnd = false,
     ) { content(item) }
+
+    when (state.currentValue) {
+        SwipeToDismissBoxValue.EndToStart -> {
+            LaunchedEffect(state.currentValue) {
+                onDelete(item)
+                state.snapTo(SwipeToDismissBoxValue.Settled)
+            }
+
+        }
+
+        else -> {
+            // Nothing to do
+        }
+    }
 }

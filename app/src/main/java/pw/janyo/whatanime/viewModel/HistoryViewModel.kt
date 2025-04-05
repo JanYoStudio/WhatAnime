@@ -42,22 +42,15 @@ class HistoryViewModel : ComposeViewModel() {
         }
     }
 
-    fun deleteHistory(list: MutableList<Int>) {
+    fun deleteHistory(historyId: Int) {
         viewModelScope.launch {
             _historyListState.value = _historyListState.value.copy(
                 loading = true,
                 errorMessage = "",
             )
-            list.forEach {
-                animationRepository.deleteHistory(it)
-            }
-            list.clear()
-            val historyList = animationRepository.queryAllHistory()
-            _historyListState.value = _historyListState.value.copy(
-                loading = false,
-                list = historyList,
-                errorMessage = "",
-            )
+            animationRepository.deleteHistory(historyId)
+        }.invokeOnCompletion {
+            refresh()
         }
     }
 }

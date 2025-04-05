@@ -93,7 +93,6 @@ import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.activity.contract.ImagePickResultContract
 import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.utils.firstNotBlank
 import pw.janyo.whatanime.utils.formatTime
 import pw.janyo.whatanime.viewModel.MainViewModel
 import java.io.File
@@ -188,7 +187,6 @@ class MainActivity : BaseComposeActivity() {
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
-        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
         val cutBorders by viewModel.cutBorders.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
@@ -405,7 +403,6 @@ class MainActivity : BaseComposeActivity() {
                                         items(listState.list) {
                                             BuildResultItem(
                                                 it,
-                                                showChineseTitle,
                                                 animeDialogState
                                             ) {
                                                 viewModel.playVideo(it)
@@ -462,15 +459,7 @@ class MainActivity : BaseComposeActivity() {
                 Text(
                     text = stringResource(
                         R.string.hint_show_animation_detail,
-                        firstNotBlank(
-                            "",
-                            ArrayList<String?>().apply {
-                                add(item.aniList.title.native)
-                                add(item.aniList.title.english)
-                                add(item.aniList.title.romaji)
-                                addAll(item.aniList.synonyms)
-                            },
-                        )
+                        item.aniList.title.native
                     )
                 )
             },
@@ -502,9 +491,10 @@ class MainActivity : BaseComposeActivity() {
                 viewModel.playDone()
             }, content = {
                 Box(modifier = Modifier.padding(8.dp)) {
-                    AndroidView(modifier = Modifier
-                        .width(480.dp)
-                        .height(270.dp),
+                    AndroidView(
+                        modifier = Modifier
+                            .width(480.dp)
+                            .height(270.dp),
                         factory = { context ->
                             PlayerView(context).apply {
                                 player = exoPlayer
@@ -551,7 +541,6 @@ class MainActivity : BaseComposeActivity() {
 @Composable
 fun BuildResultItem(
     result: SearchAnimeResultItem,
-    showChineseTitle: Boolean,
     animeDialogState: MutableState<SearchAnimeResultItem?>,
     onClick: () -> Unit,
 ) {
@@ -569,44 +558,23 @@ fun BuildResultItem(
                 .padding(8.dp)
         ) {
             SelectionContainer {
-                Row {
-                    Column {
-                        val nativeTitle = result.aniList.title.native ?: ""
-                        val chineseTitle = result.aniList.title.chinese ?: ""
-                        val englishTitle = result.aniList.title.english ?: ""
-                        val romajiTitle = result.aniList.title.romaji ?: ""
-                        if (nativeTitle.isNotBlank()) {
-                            BuildText(
-                                text = stringResource(
-                                    R.string.detail_hint_native_title,
-                                    nativeTitle
-                                ),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        }
-                        if (showChineseTitle && chineseTitle.isNotBlank()) {
-                            BuildText(
-                                stringResource(R.string.detail_hint_chinese_title, chineseTitle),
-                                FontWeight.Bold
-                            )
-                        }
-                        if (englishTitle.isNotBlank()) {
-                            BuildText(
-                                stringResource(
-                                    R.string.detail_hint_english_title,
-                                    englishTitle
-                                )
-                            )
-                        }
-                        if (romajiTitle.isNotBlank()) {
-                            BuildText(
-                                stringResource(
-                                    R.string.detail_hint_romaji_title,
-                                    romajiTitle
-                                )
-                            )
-                        }
+                Column {
+                    BuildText(
+                        text = stringResource(
+                            R.string.detail_hint_native_title,
+                            result.aniList.title.native
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                    result.episode?.let {
+                        BuildText(
+                            text = stringResource(
+                                R.string.detail_hint_episode,
+                                it
+                            ),
+                            fontSize = 14.sp
+                        )
                     }
                 }
             }
@@ -641,11 +609,6 @@ fun BuildResultItem(
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        val similarityColor = if (result.similarity < 0.9) {
-                            Color.Red
-                        } else {
-                            Color.Green
-                        }
                         Column {
                             BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
                             BuildText("${result.aniList.id}")
@@ -653,7 +616,6 @@ fun BuildResultItem(
                             BuildText(
                                 text = "${DecimalFormat("#.000").format(result.similarity * 100)}%",
                                 fontWeight = FontWeight.Bold,
-                                textColor = similarityColor
                             )
                         }
                     }

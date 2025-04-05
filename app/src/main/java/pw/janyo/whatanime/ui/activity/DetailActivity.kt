@@ -11,7 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -20,7 +22,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -44,7 +45,6 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.toCustomTabs
 import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.utils.firstNotBlank
 import pw.janyo.whatanime.viewModel.DetailViewModel
 import java.io.File
 
@@ -53,14 +53,12 @@ class DetailActivity : BaseComposeActivity() {
         private const val INTENT_HISTORY_ID = "INTENT_HISTORY_ID"
         private const val INTENT_HISTORY_EXPIRED = "INTENT_HISTORY_EXPIRED"
         private const val INTENT_CACHE_PATH = "INTENT_CACHE_PATH"
-        private const val INTENT_TITLE = "INTENT_TITLE"
 
         fun showDetail(history: AnimationHistory): Intent.() -> Unit {
             return {
                 putExtra(INTENT_HISTORY_ID, history.id)
                 putExtra(INTENT_HISTORY_EXPIRED, history.time)
                 putExtra(INTENT_CACHE_PATH, history.cachePath)
-                putExtra(INTENT_TITLE, history.title)
             }
         }
     }
@@ -102,8 +100,6 @@ class DetailActivity : BaseComposeActivity() {
         //查看历史记录
         val historyId = intent.getIntExtra(INTENT_HISTORY_ID, -1)
         val cacheFile = File(intent.getStringExtra(INTENT_CACHE_PATH)!!)
-        //设置标题
-        title = intent.getStringExtra(INTENT_TITLE)
         viewModel.loadHistoryDetail(historyId, cacheFile)
     }
 
@@ -111,7 +107,6 @@ class DetailActivity : BaseComposeActivity() {
     @Composable
     override fun BuildContent() {
         val listState by viewModel.listState.collectAsState()
-        val showChineseTitle by viewModel.showChineseTitle.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -120,7 +115,7 @@ class DetailActivity : BaseComposeActivity() {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     title = { Text(text = title.toString()) },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -129,6 +124,13 @@ class DetailActivity : BaseComposeActivity() {
                             Icons(Icons.AutoMirrored.Filled.ArrowBack)
                         }
                     },
+                    actions = {
+                        IconButton(onClick = {
+                            R.string.hint_click_to_show_anilist_info.toast()
+                        }) {
+                            Icons(Icons.Outlined.TipsAndUpdates)
+                        }
+                    }
                 )
             },
         ) { innerPadding ->
@@ -137,7 +139,7 @@ class DetailActivity : BaseComposeActivity() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(listState.list) { item: SearchAnimeResultItem ->
-                    BuildResultItem(item, showChineseTitle, animeDialogState) {
+                    BuildResultItem(item, animeDialogState) {
                         if (listState.tokenExpired) {
                             R.string.video_play_hint_410.toast(true)
                             return@BuildResultItem
@@ -167,15 +169,7 @@ class DetailActivity : BaseComposeActivity() {
                 Text(
                     text = stringResource(
                         R.string.hint_show_animation_detail,
-                        firstNotBlank(
-                            "",
-                            ArrayList<String?>().apply {
-                                add(item.aniList.title.native)
-                                add(item.aniList.title.english)
-                                add(item.aniList.title.romaji)
-                                addAll(item.aniList.synonyms)
-                            },
-                        )
+                        item.aniList.title.native
                     )
                 )
             },
@@ -207,9 +201,10 @@ class DetailActivity : BaseComposeActivity() {
                 viewModel.playDone()
             }, content = {
                 Box(modifier = Modifier.padding(8.dp)) {
-                    AndroidView(modifier = Modifier
-                        .width(480.dp)
-                        .height(270.dp),
+                    AndroidView(
+                        modifier = Modifier
+                            .width(480.dp)
+                            .height(270.dp),
                         factory = { context ->
                             PlayerView(context).apply {
                                 player = exoPlayer

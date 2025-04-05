@@ -6,7 +6,6 @@ import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import pw.janyo.whatanime.api.AniListChineseApi
 import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.model.moshi
@@ -56,8 +55,5 @@ val networkModule = module {
     }
     single {
         get<Retrofit>(named("baseUrl")).create(SearchApi::class.java)
-    }
-    single {
-        get<Retrofit>(named("aniListChineseUrl")).create(AniListChineseApi::class.java)
     }
 }

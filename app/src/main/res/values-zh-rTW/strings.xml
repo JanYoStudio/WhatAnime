@@ -10,12 +10,10 @@
     <string name="hint_quota_used">已使用次數：%d</string>
     <string name="hint_quota_total">本月總次數：%d</string>
     <string name="history_hint_save_time">保存時間：</string>
-    <string name="history_hint_native_title">本地化標題：</string>
+    <string name="history_hint_native_title">標題：</string>
     <string name="history_hint_similarity">準確度：</string>
-    <string name="detail_hint_native_title">原文標題：%s</string>
-    <string name="detail_hint_chinese_title">中文標題：%s</string>
-    <string name="detail_hint_english_title">英文標題：%s</string>
-    <string name="detail_hint_romaji_title">羅馬字標題：%s</string>
+    <string name="detail_hint_native_title">標題：%s</string>
+    <string name="detail_hint_episode">集數：%s</string>
     <string name="detail_hint_time">時間：</string>
     <string name="detail_hint_similarity">準確度：</string>
     <string name="video_play_hint_400">無效的參數</string>
@@ -24,7 +22,8 @@
     <string name="video_play_hint_410">令牌已過期，無法播放</string>
     <string name="video_play_hint_500">服務端異常</string>
     <string name="video_play_hint_unknown">未知異常</string>
-    <string name="hint_swipe_to_delete">左右滑動可以刪除子項</string>
+    <string name="hint_swipe_to_delete">向左滑可以刪除歷史紀錄</string>
+    <string name="hint_click_to_show_anilist_info">點擊查看 AniList 資訊</string>
     <string name="hint_no_network">網絡連接不可用，請檢查網絡設置</string>
     <string name="hint_no_result">無結果</string>
     <string name="hint_search_error">搜索失敗</string>
