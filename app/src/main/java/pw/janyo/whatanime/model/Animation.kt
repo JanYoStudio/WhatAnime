@@ -23,7 +23,7 @@ data class SearchAnimeResultItem(
     val aniList: SearchAniListResult,
     @Json(name = "filename")
     val fileName: String,
-    val episode: Int?,
+    val episode: String?,
     val from: Double = 0.0,
     val to: Double = 0.0,
     val similarity: Double = 0.0,
