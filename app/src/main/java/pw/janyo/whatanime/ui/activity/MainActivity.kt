@@ -347,18 +347,17 @@ class MainActivity : BaseComposeActivity() {
                                 }
                             },
                             actions = {
-                                if (listState.list.isEmpty()) {
-                                    IconButton(onClick = {
-                                        imageSelectLauncher.launch("image/*")
-                                    }) {
-                                        Icons(Icons.Outlined.ImageSearch)
-                                    }
-                                } else {
+                                if (!listState.list.isEmpty()) {
                                     IconButton(onClick = {
                                         R.string.hint_click_to_show_anilist_info.toast()
                                     }) {
                                         Icons(Icons.Outlined.TipsAndUpdates)
                                     }
+                                }
+                                IconButton(onClick = {
+                                    imageSelectLauncher.launch("image/*")
+                                }) {
+                                    Icons(Icons.Outlined.ImageSearch)
                                 }
                             }
                         )
