@@ -1,0 +1,103 @@
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_DIR: ${{ github.workspace }}/outputs/
+      SIGN_KEY_ALIAS_ENV: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
+      SIGN_KEY_STORE_PASSWORD_ENV: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
+      SIGN_KEY_PASSWORD_ENV: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
+      SIGN_KEYSTORE_FILE_PATH_ENV: ${{ github.workspace }}/keystore.jks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required to get the full commit history for the commit message
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Check for secrets and handle keystore
+        run: |
+          if [ -n "${{ secrets.SIGN_KEY_ALIAS }}" ] && \
+             [ -n "${{ secrets.SIGN_KEY_STORE_PASSWORD }}" ] && \
+             [ -n "${{ secrets.SIGN_KEY_PASSWORD }}" ] && \
+             [ -n "${{ secrets.SIGN_KEY_BASE64 }}" ]; then
+            echo "Signing secrets found. Decoding keystore..."
+            echo "${{ secrets.SIGN_KEY_BASE64 }}" | base64 --decode > ${{ env.SIGN_KEYSTORE_FILE_PATH_ENV }}
+            echo "Keystore decoded successfully."
+          else
+            echo "Signing secrets not found. Generating temporary keystore..."
+            keytool -genkey -v \
+              -keystore ${{ env.SIGN_KEYSTORE_FILE_PATH_ENV }} \
+              -alias ${{ env.SIGN_KEY_ALIAS_ENV }} \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -storepass ${{ env.SIGN_KEY_STORE_PASSWORD_ENV }} \
+              -keypass ${{ env.SIGN_KEY_PASSWORD_ENV }} \
+              -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown"
+            echo "Temporary keystore generated successfully."
+          fi
+        shell: bash
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Parse output-metadata.json
+        id: parse_metadata
+        run: |
+          OUTPUT_METADATA_FILE="app/build/outputs/apk/release/output-metadata.json"
+          VERSION_NAME=$(jq -r '.elements[0].versionName' $OUTPUT_METADATA_FILE)
+          VERSION_CODE=$(jq -r '.elements[0].versionCode' $OUTPUT_METADATA_FILE)
+          echo "::set-output name=versionName::$VERSION_NAME"
+          echo "::set-output name=versionCode::$VERSION_CODE"
+          echo "::set-output name=apkPath::$(jq -r '.elements[0].outputFile' $OUTPUT_METADATA_FILE)"
+
+      - name: Rename APK
+        id: rename_apk
+        run: |
+          APK_PATH="${{ steps.parse_metadata.outputs.apkPath }}"
+          VERSION_NAME="${{ steps.parse_metadata.outputs.versionName }}"
+          VERSION_CODE="${{ steps.parse_metadata.outputs.versionCode }}"
+          NEW_APK_NAME="WhatAnime-${VERSION_NAME}-${VERSION_CODE}.apk"
+          APK_DIR=$(dirname "$APK_PATH")
+          mv "$APK_PATH" "$APK_DIR/$NEW_APK_NAME"
+          echo "APK renamed to $NEW_APK_NAME"
+          echo "::set-output name=newApkPath::$APK_DIR/$NEW_APK_NAME"
+
+      - name: Get latest commit message
+        id: get_commit_message
+        run: echo "::set-output name=message::$(git show -s --format=%s)"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.parse_metadata.outputs.versionName }}
+          prerelease: true
+          body: ${{ steps.get_commit_message.outputs.message }}
+          files: ${{ steps.rename_apk.outputs.newApkPath }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# This is a new GitHub Actions workflow file.
+# It will be used to build and release the project.
