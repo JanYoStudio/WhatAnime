@@ -1,8 +1,8 @@
+name: "Build Commit"
 on:
   push:
     branches:
       - dev
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,24 +11,24 @@ jobs:
       SIGN_KEY_ALIAS_ENV: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
       SIGN_KEY_STORE_PASSWORD_ENV: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
       SIGN_KEY_PASSWORD_ENV: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
-      SIGN_KEYSTORE_FILE_PATH_ENV: ${{ github.workspace }}/keystore.jks
+      SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required to get the full commit history for the commit message
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
 
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - name: Check for secrets and handle keystore
         run: |
@@ -37,12 +37,12 @@ jobs:
              [ -n "${{ secrets.SIGN_KEY_PASSWORD }}" ] && \
              [ -n "${{ secrets.SIGN_KEY_BASE64 }}" ]; then
             echo "Signing secrets found. Decoding keystore..."
-            echo "${{ secrets.SIGN_KEY_BASE64 }}" | base64 --decode > ${{ env.SIGN_KEYSTORE_FILE_PATH_ENV }}
+            echo "${{ secrets.SIGN_KEY_BASE64 }}" | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
             echo "Keystore decoded successfully."
           else
             echo "Signing secrets not found. Generating temporary keystore..."
             keytool -genkey -v \
-              -keystore ${{ env.SIGN_KEYSTORE_FILE_PATH_ENV }} \
+              -keystore ${{ env.SIGN_KEY_STORE_FILE }} \
               -alias ${{ env.SIGN_KEY_ALIAS_ENV }} \
               -keyalg RSA \
               -keysize 2048 \
@@ -98,6 +98,3 @@ jobs:
           files: ${{ steps.rename_apk.outputs.newApkPath }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-# This is a new GitHub Actions workflow file.
-# It will be used to build and release the project.
