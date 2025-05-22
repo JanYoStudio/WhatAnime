@@ -143,13 +143,12 @@ dependencies {
     //AboutLibraries
     implementation(libs.aboutlibraries)
     implementation(libs.aboutlibraries.compose)
-
-    // JUnit for unit testing
-    testImplementation(libs.junit)
 }
 
 aboutLibraries {
     offlineMode = true
-    fetchRemoteLicense = false
-    fetchRemoteFunding = false
+    collect {
+        fetchRemoteLicense = false
+        fetchRemoteFunding = false
+    }
 }
