@@ -53,9 +53,11 @@ class SettingsActivity : BaseComposeActivity() {
     override fun BuildContent() {
         val hideSex by viewModel.hideSex.collectAsState()
         val preferWebp by viewModel.preferWebp.collectAsState()
+        val debugMode by viewModel.debugMode.collectAsState()
         val nightMode by viewModel.nightMode.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
+        val httpResponses by viewModel.httpResponses.collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -99,6 +101,14 @@ class SettingsActivity : BaseComposeActivity() {
                             checked = preferWebp,
                             onCheckedChange = { newValue ->
                                 viewModel.setPreferWebp(newValue)
+                            }
+                        )
+                        CheckboxSetting(
+                            title = stringResource(id = R.string.settings_title_debug_mode),
+                            subtitle = stringResource(id = R.string.settings_summary_debug_mode),
+                            checked = debugMode,
+                            onCheckedChange = { newValue ->
+                                viewModel.setDebugMode(newValue)
                             }
                         )
                         ListSetting(
@@ -210,6 +220,26 @@ class SettingsActivity : BaseComposeActivity() {
                             }
                         )
                     })
+                if (debugMode) {
+                    SettingsGroup(
+                        title = {
+                            Text(text = stringResource(id = R.string.settings_title_recent_http_responses))
+                        },
+                        content = {
+                            httpResponses.forEach { responsePair ->
+                                SettingsMenuLink(
+                                    title = responsePair.first.toString(),
+                                    onClick = {
+                                        val clipData = ClipData.newPlainText("HTTP Response", responsePair.second)
+                                        clipboardManager.setPrimaryClip(clipData)
+                                        // Optionally, show a toast message
+                                        // R.string.your_toast_message_resource.toast()
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
 

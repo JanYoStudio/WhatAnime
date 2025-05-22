@@ -7,7 +7,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import pw.janyo.whatanime.api.SearchApi
+import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
+import pw.janyo.whatanime.httpResponses
 import pw.janyo.whatanime.model.moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -32,6 +34,18 @@ val networkModule = module {
                     )
                     .build()
                 it.proceed(newRequest)
+            }
+            .addInterceptor { chain ->
+                val request = chain.request()
+                val response = chain.proceed(request)
+                if (Configure.debugMode) {
+                    val responseBody = response.peekBody(Long.MAX_VALUE).string()
+                    httpResponses.add(System.currentTimeMillis() to responseBody)
+                    if (httpResponses.size > 3) {
+                        httpResponses.removeAt(0)
+                    }
+                }
+                response
             }
             .build()
     }

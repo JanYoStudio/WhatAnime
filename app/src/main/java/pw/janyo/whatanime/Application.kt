@@ -11,6 +11,9 @@ import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.module.moduleList
 import pw.janyo.whatanime.utils.registerActivityLifecycle
 
+// Global list to store HTTP responses
+val httpResponses = mutableListOf<Pair<Long, String>>()
+
 class Application: Application() {
     override fun onCreate() {
         super.onCreate()
