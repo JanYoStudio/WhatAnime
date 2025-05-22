@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OUTPUT_DIR: ${{ github.workspace }}/outputs/
-      SIGN_KEY_ALIAS_ENV: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
-      SIGN_KEY_STORE_PASSWORD_ENV: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
-      SIGN_KEY_PASSWORD_ENV: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
+      SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
+      SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
+      SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
       SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
     steps:
       - name: Checkout code
@@ -43,12 +43,12 @@ jobs:
             echo "Signing secrets not found. Generating temporary keystore..."
             keytool -genkey -v \
               -keystore ${{ env.SIGN_KEY_STORE_FILE }} \
-              -alias ${{ env.SIGN_KEY_ALIAS_ENV }} \
+              -alias ${{ env.SIGN_KEY_ALIAS }} \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
-              -storepass ${{ env.SIGN_KEY_STORE_PASSWORD_ENV }} \
-              -keypass ${{ env.SIGN_KEY_PASSWORD_ENV }} \
+              -storepass ${{ env.SIGN_KEY_STORE_PASSWORD }} \
+              -keypass ${{ env.SIGN_KEY_PASSWORD }} \
               -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown"
             echo "Temporary keystore generated successfully."
           fi
