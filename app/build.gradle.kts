@@ -143,6 +143,9 @@ dependencies {
     //AboutLibraries
     implementation(libs.aboutlibraries)
     implementation(libs.aboutlibraries.compose)
+
+    // JUnit for unit testing
+    testImplementation(libs.junit)
 }
 
 aboutLibraries {

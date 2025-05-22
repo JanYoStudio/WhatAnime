@@ -626,7 +626,7 @@ fun BuildResultItem(
                         Column {
                             BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
                             BuildText("${result.aniList.id}")
-                            BuildText("${result.aniList.idMal}")
+                            BuildText(result.aniList.idMal?.toString() ?: "N/A")
                             BuildText(
                                 text = "${DecimalFormat("#.000").format(result.similarity * 100)}%",
                                 fontWeight = FontWeight.Bold,

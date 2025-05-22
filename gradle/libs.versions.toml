@@ -26,6 +26,7 @@ moshi = "1.15.2"
 mmkv = "2.1.0"
 composePreference = "1.1.1"
 media3Exoplayer = "1.6.1"
+junit = "4.13.2"
 
 [libraries]
 gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -74,6 +75,8 @@ media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "medi
 
 aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibrariesDependencies" }
 aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesDependencies" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
