@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      OUTPUT_DIR: ${{ github.workspace }}/outputs/
+      OUTPUT_DIR: "app/build/outputs/apk/release"
       SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
       SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
       SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
@@ -66,7 +66,7 @@ jobs:
       - name: Parse output-metadata.json
         id: parse_metadata
         run: |
-          OUTPUT_METADATA_FILE="app/build/outputs/apk/release/output-metadata.json"
+          OUTPUT_METADATA_FILE="${{ env.OUTPUT_DIR }}/output-metadata.json"
           VERSION_NAME=$(jq -r '.elements[0].versionName' $OUTPUT_METADATA_FILE)
           VERSION_CODE=$(jq -r '.elements[0].versionCode' $OUTPUT_METADATA_FILE)
           echo "::set-output name=versionName::$VERSION_NAME"
@@ -76,14 +76,8 @@ jobs:
       - name: Rename APK
         id: rename_apk
         run: |
-          APK_PATH="${{ steps.parse_metadata.outputs.apkPath }}"
-          VERSION_NAME="${{ steps.parse_metadata.outputs.versionName }}"
-          VERSION_CODE="${{ steps.parse_metadata.outputs.versionCode }}"
-          NEW_APK_NAME="WhatAnime-${VERSION_NAME}-${VERSION_CODE}.apk"
-          APK_DIR=$(dirname "$APK_PATH")
-          mv "$APK_PATH" "$APK_DIR/$NEW_APK_NAME"
-          echo "APK renamed to $NEW_APK_NAME"
-          echo "::set-output name=newApkPath::$APK_DIR/$NEW_APK_NAME"
+          APK_PATH="${{ env.OUTPUT_DIR }}/${{ steps.parse_metadata.outputs.apkPath }}"
+          echo "::set-output name=apkPath::$APK_PATH"
 
       - name: Get latest commit message
         id: get_commit_message
@@ -95,6 +89,6 @@ jobs:
           tag_name: ${{ steps.parse_metadata.outputs.versionName }}
           prerelease: true
           body: ${{ steps.get_commit_message.outputs.message }}
-          files: ${{ steps.rename_apk.outputs.newApkPath }}
+          files: ${{ steps.rename_apk.outputs.apkPath }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
