@@ -7,11 +7,12 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import pw.janyo.whatanime.config.Configure
+import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.module.moduleList
 import pw.janyo.whatanime.utils.registerActivityLifecycle
 
 // Global list to store HTTP responses
-val httpResponses = mutableListOf<Pair<String, String>>()
+val httpResponses = mutableListOf<DebugHttpInfo>()
 
 class Application : Application() {
     override fun onCreate() {
@@ -32,6 +33,6 @@ class Application : Application() {
         }
         Configure.lastVersion = BuildConfig.VERSION_CODE
         //每次启动都禁用调试模式
-        Configure.debugMode = false
+        Configure.debugMode = BuildConfig.DEBUG
     }
 }

@@ -10,17 +10,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,6 +36,7 @@ import pw.janyo.whatanime.appVersionName
 import pw.janyo.whatanime.base.BaseComposeActivity
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.constant.StringConstant.resString
+import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.model.entity.NightMode
 import pw.janyo.whatanime.publicDeviceId
 import pw.janyo.whatanime.toCustomTabs
@@ -60,6 +65,8 @@ class SettingsActivity : BaseComposeActivity() {
         val httpResponses by viewModel.httpResponsesFlow.collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
+
+        val state = remember { mutableStateOf<DebugHttpInfo?>(null) }
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -226,13 +233,12 @@ class SettingsActivity : BaseComposeActivity() {
                             Text(text = stringResource(id = R.string.settings_title_recent_http_responses))
                         },
                         content = {
-                            httpResponses.forEach { responsePair ->
+                            httpResponses.forEach { httpInfo ->
                                 SettingsMenuLink(
-                                    title = responsePair.first,
+                                    title = httpInfo.tag,
+                                    subtitle = httpInfo.datetime,
                                     onClick = {
-                                        val clipData = ClipData.newPlainText("HTTP Response", responsePair.second)
-                                        clipboardManager.setPrimaryClip(clipData)
-                                        R.string.hint_copy_http_resource.toast()
+                                        state.value = httpInfo
                                     }
                                 )
                             }
@@ -242,11 +248,53 @@ class SettingsActivity : BaseComposeActivity() {
             }
         }
 
+        BuildAlertDialog(state)
+
         val errorMessage by viewModel.errorMessage.collectAsState()
         if (errorMessage.isNotBlank()) {
             LaunchedEffect("errorMessage") {
                 snackbarHostState.showSnackbar(errorMessage)
             }
         }
+    }
+
+    @Composable
+    fun BuildAlertDialog(state: MutableState<DebugHttpInfo?>) {
+        if (state.value == null) return
+        val item = state.value!!
+        AlertDialog(
+            onDismissRequest = { state.value = null },
+            title = {
+                Text(text = "HTTP RESPONSE")
+            },
+            text = {
+                val scrollState = rememberScrollState()
+                Text(
+                    text = item.response,
+                    modifier = Modifier
+                        .verticalScroll(scrollState)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val clipData = ClipData.newPlainText(
+                            "HTTP Response",
+                            item.response,
+                        )
+                        clipboardManager.setPrimaryClip(clipData)
+                        R.string.hint_copy_http_resource.toast()
+                        state.value = null
+                    }
+                ) {
+                    Text(stringResource(android.R.string.copy))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { state.value = null }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
     }
 }

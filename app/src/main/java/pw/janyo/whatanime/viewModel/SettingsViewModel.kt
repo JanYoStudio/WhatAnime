@@ -11,6 +11,7 @@ import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant.resString
 import pw.janyo.whatanime.httpResponses
+import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.entity.NightMode
 import pw.janyo.whatanime.repository.AnimationRepository
@@ -40,8 +41,8 @@ class SettingsViewModel : ComposeViewModel() {
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
 
-    private val _httpResponses = MutableStateFlow<List<Pair<String, String>>>(emptyList())
-    val httpResponsesFlow: StateFlow<List<Pair<String, String>>> = _httpResponses
+    private val _httpResponses = MutableStateFlow<List<DebugHttpInfo>>(emptyList())
+    val httpResponsesFlow: StateFlow<List<DebugHttpInfo>> = _httpResponses
 
     init {
         viewModelScope.launch {

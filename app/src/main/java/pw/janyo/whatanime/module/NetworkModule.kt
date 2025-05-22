@@ -10,6 +10,7 @@ import pw.janyo.whatanime.api.SearchApi
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.Constant
 import pw.janyo.whatanime.httpResponses
+import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.model.moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -44,11 +45,21 @@ val networkModule = module {
                 val request = chain.request()
                 val response = chain.proceed(request)
                 if (Configure.debugMode) {
-                    val responseBody = response.peekBody(Long.MAX_VALUE).string()
-                    // 获取当前时间字符串，以年-月-日 时:分:秒 的格式
+                    val tag = request.tag(String::class.java) ?: "tag"
+                    var responseBody = response.peekBody(Long.MAX_VALUE).string()
+                    responseBody = responseBody.replace(
+                        Regex("\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b"),
+                        "0.0.0.0"
+                    )
                     val currentDateTime = Calendar.getInstance().time
-                    httpResponses.add(formatter.format(currentDateTime) to responseBody)
-                    if (httpResponses.size > 3) {
+                    httpResponses.add(
+                        DebugHttpInfo(
+                            tag = tag,
+                            datetime = formatter.format(currentDateTime),
+                            response = responseBody
+                        )
+                    )
+                    if (httpResponses.size > 5) {
                         httpResponses.removeAt(0)
                     }
                 }

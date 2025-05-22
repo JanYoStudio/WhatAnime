@@ -10,9 +10,11 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Tag
 
 interface SearchApi {
     companion object {
+        const val REQUEST_TAG_METHOD_NAME = "method_name"
         const val ApiKeyHeader = "x-trace-key"
     }
 
@@ -23,6 +25,7 @@ interface SearchApi {
         @Query("cutBorders") cutBorders: String = "",
         @Query("anilistInfo") anilistInfo: String = "",
         @Header(ApiKeyHeader) key: String = Configure.apiKey,
+        @Tag method_name: String = "search"
     ): SearchAnimeResult
 
     @POST("/search")
@@ -31,8 +34,12 @@ interface SearchApi {
         @Header(HttpHeaders.CONTENT_TYPE) contentType: String,
         @Query("anilistInfo") anilistInfo: String = "",
         @Header(ApiKeyHeader) key: String = Configure.apiKey,
+        @Tag method_name: String = "searchNoCut"
     ): SearchAnimeResult
 
     @GET("/me")
-    suspend fun getMe(@Header("x-trace-key") key: String = Configure.apiKey): SearchQuota
+    suspend fun getMe(
+        @Header("x-trace-key") key: String = Configure.apiKey,
+        @Tag method_name: String = "getMe"
+    ): SearchQuota
 }
