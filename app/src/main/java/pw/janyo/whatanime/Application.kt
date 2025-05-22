@@ -1,7 +1,6 @@
 package pw.janyo.whatanime
 
 import android.app.Application
-import android.content.Context
 import com.tencent.mmkv.MMKV
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -12,9 +11,9 @@ import pw.janyo.whatanime.module.moduleList
 import pw.janyo.whatanime.utils.registerActivityLifecycle
 
 // Global list to store HTTP responses
-val httpResponses = mutableListOf<Pair<Long, String>>()
+val httpResponses = mutableListOf<Pair<String, String>>()
 
-class Application: Application() {
+class Application : Application() {
     override fun onCreate() {
         super.onCreate()
         context = this
@@ -28,9 +27,11 @@ class Application: Application() {
         MMKV.initialize(this)
         if (Configure.lastVersion < 308) {
             //SP数据迁移到MMKV
-            val sp = getSharedPreferences("configure", Context.MODE_PRIVATE)
+            val sp = getSharedPreferences("configure", MODE_PRIVATE)
             Configure.hideSex = sp.getBoolean("config_hide_sex", true)
         }
         Configure.lastVersion = BuildConfig.VERSION_CODE
+        //每次启动都禁用调试模式
+        Configure.debugMode = false
     }
 }

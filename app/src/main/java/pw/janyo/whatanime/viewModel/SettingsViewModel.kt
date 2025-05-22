@@ -40,8 +40,8 @@ class SettingsViewModel : ComposeViewModel() {
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
 
-    private val _httpResponses = MutableStateFlow<List<Pair<Long, String>>>(emptyList())
-    val httpResponses: StateFlow<List<Pair<Long, String>>> = _httpResponses
+    private val _httpResponses = MutableStateFlow<List<Pair<String, String>>>(emptyList())
+    val httpResponsesFlow: StateFlow<List<Pair<String, String>>> = _httpResponses
 
     init {
         viewModelScope.launch {

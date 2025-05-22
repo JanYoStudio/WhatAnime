@@ -13,7 +13,12 @@ import pw.janyo.whatanime.httpResponses
 import pw.janyo.whatanime.model.moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
 
 val networkModule = module {
     single {
@@ -40,7 +45,9 @@ val networkModule = module {
                 val response = chain.proceed(request)
                 if (Configure.debugMode) {
                     val responseBody = response.peekBody(Long.MAX_VALUE).string()
-                    httpResponses.add(System.currentTimeMillis() to responseBody)
+                    // 获取当前时间字符串，以年-月-日 时:分:秒 的格式
+                    val currentDateTime = Calendar.getInstance().time
+                    httpResponses.add(formatter.format(currentDateTime) to responseBody)
                     if (httpResponses.size > 3) {
                         httpResponses.removeAt(0)
                     }

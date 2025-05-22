@@ -50,6 +50,7 @@
     <string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
     <string name="hint_not_share">The file is invalid!</string>
     <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
+    <string name="hint_copy_http_resource">Copied to clipboard</string>
 
     <string name="settings_group_application">Application Settings</string>
     <string name="settings_title_hide_sex">Hide Sex Content</string>

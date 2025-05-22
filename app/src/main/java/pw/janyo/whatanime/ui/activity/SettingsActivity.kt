@@ -53,11 +53,11 @@ class SettingsActivity : BaseComposeActivity() {
     override fun BuildContent() {
         val hideSex by viewModel.hideSex.collectAsState()
         val preferWebp by viewModel.preferWebp.collectAsState()
-        val debugMode by viewModel.debugMode.collectAsState()
         val nightMode by viewModel.nightMode.collectAsState()
         val searchQuota by viewModel.searchQuota.collectAsState()
         val customApiKey by viewModel.customApiKey.collectAsState()
-        val httpResponses by viewModel.httpResponses.collectAsState()
+        val debugMode by viewModel.debugMode.collectAsState()
+        val httpResponses by viewModel.httpResponsesFlow.collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -101,14 +101,6 @@ class SettingsActivity : BaseComposeActivity() {
                             checked = preferWebp,
                             onCheckedChange = { newValue ->
                                 viewModel.setPreferWebp(newValue)
-                            }
-                        )
-                        CheckboxSetting(
-                            title = stringResource(id = R.string.settings_title_debug_mode),
-                            subtitle = stringResource(id = R.string.settings_summary_debug_mode),
-                            checked = debugMode,
-                            onCheckedChange = { newValue ->
-                                viewModel.setDebugMode(newValue)
                             }
                         )
                         ListSetting(
@@ -219,6 +211,14 @@ class SettingsActivity : BaseComposeActivity() {
                                 toCustomTabs(R.string.settings_link_what_anime.resString())
                             }
                         )
+                        CheckboxSetting(
+                            title = stringResource(id = R.string.settings_title_debug_mode),
+                            subtitle = stringResource(id = R.string.settings_summary_debug_mode),
+                            checked = debugMode,
+                            onCheckedChange = { newValue ->
+                                viewModel.setDebugMode(newValue)
+                            }
+                        )
                     })
                 if (debugMode) {
                     SettingsGroup(
@@ -228,12 +228,11 @@ class SettingsActivity : BaseComposeActivity() {
                         content = {
                             httpResponses.forEach { responsePair ->
                                 SettingsMenuLink(
-                                    title = responsePair.first.toString(),
+                                    title = responsePair.first,
                                     onClick = {
                                         val clipData = ClipData.newPlainText("HTTP Response", responsePair.second)
                                         clipboardManager.setPrimaryClip(clipData)
-                                        // Optionally, show a toast message
-                                        // R.string.your_toast_message_resource.toast()
+                                        R.string.hint_copy_http_resource.toast()
                                     }
                                 )
                             }

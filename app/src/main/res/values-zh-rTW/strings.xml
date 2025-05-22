@@ -33,10 +33,12 @@
     <string name="hint_copy_device_id">設備ID已經復制到剪切板中</string>
     <string name="hint_searching">正在搜索中，請稍後……</string>
     <string name="hint_select_to_search">點擊搜索按鈕開始</string>
+    <string name="hint_copy_http_resource">已複製到剪貼簿</string>
     <string name="settings_group_application">應用設置</string>
     <string name="settings_title_hide_sex">隱藏敏感內容</string>
     <string name="settings_title_prefer_webp">使用 WEBP 格式</string>
     <string name="settings_summary_prefer_webp">優先回應 WEBP 格式的圖片，這會降低圖片的傳輸資料量（注意，如果裝置不支援 WEBP，請關閉此選項）</string>
+    <string name="settings_summary_debug_mode">啟動調試模式記錄HTTP響應數據</string>
     <string name="settings_title_api_key">自定義Api Key</string>
     <string name="settings_summary_api_key">如果您捐贈過WhatAnime，您可以在這裏填入獲得的ApiKey。<b>請註意：如果您輸入的ApiKey是無效的，會導致正常使用搜索功能。</b></string>
     <string name="settings_title_quota_used">已使用的額度</string>
@@ -52,6 +54,7 @@
     <string name="settings_title_about_device_id">設備ID</string>
     <string name="settings_group_about_what_anime">關於WhatAnime</string>
     <string name="settings_summary_developer_what_anime">WhatAnime API開發者</string>
+    <string name="settings_title_recent_http_responses">最近的HTTP請求</string>
     <string name="settings_title_night_mode">夜間模式</string>
     <string name="array_night_mode_auto">自動</string>
     <string name="array_night_mode_always_on">始終開啟</string>
@@ -68,4 +71,5 @@
     <string name="hint_file_too_large">文件過大，請先手動做一次壓縮！</string>
     <string name="hint_data_convert_no_detail_in_history">因為數據結構變更，您已經無法再查閱這條歷史記錄的詳細信息，請刪除該記錄</string>
     <string name="title_activity_receive_share">使用WhatAnime進行搜索</string>
+    <string name="settings_title_debug_mode">調試模式</string>
 </resources>
