@@ -3,15 +3,16 @@ on:
   push:
     branches:
       - dev
+env:
+  OUTPUT_DIR: "app/build/outputs/apk/release"
+  SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
+  SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
+  SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
+  SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      OUTPUT_DIR: "app/build/outputs/apk/release"
-      SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
-      SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
-      SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
-      SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

@@ -10,7 +10,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,7 +23,7 @@ jobs:
         uses: android-actions/setup-android@v3
       - name: 解密签名
         run: |
-          echo ${{ secrets.SIGN_KEY_BASE64 }} | base64 --decode > /tmp/key.jks
+          echo ${{ secrets.SIGN_KEY_BASE64 }} | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: 构建 APK
