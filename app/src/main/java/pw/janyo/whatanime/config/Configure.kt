@@ -40,4 +40,9 @@ object Configure {
             kv.encode("cutBorders", value)
         }
         get() = kv.decodeBool("cutBorders", false)
+    var debugMode: Boolean
+        set(value) {
+            kv.encode("debugMode", value)
+        }
+        get() = kv.decodeBool("debugMode", false)
 }

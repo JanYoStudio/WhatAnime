@@ -10,6 +10,7 @@ import pw.janyo.whatanime.R
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.config.Configure
 import pw.janyo.whatanime.constant.StringConstant.resString
+import pw.janyo.whatanime.httpResponses
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.model.entity.NightMode
 import pw.janyo.whatanime.repository.AnimationRepository
@@ -27,6 +28,9 @@ class SettingsViewModel : ComposeViewModel() {
     private val _preferWebp = MutableStateFlow(Configure.preferWebp)
     val preferWebp: StateFlow<Boolean> = _preferWebp
 
+    private val _debugMode = MutableStateFlow(Configure.debugMode)
+    val debugMode: StateFlow<Boolean> = _debugMode
+
     private val _nightMode = MutableStateFlow(Configure.nightMode)
     val nightMode: StateFlow<NightMode> = _nightMode
 
@@ -36,10 +40,17 @@ class SettingsViewModel : ComposeViewModel() {
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
 
+    private val _httpResponses = MutableStateFlow<List<Pair<Long, String>>>(emptyList())
+    val httpResponses: StateFlow<List<Pair<Long, String>>> = _httpResponses
+
     init {
         viewModelScope.launch {
             Theme.nightMode.value = Configure.nightMode
             _customApiKey.value = Configure.apiKey
+        }
+        // Initialize httpResponses based on current debugMode state
+        if (Configure.debugMode) {
+            _httpResponses.value = httpResponses.toList()
         }
         showQuota()
     }
@@ -48,6 +59,18 @@ class SettingsViewModel : ComposeViewModel() {
         viewModelScope.launch {
             Configure.hideSex = hideSex
             _hideSex.value = hideSex
+        }
+    }
+
+    fun setDebugMode(debugMode: Boolean) {
+        viewModelScope.launch {
+            Configure.debugMode = debugMode
+            _debugMode.value = debugMode
+            if (debugMode) {
+                _httpResponses.value = httpResponses.toList()
+            } else {
+                _httpResponses.value = emptyList()
+            }
         }
     }
 
