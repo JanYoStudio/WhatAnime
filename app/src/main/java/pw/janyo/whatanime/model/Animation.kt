@@ -32,7 +32,7 @@ data class SearchAnimeResultItem(
 )
 
 data class SearchAniListResult(
-    val id: Long = 0,
+    val id: Long? = 0,
     val idMal: Long? = 0,
     val title: AniListTitleResult,
     @Json(name = "isAdult")
@@ -40,5 +40,5 @@ data class SearchAniListResult(
 )
 
 data class AniListTitleResult(
-    val native: String = "",
+    val native: String? = "",
 )

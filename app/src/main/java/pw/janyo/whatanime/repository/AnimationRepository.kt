@@ -120,7 +120,7 @@ class AnimationRepository : KoinComponent {
                 if (searchAnimeResult.result.isNotEmpty()) {
                     val result = searchAnimeResult.result[0]
                     this.title = result.aniList.title.native ?: ""
-                    this.anilistId = result.aniList.id
+                    this.anilistId = result.aniList.id ?: 0
                     this.episode = ""
                     this.similarity = result.similarity
                 } else {

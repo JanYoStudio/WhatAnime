@@ -468,7 +468,7 @@ class MainActivity : BaseComposeActivity() {
                 Text(
                     text = stringResource(
                         R.string.hint_show_animation_detail,
-                        item.aniList.title.native
+                        item.aniList.title.native ?: item.fileName
                     )
                 )
             },
@@ -571,7 +571,7 @@ fun BuildResultItem(
                     BuildText(
                         text = stringResource(
                             R.string.detail_hint_native_title,
-                            result.aniList.title.native
+                            result.aniList.title.native ?: result.fileName
                         ),
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
@@ -625,8 +625,12 @@ fun BuildResultItem(
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                            BuildText("${result.aniList.id}")
-                            BuildText(result.aniList.idMal?.toString() ?: "N/A")
+                            result.aniList.id?.let {
+                                BuildText(result.aniList.id.toString())
+                            }
+                            result.aniList.idMal?.let {
+                                BuildText(result.aniList.idMal.toString())
+                            }
                             BuildText(
                                 text = "${DecimalFormat("#.000").format(result.similarity * 100)}%",
                                 fontWeight = FontWeight.Bold,

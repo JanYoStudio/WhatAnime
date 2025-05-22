@@ -169,7 +169,7 @@ class DetailActivity : BaseComposeActivity() {
                 Text(
                     text = stringResource(
                         R.string.hint_show_animation_detail,
-                        item.aniList.title.native
+                        item.aniList.title.native ?: item.fileName
                     )
                 )
             },
