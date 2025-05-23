@@ -28,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -63,6 +64,10 @@ class HistoryActivity : BaseComposeActivity() {
         val listState by viewModel.historyListState.collectAsState()
 
         val animeDialogState = remember { mutableStateOf<AnimationHistory?>(null) }
+
+        LaunchedEffect(Unit) {
+            viewModel.refresh()
+        }
 
         Scaffold(
             topBar = {

@@ -44,7 +44,7 @@ class SettingsViewModel : ComposeViewModel() {
     private val _httpResponses = MutableStateFlow<List<DebugHttpInfo>>(emptyList())
     val httpResponsesFlow: StateFlow<List<DebugHttpInfo>> = _httpResponses
 
-    init {
+    fun init() {
         viewModelScope.launch {
             Theme.nightMode.value = Configure.nightMode
             _customApiKey.value = Configure.apiKey

@@ -17,10 +17,6 @@ class HistoryViewModel : ComposeViewModel() {
     private val _historyListState = MutableStateFlow(HistoryListState())
     val historyListState: StateFlow<HistoryListState> = _historyListState
 
-    init {
-        refresh()
-    }
-
     fun refresh() {
         viewModelScope.launch {
             _historyListState.value = _historyListState.value.copy(

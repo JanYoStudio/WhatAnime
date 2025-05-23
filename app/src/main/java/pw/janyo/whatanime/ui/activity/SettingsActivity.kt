@@ -68,6 +68,10 @@ class SettingsActivity : BaseComposeActivity() {
 
         val state = remember { mutableStateOf<DebugHttpInfo?>(null) }
 
+        LaunchedEffect(Unit) {
+            viewModel.init()
+        }
+
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
