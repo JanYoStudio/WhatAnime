@@ -28,7 +28,7 @@ actual fun toCustomTabs(context: PlatformContext, url: String) {
         val builder = CustomTabsIntent.Builder()
         val intent = builder.build()
         intent.launchUrl(context, url.toUri())
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         loadInBrowser(context, url)
     }
 }
@@ -39,7 +39,7 @@ actual fun loadInBrowser(context: PlatformContext, url: String) {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(intent)
-    } catch (e: ActivityNotFoundException) {
+    } catch (_: ActivityNotFoundException) {
         Logger.e("no browser")
     }
 }

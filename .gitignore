@@ -4,6 +4,9 @@
 **/build/
 xcuserdata
 !src/**/build/
+composeApp/mapping.txt
+composeApp/seeds.txt
+composeApp/unused.txt
 composeApp/schemas/
 composeApp/src/commonMain/composeResources/files/aboutlibraries.json
 local.properties

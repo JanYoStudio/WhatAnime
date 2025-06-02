@@ -22,7 +22,7 @@ object Configure {
         set(value) {
             kv.set("config_api_key", value)
         }
-        get() = kv.takeString("config_api_key", "")!!
+        get() = kv.takeString("config_api_key", "")
     var nightMode: NightMode
         set(value) {
             kv.set("nightMode", value.value)
