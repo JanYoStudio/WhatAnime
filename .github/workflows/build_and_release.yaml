@@ -4,7 +4,7 @@ on:
     branches:
       - dev
 env:
-  OUTPUT_DIR: "app/build/outputs/apk/release"
+  OUTPUT_DIR: "composeApp/build/outputs/apk/release"
   SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
   SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
   SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}

@@ -143,6 +143,8 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = gitVersionCode
         versionName = "1.8.5"
+
+        setProperty("archivesBaseName", "WhatAnime-$versionName")
     }
     packaging {
         resources {
