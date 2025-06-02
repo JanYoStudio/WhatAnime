@@ -59,7 +59,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build APK
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew composeApp:exportLibraryDefinitions
+          ./gradlew assembleRelease
 
       - name: Install jq
         run: sudo apt-get install -y jq

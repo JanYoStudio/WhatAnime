@@ -142,7 +142,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = gitVersionCode
-        versionName = "1.8.4"
+        versionName = "1.8.5"
     }
     packaging {
         resources {
@@ -198,6 +198,11 @@ dependencies {
 }
 
 aboutLibraries {
+    offlineMode = true
+    collect {
+        fetchRemoteLicense = false
+        fetchRemoteFunding = false
+    }
     android {
         registerAndroidTasks = false
     }
