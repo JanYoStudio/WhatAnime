@@ -19,8 +19,7 @@ actual class PlaybackStateController {
     actual fun release() {
     }
 
-    actual fun isLoading(): Boolean{
-    }
+    actual fun isLoading(): Boolean = false
 }
 
 @Composable
