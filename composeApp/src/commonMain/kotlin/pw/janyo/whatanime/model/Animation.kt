@@ -16,7 +16,7 @@ data class SearchAnimeResultItem(
     val aniList: SearchAniListResult,
     @SerialName("filename")
     val fileName: String,
-    val episode: String?,
+    val episode: String? = null,
     val from: Double = 0.0,
     val to: Double = 0.0,
     val similarity: Double = 0.0,
