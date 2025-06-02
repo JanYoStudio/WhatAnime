@@ -1,83 +1,114 @@
 [versions]
-agp = "8.10.0"
+agp = "8.10.1"
 kotlin = "2.1.21"
 # https://github.com/google/ksp/releases
 ksp = "2.1.21-2.0.1"
-aboutlibraries = "12.1.2"
 
-composeBom = "2025.05.01"
+composeMultiplatform = "1.8.1"
+aboutlibraries = "12.2.0"
+kotlinx-serialization = "1.8.1"
+
+android-compileSdk = "36"
+android-minSdk = "24"
+android-targetSdk = "36"
+androidx-activity = "1.10.1"
+androidx-appcompat = "1.7.0"
+androidx-constraintlayout = "2.2.1"
+androidx-splashscreen = "1.0.1"
+androidx-core = "1.16.0"
+androidx-lifecycle = "2.9.0"
+androidx-navigation = "2.9.0-beta02"
+androidx-browser = "1.8.0"
 material = "1.12.0"
-androidxCore = "1.16.0"
-androidxCompose = "1.10.1"
-androidxLifecycle = "2.9.0"
-androidxCompat = "1.7.0"
-androidxAnimation = "1.8.2"
-androidxSplashScreen = "1.0.1"
-androidxBrowser = "1.8.0"
-androidxFuture = "1.2.0"
-androidxRoom = "2.7.1"
-
-aboutlibrariesDependencies = "12.1.2"
-lottie = "6.6.6"
-koin = "4.0.4"
-coil = "2.7.0"
-retrofit = "3.0.0"
-moshi = "1.15.2"
-mmkv = "2.2.2"
-composePreference = "1.1.1"
-media3Exoplayer = "1.7.1"
+material-icons = "1.7.3"
+ktorfit = "2.5.2"
+ktor = "3.1.3"
+koin-bom = "4.0.4"
+coil-bom = "3.2.0"
+kermit = "2.0.5"
+cmptoast = "1.0.5"
+filekit = "0.10.0-beta04"
+mmkv-kotlin = "1.2.17"
+media3 = "1.7.1"
+room = "2.7.1"
+kotlin-crypto-hash = "0.7.0"
+compose-preference = "1.1.1"
 
 [libraries]
-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-splashscreen" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
 
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-material3-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
-androidx-material-icon = { group = "androidx.compose.material", name = "material-icons-core" }
-androidx-material-icon-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxCompat" }
-androidx-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "androidxAnimation" }
-androidx-foundation = { module = "androidx.compose.foundation:foundation" }
-androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxSplashScreen" }
-androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
-androidx-concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "androidxFuture" }
-androidx-room = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
 
-lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
+material-icon = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
+material-icon-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons" }
 
-koin = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
-koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
+ktorfit = { module = "de.jensklingenberg.ktorfit:ktorfit-lib-light", version.ref = "ktorfit" }
 
-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
-moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
-moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
+koin-android = { module = "io.insert-koin:koin-android" }
 
-mmkv = { group = "com.tencent", name = "mmkv-static", version.ref = "mmkv" }
+coil-bom = { module = "io.coil-kt.coil3:coil-bom", version.ref = "coil-bom" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose" }
+coil-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3" }
+coil-cache-control = { module = "io.coil-kt.coil3:coil-network-cache-control" }
 
-compose-preference = { group = "me.zhanghai.compose.preference", name = "library", version.ref = "composePreference" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
-media3-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3Exoplayer" }
-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Exoplayer" }
+cmptoast = { module = "network.chaintech:cmptoast", version.ref = "cmptoast" }
 
-aboutlibraries = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibrariesDependencies" }
-aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibrariesDependencies" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+filekit-coil = { module = "io.github.vinceglb:filekit-coil", version.ref = "filekit" }
+filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
+
+mmkv-kotlin = { module = "com.ctrip.flight.mmkv:mmkv-kotlin", version.ref = "mmkv-kotlin" }
+
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
+aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutlibraries" }
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
+
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
+media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+
+androidx-room = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+kotlin-crypto-hash-bom = { group = "org.kotlincrypto.hash", name = "bom", version.ref = "kotlin-crypto-hash" }
+kotlin-crypto-hash-md = { group = "org.kotlincrypto.hash", name = "md" }
+kotlin-crypto-hash-sha1 = { group = "org.kotlincrypto.hash", name = "sha1" }
+kotlin-crypto-hash-sha2 = { group = "org.kotlincrypto.hash", name = "sha2" }
+
+compose-preference = { group = "me.zhanghai.compose.preference", name = "library", version.ref = "compose-preference" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-about-libraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialize = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
+room = { id = "androidx.room", version.ref = "room" }
