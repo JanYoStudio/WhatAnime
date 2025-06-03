@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.kotlinSerialize)
     alias(libs.plugins.kotlinKsp)
+    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.room)
@@ -116,6 +117,24 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
     }
+    cocoapods {
+        homepage = "https://xgkb.mystery0.vip"
+        summary = "XhuTimeTable"
+        version = "1.0"
+        ios.deploymentTarget = "15.3"
+        podfile = project.file("../iosApp/Podfile")
+
+        framework {
+            baseName = "composeApp"
+            compilerOptions.optIn.add("-Xbinary=bundleId=com.compose.cocoapod_sample")
+            isStatic = true
+        }
+
+        pod(name = "MMKV") {
+            version = "2.1.0"
+            moduleName = "MMKV"
+        }
+    }
 }
 
 fun String.runCommand(workingDir: File = file("./")): String {
@@ -152,12 +171,7 @@ android {
         }
     }
     signingConfigs {
-        create("release") {
-            storeFile = file(SignConfig.signKeyStoreFile)
-            storePassword = SignConfig.signKeyStorePassword
-            keyAlias = SignConfig.signKeyAlias
-            keyPassword = SignConfig.signKeyPassword
-        }
+        create("sign")
     }
     buildTypes {
         debug {
@@ -177,7 +191,7 @@ android {
                 "proguard-rules.pro"
             )
             versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("sign")
         }
     }
     compileOptions {
@@ -212,3 +226,5 @@ aboutLibraries {
         outputFile = file("src/commonMain/composeResources/files/aboutlibraries.json")
     }
 }
+
+apply(from = rootProject.file("signing.gradle"))

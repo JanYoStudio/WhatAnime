@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinSerialize) apply false
     alias(libs.plugins.kotlinKsp) apply false
+    alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.aboutLibraries) apply false
     alias(libs.plugins.ktorfit) apply false
     alias(libs.plugins.room) apply false
