@@ -1,0 +1,27 @@
+PODS:
+  - composeApp (1.0):
+    - MMKV (= 2.1.0)
+  - MMKV (2.1.0):
+    - MMKVCore (~> 2.1.0)
+  - MMKVCore (2.1.1)
+
+DEPENDENCIES:
+  - composeApp (from `../composeApp`)
+
+SPEC REPOS:
+  trunk:
+    - MMKV
+    - MMKVCore
+
+EXTERNAL SOURCES:
+  composeApp:
+    :path: "../composeApp"
+
+SPEC CHECKSUMS:
+  composeApp: f73bedd3e20f49b1974a9a98daa3fdd98871e90e
+  MMKV: ce484c1ac40bf76d5f09a0195d2ec5b3d3840d55
+  MMKVCore: 1eb661c6c498ab88e3df9ce5d8ff94d05fcc0567
+
+PODFILE CHECKSUM: f90b99d0d33898e75de1e040e16c8beb388c0fc7
+
+COCOAPODS: 1.16.2

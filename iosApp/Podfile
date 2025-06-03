@@ -1,0 +1,22 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '15.3'
+
+target 'iosApp' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+  pod 'composeApp', :path => '../composeApp'
+end
+
+post_install do |installer|
+  ignored_targets = ['KotlinGradlePlugin', 'composeApp']
+
+  installer.pods_project.targets.each do |target|
+    next if ignored_targets.include?(target.name)
+
+    puts "✅ Patching deployment target for: #{target.name}"
+
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.3'
+    end
+  end
+end
