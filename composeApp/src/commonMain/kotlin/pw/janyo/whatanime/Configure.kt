@@ -1,58 +1,43 @@
 package pw.janyo.whatanime
 
-import com.ctrip.flight.mmkv.MMKVMode
-import com.ctrip.flight.mmkv.mmkvWithID
 import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.ui.theme.NightMode
 
-object Configure {
-    private val kv = mmkvWithID("configure", MMKVMode.SINGLE_PROCESS)
+expect inline fun <reified T> getConfiguration(key: String, defaultValue: T): T
+expect inline fun <reified T> setConfiguration(key: String, value: T)
 
+object Configure {
     var lastVersion: Int
-        set(value) {
-            kv.set("config_last_version", value)
-        }
-        get() = kv.takeInt("config_last_version", 0)
+        set(value) = setConfiguration("config_last_version", value)
+        get() = getConfiguration("config_last_version", 0)
     var hideSex: Boolean
-        set(value) {
-            kv.set("config_hide_sex", value)
-        }
-        get() = kv.takeBoolean("config_hide_sex", true)
+        set(value) = setConfiguration("config_hide_sex", value)
+        get() = getConfiguration("config_hide_sex", true)
     var apiKey: String
-        set(value) {
-            kv.set("config_api_key", value)
-        }
-        get() = kv.takeString("config_api_key", "")
+        set(value) = setConfiguration("config_api_key", value)
+        get() = getConfiguration("config_api_key", "")
     var nightMode: NightMode
-        set(value) {
-            kv.set("nightMode", value.value)
-        }
+        set(value) = setConfiguration("nightMode", value.value)
         get() {
-            val value = kv.takeInt("nightMode", NightMode.AUTO.value)
+            val value = getConfiguration("nightMode", NightMode.AUTO.value)
             return NightMode.entries.first { it.value == value }
         }
     var preferWebp: Boolean
-        set(value) {
-            kv.set("preferWebp", value)
-        }
-        get() = kv.takeBoolean("preferWebp", false)
+        set(value) = setConfiguration("preferWebp", value)
+        get() = getConfiguration("preferWebp", false)
     var cutBorders: Boolean
-        set(value) {
-            kv.set("cutBorders", value)
-        }
-        get() = kv.takeBoolean("cutBorders", false)
+        set(value) = setConfiguration("cutBorders", value)
+        get() = getConfiguration("cutBorders", false)
     var debugMode: Boolean
-        set(value) {
-            kv.set("debugMode", value)
-        }
-        get() = kv.takeBoolean("debugMode", false)
+        set(value) = setConfiguration("debugMode", value)
+        get() = getConfiguration("debugMode", false)
 }
 
 object Constant {
     const val baseUrl = "https://api.trace.moe/"
 
-    const val whatAnimeUrl="https://trace.moe/about"
-    const val janYoStudioUrl="https://studio.janyos.top"
+    const val whatAnimeUrl = "https://trace.moe/about"
+    const val janYoStudioUrl = "https://studio.janyos.top"
 
     const val donateUrl = "https://github.com/sponsors/soruly"
 }

@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.kotlinSerialize)
     alias(libs.plugins.kotlinKsp)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.room)
@@ -58,6 +57,8 @@ kotlin {
             implementation(libs.androidx.room.ktx)
             //preference
             implementation(libs.compose.preference)
+            //mmkv
+            implementation(libs.mmkv.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -99,14 +100,13 @@ kotlin {
             implementation(libs.filekit.core)
             implementation(libs.filekit.coil)
             implementation(libs.filekit.dialogs.compose)
-            //mmkv
-            implementation(libs.mmkv.kotlin)
             //aboutlibraries
             implementation(libs.aboutlibraries.core)
             implementation(libs.aboutlibraries.compose.core)
             implementation(libs.aboutlibraries.compose.m3)
             //room
             implementation(libs.androidx.room)
+            implementation(libs.androidx.sqlite.bundled)
             //kotlin-crypto-hash
             implementation(project.dependencies.platform(libs.kotlin.crypto.hash.bom))
             implementation(libs.kotlin.crypto.hash.md)
@@ -114,25 +114,8 @@ kotlin {
             implementation(libs.kotlin.crypto.hash.sha2)
         }
         iosMain.dependencies {
+            //ktor
             implementation(libs.ktor.client.darwin)
-        }
-    }
-    cocoapods {
-        homepage = "https://xgkb.mystery0.vip"
-        summary = "XhuTimeTable"
-        version = "1.0"
-        ios.deploymentTarget = "15.3"
-        podfile = project.file("../iosApp/Podfile")
-
-        framework {
-            baseName = "composeApp"
-            compilerOptions.optIn.add("-Xbinary=bundleId=com.compose.cocoapod_sample")
-            isStatic = true
-        }
-
-        pod(name = "MMKV") {
-            version = "2.1.0"
-            moduleName = "MMKV"
         }
     }
 }

@@ -4,8 +4,11 @@ import androidx.room.RoomDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import pw.janyo.whatanime.db.AppDatabase
+import pw.janyo.whatanime.ui.components.PlaybackStateController
 
 actual fun platformModule(): Module = module {
+    single { PlaybackStateController() }
+
     single<RoomDatabase.Builder<AppDatabase>> {
         getDatabaseBuilder()
     }
