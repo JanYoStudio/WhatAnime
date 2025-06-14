@@ -116,6 +116,7 @@ kotlin {
         iosMain.dependencies {
             //ktor
             implementation(libs.ktor.client.darwin)
+            implementation(libs.ios.settings)
         }
     }
 }
