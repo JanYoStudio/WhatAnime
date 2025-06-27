@@ -1,8 +1,8 @@
 [versions]
 agp = "8.11.0"
-kotlin = "2.2.0"
+kotlin = "2.1.21"
 # https://github.com/google/ksp/releases
-ksp = "2.2.0-2.0.2"
+ksp = "2.1.21-2.0.1"
 
 composeMultiplatform = "1.8.2"
 aboutlibraries = "12.2.3"
@@ -21,7 +21,7 @@ androidx-browser = "1.8.0"
 material = "1.12.0"
 material-icons = "1.7.3"
 ktorfit = "2.5.2"
-ktor = "3.2.0"
+ktor = "3.1.3"
 koin-bom = "4.1.0"
 coil-bom = "3.2.0"
 kermit = "2.0.6"
