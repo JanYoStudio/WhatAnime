@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -31,13 +32,63 @@ import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pw.janyo.whatanime.Constant
+import pw.janyo.whatanime.appVersionName
 import pw.janyo.whatanime.model.DebugHttpInfo
+import pw.janyo.whatanime.publicDeviceId
 import pw.janyo.whatanime.ui.navigation.LocalNavController
+import pw.janyo.whatanime.ui.preference.CheckboxSetting
+import pw.janyo.whatanime.ui.preference.ListSetting
+import pw.janyo.whatanime.ui.preference.SettingsGroup
+import pw.janyo.whatanime.ui.preference.SettingsMenuLink
+import pw.janyo.whatanime.ui.preference.TextSettings
 import pw.janyo.whatanime.ui.theme.Icons
+import pw.janyo.whatanime.ui.theme.WaIcons
+import pw.janyo.whatanime.ui.theme.showNightModeSelectList
 import pw.janyo.whatanime.utils.copyToClipboard
+import pw.janyo.whatanime.utils.openUrl
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
+import whatanime.composeapp.generated.resources.action_donate
+import whatanime.composeapp.generated.resources.hint_copy_device_id
 import whatanime.composeapp.generated.resources.hint_copy_http_resource
+import whatanime.composeapp.generated.resources.settings_group_about
+import whatanime.composeapp.generated.resources.settings_group_about_what_anime
+import whatanime.composeapp.generated.resources.settings_group_application
+import whatanime.composeapp.generated.resources.settings_link_about_github
+import whatanime.composeapp.generated.resources.settings_link_about_google_play
+import whatanime.composeapp.generated.resources.settings_link_about_janyo_license
+import whatanime.composeapp.generated.resources.settings_link_about_license
+import whatanime.composeapp.generated.resources.settings_link_developer_what_anime
+import whatanime.composeapp.generated.resources.settings_link_what_anime
+import whatanime.composeapp.generated.resources.settings_summary_about_github
+import whatanime.composeapp.generated.resources.settings_summary_about_google_play
+import whatanime.composeapp.generated.resources.settings_summary_about_janyo_license
+import whatanime.composeapp.generated.resources.settings_summary_about_license
+import whatanime.composeapp.generated.resources.settings_summary_api_key
+import whatanime.composeapp.generated.resources.settings_summary_debug_mode
+import whatanime.composeapp.generated.resources.settings_summary_developer_what_anime
+import whatanime.composeapp.generated.resources.settings_summary_hide_sex
+import whatanime.composeapp.generated.resources.settings_summary_prefer_webp
+import whatanime.composeapp.generated.resources.settings_summary_quota_total
+import whatanime.composeapp.generated.resources.settings_summary_quota_used
+import whatanime.composeapp.generated.resources.settings_summary_what_anime
+import whatanime.composeapp.generated.resources.settings_title_about_device_id
+import whatanime.composeapp.generated.resources.settings_title_about_github
+import whatanime.composeapp.generated.resources.settings_title_about_google_play
+import whatanime.composeapp.generated.resources.settings_title_about_janyo_license
+import whatanime.composeapp.generated.resources.settings_title_about_license
+import whatanime.composeapp.generated.resources.settings_title_about_version
+import whatanime.composeapp.generated.resources.settings_title_api_key
+import whatanime.composeapp.generated.resources.settings_title_debug_mode
+import whatanime.composeapp.generated.resources.settings_title_developer_what_anime
+import whatanime.composeapp.generated.resources.settings_title_hide_sex
+import whatanime.composeapp.generated.resources.settings_title_night_mode
+import whatanime.composeapp.generated.resources.settings_title_prefer_webp
+import whatanime.composeapp.generated.resources.settings_title_quota_total
+import whatanime.composeapp.generated.resources.settings_title_quota_used
+import whatanime.composeapp.generated.resources.settings_title_recent_http_responses
+import whatanime.composeapp.generated.resources.settings_title_what_anime
 import whatanime.composeapp.generated.resources.title_activity_settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,6 +135,214 @@ actual fun SettingsScreen() {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
+            SettingsGroup(
+                title = {
+                    Text(text = stringResource(Res.string.settings_group_application))
+                },
+                content = {
+                    CheckboxSetting(
+                        title = stringResource(Res.string.settings_title_hide_sex),
+                        subtitle = stringResource(Res.string.settings_summary_hide_sex),
+                        checked = hideSex,
+                        onCheckedChange = { newValue ->
+                            vm.setHideSex(newValue)
+                        }
+                    )
+                    HorizontalDivider()
+                    CheckboxSetting(
+                        title = stringResource(Res.string.settings_title_prefer_webp),
+                        subtitle = stringResource(Res.string.settings_summary_prefer_webp),
+                        checked = preferWebp,
+                        onCheckedChange = { newValue ->
+                            vm.setPreferWebp(newValue)
+                        }
+                    )
+                    HorizontalDivider()
+                    val defaultNightMode = stringResource(nightMode.title)
+                    val originShowNightModeSelectList = showNightModeSelectList()
+                    val showNightModeSelectList =
+                        originShowNightModeSelectList.map { stringResource(it.title) }
+                    ListSetting(
+                        title = stringResource(Res.string.settings_title_night_mode),
+                        subtitle = stringResource(nightMode.title),
+                        defaultValue = defaultNightMode,
+                        values = showNightModeSelectList,
+                        onValueChange = {
+                            vm.setNightMode(
+                                originShowNightModeSelectList[showNightModeSelectList.indexOf(
+                                    it
+                                )]
+                            )
+                        },
+                    )
+                    HorizontalDivider()
+                    TextSettings(
+                        title = stringResource(Res.string.settings_title_api_key),
+                        subtitle = stringResource(Res.string.settings_summary_api_key),
+                        defaultValue = customApiKey,
+                        onValueChange = {
+                            vm.setCustomApiKey(it)
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.action_donate),
+                        subtitle = Constant.donateUrl,
+                        onClick = {
+                            openUrl(context, Constant.donateUrl)
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_quota_used),
+                        subtitle = stringResource(
+                            Res.string.settings_summary_quota_used,
+                            searchQuota.quotaUsed
+                        ),
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_quota_total),
+                        subtitle = stringResource(
+                            Res.string.settings_summary_quota_total,
+                            searchQuota.quota
+                        ),
+                    )
+                })
+            SettingsGroup(
+                title = {
+                    Text(text = stringResource(Res.string.settings_group_about))
+                },
+                content = {
+                    SettingsMenuLink(
+                        icon = { Icons(WaIcons.Settings.github) },
+                        title = stringResource(Res.string.settings_title_about_github),
+                        subtitle = stringResource(Res.string.settings_summary_about_github),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_about_github)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_about_license),
+                        subtitle = stringResource(Res.string.settings_summary_about_license),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_about_license)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        icon = { Icons(WaIcons.Settings.googlePlay) },
+                        title = stringResource(Res.string.settings_title_about_google_play),
+                        subtitle = stringResource(Res.string.settings_summary_about_google_play),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_about_google_play)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_about_janyo_license),
+                        subtitle = stringResource(Res.string.settings_summary_about_janyo_license),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_about_janyo_license)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_about_version),
+                        subtitle = appVersionName,
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_about_device_id),
+                        subtitle = publicDeviceId,
+                        onClick = {
+                            scope.launch {
+                                copyToClipboard(context, publicDeviceId)
+                                showToast(getString(Res.string.hint_copy_device_id))
+                            }
+                        }
+                    )
+                })
+            SettingsGroup(
+                title = {
+                    Text(text = stringResource(Res.string.settings_group_about_what_anime))
+                },
+                content = {
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_developer_what_anime),
+                        subtitle = stringResource(Res.string.settings_summary_developer_what_anime),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_developer_what_anime)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    SettingsMenuLink(
+                        title = stringResource(Res.string.settings_title_what_anime),
+                        subtitle = stringResource(Res.string.settings_summary_what_anime),
+                        onClick = {
+                            scope.launch {
+                                openUrl(
+                                    context,
+                                    getString(Res.string.settings_link_what_anime)
+                                )
+                            }
+                        }
+                    )
+                    HorizontalDivider()
+                    CheckboxSetting(
+                        title = stringResource(Res.string.settings_title_debug_mode),
+                        subtitle = stringResource(Res.string.settings_summary_debug_mode),
+                        checked = debugMode,
+                        onCheckedChange = { newValue ->
+                            vm.setDebugMode(newValue)
+                        }
+                    )
+                })
+            if (debugMode) {
+                SettingsGroup(
+                    title = {
+                        Text(text = stringResource(Res.string.settings_title_recent_http_responses))
+                    },
+                    content = {
+                        httpResponses.forEach { httpInfo ->
+                            SettingsMenuLink(
+                                title = httpInfo.title,
+                                subtitle = httpInfo.datetime,
+                                onClick = {
+                                    state.value = httpInfo
+                                }
+                            )
+                            HorizontalDivider()
+                        }
+                    }
+                )
+            }
         }
     }
 
