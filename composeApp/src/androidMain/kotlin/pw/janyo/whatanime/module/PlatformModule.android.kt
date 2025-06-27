@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.AndroidSQLiteDriver
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -27,5 +28,6 @@ actual fun platformModule(): Module = module {
 
     single<RoomDatabase.Builder<AppDatabase>> {
         getDatabaseBuilder(get())
+            .setDriver(AndroidSQLiteDriver())
     }
 }

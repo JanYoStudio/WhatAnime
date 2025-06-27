@@ -6,7 +6,6 @@ import pw.janyo.whatanime.BuildConfig
 import pw.janyo.whatanime.R
 import pw.janyo.whatanime.context
 
-
 //设备id
 val publicDeviceId: String
     @SuppressLint("HardwareIds")

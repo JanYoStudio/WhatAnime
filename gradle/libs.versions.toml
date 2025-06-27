@@ -1,11 +1,11 @@
 [versions]
-agp = "8.10.1"
-kotlin = "2.1.21"
+agp = "8.11.0"
+kotlin = "2.2.0"
 # https://github.com/google/ksp/releases
-ksp = "2.1.21-2.0.1"
+ksp = "2.2.0-2.0.2"
 
-composeMultiplatform = "1.8.1"
-aboutlibraries = "12.2.2"
+composeMultiplatform = "1.8.2"
+aboutlibraries = "12.2.3"
 kotlinx-serialization = "1.8.1"
 
 android-compileSdk = "36"
@@ -15,8 +15,8 @@ androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.1"
 androidx-splashscreen = "1.0.1"
 androidx-core = "1.16.0"
-androidx-lifecycle = "2.9.0"
-androidx-navigation = "2.9.0-beta02"
+androidx-lifecycle = "2.9.1"
+androidx-navigation = "2.9.0-beta03"
 androidx-browser = "1.8.0"
 material = "1.12.0"
 material-icons = "1.7.3"
@@ -29,8 +29,7 @@ cmptoast = "1.0.5"
 filekit = "0.10.0-beta04"
 mmkv = "2.2.2"
 media3 = "1.7.1"
-room = "2.7.1"
-sqlite = "2.5.1"
+room = "2.7.2"
 kotlin-crypto-hash = "0.7.0"
 compose-preference = "1.1.1"
 ios-settings = "1.3.0"
@@ -93,7 +92,6 @@ media3-session = { module = "androidx.media3:media3-session", version.ref = "med
 androidx-room = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 kotlin-crypto-hash-bom = { group = "org.kotlincrypto.hash", name = "bom", version.ref = "kotlin-crypto-hash" }
 kotlin-crypto-hash-md = { group = "org.kotlincrypto.hash", name = "md" }

@@ -17,19 +17,42 @@ private fun getOrCreateDeviceUniqueId(): String {
     return uniqueId
 }
 
-actual fun publicDeviceId(): String = getOrCreateDeviceUniqueId()
+//设备id
+val publicDeviceId: String by lazy { getOrCreateDeviceUniqueId() }
 
-actual fun appName(): String =
+//应用名称
+val appName: String by lazy {
     NSBundle.mainBundle.infoDictionary?.get("CFBundleDisplayName") as? String
         ?: NSBundle.mainBundle.infoDictionary?.get("CFBundleName") as? String
         ?: "Unknown"
+}
 
-actual fun packageName(): String = NSBundle.mainBundle.bundleIdentifier ?: "Unknown"
+//应用包名
+val packageName: String by lazy {
+    NSBundle.mainBundle.bundleIdentifier ?: "Unknown"
+}
 
-actual fun appVersionName(): String =
-    NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString") as? String ?: "Unknown"
+//版本名称
+val appVersionName: String by lazy {
+    NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString") as? String
+        ?: "Unknown"
+}
 
-actual fun appVersionCode(): String =
+//版本号
+val appVersionCode: String by lazy {
     NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String ?: "Unknown"
+}
+val appVersionCodeNumber: Long
+    get() = runCatching { appVersionCode.toLong() }.getOrDefault(1L)
 
-actual fun appVersionCodeNumber(): Long = runCatching { appVersionCode().toLong() }.getOrDefault(1L)
+actual fun publicDeviceId(): String = publicDeviceId
+
+actual fun appName(): String = appName
+
+actual fun packageName(): String = packageName
+
+actual fun appVersionName(): String = appVersionName
+
+actual fun appVersionCode(): String = appVersionCode
+
+actual fun appVersionCodeNumber(): Long = appVersionCodeNumber

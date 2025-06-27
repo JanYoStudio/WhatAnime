@@ -33,6 +33,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -106,7 +107,6 @@ kotlin {
             implementation(libs.aboutlibraries.compose.m3)
             //room
             implementation(libs.androidx.room)
-            implementation(libs.androidx.sqlite.bundled)
             //kotlin-crypto-hash
             implementation(project.dependencies.platform(libs.kotlin.crypto.hash.bom))
             implementation(libs.kotlin.crypto.hash.md)

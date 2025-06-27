@@ -33,9 +33,9 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.Constant
-import pw.janyo.whatanime.appVersionName
+import pw.janyo.whatanime.base.appVersionName
+import pw.janyo.whatanime.base.publicDeviceId
 import pw.janyo.whatanime.model.DebugHttpInfo
-import pw.janyo.whatanime.publicDeviceId
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.preference.CheckboxSetting
 import pw.janyo.whatanime.ui.preference.ListSetting
@@ -46,7 +46,7 @@ import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.ui.theme.showNightModeSelectList
 import pw.janyo.whatanime.utils.copyToClipboard
-import pw.janyo.whatanime.utils.openUrl
+import pw.janyo.whatanime.utils.toCustomTabs
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_donate
@@ -189,7 +189,7 @@ actual fun SettingsScreen() {
                         title = stringResource(Res.string.action_donate),
                         subtitle = Constant.donateUrl,
                         onClick = {
-                            openUrl(context, Constant.donateUrl)
+                            toCustomTabs(context, Constant.donateUrl)
                         }
                     )
                     HorizontalDivider()
@@ -220,7 +220,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_github),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_about_github)
                                 )
@@ -233,7 +233,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_license),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_about_license)
                                 )
@@ -247,7 +247,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_google_play),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_about_google_play)
                                 )
@@ -260,7 +260,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_janyo_license),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_about_janyo_license)
                                 )
@@ -294,7 +294,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_developer_what_anime),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_developer_what_anime)
                                 )
@@ -307,7 +307,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_what_anime),
                         onClick = {
                             scope.launch {
-                                openUrl(
+                                toCustomTabs(
                                     context,
                                     getString(Res.string.settings_link_what_anime)
                                 )

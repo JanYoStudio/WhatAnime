@@ -7,9 +7,9 @@ import platform.UIKit.UIPasteboard
 
 actual fun isOnline(): Boolean = true // TODO: Implement actual network check for iOS
 
-actual fun toCustomTabs(context: PlatformContext, url: String) = openUrl(context, url)
+actual fun toCustomTabs(context: PlatformContext, url: String) = loadInBrowser(context, url)
 
-actual fun openUrl(context: PlatformContext, url: String) {
+actual fun loadInBrowser(context: PlatformContext, url: String) {
     val nsUrl = url.let { NSURL.URLWithString(it) } ?: return
     val application = UIApplication.sharedApplication
     if (application.canOpenURL(nsUrl)) {
