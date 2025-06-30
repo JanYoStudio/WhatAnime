@@ -124,7 +124,6 @@ import whatanime.composeapp.generated.resources.settings_group_about
 @Composable
 fun MainScreen() {
     val navController = LocalNavController.current!!
-    val context = LocalPlatformContext.current
     val uriHandler = LocalUriHandler.current
     val vm = koinViewModel<MainViewModel>()
 
@@ -438,7 +437,6 @@ fun MainScreen() {
 private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultItem?>) {
     if (animeDialogState.value == null) return
     val item = animeDialogState.value!!
-    val context = LocalPlatformContext.current
     val uriHandler = LocalUriHandler.current
     AlertDialog(
         onDismissRequest = { animeDialogState.value = null },

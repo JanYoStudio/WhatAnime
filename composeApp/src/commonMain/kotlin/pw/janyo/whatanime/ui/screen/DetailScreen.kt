@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import coil3.compose.LocalPlatformContext
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
 import multiplatform.network.cmptoast.showToast
