@@ -211,4 +211,4 @@ aboutLibraries {
     }
 }
 
-// apply(from = rootProject.file("signing.gradle"))
+apply(from = rootProject.file("signing.gradle"))

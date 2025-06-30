@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,23 +61,25 @@ fun SearchResultItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Column {
-                SelectableText(
-                    text = stringResource(
-                        Res.string.detail_hint_native_title,
-                        result.aniList.title.native ?: result.fileName
-                    ),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                formatEpisode(result.episode)?.let { episodeString ->
-                    SelectableText(
+            SelectionContainer {
+                Column {
+                    BuildText(
                         text = stringResource(
-                            Res.string.detail_hint_episode,
-                            episodeString
+                            Res.string.detail_hint_native_title,
+                            result.aniList.title.native ?: result.fileName
                         ),
+                        fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )
+                    formatEpisode(result.episode)?.let { episodeString ->
+                        BuildText(
+                            text = stringResource(
+                                Res.string.detail_hint_episode,
+                                episodeString
+                            ),
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -102,32 +106,51 @@ fun SearchResultItem(
                         .clickable(onClick = onClickImage),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Row {
-                    Column {
-                        SelectableText(stringResource(Res.string.detail_hint_time))
-                        SelectableText(stringResource(Res.string.detail_hint_ani_list_id))
-                        SelectableText(stringResource(Res.string.detail_hint_my_anime_list_id))
-                        SelectableText(
-                            stringResource(Res.string.detail_hint_similarity),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        SelectableText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                        result.aniList.id?.let {
-                            SelectableText(result.aniList.id.toString())
+                SelectionContainer {
+                    Row {
+                        Column {
+                            BuildText(stringResource(Res.string.detail_hint_time))
+                            BuildText(stringResource(Res.string.detail_hint_ani_list_id))
+                            BuildText(stringResource(Res.string.detail_hint_my_anime_list_id))
+                            BuildText(
+                                stringResource(Res.string.detail_hint_similarity),
+                                FontWeight.Bold
+                            )
                         }
-                        result.aniList.idMal?.let {
-                            SelectableText(result.aniList.idMal.toString())
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
+                            result.aniList.id?.let {
+                                BuildText(result.aniList.id.toString())
+                            }
+                            result.aniList.idMal?.let {
+                                BuildText(result.aniList.idMal.toString())
+                            }
+                            BuildText(
+                                text = "${formatDecimal(result.similarity * 100, 3)}%",
+                                fontWeight = FontWeight.Bold,
+                            )
                         }
-                        SelectableText(
-                            text = "${formatDecimal(result.similarity * 100, 3)}%",
-                            fontWeight = FontWeight.Bold,
-                        )
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun BuildText(
+    text: String,
+    fontWeight: FontWeight? = null,
+    fontSize: TextUnit = 12.sp,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        text = text,
+        fontSize = fontSize,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        fontWeight = fontWeight,
+        color = textColor,
+    )
 }
