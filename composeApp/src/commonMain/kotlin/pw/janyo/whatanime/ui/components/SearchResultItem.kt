@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 import pw.janyo.whatanime.Configure
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.utils.formatDecimal
+import pw.janyo.whatanime.utils.formatEpisode
 import pw.janyo.whatanime.utils.formatTime
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.detail_hint_ani_list_id
@@ -70,11 +71,11 @@ fun SearchResultItem(
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )
-                    result.episode?.let {
+                    formatEpisode(result.episode)?.let { episodeString ->
                         BuildText(
                             text = stringResource(
                                 Res.string.detail_hint_episode,
-                                it
+                                episodeString
                             ),
                             fontSize = 14.sp
                         )
