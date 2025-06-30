@@ -22,6 +22,7 @@ import pw.janyo.whatanime.db.service.HistoryService
 import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchAnimeResult
 import pw.janyo.whatanime.model.SearchQuota
+import pw.janyo.whatanime.utils.formatEpisode
 import pw.janyo.whatanime.utils.isOnline
 import pw.janyo.whatanime.utils.md5
 import whatanime.composeapp.generated.resources.Res
@@ -117,7 +118,7 @@ class AnimationRepository : KoinComponent {
                     val result = searchAnimeResult.result[0]
                     this.title = result.aniList.title.native ?: ""
                     this.anilistId = result.aniList.id ?: 0
-                    this.episode = ""
+                    this.episode = formatEpisode(result.episode) ?: ""
                     this.similarity = result.similarity
                 } else {
                     this.title = getString(Res.string.hint_no_result)

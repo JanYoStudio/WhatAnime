@@ -2,6 +2,7 @@ package pw.janyo.whatanime.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class SearchAnimeResult(
@@ -16,7 +17,7 @@ data class SearchAnimeResultItem(
     val aniList: SearchAniListResult,
     @SerialName("filename")
     val fileName: String,
-    val episode: String? = null,
+    val episode: JsonElement? = null,
     val from: Double = 0.0,
     val to: Double = 0.0,
     val similarity: Double = 0.0,
