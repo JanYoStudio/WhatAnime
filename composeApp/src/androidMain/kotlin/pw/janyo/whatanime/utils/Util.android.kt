@@ -20,30 +20,6 @@ actual fun isOnline(): Boolean {
     return networkInfo?.isConnected == true
 }
 
-actual fun toCustomTabs(context: PlatformContext, url: String) {
-    if (url.isBlank()) {
-        throw IllegalArgumentException("url is blank")
-    }
-    try {
-        val builder = CustomTabsIntent.Builder()
-        val intent = builder.build()
-        intent.launchUrl(context, url.toUri())
-    } catch (_: Exception) {
-        loadInBrowser(context, url)
-    }
-}
-
-actual fun loadInBrowser(context: PlatformContext, url: String) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        context.startActivity(intent)
-    } catch (_: ActivityNotFoundException) {
-        Logger.e("no browser")
-    }
-}
-
 actual fun copyToClipboard(context: PlatformContext, text: String) {
     val clipboardManager =
         KoinJavaComponent.get<ClipboardManager>(ClipboardManager::class.java)

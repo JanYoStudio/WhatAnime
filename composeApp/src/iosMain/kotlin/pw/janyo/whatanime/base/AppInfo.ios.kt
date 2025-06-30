@@ -7,8 +7,8 @@ import pw.janyo.whatanime.getConfiguration
 import pw.janyo.whatanime.setConfiguration
 
 private fun getOrCreateDeviceUniqueId(): String {
-    var uniqueId = getConfiguration<String?>("device_unique_id", null)
-    if (uniqueId == null) {
+    var uniqueId = getConfiguration<String>("device_unique_id", "")
+    if (uniqueId == "") {
         // 首次安装或数据清除后生成新的ID
         // identifierForVendor 是一个很好的选择，因为它在同一厂商的应用间保持一致
         uniqueId = UIDevice.currentDevice.identifierForVendor?.UUIDString ?: NSUUID().UUIDString

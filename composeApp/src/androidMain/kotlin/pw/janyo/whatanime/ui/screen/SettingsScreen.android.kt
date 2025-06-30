@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import coil3.compose.LocalPlatformContext
 import kotlinx.coroutines.launch
@@ -46,7 +47,6 @@ import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.ui.theme.showNightModeSelectList
 import pw.janyo.whatanime.utils.copyToClipboard
-import pw.janyo.whatanime.utils.toCustomTabs
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_donate
@@ -96,6 +96,7 @@ import whatanime.composeapp.generated.resources.title_activity_settings
 actual fun SettingsScreen() {
     val navController = LocalNavController.current!!
     val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val vm = koinViewModel<SettingsViewModel>()
     val hideSex by vm.hideSex.collectAsState()
     val preferWebp by vm.preferWebp.collectAsState()
@@ -185,7 +186,7 @@ actual fun SettingsScreen() {
                         title = stringResource(Res.string.action_donate),
                         subtitle = Constant.donateUrl,
                         onClick = {
-                            toCustomTabs(context, Constant.donateUrl)
+                            uriHandler.openUri(Constant.donateUrl)
                         }
                     )
                     SettingsMenuLink(
@@ -214,10 +215,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_github),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_about_github)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_about_github))
                             }
                         }
                     )
@@ -226,10 +224,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_license),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_about_license)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_about_license))
                             }
                         }
                     )
@@ -239,10 +234,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_google_play),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_about_google_play)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_about_google_play))
                             }
                         }
                     )
@@ -251,10 +243,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_about_janyo_license),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_about_janyo_license)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_about_janyo_license))
                             }
                         }
                     )
@@ -283,10 +272,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_developer_what_anime),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_developer_what_anime)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_developer_what_anime))
                             }
                         }
                     )
@@ -295,10 +281,7 @@ actual fun SettingsScreen() {
                         subtitle = stringResource(Res.string.settings_summary_what_anime),
                         onClick = {
                             scope.launch {
-                                toCustomTabs(
-                                    context,
-                                    getString(Res.string.settings_link_what_anime)
-                                )
+                                uriHandler.openUri(getString(Res.string.settings_link_what_anime))
                             }
                         }
                     )

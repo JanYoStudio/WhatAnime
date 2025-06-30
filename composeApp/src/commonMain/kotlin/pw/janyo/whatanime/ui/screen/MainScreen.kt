@@ -66,6 +66,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -98,7 +99,6 @@ import pw.janyo.whatanime.ui.navigation.RouteAbout
 import pw.janyo.whatanime.ui.navigation.RouteHistory
 import pw.janyo.whatanime.ui.navigation.RouteSettings
 import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.utils.toCustomTabs
 import pw.janyo.whatanime.viewmodel.MainViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_about_janyo
@@ -125,6 +125,7 @@ import whatanime.composeapp.generated.resources.settings_group_about
 fun MainScreen() {
     val navController = LocalNavController.current!!
     val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     val vm = koinViewModel<MainViewModel>()
 
     val listState by vm.listState.collectAsState()
@@ -249,7 +250,7 @@ fun MainScreen() {
                         modifier = Modifier
                             .weight(1F),
                         onClick = {
-                            toCustomTabs(context, Constant.janYoStudioUrl)
+                            uriHandler.openUri(Constant.janYoStudioUrl)
                         }) {
                         Text(
                             text = stringResource(Res.string.action_about_janyo),
@@ -266,7 +267,7 @@ fun MainScreen() {
                         modifier = Modifier
                             .weight(1F),
                         onClick = {
-                            toCustomTabs(context, Constant.whatAnimeUrl)
+                            uriHandler.openUri(Constant.whatAnimeUrl)
                         }) {
                         Text(
                             text = stringResource(Res.string.action_about_whatanime),
@@ -438,6 +439,7 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
     if (animeDialogState.value == null) return
     val item = animeDialogState.value!!
     val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     AlertDialog(
         onDismissRequest = { animeDialogState.value = null },
         text = {
@@ -451,7 +453,7 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
         confirmButton = {
             TextButton(
                 onClick = {
-                    toCustomTabs(context, "https://anilist.co/anime/${item.aniList.id}")
+                    uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
                     animeDialogState.value = null
                 }
             ) {

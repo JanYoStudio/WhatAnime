@@ -20,6 +20,10 @@ actual fun getCacheFile(file: PlatformFile): PlatformFile? {
     ) ?: return null
 
     val saveParentPath = "${cacheDirectoryUrl.path}/$CACHE_IMAGE_FILE_NAME"
+    // 如果saveParentPath目录不存在，创建一个
+    if (!NSFileManager.defaultManager.fileExistsAtPath(saveParentPath)) {
+        NSFileManager.defaultManager.createDirectoryAtPath(saveParentPath, true, null, null)
+    }
     val originalFilePath = file.absolutePath()
     val md5Name = originalFilePath.md5()
     val cachedFilePath = "$saveParentPath/$md5Name"

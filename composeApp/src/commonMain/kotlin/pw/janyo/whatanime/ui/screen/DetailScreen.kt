@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil3.compose.LocalPlatformContext
@@ -45,7 +46,6 @@ import pw.janyo.whatanime.ui.components.PlaybackState
 import pw.janyo.whatanime.ui.components.SearchResultItem
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.utils.toCustomTabs
 import pw.janyo.whatanime.viewmodel.DetailViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_cancel
@@ -135,7 +135,7 @@ fun DetailScreen(historyId: Int, cachePath: String) {
 private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultItem?>) {
     if (animeDialogState.value == null) return
     val item = animeDialogState.value!!
-    val context = LocalPlatformContext.current
+    val uriHandler = LocalUriHandler.current
     AlertDialog(
         onDismissRequest = { animeDialogState.value = null },
         text = {
@@ -149,7 +149,7 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
         confirmButton = {
             TextButton(
                 onClick = {
-                    toCustomTabs(context, "https://anilist.co/anime/${item.aniList.id}")
+                    uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
                     animeDialogState.value = null
                 }
             ) {
