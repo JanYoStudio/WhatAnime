@@ -10,6 +10,7 @@
     <string name="action_cut_border">Cut Borders</string>
     <string name="action_donate">Go to Donate</string>
     <string name="action_ok">Ok</string>
+    <string name="action_copy">Copy</string>
     <string name="action_cancel">Cancel</string>
 
     <string name="hint_quota_used">Quota Used: %1$d</string>

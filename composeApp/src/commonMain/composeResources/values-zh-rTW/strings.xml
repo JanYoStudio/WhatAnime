@@ -8,6 +8,7 @@
     <string name="action_cut_border">自動去除黑邊</string>
     <string name="action_donate">前往捐贈</string>
     <string name="action_ok">確認</string>
+    <string name="action_copy">複製</string>
     <string name="action_cancel">取消</string>
     <string name="hint_quota_used">已使用次數：%1$d</string>
     <string name="hint_quota_total">本月總次數：%1$d</string>

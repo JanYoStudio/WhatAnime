@@ -31,7 +31,7 @@ mmkv = "2.2.2"
 media3 = "1.7.1"
 room = "2.7.2"
 kotlin-crypto-hash = "0.7.0"
-compose-preference = "1.1.1"
+compose-preference = "2.0.0"
 ios-settings = "1.3.0"
 
 [libraries]
@@ -98,7 +98,7 @@ kotlin-crypto-hash-md = { group = "org.kotlincrypto.hash", name = "md" }
 kotlin-crypto-hash-sha1 = { group = "org.kotlincrypto.hash", name = "sha1" }
 kotlin-crypto-hash-sha2 = { group = "org.kotlincrypto.hash", name = "sha2" }
 
-compose-preference = { group = "me.zhanghai.compose.preference", name = "library", version.ref = "compose-preference" }
+compose-preference = { group = "me.zhanghai.compose.preference", name = "preference", version.ref = "compose-preference" }
 
 ios-settings = {group="com.russhwolf",name="multiplatform-settings",version.ref="ios-settings"}
 

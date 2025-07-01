@@ -3,6 +3,7 @@ package pw.janyo.whatanime.base
 import platform.Foundation.NSBundle
 import platform.Foundation.NSUUID
 import platform.UIKit.UIDevice
+import pw.janyo.whatanime.Configure
 import pw.janyo.whatanime.getConfiguration
 import pw.janyo.whatanime.setConfiguration
 
@@ -14,23 +15,22 @@ private fun getOrCreateDeviceUniqueId(): String {
         uniqueId = UIDevice.currentDevice.identifierForVendor?.UUIDString ?: NSUUID().UUIDString
         setConfiguration("device_unique_id", uniqueId)
     }
+    //每次启动都关闭调试模式
+    Configure.debugMode = false
     return uniqueId
 }
 
 //设备id
-val publicDeviceId: String by lazy { getOrCreateDeviceUniqueId() }
+val publicDeviceId: String = getOrCreateDeviceUniqueId()
 
 //应用名称
-val appName: String by lazy {
+val appName: String =
     NSBundle.mainBundle.infoDictionary?.get("CFBundleDisplayName") as? String
         ?: NSBundle.mainBundle.infoDictionary?.get("CFBundleName") as? String
         ?: "Unknown"
-}
 
 //应用包名
-val packageName: String by lazy {
-    NSBundle.mainBundle.bundleIdentifier ?: "Unknown"
-}
+val packageName: String = NSBundle.mainBundle.bundleIdentifier ?: "Unknown"
 
 //版本名称
 val appVersionName: String by lazy {
@@ -39,9 +39,9 @@ val appVersionName: String by lazy {
 }
 
 //版本号
-val appVersionCode: String by lazy {
+val appVersionCode: String =
     NSBundle.mainBundle.infoDictionary?.get("CFBundleVersion") as? String ?: "Unknown"
-}
+
 val appVersionCodeNumber: Long
     get() = runCatching { appVersionCode.toLong() }.getOrDefault(1L)
 
