@@ -16,8 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,32 +109,32 @@ fun SearchResultItem(
                         .clickable(onClick = onClickImage),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                SelectionContainer {
-                    Row {
-                        Column {
-                            BuildText(stringResource(Res.string.detail_hint_time))
-                            BuildText(stringResource(Res.string.detail_hint_ani_list_id))
-                            BuildText(stringResource(Res.string.detail_hint_my_anime_list_id))
-                            BuildText(
-                                stringResource(Res.string.detail_hint_similarity),
-                                FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            BuildText("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                            result.aniList.id?.let {
-                                BuildText(result.aniList.id.toString())
-                            }
-                            result.aniList.idMal?.let {
-                                BuildText(result.aniList.idMal.toString())
-                            }
-                            BuildText(
-                                text = "${formatDecimal(result.similarity * 100, 3)}%",
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
+                val annotationText = buildAnnotatedString {
+                    if (result.from != null && result.from != 0.0 && result.to != null && result.to != 0.0) {
+                        append(stringResource(Res.string.detail_hint_time))
+                        append("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
+                        appendLine()
                     }
+                    result.aniList.id?.let {
+                        append(stringResource(Res.string.detail_hint_ani_list_id))
+                        append(result.aniList.id.toString())
+                        appendLine()
+                    }
+                    result.aniList.idMal?.let {
+                        append(stringResource(Res.string.detail_hint_my_anime_list_id))
+                        append(result.aniList.idMal.toString())
+                        appendLine()
+                    }
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(stringResource(Res.string.detail_hint_similarity))
+                        append("${formatDecimal(result.similarity * 100, 3)}%")
+                    }
+                }
+                SelectionContainer {
+                    Text(
+                        text = annotationText,
+                        fontSize = 12.sp,
+                    )
                 }
             }
         }

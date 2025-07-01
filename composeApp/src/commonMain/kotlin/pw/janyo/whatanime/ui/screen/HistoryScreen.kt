@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.TipsAndUpdates
@@ -36,8 +37,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.LocalPlatformContext
@@ -231,6 +235,7 @@ private fun BuildResultItem(
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(8.dp)
         ) {
             SubcomposeAsyncImage(
@@ -244,44 +249,35 @@ private fun BuildResultItem(
                     .height(90.dp)
                     .width(160.dp),
             )
-            Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                BuildText(stringResource(Res.string.history_hint_save_time))
-                BuildText(stringResource(Res.string.history_hint_native_title), FontWeight.Bold)
-                if (!isOldData) {
-                    BuildText(stringResource(Res.string.history_hint_ani_list_id))
-                }
-                if (!isOldData) {
-                    BuildText(stringResource(Res.string.history_hint_similarity), FontWeight.Bold)
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .fillMaxWidth()
-            ) {
-                BuildText(
+            val annotationText = buildAnnotatedString {
+                append(stringResource(Res.string.history_hint_save_time))
+                append(
                     Instant.fromEpochMilliseconds(history.time)
                         .toLocalDateTime(TimeZone.currentSystemDefault()).formatDateTime()
                 )
-                BuildText(history.title, FontWeight.Bold)
-                if (!isOldData) {
-                    BuildText(history.anilistId.toString())
+                appendLine()
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(stringResource(Res.string.history_hint_native_title))
+                    append(history.title)
+                    appendLine()
                 }
                 if (!isOldData) {
-                    BuildText(similarity, FontWeight.Bold)
+                    append(stringResource(Res.string.history_hint_ani_list_id))
+                    append(history.anilistId.toString())
+                    appendLine()
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(stringResource(Res.string.history_hint_similarity))
+                        append(similarity)
+                        appendLine()
+                    }
                 }
+            }
+            SelectionContainer {
+                Text(
+                    text = annotationText,
+                    fontSize = 12.sp,
+                )
             }
         }
     }
-}
-
-@Composable
-private fun BuildText(text: String, fontWeight: FontWeight? = null) {
-    Text(
-        text = text,
-        fontSize = 12.sp,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        fontWeight = fontWeight
-    )
 }

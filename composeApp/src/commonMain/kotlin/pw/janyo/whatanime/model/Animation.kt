@@ -18,8 +18,8 @@ data class SearchAnimeResultItem(
     @SerialName("filename")
     val fileName: String,
     val episode: JsonElement? = null,
-    val from: Double = 0.0,
-    val to: Double = 0.0,
+    val from: Double? = 0.0,
+    val to: Double? = 0.0,
     val similarity: Double = 0.0,
     val video: String,
     val image: String,
