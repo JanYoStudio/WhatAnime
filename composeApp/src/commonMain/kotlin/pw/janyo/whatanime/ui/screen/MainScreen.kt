@@ -76,12 +76,9 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.dialogs.openFilePicker
-import io.github.vinceglb.filekit.exists
 import kotlinx.coroutines.launch
 import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
@@ -115,7 +112,6 @@ import whatanime.composeapp.generated.resources.hint_click_to_show_anilist_info
 import whatanime.composeapp.generated.resources.hint_quota_total
 import whatanime.composeapp.generated.resources.hint_quota_used
 import whatanime.composeapp.generated.resources.hint_searching
-import whatanime.composeapp.generated.resources.hint_select_file_not_exist
 import whatanime.composeapp.generated.resources.hint_select_to_search
 import whatanime.composeapp.generated.resources.hint_show_animation_detail
 import whatanime.composeapp.generated.resources.ic_whatanime
@@ -385,17 +381,7 @@ fun MainScreen() {
                             label = "image search button",
                         ) {
                             if (it == 0) {
-                                val transition = rememberInfiniteTransition()
-                                val translationY by transition.animateFloat(
-                                    initialValue = 0F,
-                                    targetValue = -24F,
-                                    animationSpec = infiniteRepeatable(
-                                        animation = tween(durationMillis = 750, easing = EaseInOut),
-                                        repeatMode = RepeatMode.Reverse,
-                                    )
-                                )
                                 ExtendedFloatingActionButton(
-                                    modifier = Modifier.offset(y = translationY.dp),
                                     text = {
                                         Text(text = stringResource(Res.string.action_start_search))
                                     },
