@@ -20,3 +20,9 @@ actual suspend fun getCacheFile(file: PlatformFile): PlatformFile? {
     val md5Name = originalFilePath.md5()
     return PlatformFile(dir, md5Name)
 }
+
+actual fun getCacheFilePathBySavedCacheFilePath(path: String): String {
+    val dir = PlatformFile(FileKit.filesDir, CACHE_IMAGE_FILE_NAME)
+    val fileName = path.substringAfterLast("/")
+    return PlatformFile(dir, fileName).absolutePath()
+}

@@ -19,3 +19,5 @@ private val map = hashMapOf(
 fun getMimeType(extension: String): String? = map[extension]
 
 expect suspend fun getCacheFile(file: PlatformFile): PlatformFile?
+
+expect fun getCacheFilePathBySavedCacheFilePath(path: String): String

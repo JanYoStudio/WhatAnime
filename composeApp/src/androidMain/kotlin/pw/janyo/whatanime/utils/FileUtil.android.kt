@@ -17,3 +17,5 @@ actual suspend fun getCacheFile(file: PlatformFile): PlatformFile? {
     }
     return null
 }
+
+actual fun getCacheFilePathBySavedCacheFilePath(path: String): String = path

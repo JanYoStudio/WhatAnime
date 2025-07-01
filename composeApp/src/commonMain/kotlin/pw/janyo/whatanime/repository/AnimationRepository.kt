@@ -24,6 +24,7 @@ import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.SearchAnimeResult
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.utils.formatEpisode
+import pw.janyo.whatanime.utils.getCacheFilePathBySavedCacheFilePath
 import pw.janyo.whatanime.utils.isOnline
 import pw.janyo.whatanime.utils.md5
 import whatanime.composeapp.generated.resources.Res
@@ -129,7 +130,14 @@ class AnimationRepository : KoinComponent {
         historyService.saveHistory(animationHistory)
     }
 
-    suspend fun queryAllHistory(): List<AnimationHistory> = historyService.queryAllHistory()
+    suspend fun queryAllHistory(): List<AnimationHistory> {
+        val histories = historyService.queryAllHistory()
+        //重新组装缓存图片路径，因为iOS沙盒id会变
+        histories.forEach { history ->
+            history.cachePath = getCacheFilePathBySavedCacheFilePath(history.cachePath)
+        }
+        return histories
+    }
 
     suspend fun deleteHistory(historyId: Int) {
         val animationHistory = historyService.getById(historyId)
