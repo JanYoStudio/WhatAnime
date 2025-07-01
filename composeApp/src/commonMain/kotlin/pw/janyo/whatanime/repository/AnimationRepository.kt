@@ -3,6 +3,7 @@ package pw.janyo.whatanime.repository
 import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.delete
+import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -134,7 +135,10 @@ class AnimationRepository : KoinComponent {
         val animationHistory = historyService.getById(historyId)
         historyService.delete(historyId)
         animationHistory?.let {
-            PlatformFile(it.cachePath).delete()
+            val cacheFIle = PlatformFile(it.cachePath)
+            if (cacheFIle.exists()) {
+                cacheFIle.delete()
+            }
         }
     }
 }

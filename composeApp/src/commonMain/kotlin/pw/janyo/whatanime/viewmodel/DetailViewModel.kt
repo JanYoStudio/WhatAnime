@@ -2,6 +2,7 @@ package pw.janyo.whatanime.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.absolutePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class DetailViewModel : ComposeViewModel() {
             if (result == null) {
                 _listState.value = _listState.value.copy(
                     loading = false,
-                    searchImageFile = cacheFile,
+                    searchImageFilePath = cacheFile.absolutePath(),
                     tokenExpired = false,
                     errorMessage = getString(Res.string.hint_no_result)
                 )
@@ -52,7 +53,7 @@ class DetailViewModel : ComposeViewModel() {
             }
             _listState.value = _listState.value.copy(
                 loading = false,
-                searchImageFile = cacheFile,
+                searchImageFilePath = cacheFile.absolutePath(),
                 tokenExpired = pair.second + 1000 * 60 * 10 < Clock.System.now().toEpochMilliseconds(),
                 list = list,
                 errorMessage = "",

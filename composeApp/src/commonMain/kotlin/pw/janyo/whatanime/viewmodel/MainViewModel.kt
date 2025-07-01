@@ -71,7 +71,7 @@ class MainViewModel : ComposeViewModel() {
         }) {
             _listState.value = _listState.value.copy(
                 loading = true,
-                searchImageFile = imageFile
+                searchImageFilePath = imageFile.absolutePath()
             )
             //开始搜索图片
             if (imageFile.size() > 26214400L) {
@@ -110,11 +110,10 @@ class MainViewModel : ComposeViewModel() {
             } else {
                 animation.result
             }
-            val cacheFile = PlatformFile(cachePath)
             if (result.isEmpty()) {
                 _listState.value = _listState.value.copy(
                     loading = false,
-                    searchImageFile = cacheFile,
+                    searchImageFilePath = cachePath,
                     tokenExpired = false,
                     errorMessage = getString(Res.string.hint_no_result)
                 )
@@ -122,7 +121,7 @@ class MainViewModel : ComposeViewModel() {
             }
             _listState.value = _listState.value.copy(
                 loading = false,
-                searchImageFile = cacheFile,
+                searchImageFilePath = cachePath,
                 tokenExpired = false,
                 list = result,
                 errorMessage = "",
@@ -161,7 +160,7 @@ class MainViewModel : ComposeViewModel() {
 
 data class MainListState(
     val loading: Boolean = false,
-    val searchImageFile: PlatformFile? = null,
+    val searchImageFilePath: String? = null,
     val tokenExpired: Boolean = false,
     val list: List<SearchAnimeResultItem> = emptyList(),
     val errorMessage: String = "",

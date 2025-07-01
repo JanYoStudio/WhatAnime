@@ -79,6 +79,7 @@ import coil3.request.ImageRequest
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.exists
 import kotlinx.coroutines.launch
@@ -137,19 +138,16 @@ fun MainScreen() {
     val snackbarHostState = remember { SnackbarHostState() }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-    fun doPickAndSearch() {
-        scope.launch {
-            val imageFile = FileKit.openFilePicker(type = FileKitType.Image) ?: return@launch
-            if (!imageFile.exists()) {
-                showToast(getString(Res.string.hint_select_file_not_exist))
-            } else {
-                vm.searchImageFile(imageFile)
-            }
-        }
+    val pickerLauncher = rememberFilePickerLauncher(FileKitType.Image) { imageFile ->
+        val image = imageFile ?: return@rememberFilePickerLauncher
+        vm.searchImageFile(image)
     }
 
-    BackHandler(drawerState.isOpen){
+    fun doPickAndSearch() {
+        pickerLauncher.launch()
+    }
+
+    BackHandler(drawerState.isOpen) {
         scope.launch {
             drawerState.close()
         }
@@ -346,7 +344,7 @@ fun MainScreen() {
                                         },
                                     shape = RoundedCornerShape(16.dp),
                                 ) {
-                                    BuildImage(listState.searchImageFile)
+                                    BuildImage(listState.searchImageFilePath)
                                 }
                             }
                             when {
@@ -489,14 +487,10 @@ private fun BuildVideoDialog(playbackState: PlaybackState) {
 }
 
 @Composable
-private fun BuildImage(searchImageFile: PlatformFile?) {
+private fun BuildImage(searchImageFilePath: String?) {
     var data: Any = Res.getUri("drawable/janyo_studio.png")
-    searchImageFile?.let {
-        if (!it.exists()) {
-            showToast(stringResource(Res.string.hint_select_file_not_exist))
-        } else {
-            data = it
-        }
+    searchImageFilePath?.let {
+        data = PlatformFile(searchImageFilePath)
     }
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalPlatformContext.current)

@@ -7,7 +7,7 @@ import java.io.File
 
 private const val CACHE_IMAGE_FILE_NAME = "cacheImage"
 
-actual fun getCacheFile(file: PlatformFile): PlatformFile? {
+actual suspend fun getCacheFile(file: PlatformFile): PlatformFile? {
     val saveParent = context.getExternalFilesDir(CACHE_IMAGE_FILE_NAME) ?: return null
     if (!saveParent.exists())
         saveParent.mkdirs()
