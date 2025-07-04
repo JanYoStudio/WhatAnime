@@ -35,7 +35,7 @@ class DetailViewModel : ComposeViewModel() {
             if (result == null) {
                 _listState.value = _listState.value.copy(
                     loading = false,
-                    searchImageFilePath = cacheFile.absolutePath(),
+                    searchImageFile = cacheFile,
                     tokenExpired = false,
                     errorMessage = getString(Res.string.hint_no_result)
                 )
@@ -48,7 +48,7 @@ class DetailViewModel : ComposeViewModel() {
             }
             _listState.value = _listState.value.copy(
                 loading = false,
-                searchImageFilePath = cacheFile.absolutePath(),
+                searchImageFile = cacheFile,
                 tokenExpired = pair.second + 1000 * 60 * 10 < Clock.System.now()
                     .toEpochMilliseconds(),
                 list = list,

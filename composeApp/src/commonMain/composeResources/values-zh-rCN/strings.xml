@@ -43,7 +43,7 @@
     <string name="settings_summary_prefer_webp">优先响应WEBP格式的图片，这会降低图片的传输数据量（注意，如果设备不支持WEBP，请关闭此选项）</string>
     <string name="settings_summary_debug_mode">启动调试模式记录HTTP响应数据</string>
     <string name="settings_title_api_key">自定义Api Key</string>
-    <string name="settings_summary_api_key">如果您捐赠过WhatAnime，您可以在这里填入获得的ApiKey。<b>请注意：如果您输入的ApiKey是无效的，会导致正常使用搜索功能。</b></string>
+    <string name="settings_summary_api_key">如果您捐赠过WhatAnime，您可以在这里填入获得的ApiKey。<b>请注意：如果您输入的ApiKey是无效的，可能会导致无法正常使用搜索功能。</b></string>
     <string name="settings_title_quota_used">已使用的额度</string>
     <string name="settings_summary_quota_used">本月已使用为：%1$d</string>
     <string name="settings_title_quota_total">总额度</string>

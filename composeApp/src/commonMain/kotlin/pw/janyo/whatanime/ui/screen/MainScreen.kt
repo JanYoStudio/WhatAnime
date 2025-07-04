@@ -63,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.touchlab.kermit.Logger
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
@@ -329,7 +330,7 @@ fun MainScreen() {
                                         },
                                     shape = RoundedCornerShape(16.dp),
                                 ) {
-                                    BuildImage(listState.searchImageFilePath)
+                                    BuildImage(listState.searchImageFile)
                                 }
                             }
                             when {
@@ -440,10 +441,10 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
 }
 
 @Composable
-private fun BuildImage(searchImageFilePath: String?) {
+private fun BuildImage(searchImageFile: PlatformFile?) {
     var data: Any = Res.getUri("drawable/janyo_studio.png")
-    searchImageFilePath?.let {
-        data = PlatformFile(searchImageFilePath)
+    searchImageFile?.let {
+        data = searchImageFile
     }
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalPlatformContext.current)
