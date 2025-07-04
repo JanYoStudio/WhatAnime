@@ -29,6 +29,7 @@ cmptoast = "1.0.5"
 filekit = "0.10.0-beta04"
 mmkv = "2.2.2"
 media3 = "1.7.1"
+media-player = "1.0.41"
 room = "2.7.2"
 kotlin-crypto-hash = "0.7.0"
 compose-preference = "2.0.0"
@@ -89,6 +90,8 @@ media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", vers
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 
+media-player = { module = "network.chaintech:compose-multiplatform-media-player", version.ref = "media-player" }
+
 androidx-room = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -100,7 +103,7 @@ kotlin-crypto-hash-sha2 = { group = "org.kotlincrypto.hash", name = "sha2" }
 
 compose-preference = { group = "me.zhanghai.compose.preference", name = "preference", version.ref = "compose-preference" }
 
-ios-settings = {group="com.russhwolf",name="multiplatform-settings",version.ref="ios-settings"}
+ios-settings = { group = "com.russhwolf", name = "multiplatform-settings", version.ref = "ios-settings" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

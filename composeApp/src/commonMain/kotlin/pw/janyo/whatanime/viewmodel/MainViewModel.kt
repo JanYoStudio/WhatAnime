@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import chaintech.videoplayer.host.MediaPlayerHost
 import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.absolutePath
@@ -21,8 +22,7 @@ import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.AnimationRepository
-import pw.janyo.whatanime.ui.components.PlaybackState
-import pw.janyo.whatanime.ui.components.PlaybackStateController
+import pw.janyo.whatanime.ui.components.PlayerState
 import pw.janyo.whatanime.utils.getCacheFile
 import pw.janyo.whatanime.utils.getMimeType
 import whatanime.composeapp.generated.resources.Res
@@ -34,7 +34,8 @@ import whatanime.composeapp.generated.resources.hint_unknown_error
 
 class MainViewModel : ComposeViewModel() {
     private val animationRepository by inject<AnimationRepository>()
-    private val playbackStateController by inject<PlaybackStateController>()
+    private val mediaPlayerHost by inject<MediaPlayerHost>()
+    private val playerState by inject<PlayerState>()
 
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
@@ -44,13 +45,6 @@ class MainViewModel : ComposeViewModel() {
 
     private val _cutBorders = MutableStateFlow(Configure.cutBorders)
     val cutBorders: StateFlow<Boolean> = _cutBorders
-
-    private val _playBackState = MutableStateFlow<PlaybackState>(PlaybackState.Stop)
-    val playBackState: StateFlow<PlaybackState> = _playBackState
-
-    fun getPlatformController(): PlaybackStateController {
-        return playbackStateController
-    }
 
     fun showQuota() {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
@@ -132,16 +126,9 @@ class MainViewModel : ComposeViewModel() {
     fun playVideo(result: SearchAnimeResultItem) {
         viewModelScope.launch {
             val requestUrl = "${result.video}&size=l"
-            try {
-                val callback = { it: PlaybackState ->
-                    _playBackState.value = it
-                }
-                playbackStateController.initPlayer(callback)
-                playbackStateController.setPlayUrl(requestUrl, callback)
-                playbackStateController.play(callback)
-            } catch (e: Exception) {
-                _playBackState.value = PlaybackState.Error(e.message ?: "exception was thrown")
-            }
+            mediaPlayerHost.loadUrl(requestUrl)
+            playerState.loadUrl()
+            mediaPlayerHost.play()
         }
     }
 
@@ -154,6 +141,7 @@ class MainViewModel : ComposeViewModel() {
 
     override fun onCleared() {
         viewModelScope.cancel()
+        playerState.release()
         super.onCleared()
     }
 }

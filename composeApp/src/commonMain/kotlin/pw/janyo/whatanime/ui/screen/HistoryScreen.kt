@@ -258,16 +258,15 @@ private fun BuildResultItem(
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(stringResource(Res.string.history_hint_native_title))
                     append(history.title)
-                    appendLine()
                 }
                 if (!isOldData) {
+                    appendLine()
                     append(stringResource(Res.string.history_hint_ani_list_id))
                     append(history.anilistId.toString())
                     appendLine()
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                         append(stringResource(Res.string.history_hint_similarity))
                         append(similarity)
-                        appendLine()
                     }
                 }
             }

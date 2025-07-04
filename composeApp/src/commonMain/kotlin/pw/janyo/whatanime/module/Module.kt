@@ -9,4 +9,5 @@ fun moduleList(): List<Module> =
         networkModule,
         viewModelModule,
         repositoryModule,
+        mediaModule,
     )

@@ -49,11 +49,6 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             //koin
             implementation(libs.koin.android)
-            //Media3
-            implementation(libs.media3.exoplayer)
-            implementation(libs.media3.exoplayer.dash)
-            implementation(libs.media3.ui)
-            implementation(libs.media3.session)
             //room
             implementation(libs.androidx.room.ktx)
             //mmkv
@@ -112,6 +107,8 @@ kotlin {
             implementation(libs.kotlin.crypto.hash.md)
             implementation(libs.kotlin.crypto.hash.sha1)
             implementation(libs.kotlin.crypto.hash.sha2)
+            //media-player
+            implementation(libs.media.player)
         }
         iosMain.dependencies {
             //ktor

@@ -30,7 +30,6 @@ import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -64,7 +63,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
@@ -80,8 +78,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
-import pw.janyo.whatanime.ui.components.PlatformMediaPlayerView
-import pw.janyo.whatanime.ui.components.PlaybackState
+import pw.janyo.whatanime.ui.components.BuildVideoDialog
 import pw.janyo.whatanime.ui.components.SearchResultItem
 import pw.janyo.whatanime.ui.components.ShowProgressDialog
 import pw.janyo.whatanime.ui.components.rememberShowDialogState
@@ -119,7 +116,6 @@ fun MainScreen() {
 
     val listState by vm.listState.collectAsState()
     val cutBorders by vm.cutBorders.collectAsState()
-    val playbackState by vm.playBackState.collectAsState()
 
     val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -397,7 +393,7 @@ fun MainScreen() {
         text = stringResource(Res.string.hint_searching)
     )
     BuildAlertDialog(animeDialogState)
-    BuildVideoDialog(playbackState)
+    BuildVideoDialog()
 
     LaunchedEffect(listState) {
         progressDialogState.show = listState.loading
@@ -441,28 +437,6 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
             }
         }
     )
-}
-
-@Composable
-private fun BuildVideoDialog(playbackState: PlaybackState) {
-    val vm = koinViewModel<MainViewModel>()
-    val controller = remember { vm.getPlatformController() }
-    if (playbackState == PlaybackState.Stop || playbackState is PlaybackState.Error) {
-        return
-    }
-    Dialog(onDismissRequest = { }, content = {
-        Box(modifier = Modifier.padding(8.dp)) {
-            PlatformMediaPlayerView(
-                modifier = Modifier
-                    .width(480.dp)
-                    .height(270.dp),
-                controller,
-            )
-            if (controller.isLoading()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-    })
 }
 
 @Composable

@@ -2,25 +2,46 @@ package pw.janyo.whatanime.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import chaintech.videoplayer.host.MediaPlayerHost
+import chaintech.videoplayer.model.VideoPlayerConfig
+import chaintech.videoplayer.ui.video.VideoPlayerComposable
+import kotlinx.coroutines.flow.MutableStateFlow
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-expect class PlaybackStateController {
-    fun initPlayer(playbackState: (PlaybackState) -> Unit)
-    fun setPlayUrl(playUrl: String, playbackState: (PlaybackState) -> Unit)
-    fun play(playbackState: (PlaybackState) -> Unit)
-    fun release()
-    fun isLoading(): Boolean
-}
+class PlayerState {
+    val isPaused = MutableStateFlow(false)
+    val isLoadUrl = MutableStateFlow(false)
+    val isEnd = MutableStateFlow(false)
 
-sealed class PlaybackState {
-    data object Stop : PlaybackState()
-    data object Buffering : PlaybackState()
-    data object Playing : PlaybackState()
-    data class Error(val errorMessage: String) : PlaybackState()
+    fun loadUrl() {
+        isLoadUrl.value = true
+        isEnd.value = false
+    }
+
+    fun playEnd() {
+        isEnd.value = true
+    }
+
+    fun release() {
+        isPaused.value = false
+        isLoadUrl.value = false
+        isEnd.value = false
+    }
 }
 
 @Composable
-expect fun PlatformMediaPlayerView(
-    modifier: Modifier = Modifier,
-    playbackStateController: PlaybackStateController,
-)
+fun PlatformMediaPlayerView(modifier: Modifier = Modifier, mediaPlayerHost: MediaPlayerHost) {
+    VideoPlayerComposable(
+        modifier = modifier,
+        playerHost = mediaPlayerHost,
+        playerConfig = VideoPlayerConfig(
+            isFullScreenEnabled = false,
+            isScreenLockEnabled = false,
+            isSpeedControlEnabled = false,
+            isZoomEnabled = false,
+            isScreenResizeEnabled = false,
+            isGestureVolumeControlEnabled = false,
+            isMuteControlEnabled = false,
+            isFastForwardBackwardEnabled = false,
+        )
+    )
+}

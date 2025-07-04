@@ -1,10 +1,7 @@
 package pw.janyo.whatanime.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -12,7 +9,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -28,11 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
 import multiplatform.network.cmptoast.showToast
@@ -40,8 +34,7 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.model.SearchAnimeResultItem
-import pw.janyo.whatanime.ui.components.PlatformMediaPlayerView
-import pw.janyo.whatanime.ui.components.PlaybackState
+import pw.janyo.whatanime.ui.components.BuildVideoDialog
 import pw.janyo.whatanime.ui.components.SearchResultItem
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.theme.Icons
@@ -61,7 +54,6 @@ fun DetailScreen(historyId: Int, cachePath: String) {
     val vm = koinViewModel<DetailViewModel>()
 
     val listState by vm.listState.collectAsState()
-    val playbackState by vm.playBackState.collectAsState()
 
     val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
@@ -116,7 +108,7 @@ fun DetailScreen(historyId: Int, cachePath: String) {
         }
     }
     BuildAlertDialog(animeDialogState)
-    BuildVideoDialog(playbackState)
+    BuildVideoDialog()
 
     LaunchedEffect(listState) {
         if (listState.errorMessage.isNotBlank()) {
@@ -161,26 +153,4 @@ private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultIte
             }
         }
     )
-}
-
-@Composable
-private fun BuildVideoDialog(playbackState: PlaybackState) {
-    val vm = koinViewModel<DetailViewModel>()
-    val controller = remember { vm.getPlatformController() }
-    if (playbackState == PlaybackState.Stop || playbackState is PlaybackState.Error) {
-        return
-    }
-    Dialog(onDismissRequest = { }, content = {
-        Box(modifier = Modifier.padding(8.dp)) {
-            PlatformMediaPlayerView(
-                modifier = Modifier
-                    .width(480.dp)
-                    .height(270.dp),
-                controller,
-            )
-            if (controller.isLoading()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-    })
 }
