@@ -17,6 +17,22 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+fun String.runCommand(workingDir: File = file("./")): String {
+    val parts = this.split("\\s".toRegex())
+    val proc = ProcessBuilder(*parts.toTypedArray())
+        .directory(workingDir)
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .redirectError(ProcessBuilder.Redirect.PIPE)
+        .start()
+
+    proc.waitFor(1, TimeUnit.MINUTES)
+    return proc.inputStream.bufferedReader().readText().trim()
+}
+
+val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
+val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
+val appVersionName = "1.8.5"
+
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -34,6 +50,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             linkerOpts.add("-lsqlite3")
+            binaryOption("bundleVersion", gitVersionCode.toString())
+            binaryOption("bundleShortVersionString", appVersionName)
         }
     }
 
@@ -118,21 +136,6 @@ kotlin {
     }
 }
 
-fun String.runCommand(workingDir: File = file("./")): String {
-    val parts = this.split("\\s".toRegex())
-    val proc = ProcessBuilder(*parts.toTypedArray())
-        .directory(workingDir)
-        .redirectOutput(ProcessBuilder.Redirect.PIPE)
-        .redirectError(ProcessBuilder.Redirect.PIPE)
-        .start()
-
-    proc.waitFor(1, TimeUnit.MINUTES)
-    return proc.inputStream.bufferedReader().readText().trim()
-}
-
-val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
-val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
-
 android {
     namespace = "pw.janyo.whatanime"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -142,7 +145,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = gitVersionCode
-        versionName = "1.8.5"
+        versionName = appVersionName
 
         setProperty("archivesBaseName", "WhatAnime-$versionName")
     }

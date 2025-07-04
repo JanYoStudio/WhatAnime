@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import pw.janyo.whatanime.base.appName
+import pw.janyo.whatanime.base.appVersionCode
 import pw.janyo.whatanime.base.appVersionName
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.ic_app_icon
@@ -39,6 +40,9 @@ fun AppInfo() {
                 .clip(CircleShape)
         )
         Text(text = appName(), color = MaterialTheme.colorScheme.onSurface)
-        Text(text = appVersionName(), color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = "${appVersionName()}(${appVersionCode()})",
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
