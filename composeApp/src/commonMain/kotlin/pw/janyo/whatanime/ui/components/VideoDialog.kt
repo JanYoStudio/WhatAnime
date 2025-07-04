@@ -25,7 +25,7 @@ fun BuildVideoDialog() {
         mediaPlayerHost.pause()
         playerState.release()
     }) {
-        Box(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.padding(4.dp)) {
             PlatformMediaPlayerView(
                 modifier = Modifier
                     .width(480.dp)

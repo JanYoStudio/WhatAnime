@@ -40,7 +40,6 @@ fun PlatformMediaPlayerView(modifier: Modifier = Modifier, mediaPlayerHost: Medi
             isZoomEnabled = false,
             isScreenResizeEnabled = false,
             isGestureVolumeControlEnabled = false,
-            isMuteControlEnabled = false,
             isFastForwardBackwardEnabled = false,
         )
     )
