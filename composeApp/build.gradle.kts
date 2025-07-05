@@ -50,8 +50,6 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             linkerOpts.add("-lsqlite3")
-            binaryOption("bundleVersion", gitVersionCode.toString())
-            binaryOption("bundleShortVersionString", appVersionName)
         }
     }
 
@@ -208,6 +206,22 @@ aboutLibraries {
     }
     export {
         outputFile = file("src/commonMain/composeResources/files/aboutlibraries.json")
+    }
+}
+
+tasks.register("updateAppleBuildVersion") {
+    doLast {
+        val iosAppVersionName = "${appVersionName}.r${gitVersionCode}.${gitVersionName}"
+        val config = rootProject.file("iosApp/Configuration/Config.xcconfig")
+        val content = config.readText()
+        var newContent =
+            content.replace(Regex("MARKETING_VERSION=.*"), "MARKETING_VERSION=${iosAppVersionName}")
+        newContent = newContent.replace(
+            Regex("CURRENT_PROJECT_VERSION=\\d+"),
+            "CURRENT_PROJECT_VERSION=${gitVersionCode}"
+        )
+        config.writeText(newContent)
+        println("Updated Config.xcconfig with version $iosAppVersionName (Build $gitVersionCode)")
     }
 }
 
