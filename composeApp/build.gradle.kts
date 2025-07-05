@@ -211,8 +211,9 @@ aboutLibraries {
 
 tasks.register("updateAppleBuildVersion") {
     doLast {
+        val configTemplate = rootProject.file("iosApp/Configuration/Config.xcconfig.template")
         val config = rootProject.file("iosApp/Configuration/Config.xcconfig")
-        val content = config.readText()
+        val content = configTemplate.readText()
         var newContent =
             content.replace(Regex("MARKETING_VERSION=.*"), "MARKETING_VERSION=${appVersionName}")
         newContent = newContent.replace(
