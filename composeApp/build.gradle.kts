@@ -214,12 +214,9 @@ tasks.register("updateAppleBuildVersion") {
         val configTemplate = rootProject.file("iosApp/Configuration/Config.xcconfig.template")
         val config = rootProject.file("iosApp/Configuration/Config.xcconfig")
         val content = configTemplate.readText()
-        var newContent =
-            content.replace(Regex("MARKETING_VERSION=.*"), "MARKETING_VERSION=${appVersionName}")
-        newContent = newContent.replace(
-            Regex("CURRENT_PROJECT_VERSION=\\d+"),
-            "CURRENT_PROJECT_VERSION=${gitVersionCode}"
-        )
+        val newContent = content
+            .replace("{appVersionName}", appVersionName)
+            .replace("{gitVersionCode}", gitVersionCode.toString())
         config.writeText(newContent)
         println("Updated Config.xcconfig with version $appVersionName (Build $gitVersionCode)")
     }
