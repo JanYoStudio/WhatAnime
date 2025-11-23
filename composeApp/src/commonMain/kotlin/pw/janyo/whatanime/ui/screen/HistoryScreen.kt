@@ -239,7 +239,8 @@ private fun BuildResultItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
