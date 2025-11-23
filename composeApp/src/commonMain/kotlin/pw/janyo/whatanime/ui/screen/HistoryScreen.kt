@@ -21,7 +21,6 @@ import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,7 +56,6 @@ import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.janyo.whatanime.model.AnimationHistory
 import pw.janyo.whatanime.model.ReadOnlyAnimationHistory
 import pw.janyo.whatanime.ui.components.NoDataLayout
 import pw.janyo.whatanime.ui.components.SwipeToDeleteContainer

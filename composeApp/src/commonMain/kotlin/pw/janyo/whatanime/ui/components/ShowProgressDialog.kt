@@ -19,7 +19,7 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun ShowProgressDialog(
-    state: ShowDialogState = rememberShowDialogState(),
+    state: ShowDialogState,
     text: String,
     fontSize: TextUnit = TextUnit.Unspecified,
 ) {
