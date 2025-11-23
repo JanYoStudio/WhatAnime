@@ -4,5 +4,11 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en-US</string>
+        <string>zh-CN</string>
+        <string>zh-TW</string>
+    </array>
 </dict>
 </plist>

@@ -191,8 +191,11 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    @Suppress("UnstableApiUsage")
     androidResources {
-        generateLocaleConfig = true
+        localeFilters.add("en")
+        localeFilters.add("zh-rCN")
+        localeFilters.add("zh-rTW")
     }
 }
 
