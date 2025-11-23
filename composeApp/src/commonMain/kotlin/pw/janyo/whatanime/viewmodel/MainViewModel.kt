@@ -125,7 +125,11 @@ class MainViewModel : ComposeViewModel() {
 
     fun playVideo(result: SearchAnimeResultItem) {
         viewModelScope.launch {
-            val requestUrl = "${result.video}&size=l"
+            val requestUrl: String = if (result.video.contains("?")) {
+                "${result.video}&size=l"
+            } else {
+                "${result.video}?size=l"
+            }
             mediaPlayerHost.loadUrl(requestUrl)
             playerState.loadUrl()
             mediaPlayerHost.play()

@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ComposeFoundationFlags
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.NavHost
@@ -17,8 +19,10 @@ import pw.janyo.whatanime.ui.navigation.Navs
 import pw.janyo.whatanime.ui.navigation.RouteMain
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun App() {
+    ComposeFoundationFlags.isNewContextMenuEnabled = true
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {
