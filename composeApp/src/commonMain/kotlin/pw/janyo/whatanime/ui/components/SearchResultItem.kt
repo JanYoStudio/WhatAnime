@@ -21,6 +21,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.PlatformContext
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.network.NetworkHeaders
@@ -74,7 +77,6 @@ import whatanime.composeapp.generated.resources.janyo_studio
 fun SearchResultItem(
     result: SearchAnimeResultItem,
     onClick: () -> Unit,
-    onClickImage: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -87,25 +89,23 @@ fun SearchResultItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            SelectionContainer {
-                Column {
+            Column {
+                BuildText(
+                    text = stringResource(
+                        Res.string.detail_hint_native_title,
+                        result.aniList.title.native ?: result.fileName
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+                formatEpisode(result.episode)?.let { episodeString ->
                     BuildText(
                         text = stringResource(
-                            Res.string.detail_hint_native_title,
-                            result.aniList.title.native ?: result.fileName
+                            Res.string.detail_hint_episode,
+                            episodeString
                         ),
-                        fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )
-                    formatEpisode(result.episode)?.let { episodeString ->
-                        BuildText(
-                            text = stringResource(
-                                Res.string.detail_hint_episode,
-                                episodeString
-                            ),
-                            fontSize = 14.sp
-                        )
-                    }
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -129,7 +129,6 @@ fun SearchResultItem(
                     modifier = Modifier
                         .height(90.dp)
                         .width(160.dp)
-                        .clickable(onClick = onClickImage),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 val annotationText = buildAnnotatedString {
@@ -153,12 +152,10 @@ fun SearchResultItem(
                         append("${formatDecimal(result.similarity * 100, 3)}%")
                     }
                 }
-                SelectionContainer {
-                    Text(
-                        text = annotationText,
-                        fontSize = 12.sp,
-                    )
-                }
+                Text(
+                    text = annotationText,
+                    fontSize = 12.sp,
+                )
             }
         }
     }
@@ -184,12 +181,12 @@ private fun BuildText(
 
 @Composable
 fun BuildBottomSheet(
+    uriHandler: UriHandler,
+    context: PlatformContext,
     openBottomSheet: MutableState<Boolean>,
     item: SearchAnimeResultItem?,
     onPlayVideo: (SearchAnimeResultItem) -> Unit
 ) {
-    val uriHandler = LocalUriHandler.current
-    val context = LocalPlatformContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
@@ -199,6 +196,10 @@ fun BuildBottomSheet(
                 openBottomSheet.value = false
             },
             sheetState = sheetState,
+            properties = ModalBottomSheetProperties(
+                shouldDismissOnBackPress = true,
+                shouldDismissOnClickOutside = true,
+            )
         ) {
             val title = item.aniList.title.native ?: item.fileName
             Column(modifier = Modifier.padding(bottom = 32.dp)) {
@@ -212,36 +213,36 @@ fun BuildBottomSheet(
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_copy_title)) },
                     leadingContent = { Icons(Icons.Default.ContentCopy) },
-                    modifier = Modifier.clickable {
-                        scope.launch { copyToClipboardThenToast(context, title) }
+                    modifier = Modifier.fillMaxWidth().clickable {
                         openBottomSheet.value = false
+                        scope.launch { copyToClipboardThenToast(context, title) }
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_share_title)) },
                     leadingContent = { Icons(Icons.Default.Share) },
-                    modifier = Modifier.clickable {
-                        showSharePanel(context, title)
+                    modifier = Modifier.fillMaxWidth().clickable {
                         openBottomSheet.value = false
+                        showSharePanel(context, title)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_view_anilist)) },
                     leadingContent = { Icons(Icons.Default.Info) },
-                    modifier = Modifier.clickable {
-                        uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
+                    modifier = Modifier.fillMaxWidth().clickable {
                         openBottomSheet.value = false
+                        uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_play_preview_video)) },
                     leadingContent = { Icons(Icons.Default.PlayArrow) },
-                    modifier = Modifier.clickable {
-                        onPlayVideo(item)
+                    modifier = Modifier.fillMaxWidth().clickable {
                         openBottomSheet.value = false
+                        onPlayVideo(item)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 )

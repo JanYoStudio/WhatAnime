@@ -107,6 +107,7 @@ import whatanime.composeapp.generated.resources.settings_group_about
 fun MainScreen() {
     val navController = LocalNavController.current!!
     val uriHandler = LocalUriHandler.current
+    val context = LocalPlatformContext.current
     val vm = koinViewModel<MainViewModel>()
 
     val listState by vm.listState.collectAsState()
@@ -344,9 +345,6 @@ fun MainScreen() {
                                                 selectedItemForBottomSheet = it
                                                 openBottomSheet.value = true
                                             },
-                                            onClickImage = {
-                                                vm.playVideo(it)
-                                            }
                                         )
                                     }
                                 }
@@ -380,16 +378,15 @@ fun MainScreen() {
         state = progressDialogState,
         text = stringResource(Res.string.hint_searching)
     )
-
-    if (selectedItemForBottomSheet != null) {
-        BuildBottomSheet(
-            openBottomSheet = openBottomSheet,
-            item = selectedItemForBottomSheet!!,
-            onPlayVideo = {
-                vm.playVideo(it)
-            }
-        )
-    }
+    BuildBottomSheet(
+        uriHandler = uriHandler,
+        context = context,
+        openBottomSheet = openBottomSheet,
+        item = selectedItemForBottomSheet,
+        onPlayVideo = {
+            vm.playVideo(it)
+        }
+    )
 
     BuildVideoDialog()
 

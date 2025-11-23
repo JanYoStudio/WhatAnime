@@ -23,7 +23,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import coil3.compose.LocalPlatformContext
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
 import multiplatform.network.cmptoast.showToast
@@ -44,6 +46,8 @@ import whatanime.composeapp.generated.resources.video_play_hint_410
 @Composable
 fun DetailScreen(historyId: Int, cachePath: String) {
     val navController = LocalNavController.current!!
+    val uriHandler = LocalUriHandler.current
+    val context = LocalPlatformContext.current
     val vm = koinViewModel<DetailViewModel>()
 
     val listState by vm.listState.collectAsState()
@@ -80,29 +84,26 @@ fun DetailScreen(historyId: Int, cachePath: String) {
                         selectedItemForBottomSheet = item
                         openBottomSheet.value = true
                     },
-                    onClickImage = {
-                        if (listState.tokenExpired) {
-                            scope.launch {
-                                showToast(getString(Res.string.video_play_hint_410))
-                            }
-                            return@SearchResultItem
-                        }
-                        vm.playVideo(item)
-                    }
                 )
             }
         }
     }
 
-    if (selectedItemForBottomSheet != null) {
-        BuildBottomSheet(
-            openBottomSheet = openBottomSheet,
-            item = selectedItemForBottomSheet!!,
-            onPlayVideo = {
-                vm.playVideo(it)
+    BuildBottomSheet(
+        uriHandler = uriHandler,
+        context = context,
+        openBottomSheet = openBottomSheet,
+        item = selectedItemForBottomSheet,
+        onPlayVideo = {
+            if (listState.tokenExpired) {
+                scope.launch {
+                    showToast(getString(Res.string.video_play_hint_410))
+                }
+                return@BuildBottomSheet
             }
-        )
-    }
+            vm.playVideo(it)
+        }
+    )
 
     BuildVideoDialog()
 
