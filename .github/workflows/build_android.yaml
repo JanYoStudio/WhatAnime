@@ -10,6 +10,7 @@ env:
   SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
   SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
   SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
+  NIGHTLY: true
 jobs:
   build:
     runs-on: ubuntu-latest

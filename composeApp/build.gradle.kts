@@ -175,12 +175,17 @@ android {
             versionNameSuffix = ".d$gitVersionCode.$gitVersionName"
         }
         release {
+            val nightly = System.getenv("NIGHTLY")?.toBoolean() == true
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
+            if (nightly) {
+                versionNameSuffix = ".n$gitVersionCode.nightly"
+            } else {
+                versionNameSuffix = ".r$gitVersionCode.$gitVersionName"
+            }
             signingConfig = signingConfigs.getByName("sign")
         }
     }
