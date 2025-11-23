@@ -6,26 +6,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.TipsAndUpdates
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
@@ -34,16 +31,13 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.model.SearchAnimeResultItem
+import pw.janyo.whatanime.ui.components.BuildBottomSheet
 import pw.janyo.whatanime.ui.components.BuildVideoDialog
 import pw.janyo.whatanime.ui.components.SearchResultItem
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.viewmodel.DetailViewModel
 import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.action_cancel
-import whatanime.composeapp.generated.resources.action_ok
-import whatanime.composeapp.generated.resources.hint_click_to_show_anilist_info
-import whatanime.composeapp.generated.resources.hint_show_animation_detail
 import whatanime.composeapp.generated.resources.title_activity_history
 import whatanime.composeapp.generated.resources.video_play_hint_410
 
@@ -54,7 +48,8 @@ fun DetailScreen(historyId: Int, cachePath: String) {
 
     val listState by vm.listState.collectAsState()
 
-    val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
+    val openBottomSheet = rememberSaveable { mutableStateOf(false) }
+    var selectedItemForBottomSheet by remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -71,15 +66,6 @@ fun DetailScreen(historyId: Int, cachePath: String) {
                         Icons(Icons.AutoMirrored.Filled.ArrowBack)
                     }
                 },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            showToast(getString(Res.string.hint_click_to_show_anilist_info))
-                        }
-                    }) {
-                        Icons(Icons.Outlined.TipsAndUpdates)
-                    }
-                }
             )
         },
     ) { innerPadding ->
@@ -91,7 +77,8 @@ fun DetailScreen(historyId: Int, cachePath: String) {
                 SearchResultItem(
                     item,
                     onClick = {
-                        animeDialogState.value = item
+                        selectedItemForBottomSheet = item
+                        openBottomSheet.value = true
                     },
                     onClickImage = {
                         if (listState.tokenExpired) {
@@ -106,7 +93,17 @@ fun DetailScreen(historyId: Int, cachePath: String) {
             }
         }
     }
-    BuildAlertDialog(animeDialogState)
+
+    if (selectedItemForBottomSheet != null) {
+        BuildBottomSheet(
+            openBottomSheet = openBottomSheet,
+            item = selectedItemForBottomSheet!!,
+            onPlayVideo = {
+                vm.playVideo(it)
+            }
+        )
+    }
+
     BuildVideoDialog()
 
     LaunchedEffect(listState) {
@@ -118,38 +115,4 @@ fun DetailScreen(historyId: Int, cachePath: String) {
         val cacheFile = PlatformFile(cachePath)
         vm.loadHistoryDetail(historyId, cacheFile)
     }
-}
-
-
-@Composable
-private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultItem?>) {
-    if (animeDialogState.value == null) return
-    val item = animeDialogState.value!!
-    val uriHandler = LocalUriHandler.current
-    AlertDialog(
-        onDismissRequest = { animeDialogState.value = null },
-        text = {
-            Text(
-                text = stringResource(
-                    Res.string.hint_show_animation_detail,
-                    item.aniList.title.native ?: item.fileName
-                )
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
-                    animeDialogState.value = null
-                }
-            ) {
-                Text(stringResource(Res.string.action_ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { animeDialogState.value = null }) {
-                Text(stringResource(Res.string.action_cancel))
-            }
-        }
-    )
 }

@@ -2,6 +2,7 @@ package pw.janyo.whatanime.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Intent
 import android.net.ConnectivityManager
 import coil3.PlatformContext
 import org.koin.java.KoinJavaComponent
@@ -15,9 +16,17 @@ actual fun isOnline(): Boolean {
     return networkInfo?.isConnected == true
 }
 
-actual fun copyToClipboard(context: PlatformContext, text: String) {
+actual suspend fun copyToClipboard(context: PlatformContext, text: String) {
     val clipboardManager =
         KoinJavaComponent.get<ClipboardManager>(ClipboardManager::class.java)
     val clipData = ClipData.newPlainText(appName, text)
     clipboardManager.setPrimaryClip(clipData)
+}
+
+actual fun showSharePanel(context: PlatformContext, shareText: String) {
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+    context.startActivity(Intent.createChooser(shareIntent, ""))
 }

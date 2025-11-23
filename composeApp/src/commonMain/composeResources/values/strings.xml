@@ -12,6 +12,10 @@
     <string name="action_ok">Ok</string>
     <string name="action_copy">Copy</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_copy_title">Copy Title</string>
+    <string name="action_share_title">Share Title</string>
+    <string name="action_view_anilist">View AniList</string>
+    <string name="action_play_preview_video">Play Preview Video</string>
 
     <string name="hint_quota_used">Quota Used: %1$d</string>
     <string name="hint_quota_total">Quota Total: %1$d</string>
@@ -38,7 +42,6 @@
     <string name="hint_swipe_to_delete">Swipe item to delete</string>
     <string name="hint_delete">Delete the record of (%1$d)? </string>
     <string name="hint_delete_desc">Please note that this action is irreversible.</string>
-    <string name="hint_click_to_show_anilist_info">Click to show AniList info</string>
     <string name="hint_no_network">The network connection is not available, please check the network</string>
     <string name="hint_no_result">No results</string>
     <string name="hint_search_error">Search failed</string>
@@ -54,7 +57,7 @@
     <string name="hint_select_file_path_null">The path of file is null, please check the file! </string>
     <string name="hint_not_share">The file is invalid!</string>
     <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
-    <string name="hint_copy_http_resource">Copied to clipboard</string>
+    <string name="hint_copy_done">Copied to clipboard</string>
 
     <string name="settings_group_application">Application Settings</string>
     <string name="settings_title_hide_sex">Hide Sex Content</string>

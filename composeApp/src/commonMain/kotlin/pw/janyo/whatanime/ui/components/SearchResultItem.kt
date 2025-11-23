@@ -10,12 +10,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -29,14 +44,22 @@ import coil3.compose.LocalPlatformContext
 import coil3.network.NetworkHeaders
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pw.janyo.whatanime.Configure
 import pw.janyo.whatanime.model.SearchAnimeResultItem
+import pw.janyo.whatanime.ui.theme.Icons
+import pw.janyo.whatanime.utils.copyToClipboardThenToast
 import pw.janyo.whatanime.utils.formatDecimal
 import pw.janyo.whatanime.utils.formatEpisode
 import pw.janyo.whatanime.utils.formatTime
+import pw.janyo.whatanime.utils.showSharePanel
 import whatanime.composeapp.generated.resources.Res
+import whatanime.composeapp.generated.resources.action_copy_title
+import whatanime.composeapp.generated.resources.action_play_preview_video
+import whatanime.composeapp.generated.resources.action_share_title
+import whatanime.composeapp.generated.resources.action_view_anilist
 import whatanime.composeapp.generated.resources.detail_hint_ani_list_id
 import whatanime.composeapp.generated.resources.detail_hint_episode
 import whatanime.composeapp.generated.resources.detail_hint_my_anime_list_id
@@ -156,4 +179,73 @@ private fun BuildText(
         fontWeight = fontWeight,
         color = textColor,
     )
+}
+
+
+@Composable
+fun BuildBottomSheet(
+    openBottomSheet: MutableState<Boolean>,
+    item: SearchAnimeResultItem?,
+    onPlayVideo: (SearchAnimeResultItem) -> Unit
+) {
+    val uriHandler = LocalUriHandler.current
+    val context = LocalPlatformContext.current
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    if (openBottomSheet.value && item != null) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                openBottomSheet.value = false
+            },
+            sheetState = sheetState,
+        ) {
+            val title = item.aniList.title.native ?: item.fileName
+            Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                Text(
+                    text = stringResource(
+                        Res.string.detail_hint_native_title,
+                        title
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.action_copy_title)) },
+                    leadingContent = { Icons(Icons.Default.ContentCopy) },
+                    modifier = Modifier.clickable {
+                        scope.launch { copyToClipboardThenToast(context, title) }
+                        openBottomSheet.value = false
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.action_share_title)) },
+                    leadingContent = { Icons(Icons.Default.Share) },
+                    modifier = Modifier.clickable {
+                        showSharePanel(context, title)
+                        openBottomSheet.value = false
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.action_view_anilist)) },
+                    leadingContent = { Icons(Icons.Default.Info) },
+                    modifier = Modifier.clickable {
+                        uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
+                        openBottomSheet.value = false
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                )
+                ListItem(
+                    headlineContent = { Text(stringResource(Res.string.action_play_preview_video)) },
+                    leadingContent = { Icons(Icons.Default.PlayArrow) },
+                    modifier = Modifier.clickable {
+                        onPlayVideo(item)
+                        openBottomSheet.value = false
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                )
+            }
+        }
+    }
 }

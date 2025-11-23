@@ -19,10 +19,8 @@ import pw.janyo.whatanime.ui.navigation.Navs
 import pw.janyo.whatanime.ui.navigation.RouteMain
 import pw.janyo.whatanime.ui.theme.WhatAnimeTheme
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun App() {
-    ComposeFoundationFlags.isNewContextMenuEnabled = true
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components {

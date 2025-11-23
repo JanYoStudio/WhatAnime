@@ -26,11 +26,10 @@ import androidx.compose.material.icons.outlined.AppShortcut
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.TipsAndUpdates
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
@@ -47,14 +46,16 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -70,13 +71,12 @@ import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.coroutines.launch
-import multiplatform.network.cmptoast.showToast
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
+import pw.janyo.whatanime.ui.components.BuildBottomSheet
 import pw.janyo.whatanime.ui.components.BuildVideoDialog
 import pw.janyo.whatanime.ui.components.SearchResultItem
 import pw.janyo.whatanime.ui.components.ShowProgressDialog
@@ -90,22 +90,19 @@ import pw.janyo.whatanime.viewmodel.MainViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_about_janyo
 import whatanime.composeapp.generated.resources.action_about_whatanime
-import whatanime.composeapp.generated.resources.action_cancel
 import whatanime.composeapp.generated.resources.action_cut_border
 import whatanime.composeapp.generated.resources.action_history
-import whatanime.composeapp.generated.resources.action_ok
 import whatanime.composeapp.generated.resources.action_settings
 import whatanime.composeapp.generated.resources.action_start_search
 import whatanime.composeapp.generated.resources.app_name
-import whatanime.composeapp.generated.resources.hint_click_to_show_anilist_info
 import whatanime.composeapp.generated.resources.hint_quota_total
 import whatanime.composeapp.generated.resources.hint_quota_used
 import whatanime.composeapp.generated.resources.hint_searching
 import whatanime.composeapp.generated.resources.hint_select_to_search
-import whatanime.composeapp.generated.resources.hint_show_animation_detail
 import whatanime.composeapp.generated.resources.ic_whatanime
 import whatanime.composeapp.generated.resources.settings_group_about
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val navController = LocalNavController.current!!
@@ -115,7 +112,8 @@ fun MainScreen() {
     val listState by vm.listState.collectAsState()
     val cutBorders by vm.cutBorders.collectAsState()
 
-    val animeDialogState = remember { mutableStateOf<SearchAnimeResultItem?>(null) }
+    val openBottomSheet = rememberSaveable { mutableStateOf(false) }
+    var selectedItemForBottomSheet by remember { mutableStateOf<SearchAnimeResultItem?>(null) }
 
     val progressDialogState = rememberShowDialogState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -286,15 +284,6 @@ fun MainScreen() {
                             }
                         },
                         actions = {
-                            if (!listState.list.isEmpty()) {
-                                IconButton(onClick = {
-                                    scope.launch {
-                                        showToast(getString(Res.string.hint_click_to_show_anilist_info))
-                                    }
-                                }) {
-                                    Icons(Icons.Outlined.TipsAndUpdates)
-                                }
-                            }
                             IconButton(onClick = {
                                 doPickAndSearch()
                             }) {
@@ -352,7 +341,8 @@ fun MainScreen() {
                                         SearchResultItem(
                                             it,
                                             onClick = {
-                                                animeDialogState.value = it
+                                                selectedItemForBottomSheet = it
+                                                openBottomSheet.value = true
                                             },
                                             onClickImage = {
                                                 vm.playVideo(it)
@@ -390,7 +380,17 @@ fun MainScreen() {
         state = progressDialogState,
         text = stringResource(Res.string.hint_searching)
     )
-    BuildAlertDialog(animeDialogState)
+
+    if (selectedItemForBottomSheet != null) {
+        BuildBottomSheet(
+            openBottomSheet = openBottomSheet,
+            item = selectedItemForBottomSheet!!,
+            onPlayVideo = {
+                vm.playVideo(it)
+            }
+        )
+    }
+
     BuildVideoDialog()
 
     LaunchedEffect(listState) {
@@ -402,39 +402,6 @@ fun MainScreen() {
     LaunchedEffect(Unit) {
         vm.showQuota()
     }
-}
-
-@Composable
-private fun BuildAlertDialog(animeDialogState: MutableState<SearchAnimeResultItem?>) {
-    if (animeDialogState.value == null) return
-    val item = animeDialogState.value!!
-    val uriHandler = LocalUriHandler.current
-    AlertDialog(
-        onDismissRequest = { animeDialogState.value = null },
-        text = {
-            Text(
-                text = stringResource(
-                    Res.string.hint_show_animation_detail,
-                    item.aniList.title.native ?: item.fileName
-                )
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
-                    animeDialogState.value = null
-                }
-            ) {
-                Text(stringResource(Res.string.action_ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { animeDialogState.value = null }) {
-                Text(stringResource(Res.string.action_cancel))
-            }
-        }
-    )
 }
 
 @Composable

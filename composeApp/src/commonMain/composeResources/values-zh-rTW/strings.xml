@@ -28,7 +28,6 @@
     <string name="hint_swipe_to_delete">向左滑可以刪除歷史紀錄</string>
     <string name="hint_delete">確認刪除（%1$s）嗎？</string>
     <string name="hint_delete_desc">請注意，此操作是不可恢復的</string>
-    <string name="hint_click_to_show_anilist_info">點擊查看 AniList 資訊</string>
     <string name="hint_no_network">網絡連接不可用，請檢查網絡設置</string>
     <string name="hint_no_result">無結果</string>
     <string name="hint_search_error">搜索失敗</string>
@@ -36,7 +35,7 @@
     <string name="hint_copy_device_id">設備ID已經復制到剪切板中</string>
     <string name="hint_searching">正在搜索中，請稍後……</string>
     <string name="hint_select_to_search">點擊搜索按鈕開始</string>
-    <string name="hint_copy_http_resource">已複製到剪貼簿</string>
+    <string name="hint_copy_done">已複製到剪貼簿</string>
     <string name="settings_group_application">應用設置</string>
     <string name="settings_title_hide_sex">隱藏敏感內容</string>
     <string name="settings_title_prefer_webp">使用 WEBP 格式</string>
@@ -75,4 +74,8 @@
     <string name="hint_data_convert_no_detail_in_history">因為數據結構變更，您已經無法再查閱這條歷史記錄的詳細信息，請刪除該記錄</string>
     <string name="title_activity_receive_share">使用WhatAnime進行搜索</string>
     <string name="settings_title_debug_mode">調試模式</string>
+    <string name="action_copy_title">複製標題</string>
+    <string name="action_share_title">分享標題</string>
+    <string name="action_view_anilist">查看 Anilist 資訊</string>
+    <string name="action_play_preview_video">播放預覽影片</string>
 </resources>

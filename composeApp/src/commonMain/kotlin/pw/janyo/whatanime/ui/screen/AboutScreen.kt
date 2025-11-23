@@ -3,7 +3,6 @@ package pw.janyo.whatanime.ui.screen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
-import com.mikepenz.aboutlibraries.ui.compose.rememberLibraries
 import org.jetbrains.compose.resources.stringResource
 import pw.janyo.whatanime.ui.components.AppInfo
 import pw.janyo.whatanime.ui.navigation.LocalNavController

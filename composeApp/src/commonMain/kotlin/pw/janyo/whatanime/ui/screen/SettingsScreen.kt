@@ -45,13 +45,13 @@ import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.ui.theme.showNightModeSelectList
 import pw.janyo.whatanime.utils.copyToClipboard
+import pw.janyo.whatanime.utils.copyToClipboardThenToast
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_cancel
 import whatanime.composeapp.generated.resources.action_copy
 import whatanime.composeapp.generated.resources.action_donate
 import whatanime.composeapp.generated.resources.hint_copy_device_id
-import whatanime.composeapp.generated.resources.hint_copy_http_resource
 import whatanime.composeapp.generated.resources.settings_group_about
 import whatanime.composeapp.generated.resources.settings_group_about_what_anime
 import whatanime.composeapp.generated.resources.settings_group_application
@@ -348,8 +348,7 @@ private fun BuildAlertDialog(state: MutableState<DebugHttpInfo?>) {
             TextButton(
                 onClick = {
                     scope.launch {
-                        copyToClipboard(context, item.response)
-                        showToast(getString(Res.string.hint_copy_http_resource))
+                        copyToClipboardThenToast(context, item.response)
                         state.value = null
                     }
                 }
