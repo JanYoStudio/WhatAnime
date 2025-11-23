@@ -32,4 +32,31 @@ class AnimationHistory {
 
     @ColumnInfo(name = "animation_similarity")
     var similarity: Double = 0.0
+
+    fun readonly(): ReadOnlyAnimationHistory {
+        return ReadOnlyAnimationHistory(
+            id,
+            originPath,
+            cachePath,
+            result,
+            time,
+            title,
+            anilistId,
+            episode,
+            similarity,
+        )
+    }
 }
+
+data class ReadOnlyAnimationHistory(
+    val id: Int,
+    val originPath: String,
+    val cachePath: String,
+    val result: String,
+    val time: Long,
+    val title: String,
+    val anilistId: Long,
+    val episode: String,
+    val similarity: Double,
+    val isOldData: Boolean = episode == "old" || similarity == 0.0
+)

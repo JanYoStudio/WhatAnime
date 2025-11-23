@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.inject
 import pw.janyo.whatanime.base.ComposeViewModel
-import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.model.ReadOnlyAnimationHistory
 import pw.janyo.whatanime.repository.AnimationRepository
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.hint_no_result
@@ -34,7 +34,7 @@ class HistoryViewModel : ComposeViewModel() {
             } else {
                 _historyListState.value = _historyListState.value.copy(
                     loading = false,
-                    list = list,
+                    list = list.map { it.readonly() },
                 )
             }
         }
@@ -55,6 +55,6 @@ class HistoryViewModel : ComposeViewModel() {
 
 data class HistoryListState(
     val loading: Boolean = false,
-    val list: List<AnimationHistory> = emptyList(),
+    val list: List<ReadOnlyAnimationHistory> = emptyList(),
     val errorMessage: String = "",
 )

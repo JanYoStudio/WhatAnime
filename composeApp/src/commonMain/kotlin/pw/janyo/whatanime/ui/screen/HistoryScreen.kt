@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -56,6 +58,7 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.model.AnimationHistory
+import pw.janyo.whatanime.model.ReadOnlyAnimationHistory
 import pw.janyo.whatanime.ui.components.NoDataLayout
 import pw.janyo.whatanime.ui.components.SwipeToDeleteContainer
 import pw.janyo.whatanime.ui.navigation.LocalNavController
@@ -85,7 +88,7 @@ fun HistoryScreen() {
 
     val listState by vm.historyListState.collectAsState()
 
-    val animeDialogState = remember { mutableStateOf<AnimationHistory?>(null) }
+    val animeDialogState = remember { mutableStateOf<ReadOnlyAnimationHistory?>(null) }
 
     val scope = rememberCoroutineScope()
 
@@ -125,6 +128,13 @@ fun HistoryScreen() {
                 animeDialogState.value = null
             },
             state = pullToRefreshState,
+            indicator = {
+                PullToRefreshDefaults.LoadingIndicator(
+                    state = pullToRefreshState,
+                    isRefreshing = listState.loading,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            }
         ) {
             if (listState.list.isEmpty()) {
                 NoDataLayout(modifier = Modifier.fillMaxSize())
@@ -133,7 +143,7 @@ fun HistoryScreen() {
                     modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    items(listState.list) { item: AnimationHistory ->
+                    items(listState.list) { item: ReadOnlyAnimationHistory ->
                         SwipeToDeleteContainer(
                             item = item,
                             onDelete = {
@@ -174,8 +184,8 @@ fun HistoryScreen() {
 
 @Composable
 private fun BuildAlertDialog(
-    animeDialogState: MutableState<AnimationHistory?>,
-    onOk: (AnimationHistory) -> Unit,
+    animeDialogState: MutableState<ReadOnlyAnimationHistory?>,
+    onOk: (ReadOnlyAnimationHistory) -> Unit,
 ) {
     if (animeDialogState.value == null) return
     val item = animeDialogState.value!!
@@ -211,22 +221,19 @@ private fun BuildAlertDialog(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BuildResultItem(
-    history: AnimationHistory,
+    history: ReadOnlyAnimationHistory,
     onClickOldData: () -> Unit,
     onClick: () -> Unit,
 ) {
     val similarity = "${formatDecimal(history.similarity * 100, 4)}%"
-    val isOldData =
-        history.episode == "old" || history.similarity == 0.0
-
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .clickable {
-                when {
-                    isOldData -> onClickOldData()
-
-                    else -> onClick()
+                if (history.isOldData) {
+                    onClickOldData()
+                } else {
+                    onClick()
                 }
             },
         shape = RoundedCornerShape(8.dp),
@@ -258,7 +265,7 @@ private fun BuildResultItem(
                     append(stringResource(Res.string.history_hint_native_title))
                     append(history.title)
                 }
-                if (!isOldData) {
+                if (!history.isOldData) {
                     appendLine()
                     append(stringResource(Res.string.history_hint_ani_list_id))
                     append(history.anilistId.toString())
