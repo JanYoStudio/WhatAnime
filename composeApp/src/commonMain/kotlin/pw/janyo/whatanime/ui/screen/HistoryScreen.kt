@@ -49,7 +49,6 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import multiplatform.network.cmptoast.showToast
@@ -77,8 +76,8 @@ import whatanime.composeapp.generated.resources.history_hint_native_title
 import whatanime.composeapp.generated.resources.history_hint_save_time
 import whatanime.composeapp.generated.resources.history_hint_similarity
 import whatanime.composeapp.generated.resources.title_activity_history
+import kotlin.time.Instant
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen() {
     val navController = LocalNavController.current!!

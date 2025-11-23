@@ -9,7 +9,6 @@ import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
@@ -21,6 +20,7 @@ import pw.janyo.whatanime.api.createSearchApi
 import pw.janyo.whatanime.httpResponses
 import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.utils.formatDateTime
+import kotlin.time.Clock
 
 val networkModule = module {
     single {
@@ -42,7 +42,7 @@ val networkModule = module {
     single {
         Ktorfit.Builder()
             .httpClient(get<HttpClient>())
-            .baseUrl(Constant.baseUrl)
+            .baseUrl(Constant.BASE_URL)
             .build()
     }
     single {

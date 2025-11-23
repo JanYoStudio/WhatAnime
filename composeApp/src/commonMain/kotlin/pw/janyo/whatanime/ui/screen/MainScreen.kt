@@ -31,7 +31,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
@@ -63,7 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import co.touchlab.kermit.Logger
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
@@ -108,7 +106,6 @@ import whatanime.composeapp.generated.resources.hint_show_animation_detail
 import whatanime.composeapp.generated.resources.ic_whatanime
 import whatanime.composeapp.generated.resources.settings_group_about
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
     val navController = LocalNavController.current!!
@@ -233,7 +230,7 @@ fun MainScreen() {
                         modifier = Modifier
                             .weight(1F),
                         onClick = {
-                            uriHandler.openUri(Constant.janYoStudioUrl)
+                            uriHandler.openUri(Constant.JANYO_STUDIO_URL)
                         }) {
                         Text(
                             text = stringResource(Res.string.action_about_janyo),
@@ -250,7 +247,7 @@ fun MainScreen() {
                         modifier = Modifier
                             .weight(1F),
                         onClick = {
-                            uriHandler.openUri(Constant.whatAnimeUrl)
+                            uriHandler.openUri(Constant.WHAT_ANIME_URL)
                         }) {
                         Text(
                             text = stringResource(Res.string.action_about_whatanime),

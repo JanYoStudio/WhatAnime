@@ -8,7 +8,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.inject
 import pw.janyo.whatanime.Configure
@@ -18,6 +17,7 @@ import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.ui.components.PlayerState
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.hint_no_result
+import kotlin.time.Clock
 
 class DetailViewModel : ComposeViewModel() {
     private val animationRepository by inject<AnimationRepository>()

@@ -37,8 +37,16 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
+    }
+
+    compilerOptions {
+        optIn.add("kotlin.time.ExperimentalTime")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
+
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     listOf(
@@ -73,9 +81,9 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(libs.material3)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             //common-viewmodel
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -177,8 +185,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         buildConfig = true
@@ -200,9 +208,6 @@ aboutLibraries {
     collect {
         fetchRemoteLicense = false
         fetchRemoteFunding = false
-    }
-    android {
-        registerAndroidTasks = false
     }
     export {
         outputFile = file("src/commonMain/composeResources/files/aboutlibraries.json")

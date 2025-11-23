@@ -47,7 +47,6 @@ import whatanime.composeapp.generated.resources.hint_show_animation_detail
 import whatanime.composeapp.generated.resources.title_activity_history
 import whatanime.composeapp.generated.resources.video_play_hint_410
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(historyId: Int, cachePath: String) {
     val navController = LocalNavController.current!!

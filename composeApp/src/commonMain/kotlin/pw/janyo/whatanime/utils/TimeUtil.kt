@@ -1,6 +1,7 @@
 package pw.janyo.whatanime.utils
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.number
 
 enum class TimeUnit(val level: Int, val unit: String, val interval: Int) {
     MILLISECOND(0, "毫秒", 1000),
@@ -65,10 +66,10 @@ fun LocalDateTime.formatDateTime(): String = formatWithFormatter("yyyy-MM-dd HH:
 
 private fun LocalDateTime.formatWithFormatter(format: String): String {
     return format.replace("yyyy", year.toString())
-        .replace("MM", monthNumber.pad2())
-        .replace("M", monthNumber.toString())
-        .replace("dd", dayOfMonth.pad2())
-        .replace("d", dayOfMonth.toString())
+        .replace("MM", month.number.pad2())
+        .replace("M", month.number.toString())
+        .replace("dd", day.pad2())
+        .replace("d", day.toString())
         .replace("HH", hour.pad2())
         .replace("H", hour.toString())
         .replace("hh", if (hour > 12) (hour - 12).pad2() else hour.pad2())

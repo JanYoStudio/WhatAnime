@@ -12,7 +12,6 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
@@ -31,6 +30,7 @@ import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.hint_no_network
 import whatanime.composeapp.generated.resources.hint_no_result
 import whatanime.composeapp.generated.resources.hint_search_error
+import kotlin.time.Clock
 
 class AnimationRepository : KoinComponent {
     private val searchApi by inject<SearchApi>()

@@ -1,38 +1,39 @@
 [versions]
-agp = "8.11.0"
-kotlin = "2.1.21"
+agp = "8.13.1"
+kotlin = "2.2.21"
 # https://github.com/google/ksp/releases
-ksp = "2.1.21-2.0.1"
+ksp = "2.2.21-2.0.4"
 
-composeMultiplatform = "1.8.2"
-aboutlibraries = "12.2.3"
-kotlinx-serialization = "1.8.1"
+composeMultiplatform = "1.9.3"
+aboutlibraries = "13.1.0"
+kotlinx-serialization = "1.9.0"
 
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
-androidx-activity = "1.10.1"
+androidx-activity = "1.12.0"
 androidx-appcompat = "1.7.1"
-androidx-splashscreen = "1.0.1"
-androidx-core = "1.16.0"
-androidx-lifecycle = "2.9.1"
-androidx-navigation = "2.9.0-beta03"
-androidx-browser = "1.8.0"
-material = "1.12.0"
+androidx-splashscreen = "1.2.0"
+androidx-core = "1.17.0"
+androidx-lifecycle = "2.9.6"
+androidx-navigation = "2.9.1"
+androidx-browser = "1.9.0"
+material = "1.13.0"
+material3 = "1.10.0-alpha05"
 material-icons = "1.7.3"
-ktorfit = "2.5.2"
-ktor = "3.1.3"
-koin-bom = "4.1.0"
-coil-bom = "3.2.0"
-kermit = "2.0.6"
-cmptoast = "1.0.5"
-filekit = "0.10.0-beta04"
-mmkv = "2.2.2"
-media3 = "1.7.1"
-media-player = "1.0.41"
+ktorfit = "2.6.4"
+ktor = "3.3.2"
+koin-bom = "4.1.1"
+coil-bom = "3.3.0"
+kermit = "2.0.8"
+cmptoast = "1.0.71"
+filekit = "0.12.0"
+mmkv = "2.2.4"
+media-player = "1.0.50"
+# 不能升级，升级后ios无法编译
 room = "2.7.2"
-kotlin-crypto-hash = "0.7.0"
-compose-preference = "2.0.0"
+kotlin-crypto-hash = "0.8.0"
+compose-preference = "2.1.0"
 ios-settings = "1.3.0"
 
 [libraries]
@@ -47,6 +48,7 @@ androidx-browser = { module = "androidx.browser:browser", version.ref = "android
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
+material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 material-icon = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons" }
 material-icon-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "material-icons" }
 
@@ -84,11 +86,6 @@ mmkv-android = { module = "com.tencent:mmkv", version.ref = "mmkv" }
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
 aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutlibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
-
-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 
 media-player = { module = "network.chaintech:compose-multiplatform-media-player", version.ref = "media-player" }
 

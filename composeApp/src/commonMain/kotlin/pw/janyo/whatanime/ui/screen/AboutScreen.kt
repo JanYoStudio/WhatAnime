@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.rememberLibraries
 import org.jetbrains.compose.resources.stringResource
 import pw.janyo.whatanime.ui.components.AppInfo
@@ -20,7 +21,6 @@ import pw.janyo.whatanime.ui.theme.Icons
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.app_name
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen() {
     val navController = LocalNavController.current!!
@@ -38,7 +38,7 @@ fun AboutScreen() {
             )
         },
     ) { innerPadding ->
-        val libraries by rememberLibraries {
+        val libraries by produceLibraries {
             Res.readBytes("files/aboutlibraries.json").decodeToString()
         }
         LibrariesContainer(

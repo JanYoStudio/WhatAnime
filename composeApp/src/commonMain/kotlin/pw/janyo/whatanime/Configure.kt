@@ -34,12 +34,12 @@ object Configure {
 }
 
 object Constant {
-    const val baseUrl = "https://api.trace.moe/"
+    const val BASE_URL = "https://api.trace.moe/"
 
-    const val whatAnimeUrl = "https://trace.moe/about"
-    const val janYoStudioUrl = "https://studio.janyos.top"
+    const val WHAT_ANIME_URL = "https://trace.moe/about"
+    const val JANYO_STUDIO_URL = "https://studio.janyos.top"
 
-    const val donateUrl = "https://github.com/sponsors/soruly"
+    const val DONATE_URL = "https://github.com/sponsors/soruly"
 }
 
 // Global list to store HTTP responses

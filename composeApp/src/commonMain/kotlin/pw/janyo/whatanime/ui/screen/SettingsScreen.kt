@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -92,7 +91,6 @@ import whatanime.composeapp.generated.resources.settings_title_recent_http_respo
 import whatanime.composeapp.generated.resources.settings_title_what_anime
 import whatanime.composeapp.generated.resources.title_activity_settings
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(){
 
@@ -186,9 +184,9 @@ fun SettingsScreen(){
                     )
                     SettingsMenuLink(
                         title = stringResource(Res.string.action_donate),
-                        subtitle = Constant.donateUrl,
+                        subtitle = Constant.DONATE_URL,
                         onClick = {
-                            uriHandler.openUri(Constant.donateUrl)
+                            uriHandler.openUri(Constant.DONATE_URL)
                         }
                     )
                     SettingsMenuLink(
