@@ -98,14 +98,14 @@ jobs:
       - name: 构建iOS APP
         run: |
           cd ${{ env.MOBILE_DIRECTORY }}
-          xcodebuild PROVISIONING_PROFILE=${{ steps.profile.outputs.uuid }} -scheme ${{ env.XCODE_PROJECT }} archive -archivePath "Actions" -configuration Release -arch arm64
+          xcodebuild -scheme ${{ env.XCODE_PROJECT }} archive -archivePath "Actions" -configuration Release -arch arm64 CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="${{ steps.profile.outputs.uuid }}" CODE_SIGN_IDENTITY="Apple Distribution"
       - name: 导出ipa
         env:
           EXPORT_PLIST: ${{ secrets.IOS_EXPORT_PRODUCTION }}
         run: |
           EXPORT_PLIST_PATH=${{ runner.temp }}/ExportOptions.plist
           echo -n "$EXPORT_PLIST" | base64 --decode --output $EXPORT_PLIST_PATH
-          xcodebuild PROVISIONING_PROFILE=${{ steps.profile.outputs.uuid }} -exportArchive -archivePath ${{ env.MOBILE_DIRECTORY }}/Actions.xcarchive -exportOptionsPlist $EXPORT_PLIST_PATH -exportPath ${{ runner.temp }}/export
+          xcodebuild -exportArchive -archivePath ${{ env.MOBILE_DIRECTORY }}/Actions.xcarchive -exportOptionsPlist $EXPORT_PLIST_PATH -exportPath ${{ runner.temp }}/export
       - name: 解密API密钥
         env:
           API_KEY_BASE64: ${{ secrets.IOS_APPSTORE_API_PRIVATE_KEY }}
