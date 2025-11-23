@@ -74,7 +74,7 @@ jobs:
           # import certificate and provisioning profile from secrets
           echo -n "$IOS_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
           echo -n "$IOS_PROVISION_PROFILE" | base64 --decode -o $PP_PATH
-          uuid=`grep UUID -A1 -a $PP_PATH | grep -io "[-A-F0-9]\{36\}"`
+          uuid=`grep UUID -A1 -a $PP_PATH | grep -io "[-A-F0-9]\\{36\\}"`
           echo "uuid=$uuid" >> $GITHUB_OUTPUT
           
           # create temporary keychain

@@ -25,7 +25,7 @@ jobs:
         run: |
           echo ${{ secrets.SIGN_KEY_BASE64 }} | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: 构建 APK
         run: |
           ./gradlew composeApp:exportLibraryDefinitions
@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install wget -y
       - name: 解析版本号
         run: |
-          wget -q -O /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.1/bundletool-all-1.18.1.jar
+          wget -q -O /tmp/bundletool.jar https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar
           fileName=$(ls ${{ env.OUTPUT_DIR }}/ | head -n 1)
           versionName=$(java -jar /tmp/bundletool.jar dump manifest --bundle ${{ env.OUTPUT_DIR }}/$fileName --xpath /manifest/@android:versionName)
           echo "versionName=$versionName" >> $GITHUB_ENV
@@ -44,7 +44,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.versionName }}
-          body: |
-            ${{ env.versionName }}
+          body_path: CHANGELOG.md
           files: |
             ${{ env.OUTPUT_DIR }}/${{ env.fileName }}
