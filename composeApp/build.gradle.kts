@@ -31,7 +31,7 @@ fun String.runCommand(workingDir: File = file("./")): String {
 
 val gitVersionCode: Int = "git rev-list HEAD --count".runCommand().toInt()
 val gitVersionName = "git rev-parse --short=8 HEAD".runCommand()
-val appVersionName = "1.8.6"
+val appVersionName = libs.versions.app.version.get()
 
 kotlin {
     androidTarget {
