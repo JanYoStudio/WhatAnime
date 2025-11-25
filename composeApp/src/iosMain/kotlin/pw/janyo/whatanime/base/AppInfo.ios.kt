@@ -1,9 +1,17 @@
 package pw.janyo.whatanime.base
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import platform.Foundation.NSBundle
 import platform.Foundation.NSUUID
 import platform.UIKit.UIDevice
 import pw.janyo.whatanime.Configure
+import whatanime.composeapp.generated.resources.Res
+import whatanime.composeapp.generated.resources.ic_app_store
+import whatanime.composeapp.generated.resources.settings_link_about_app_store
+import whatanime.composeapp.generated.resources.settings_title_about_app_store
 import pw.janyo.whatanime.getConfiguration
 import pw.janyo.whatanime.setConfiguration
 
@@ -56,3 +64,10 @@ actual fun appVersionName(): String = appVersionName
 actual fun appVersionCode(): String = appVersionCode
 
 actual fun appVersionCodeNumber(): Long = appVersionCodeNumber
+
+actual fun getStoreUrl(): StringResource = Res.string.settings_link_about_app_store
+
+actual fun getStoreTitle(): StringResource = Res.string.settings_title_about_app_store
+
+@Composable
+actual fun getStoreIcon(): Painter = painterResource(Res.drawable.ic_app_store)

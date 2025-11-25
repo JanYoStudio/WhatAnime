@@ -33,6 +33,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.Constant
 import pw.janyo.whatanime.base.appVersionName
+import pw.janyo.whatanime.base.getStoreIcon
+import pw.janyo.whatanime.base.getStoreTitle
+import pw.janyo.whatanime.base.getStoreUrl
 import pw.janyo.whatanime.base.publicDeviceId
 import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.ui.navigation.LocalNavController
@@ -229,12 +232,12 @@ fun SettingsScreen(){
                         }
                     )
                     SettingsMenuLink(
-                        icon = { Icons(WaIcons.Settings.googlePlay) },
-                        title = stringResource(Res.string.settings_title_about_google_play),
-                        subtitle = stringResource(Res.string.settings_summary_about_google_play),
+                        icon = { Icons(getStoreIcon()) },
+                        title = stringResource(getStoreTitle()),
+                        subtitle = stringResource(getStoreUrl()),
                         onClick = {
                             scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_about_google_play))
+                                uriHandler.openUri(getString(getStoreUrl()))
                             }
                         }
                     )

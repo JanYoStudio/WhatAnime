@@ -82,6 +82,9 @@
     <string name="settings_title_about_google_play" translatable="false">Google Play Store</string>
     <string name="settings_summary_about_google_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="settings_link_about_google_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
+    <string name="settings_title_about_app_store" translatable="false">App Store</string>
+    <string name="settings_summary_about_app_store" translatable="false">https://apps.apple.com/us/app/whatanime/id6748246489</string>
+    <string name="settings_link_about_app_store" translatable="false">https://apps.apple.com/us/app/whatanime/id6748246489</string>
     <string name="settings_title_about_janyo_license">License</string>
     <string name="settings_summary_about_janyo_license">JanYo Studio License</string>
     <string name="settings_link_about_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
