@@ -153,9 +153,10 @@ fun MainScreen() {
                 }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth())
                 val quota by vm.searchQuota.collectAsState()
+                val quotaLoaded = quota.quota > 0
                 val quotaUsed = quota.quotaUsed
                 val quotaTotal = quota.quota
-                val quotaProgress = if (quotaTotal > 0) quotaUsed / quotaTotal.toFloat() else 0f
+                val quotaProgress = if (quotaLoaded) (quotaTotal - quotaUsed) / quotaTotal.toFloat() else 0f
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -177,7 +178,7 @@ fun MainScreen() {
                                 modifier = Modifier.weight(1f),
                             )
                             Text(
-                                text = "$quotaUsed / $quotaTotal",
+                                text = if (quotaLoaded) "$quotaUsed / $quotaTotal" else "-/-",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
