@@ -9,7 +9,6 @@ import pw.janyo.whatanime.ui.components.PlayerState
 val mediaModule = module {
     single {
         MediaPlayerHost(
-            isPaused = true,
             isLooping = false,
             isFullScreen = false,
             initialVideoFitMode = ScreenResize.FIT,

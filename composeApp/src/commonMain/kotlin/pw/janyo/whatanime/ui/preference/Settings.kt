@@ -42,7 +42,7 @@ fun <T> ListSetting(
     defaultValue: T,
     onValueChange: (T) -> Unit = {},
     values: List<T>,
-    valueToText: (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
+    valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
 ) {
     ListPreference(
         value = defaultValue,
