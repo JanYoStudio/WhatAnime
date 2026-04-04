@@ -43,9 +43,6 @@ class MainViewModel : ComposeViewModel() {
     private val _listState = MutableStateFlow(MainListState())
     val listState: StateFlow<MainListState> = _listState
 
-    private val _cutBorders = MutableStateFlow(Configure.cutBorders)
-    val cutBorders: StateFlow<Boolean> = _cutBorders
-
     fun showQuota() {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Logger.w("showQuota: failed", throwable)
@@ -133,13 +130,6 @@ class MainViewModel : ComposeViewModel() {
             mediaPlayerHost.loadUrl(requestUrl)
             playerState.loadUrl()
             mediaPlayerHost.play()
-        }
-    }
-
-    fun changeCutBorders() {
-        viewModelScope.launch {
-            Configure.cutBorders = !_cutBorders.value
-            _cutBorders.value = !_cutBorders.value
         }
     }
 

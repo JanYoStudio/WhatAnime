@@ -17,22 +17,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Plagiarism
-import androidx.compose.material.icons.outlined.AppShortcut
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -41,10 +41,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,7 +70,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.janyo.whatanime.Constant
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.ui.components.BuildBottomSheet
 import pw.janyo.whatanime.ui.components.BuildVideoDialog
@@ -87,19 +83,15 @@ import pw.janyo.whatanime.ui.navigation.RouteSettings
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.viewmodel.MainViewModel
 import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.action_about_janyo
-import whatanime.composeapp.generated.resources.action_about_whatanime
-import whatanime.composeapp.generated.resources.action_cut_border
 import whatanime.composeapp.generated.resources.action_history
 import whatanime.composeapp.generated.resources.action_settings
 import whatanime.composeapp.generated.resources.action_start_search
 import whatanime.composeapp.generated.resources.app_name
-import whatanime.composeapp.generated.resources.hint_quota_total
-import whatanime.composeapp.generated.resources.hint_quota_used
+import whatanime.composeapp.generated.resources.action_open_source_license
+import whatanime.composeapp.generated.resources.drawer_api_quota_title
 import whatanime.composeapp.generated.resources.hint_searching
 import whatanime.composeapp.generated.resources.hint_select_to_search
 import whatanime.composeapp.generated.resources.ic_whatanime
-import whatanime.composeapp.generated.resources.settings_group_about
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +102,6 @@ fun MainScreen() {
     val vm = koinViewModel<MainViewModel>()
 
     val listState by vm.listState.collectAsState()
-    val cutBorders by vm.cutBorders.collectAsState()
 
     val openBottomSheet = rememberSaveable { mutableStateOf(false) }
     var selectedItemForBottomSheet by remember { mutableStateOf<SearchAnimeResultItem?>(null) }
@@ -161,23 +152,44 @@ fun MainScreen() {
                     )
                 }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                Column(
+                val quota by vm.searchQuota.collectAsState()
+                val quotaUsed = quota.quotaUsed
+                val quotaTotal = quota.quota
+                val quotaProgress = if (quotaTotal > 0) quotaUsed / quotaTotal.toFloat() else 0f
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(96.dp)
-                        .padding(start = 56.dp),
-                    verticalArrangement = Arrangement.Center,
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
                 ) {
-                    val quota by vm.searchQuota.collectAsState()
-                    Text(
-                        text = stringResource(Res.string.hint_quota_used, quota.quotaUsed),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(Res.string.hint_quota_total, quota.quota))
+                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.drawer_api_quota_title),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Text(
+                                text = "$quotaUsed / $quotaTotal",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LinearProgressIndicator(
+                            progress = { quotaProgress },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth())
                 NavigationDrawerItem(
                     icon = { Icons(Icons.Filled.Plagiarism) },
                     label = { Text(stringResource(Res.string.action_history)) },
@@ -197,61 +209,14 @@ fun MainScreen() {
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
                 NavigationDrawerItem(
-                    icon = { Icons(Icons.Outlined.AppShortcut) },
-                    label = { Text(stringResource(Res.string.action_cut_border)) },
-                    badge = {
-                        Switch(checked = cutBorders, onCheckedChange = {
-                            vm.changeCutBorders()
-                        })
-                    },
-                    selected = true,
-                    onClick = {
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-                NavigationDrawerItem(
-                    icon = { Icons(Icons.Filled.AutoAwesome) },
-                    label = { Text(stringResource(Res.string.settings_group_about)) },
+                    icon = { Icons(Icons.Filled.Code) },
+                    label = { Text(stringResource(Res.string.action_open_source_license)) },
                     selected = false,
                     onClick = {
                         navController.navigate(RouteAbout)
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
-                Spacer(modifier = Modifier.weight(1F))
-                HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                Row(
-                    modifier = Modifier.height(48.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TextButton(
-                        modifier = Modifier
-                            .weight(1F),
-                        onClick = {
-                            uriHandler.openUri(Constant.JANYO_STUDIO_URL)
-                        }) {
-                        Text(
-                            text = stringResource(Res.string.action_about_janyo),
-                        )
-                    }
-                    Surface(
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .size(4.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    ) {}
-                    TextButton(
-                        modifier = Modifier
-                            .weight(1F),
-                        onClick = {
-                            uriHandler.openUri(Constant.WHAT_ANIME_URL)
-                        }) {
-                        Text(
-                            text = stringResource(Res.string.action_about_whatanime),
-                        )
-                    }
-                }
             }
         },
         content = {

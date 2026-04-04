@@ -23,6 +23,9 @@ class SettingsViewModel : ComposeViewModel() {
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage
 
+    private val _cutBorders = MutableStateFlow(Configure.cutBorders)
+    val cutBorders: StateFlow<Boolean> = _cutBorders
+
     private val _hideSex = MutableStateFlow(Configure.hideSex)
     val hideSex: StateFlow<Boolean> = _hideSex
 
@@ -53,6 +56,13 @@ class SettingsViewModel : ComposeViewModel() {
             _httpResponses.value = httpResponses.toList()
         }
         showQuota()
+    }
+
+    fun setCutBorders(value: Boolean) {
+        viewModelScope.launch {
+            Configure.cutBorders = value
+            _cutBorders.value = value
+        }
     }
 
     fun setHideSex(hideSex: Boolean) {

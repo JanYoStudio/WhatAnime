@@ -6,12 +6,14 @@
     <string name="action_settings">設置</string>
     <string name="action_start_search">開始搜索</string>
     <string name="action_cut_border">自動去除黑邊</string>
+    <string name="action_open_source_license">開源許可</string>
     <string name="action_donate">前往捐贈</string>
     <string name="action_ok">確認</string>
     <string name="action_copy">複製</string>
     <string name="action_cancel">取消</string>
     <string name="hint_quota_used">已使用次數：%1$d</string>
     <string name="hint_quota_total">本月總次數：%1$d</string>
+    <string name="drawer_api_quota_title">本月 API 用量</string>
     <string name="history_hint_save_time">保存時間：</string>
     <string name="history_hint_native_title">標題：</string>
     <string name="history_hint_similarity">準確度：</string>

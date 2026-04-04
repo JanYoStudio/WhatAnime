@@ -52,6 +52,7 @@ import pw.janyo.whatanime.utils.copyToClipboardThenToast
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_cancel
+import whatanime.composeapp.generated.resources.action_cut_border
 import whatanime.composeapp.generated.resources.action_copy
 import whatanime.composeapp.generated.resources.action_donate
 import whatanime.composeapp.generated.resources.hint_copy_device_id
@@ -101,6 +102,7 @@ fun SettingsScreen(){
     val context = LocalPlatformContext.current
     val uriHandler = LocalUriHandler.current
     val vm = koinViewModel<SettingsViewModel>()
+    val cutBorders by vm.cutBorders.collectAsState()
     val hideSex by vm.hideSex.collectAsState()
     val preferWebp by vm.preferWebp.collectAsState()
     val nightMode by vm.nightMode.collectAsState()
@@ -144,6 +146,13 @@ fun SettingsScreen(){
                     Text(text = stringResource(Res.string.settings_group_application))
                 },
                 content = {
+                    CheckboxSetting(
+                        title = stringResource(Res.string.action_cut_border),
+                        checked = cutBorders,
+                        onCheckedChange = { newValue ->
+                            vm.setCutBorders(newValue)
+                        }
+                    )
                     CheckboxSetting(
                         title = stringResource(Res.string.settings_title_hide_sex),
                         subtitle = stringResource(Res.string.settings_summary_hide_sex),
