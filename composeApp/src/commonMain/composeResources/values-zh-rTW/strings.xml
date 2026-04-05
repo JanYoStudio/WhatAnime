@@ -17,6 +17,10 @@
     <string name="drawer_api_quota_priority_label">優先級</string>
     <string name="drawer_api_quota_refresh">刷新額度</string>
     <string name="drawer_api_quota_set_api_key">設置 API-Key</string>
+    <string name="drawer_api_quota_donate_title">透過贊助提高優先級</string>
+    <string name="drawer_api_quota_donate_message">贊助後可以獲得專屬 API-Key，並會根據贊助額度使用不同的請求優先級。</string>
+    <string name="drawer_api_quota_donate_sponsors">GitHub</string>
+    <string name="drawer_api_quota_donate_patreon">Patreon</string>
     <string name="drawer_api_quota_priority_free">free</string>
     <string name="drawer_api_quota_priority_hint">免費請求需要等待佇列有空位才會處理；更高優先級的請求會更晚被佇列拒絕。</string>
     <string name="drawer_api_quota_priority_action">提升優先級</string>

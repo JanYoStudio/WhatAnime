@@ -101,6 +101,10 @@ import whatanime.composeapp.generated.resources.action_open_source_license
 import whatanime.composeapp.generated.resources.action_settings
 import whatanime.composeapp.generated.resources.action_start_search
 import whatanime.composeapp.generated.resources.app_name
+import whatanime.composeapp.generated.resources.drawer_api_quota_donate_message
+import whatanime.composeapp.generated.resources.drawer_api_quota_donate_patreon
+import whatanime.composeapp.generated.resources.drawer_api_quota_donate_sponsors
+import whatanime.composeapp.generated.resources.drawer_api_quota_donate_title
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_free
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_hint
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_label
@@ -132,6 +136,7 @@ fun MainScreen() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var apiKeyDialogVisible by remember { mutableStateOf(false) }
+    var donateDialogVisible by remember { mutableStateOf(false) }
     var apiKeyInput by remember { mutableStateOf(Configure.apiKey) }
     val pickerLauncher = rememberFilePickerLauncher(FileKitType.Image) { imageFile ->
         val image = imageFile ?: return@rememberFilePickerLauncher
@@ -325,7 +330,7 @@ fun MainScreen() {
                                 Text(stringResource(Res.string.drawer_api_quota_set_api_key))
                             }
                             Button(
-                                onClick = { uriHandler.openUri("https://github.com/sponsors/soruly") },
+                                onClick = { donateDialogVisible = true },
                                 shape = ButtonGroupDefaults.connectedTrailingButtonShape,
                             ) {
                                 Icons(Icons.AutoMirrored.Filled.TrendingUp)
@@ -499,6 +504,37 @@ fun MainScreen() {
             },
             dismissButton = {
                 TextButton(onClick = { apiKeyDialogVisible = false }) {
+                    Text(stringResource(Res.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    if (donateDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { donateDialogVisible = false },
+            title = { Text(stringResource(Res.string.drawer_api_quota_donate_title)) },
+            text = {
+                Text(stringResource(Res.string.drawer_api_quota_donate_message))
+            },
+            confirmButton = {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = {
+                        donateDialogVisible = false
+                        uriHandler.openUri("https://github.com/sponsors/soruly")
+                    }) {
+                        Text(stringResource(Res.string.drawer_api_quota_donate_sponsors))
+                    }
+                    TextButton(onClick = {
+                        donateDialogVisible = false
+                        uriHandler.openUri("https://www.patreon.com/soruly")
+                    }) {
+                        Text(stringResource(Res.string.drawer_api_quota_donate_patreon))
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { donateDialogVisible = false }) {
                     Text(stringResource(Res.string.action_cancel))
                 }
             }
