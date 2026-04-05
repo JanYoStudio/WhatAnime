@@ -40,6 +40,9 @@ class MainViewModel : ComposeViewModel() {
     private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
     val searchQuota: StateFlow<SearchQuota> = _searchQuota
 
+    private val _quotaLoading = MutableStateFlow(false)
+    val quotaLoading: StateFlow<Boolean> = _quotaLoading
+
     private val _listState = MutableStateFlow(MainListState())
     val listState: StateFlow<MainListState> = _listState
 
@@ -47,8 +50,11 @@ class MainViewModel : ComposeViewModel() {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
             Logger.w("showQuota: failed", throwable)
             _searchQuota.value = SearchQuota.EMPTY
+            _quotaLoading.value = false
         }) {
+            _quotaLoading.value = true
             _searchQuota.value = animationRepository.showQuota()
+            _quotaLoading.value = false
         }
     }
 

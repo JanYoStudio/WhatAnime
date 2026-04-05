@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Plagiarism
 import androidx.compose.material.icons.outlined.ImageSearch
@@ -27,6 +28,8 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -91,14 +94,13 @@ import pw.janyo.whatanime.ui.navigation.RouteSettings
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.viewmodel.MainViewModel
 import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.action_history
-import whatanime.composeapp.generated.resources.action_open_source_license
 import whatanime.composeapp.generated.resources.action_cancel
+import whatanime.composeapp.generated.resources.action_history
 import whatanime.composeapp.generated.resources.action_ok
+import whatanime.composeapp.generated.resources.action_open_source_license
 import whatanime.composeapp.generated.resources.action_settings
 import whatanime.composeapp.generated.resources.action_start_search
 import whatanime.composeapp.generated.resources.app_name
-import whatanime.composeapp.generated.resources.drawer_api_quota_priority_action
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_free
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_hint
 import whatanime.composeapp.generated.resources.drawer_api_quota_priority_label
@@ -227,6 +229,7 @@ fun MainScreen() {
                 // ── API 额度卡片下沉到底部 ──
                 Spacer(modifier = Modifier.weight(1f))
                 val quota by vm.searchQuota.collectAsState()
+                val quotaLoading by vm.quotaLoading.collectAsState()
                 val displayQuotaTotal = if (quota.priority == 0 && quota.quota == 0) 100 else quota.quota
                 val displayQuotaUsed = if (quota.priority == 0 && quota.quota == 0 && quota.quotaUsed == 0) 0 else quota.quotaUsed
                 val quotaLoaded = displayQuotaTotal > 0
@@ -261,7 +264,7 @@ fun MainScreen() {
                                 modifier = Modifier.weight(1f),
                             )
                             Text(
-                                text = if (quotaLoaded) "$displayQuotaUsed / $displayQuotaTotal" else "-/-",
+                                text = if (quotaLoading) "loading" else if (quotaLoaded) "$displayQuotaUsed / $displayQuotaTotal" else "-/-",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -299,6 +302,7 @@ fun MainScreen() {
                         Spacer(modifier = Modifier.height(12.dp))
                         OutlinedButton(
                             onClick = { vm.showQuota() },
+                            enabled = !quotaLoading,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Icons(Icons.Outlined.Refresh)
@@ -306,21 +310,26 @@ fun MainScreen() {
                             Text(stringResource(Res.string.drawer_api_quota_refresh))
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedButton(
-                            onClick = {
-                                apiKeyInput = Configure.apiKey
-                                apiKeyDialogVisible = true
-                            },
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
-                            Text(stringResource(Res.string.drawer_api_quota_set_api_key))
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedButton(
-                            onClick = { uriHandler.openUri("https://github.com/sponsors/soruly") },
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(stringResource(Res.string.drawer_api_quota_priority_action))
+                            OutlinedButton(
+                                onClick = {
+                                    apiKeyInput = Configure.apiKey
+                                    apiKeyDialogVisible = true
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = ButtonGroupDefaults.connectedLeadingButtonShape,
+                            ) {
+                                Text(stringResource(Res.string.drawer_api_quota_set_api_key))
+                            }
+                            Button(
+                                onClick = { uriHandler.openUri("https://github.com/sponsors/soruly") },
+                                shape = ButtonGroupDefaults.connectedTrailingButtonShape,
+                            ) {
+                                Icons(Icons.AutoMirrored.Filled.TrendingUp)
+                            }
                         }
                     }
                 }
