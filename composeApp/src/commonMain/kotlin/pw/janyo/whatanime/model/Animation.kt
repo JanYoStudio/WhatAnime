@@ -1,5 +1,6 @@
 package pw.janyo.whatanime.model
 
+import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -11,6 +12,7 @@ data class SearchAnimeResult(
     val result: List<SearchAnimeResultItem>,
 )
 
+@Stable
 @Serializable
 data class SearchAnimeResultItem(
     @SerialName("anilist")

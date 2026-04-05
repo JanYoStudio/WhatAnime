@@ -1,9 +1,12 @@
 package pw.janyo.whatanime.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
@@ -26,16 +30,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.UriHandler
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.PlatformContext
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
@@ -54,16 +55,13 @@ import pw.janyo.whatanime.utils.formatEpisode
 import pw.janyo.whatanime.utils.formatTime
 import pw.janyo.whatanime.utils.showSharePanel
 import whatanime.composeapp.generated.resources.Res
+import whatanime.composeapp.generated.resources.action_copy_anilist_id
+import whatanime.composeapp.generated.resources.action_copy_my_anime_list_id
 import whatanime.composeapp.generated.resources.action_copy_title
 import whatanime.composeapp.generated.resources.action_play_preview_video
 import whatanime.composeapp.generated.resources.action_share_title
 import whatanime.composeapp.generated.resources.action_view_anilist
-import whatanime.composeapp.generated.resources.detail_hint_ani_list_id
-import whatanime.composeapp.generated.resources.detail_hint_episode
-import whatanime.composeapp.generated.resources.detail_hint_my_anime_list_id
 import whatanime.composeapp.generated.resources.detail_hint_native_title
-import whatanime.composeapp.generated.resources.detail_hint_similarity
-import whatanime.composeapp.generated.resources.detail_hint_time
 import whatanime.composeapp.generated.resources.ic_load_failed
 import whatanime.composeapp.generated.resources.janyo_studio
 
@@ -73,104 +71,113 @@ fun SearchResultItem(
     result: SearchAnimeResultItem,
     onClick: () -> Unit,
 ) {
+    val typography = MaterialTheme.typography
+    val colorScheme = MaterialTheme.colorScheme
+    val title = result.aniList.title.native ?: result.fileName
+    val episodeText = formatEpisode(result.episode)
+    val timeText = result.formatTimeRange()
+    val metaText = buildList {
+        episodeText?.let { add("第 $it 集") }
+        timeText?.let { add(it) }
+    }.joinToString(" • ")
+    val similarityText = "${formatDecimal(result.similarity * 100, 1)}%"
+
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column {
-                BuildText(
-                    text = stringResource(
-                        Res.string.detail_hint_native_title,
-                        result.aniList.title.native ?: result.fileName
-                    ),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(result.image)
+                    .apply {
+                        if (Configure.preferWebp) {
+                            httpHeaders(
+                                NetworkHeaders.Builder()
+                                    .set("Accept", "image/webp")
+                                    .build()
+                            )
+                        }
+                    }
+                    .build(),
+                placeholder = painterResource(Res.drawable.janyo_studio),
+                error = painterResource(Res.drawable.ic_load_failed),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(144.dp)
+                    .aspectRatio(16f / 9f)
+                    .align(Alignment.CenterVertically)
+                    .clip(RoundedCornerShape(4.dp))
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = "《$title》",
+                    style = typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    color = colorScheme.onSurface,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                 )
-                formatEpisode(result.episode)?.let { episodeString ->
-                    BuildText(
-                        text = stringResource(
-                            Res.string.detail_hint_episode,
-                            episodeString
-                        ),
-                        fontSize = 14.sp
+                if (metaText.isNotEmpty()) {
+                    Text(
+                        text = metaText,
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(result.image)
-                        .apply {
-                            if (Configure.preferWebp) {
-                                httpHeaders(
-                                    NetworkHeaders.Builder()
-                                        .set("Accept", "image/webp")
-                                        .build()
-                                )
-                            }
-                        }
-                        .build(),
-                    placeholder = painterResource(Res.drawable.janyo_studio),
-                    error = painterResource(Res.drawable.ic_load_failed),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(90.dp)
-                        .width(160.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                val annotationText = buildAnnotatedString {
-                    if (result.from != null && result.from != 0.0 && result.to != null && result.to != 0.0) {
-                        append(stringResource(Res.string.detail_hint_time))
-                        append("${(result.from.toLong() * 1000).formatTime()} ~ ${(result.to.toLong() * 1000).formatTime()}")
-                        appendLine()
-                    }
-                    result.aniList.id?.let {
-                        append(stringResource(Res.string.detail_hint_ani_list_id))
-                        append(result.aniList.id.toString())
-                        appendLine()
-                    }
-                    result.aniList.idMal?.let {
-                        append(stringResource(Res.string.detail_hint_my_anime_list_id))
-                        append(result.aniList.idMal.toString())
-                        appendLine()
-                    }
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(Res.string.detail_hint_similarity))
-                        append("${formatDecimal(result.similarity * 100, 3)}%")
-                    }
+                result.aniList.id?.let {
+                    Text(
+                        text = "AniList ID：$it",
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
-                Text(
-                    text = annotationText,
-                    fontSize = 12.sp,
-                )
+                result.aniList.idMal?.let {
+                    Text(
+                        text = "MyAnimeList ID：$it",
+                        style = typography.bodySmall,
+                        color = colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = similarityText,
+                        style = typography.labelMedium,
+                        color = colorScheme.primary,
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-private fun BuildText(
-    text: String,
-    fontWeight: FontWeight? = null,
-    fontSize: TextUnit = 12.sp,
-    textColor: Color = Color.Unspecified
-) {
-    Text(
-        text = text,
-        fontSize = fontSize,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        fontWeight = fontWeight,
-        color = textColor,
-    )
+private fun SearchAnimeResultItem.formatTimeRange(): String? {
+    if (from == null || to == null || (from == 0.0 && to == 0.0)) {
+        return null
+    }
+    return "${(from.toLong() * 1000).formatTime()} - ${(to.toLong() * 1000).formatTime()}"
 }
 
 
@@ -197,14 +204,17 @@ fun BuildBottomSheet(
             )
         ) {
             val title = item.aniList.title.native ?: item.fileName
-            Column(modifier = Modifier.padding(bottom = 32.dp)) {
+            Column(modifier = Modifier.padding(bottom = 24.dp)) {
                 Text(
                     text = stringResource(
                         Res.string.detail_hint_native_title,
                         title
                     ),
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                 )
+                Spacer(modifier = Modifier.height(14.dp))
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_copy_title)) },
                     leadingContent = { Icons(Icons.Default.ContentCopy) },
@@ -213,7 +223,39 @@ fun BuildBottomSheet(
                         scope.launch { copyToClipboardThenToast(context, title) }
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 )
+                item.aniList.id?.let { aniListId ->
+                    ListItem(
+                        headlineContent = { Text(stringResource(Res.string.action_copy_anilist_id)) },
+                        supportingContent = { Text(aniListId.toString()) },
+                        leadingContent = { Icons(Icons.Default.ContentCopy) },
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            openBottomSheet.value = false
+                            scope.launch { copyToClipboardThenToast(context, aniListId.toString()) }
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        tonalElevation = 0.dp,
+                        shadowElevation = 0.dp,
+                    )
+                }
+                item.aniList.idMal?.let { myAnimeListId ->
+                    ListItem(
+                        headlineContent = { Text(stringResource(Res.string.action_copy_my_anime_list_id)) },
+                        supportingContent = { Text(myAnimeListId.toString()) },
+                        leadingContent = { Icons(Icons.Default.ContentCopy) },
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            openBottomSheet.value = false
+                            scope.launch {
+                                copyToClipboardThenToast(context, myAnimeListId.toString())
+                            }
+                        },
+                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        tonalElevation = 0.dp,
+                        shadowElevation = 0.dp,
+                    )
+                }
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_share_title)) },
                     leadingContent = { Icons(Icons.Default.Share) },
@@ -222,6 +264,8 @@ fun BuildBottomSheet(
                         showSharePanel(context, title)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 )
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_view_anilist)) },
@@ -231,6 +275,8 @@ fun BuildBottomSheet(
                         uriHandler.openUri("https://anilist.co/anime/${item.aniList.id}")
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 )
                 ListItem(
                     headlineContent = { Text(stringResource(Res.string.action_play_preview_video)) },
@@ -240,6 +286,8 @@ fun BuildBottomSheet(
                         onPlayVideo(item)
                     },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp,
                 )
             }
         }

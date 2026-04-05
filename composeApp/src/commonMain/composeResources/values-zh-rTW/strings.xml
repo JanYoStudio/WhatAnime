@@ -93,6 +93,8 @@
     <string name="title_activity_receive_share">使用WhatAnime進行搜索</string>
     <string name="settings_title_debug_mode">問題排查模式</string>
     <string name="action_copy_title">複製標題</string>
+    <string name="action_copy_anilist_id">複製 AniList ID</string>
+    <string name="action_copy_my_anime_list_id">複製 MyAnimeList ID</string>
     <string name="action_share_title">分享標題</string>
     <string name="action_view_anilist">查看 Anilist 資訊</string>
     <string name="action_play_preview_video">播放預覽影片</string>

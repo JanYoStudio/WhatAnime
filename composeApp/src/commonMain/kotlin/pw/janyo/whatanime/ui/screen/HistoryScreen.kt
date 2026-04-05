@@ -3,6 +3,7 @@ package pw.janyo.whatanime.ui.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -274,13 +275,16 @@ private fun BuildResultItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 if (!history.isOldData) {
-                    Text(
-                        text = similarity,
-                        style = typography.labelMedium,
-                        color = colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = similarity,
+                            style = typography.labelMedium,
+                            color = colorScheme.primary,
+                            modifier = Modifier.align(Alignment.BottomEnd),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
             }
         }
@@ -296,6 +300,7 @@ private fun ReadOnlyAnimationHistory.formatDisplayTime(): String {
 
     return when {
         diffMillis < 10 * minuteMillis -> "刚刚"
+        diffMillis < hourMillis -> "${diffMillis / minuteMillis}分钟前"
         diffMillis < dayMillis -> "${diffMillis / hourMillis}小时前"
         diffMillis < 30 * dayMillis -> "${diffMillis / dayMillis}天前"
         else -> Instant.fromEpochMilliseconds(time)
