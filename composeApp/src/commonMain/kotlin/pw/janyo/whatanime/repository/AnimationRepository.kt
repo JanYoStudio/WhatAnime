@@ -4,14 +4,14 @@ import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.delete
 import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.name
-import io.github.vinceglb.filekit.readBytes
+import io.github.vinceglb.filekit.size
+import io.github.vinceglb.filekit.source
+import io.ktor.client.request.forms.InputProvider
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.io.buffered
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
@@ -46,18 +46,15 @@ class AnimationRepository : KoinComponent {
         file: PlatformFile,
         originPath: String,
         cachePath: String,
-        mimeType: String,
     ): SearchAnimeResult {
         val history = queryByFileMd5(file)
         if (history != null) {
             return history
         }
         checkNetwork()
-        val byteArray = file.readBytes()
         val multipart = MultiPartFormDataContent(formData {
-            append("image", byteArray, Headers.build {
-                append(HttpHeaders.ContentType, mimeType)
-                append(HttpHeaders.ContentDisposition, "filename=${file.name}")
+            append("image", InputProvider(file.size()) {
+                file.source().buffered()
             })
         })
         val data = if (Configure.cutBorders) {
@@ -82,10 +79,9 @@ class AnimationRepository : KoinComponent {
         file: PlatformFile,
         originPath: String,
         cachePath: String,
-        mimeType: String,
     ): SearchAnimeResult {
         val animationHistory = historyService.queryHistoryByOriginPath(originPath)
-            ?: return queryAnimationByImageOnline(file, originPath, cachePath, mimeType)
+            ?: return queryAnimationByImageOnline(file, originPath, cachePath)
         return Json.decodeFromString(animationHistory.result)
     }
 

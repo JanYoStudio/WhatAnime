@@ -8,7 +8,6 @@ import io.github.vinceglb.filekit.absolutePath
 import io.github.vinceglb.filekit.copyTo
 import io.github.vinceglb.filekit.delete
 import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.extension
 import io.github.vinceglb.filekit.size
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.cancel
@@ -24,12 +23,10 @@ import pw.janyo.whatanime.model.SearchQuota
 import pw.janyo.whatanime.repository.AnimationRepository
 import pw.janyo.whatanime.ui.components.PlayerState
 import pw.janyo.whatanime.utils.getCacheFile
-import pw.janyo.whatanime.utils.getMimeType
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.hint_cache_make_dir_error
 import whatanime.composeapp.generated.resources.hint_file_too_large
 import whatanime.composeapp.generated.resources.hint_no_result
-import whatanime.composeapp.generated.resources.hint_select_file_path_null
 import whatanime.composeapp.generated.resources.hint_unknown_error
 
 class MainViewModel : ComposeViewModel() {
@@ -97,10 +94,8 @@ class MainViewModel : ComposeViewModel() {
                 imageFile.copyTo(cacheFile)
                 cachePath = cacheFile.absolutePath()
             }
-            val mimeType = getMimeType(imageFile.extension)
-                ?: throw RuntimeException(getString(Res.string.hint_select_file_path_null))
             val animation = animationRepository.queryAnimationByImageLocal(
-                imageFile, imageFile.absolutePath(), cachePath, mimeType,
+                imageFile, imageFile.absolutePath(), cachePath,
             )
             val result = if (Configure.hideSex) {
                 animation.result.filter { !it.aniList.adult }

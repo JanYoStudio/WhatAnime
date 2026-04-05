@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.TipsAndUpdates
@@ -22,6 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,12 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
@@ -51,6 +50,7 @@ import coil3.request.ImageRequest
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
@@ -62,7 +62,6 @@ import pw.janyo.whatanime.ui.components.SwipeToDeleteContainer
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.navigation.RouteDetail
 import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.utils.formatDateTime
 import pw.janyo.whatanime.utils.formatDecimal
 import pw.janyo.whatanime.viewmodel.HistoryViewModel
 import whatanime.composeapp.generated.resources.Res
@@ -72,13 +71,9 @@ import whatanime.composeapp.generated.resources.hint_data_convert_no_detail_in_h
 import whatanime.composeapp.generated.resources.hint_delete
 import whatanime.composeapp.generated.resources.hint_delete_desc
 import whatanime.composeapp.generated.resources.hint_swipe_to_delete
-import whatanime.composeapp.generated.resources.history_hint_ani_list_id
-import whatanime.composeapp.generated.resources.history_hint_native_title
-import whatanime.composeapp.generated.resources.history_hint_save_time
-import whatanime.composeapp.generated.resources.history_hint_similarity
 import whatanime.composeapp.generated.resources.title_activity_history
+import kotlin.time.Clock
 import kotlin.time.Instant
-
 @Composable
 fun HistoryScreen() {
     val navController = LocalNavController.current!!
@@ -223,7 +218,9 @@ private fun BuildResultItem(
     onClickOldData: () -> Unit,
     onClick: () -> Unit,
 ) {
-    val similarity = "${formatDecimal(history.similarity * 100, 4)}%"
+    val typography = MaterialTheme.typography
+    val colorScheme = MaterialTheme.colorScheme
+    val similarity = "${formatDecimal(history.similarity * 100, 1)}%"
     Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
@@ -240,7 +237,7 @@ private fun BuildResultItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
@@ -249,38 +246,66 @@ private fun BuildResultItem(
                     .diskCachePolicy(CachePolicy.DISABLED)
                     .build(),
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(90.dp)
-                    .width(160.dp),
+                    .width(144.dp)
+                    .height(81.dp)
+                    .clip(RoundedCornerShape(4.dp)),
             )
-            val annotationText = buildAnnotatedString {
-                append(stringResource(Res.string.history_hint_save_time))
-                append(
-                    Instant.fromEpochMilliseconds(history.time)
-                        .toLocalDateTime(TimeZone.currentSystemDefault()).formatDateTime()
-                )
-                appendLine()
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(stringResource(Res.string.history_hint_native_title))
-                    append(history.title)
-                }
-                if (!history.isOldData) {
-                    appendLine()
-                    append(stringResource(Res.string.history_hint_ani_list_id))
-                    append(history.anilistId.toString())
-                    appendLine()
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(Res.string.history_hint_similarity))
-                        append(similarity)
-                    }
-                }
-            }
-            SelectionContainer {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(
-                    text = annotationText,
-                    fontSize = 12.sp,
+                    text = history.title,
+                    style = typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorScheme.onSurface,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                 )
+                Text(
+                    text = history.formatDisplayTime(),
+                    style = typography.bodySmall,
+                    color = colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (!history.isOldData) {
+                    Text(
+                        text = similarity,
+                        style = typography.labelMedium,
+                        color = colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
+    }
+}
+
+private fun ReadOnlyAnimationHistory.formatDisplayTime(): String {
+    val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
+    val diffMillis = (currentTimeMillis - time).coerceAtLeast(0L)
+    val minuteMillis = 60 * 1000L
+    val hourMillis = 60 * minuteMillis
+    val dayMillis = 24 * hourMillis
+
+    return when {
+        diffMillis < 10 * minuteMillis -> "刚刚"
+        diffMillis < dayMillis -> "${diffMillis / hourMillis}小时前"
+        diffMillis < 30 * dayMillis -> "${diffMillis / dayMillis}天前"
+        else -> Instant.fromEpochMilliseconds(time)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .let { dateTime ->
+                val month = dateTime.month.number.toString().padStart(2, '0')
+                val day = dateTime.day.toString().padStart(2, '0')
+                val hour = dateTime.hour.toString().padStart(2, '0')
+                val minute = dateTime.minute.toString().padStart(2, '0')
+                "${dateTime.year}-${month}-${day} ${hour}:${minute}"
+            }
     }
 }
