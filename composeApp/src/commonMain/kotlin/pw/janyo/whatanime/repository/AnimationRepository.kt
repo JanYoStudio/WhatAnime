@@ -4,11 +4,16 @@ import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.delete
 import io.github.vinceglb.filekit.exists
+import io.github.vinceglb.filekit.mimeType
+import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.size
 import io.github.vinceglb.filekit.source
 import io.ktor.client.request.forms.InputProvider
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.io.buffered
@@ -42,6 +47,7 @@ class AnimationRepository : KoinComponent {
         }
     }
 
+    @OptIn(InternalAPI::class)
     private suspend fun queryAnimationByImageOnline(
         file: PlatformFile,
         originPath: String,
@@ -55,6 +61,9 @@ class AnimationRepository : KoinComponent {
         val multipart = MultiPartFormDataContent(formData {
             append("image", InputProvider(file.size()) {
                 file.source().buffered()
+            }, Headers.build {
+                append(HttpHeaders.ContentType, file.mimeType()!!.toString())
+                append(HttpHeaders.ContentDisposition, "filename=${file.name}")
             })
         })
         val data = if (Configure.cutBorders) {
