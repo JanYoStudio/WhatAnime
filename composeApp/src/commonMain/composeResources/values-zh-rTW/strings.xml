@@ -14,6 +14,13 @@
     <string name="hint_quota_used">已使用次數：%1$d</string>
     <string name="hint_quota_total">本月總次數：%1$d</string>
     <string name="drawer_api_quota_title">本月 API 用量</string>
+    <string name="drawer_api_quota_priority_label">優先級</string>
+    <string name="drawer_api_quota_refresh">刷新額度</string>
+    <string name="drawer_api_quota_set_api_key">設置 API-Key</string>
+    <string name="drawer_api_quota_priority_free">free</string>
+    <string name="drawer_api_quota_priority_hint">免費請求需要等待佇列有空位才會處理；更高優先級的請求會更晚被佇列拒絕。</string>
+    <string name="drawer_api_quota_priority_action">提升優先級</string>
+    <string name="drawer_slogan">透過截圖尋找番劇</string>
     <string name="history_hint_save_time">保存時間：</string>
     <string name="history_hint_native_title">標題：</string>
     <string name="history_hint_similarity">準確度：</string>

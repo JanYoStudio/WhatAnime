@@ -21,6 +21,13 @@
     <string name="hint_quota_used">Quota Used: %1$d</string>
     <string name="hint_quota_total">Quota Total: %1$d</string>
     <string name="drawer_api_quota_title">Monthly API Usage</string>
+    <string name="drawer_api_quota_priority_label">Priority</string>
+    <string name="drawer_api_quota_refresh">Refresh quota</string>
+    <string name="drawer_api_quota_set_api_key">Set API-Key</string>
+    <string name="drawer_api_quota_priority_free">free</string>
+    <string name="drawer_api_quota_priority_hint">Free requests wait for spare queue slots. Higher priority requests stay in queue longer before being rejected.</string>
+    <string name="drawer_api_quota_priority_action">Get higher priority</string>
+    <string name="drawer_slogan">Find your anime by screenshot</string>
 
     <string name="history_hint_save_time">Save time: </string>
     <string name="history_hint_native_title">Title: </string>
