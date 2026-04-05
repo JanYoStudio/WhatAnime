@@ -31,7 +31,6 @@ import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.janyo.whatanime.Constant
 import pw.janyo.whatanime.base.appVersionName
 import pw.janyo.whatanime.base.getStoreIcon
 import pw.janyo.whatanime.base.getStoreTitle
@@ -43,7 +42,6 @@ import pw.janyo.whatanime.ui.preference.CheckboxSetting
 import pw.janyo.whatanime.ui.preference.ListSetting
 import pw.janyo.whatanime.ui.preference.SettingsGroup
 import pw.janyo.whatanime.ui.preference.SettingsMenuLink
-import pw.janyo.whatanime.ui.preference.TextSettings
 import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.ui.theme.WaIcons
 import pw.janyo.whatanime.ui.theme.showNightModeSelectList
@@ -52,45 +50,36 @@ import pw.janyo.whatanime.utils.copyToClipboardThenToast
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.action_cancel
-import whatanime.composeapp.generated.resources.action_cut_border
 import whatanime.composeapp.generated.resources.action_copy
-import whatanime.composeapp.generated.resources.action_donate
+import whatanime.composeapp.generated.resources.action_cut_border
 import whatanime.composeapp.generated.resources.hint_copy_device_id
 import whatanime.composeapp.generated.resources.settings_group_about
 import whatanime.composeapp.generated.resources.settings_group_about_what_anime
 import whatanime.composeapp.generated.resources.settings_group_application
 import whatanime.composeapp.generated.resources.settings_link_about_github
-import whatanime.composeapp.generated.resources.settings_link_about_google_play
 import whatanime.composeapp.generated.resources.settings_link_about_janyo_license
 import whatanime.composeapp.generated.resources.settings_link_about_license
 import whatanime.composeapp.generated.resources.settings_link_developer_what_anime
 import whatanime.composeapp.generated.resources.settings_link_what_anime
 import whatanime.composeapp.generated.resources.settings_summary_about_github
-import whatanime.composeapp.generated.resources.settings_summary_about_google_play
 import whatanime.composeapp.generated.resources.settings_summary_about_janyo_license
 import whatanime.composeapp.generated.resources.settings_summary_about_license
-import whatanime.composeapp.generated.resources.settings_summary_api_key
+import whatanime.composeapp.generated.resources.settings_summary_cut_border
 import whatanime.composeapp.generated.resources.settings_summary_debug_mode
 import whatanime.composeapp.generated.resources.settings_summary_developer_what_anime
 import whatanime.composeapp.generated.resources.settings_summary_hide_sex
 import whatanime.composeapp.generated.resources.settings_summary_prefer_webp
-import whatanime.composeapp.generated.resources.settings_summary_quota_total
-import whatanime.composeapp.generated.resources.settings_summary_quota_used
 import whatanime.composeapp.generated.resources.settings_summary_what_anime
 import whatanime.composeapp.generated.resources.settings_title_about_device_id
 import whatanime.composeapp.generated.resources.settings_title_about_github
-import whatanime.composeapp.generated.resources.settings_title_about_google_play
 import whatanime.composeapp.generated.resources.settings_title_about_janyo_license
 import whatanime.composeapp.generated.resources.settings_title_about_license
 import whatanime.composeapp.generated.resources.settings_title_about_version
-import whatanime.composeapp.generated.resources.settings_title_api_key
 import whatanime.composeapp.generated.resources.settings_title_debug_mode
 import whatanime.composeapp.generated.resources.settings_title_developer_what_anime
 import whatanime.composeapp.generated.resources.settings_title_hide_sex
 import whatanime.composeapp.generated.resources.settings_title_night_mode
 import whatanime.composeapp.generated.resources.settings_title_prefer_webp
-import whatanime.composeapp.generated.resources.settings_title_quota_total
-import whatanime.composeapp.generated.resources.settings_title_quota_used
 import whatanime.composeapp.generated.resources.settings_title_recent_http_responses
 import whatanime.composeapp.generated.resources.settings_title_what_anime
 import whatanime.composeapp.generated.resources.title_activity_settings
@@ -106,8 +95,6 @@ fun SettingsScreen(){
     val hideSex by vm.hideSex.collectAsState()
     val preferWebp by vm.preferWebp.collectAsState()
     val nightMode by vm.nightMode.collectAsState()
-    val searchQuota by vm.searchQuota.collectAsState()
-    val customApiKey by vm.customApiKey.collectAsState()
     val debugMode by vm.debugMode.collectAsState()
     val httpResponses by vm.httpResponsesFlow.collectAsState()
 
@@ -148,6 +135,7 @@ fun SettingsScreen(){
                 content = {
                     CheckboxSetting(
                         title = stringResource(Res.string.action_cut_border),
+                        subtitle = stringResource(Res.string.settings_summary_cut_border),
                         checked = cutBorders,
                         onCheckedChange = { newValue ->
                             vm.setCutBorders(newValue)
@@ -185,35 +173,6 @@ fun SettingsScreen(){
                                 )]
                             )
                         },
-                    )
-                    TextSettings(
-                        title = stringResource(Res.string.settings_title_api_key),
-                        subtitle = stringResource(Res.string.settings_summary_api_key),
-                        defaultValue = customApiKey,
-                        onValueChange = {
-                            vm.setCustomApiKey(it)
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.action_donate),
-                        subtitle = Constant.DONATE_URL,
-                        onClick = {
-                            uriHandler.openUri(Constant.DONATE_URL)
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_quota_used),
-                        subtitle = stringResource(
-                            Res.string.settings_summary_quota_used,
-                            searchQuota.quotaUsed
-                        ),
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_quota_total),
-                        subtitle = stringResource(
-                            Res.string.settings_summary_quota_total,
-                            searchQuota.quota
-                        ),
                     )
                 })
             SettingsGroup(

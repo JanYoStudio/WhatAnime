@@ -7,7 +7,8 @@
     <string name="action_history">History</string>
     <string name="action_settings">Settings</string>
     <string name="action_start_search">Start Search</string>
-    <string name="action_cut_border">Cut Borders</string>
+    <string name="action_cut_border">Auto-crop black borders before search</string>
+    <string name="settings_summary_cut_border">Turning this on may slow searches because the server crops black borders before matching</string>
     <string name="action_open_source_license">Open Source License</string>
     <string name="action_donate">Go to Donate</string>
     <string name="action_ok">Ok</string>
@@ -20,17 +21,17 @@
 
     <string name="hint_quota_used">Quota Used: %1$d</string>
     <string name="hint_quota_total">Quota Total: %1$d</string>
-    <string name="drawer_api_quota_title">Monthly API Usage</string>
-    <string name="drawer_api_quota_priority_label">Priority</string>
+    <string name="drawer_api_quota_title">Monthly search quota</string>
+    <string name="drawer_api_quota_priority_label">Current priority</string>
     <string name="drawer_api_quota_refresh">Refresh quota</string>
-    <string name="drawer_api_quota_set_api_key">Set API-Key</string>
-    <string name="drawer_api_quota_donate_title">Support for higher priority</string>
-    <string name="drawer_api_quota_donate_message">Donating can get you a personal API-Key. Different donation levels unlock different request priorities.</string>
-    <string name="drawer_api_quota_donate_sponsors">GitHub</string>
-    <string name="drawer_api_quota_donate_patreon">Patreon</string>
-    <string name="drawer_api_quota_priority_free">free</string>
-    <string name="drawer_api_quota_priority_hint">Free requests wait for spare queue slots. Higher priority requests stay in queue longer before being rejected.</string>
-    <string name="drawer_api_quota_priority_action">Get higher priority</string>
+    <string name="drawer_api_quota_set_api_key">Enter personal API key</string>
+    <string name="drawer_api_quota_donate_title">Get higher priority through support</string>
+    <string name="drawer_api_quota_donate_message">With a personal API key, you can use a higher request priority for a more stable search experience.</string>
+    <string name="drawer_api_quota_donate_sponsors" translatable="false">GitHub</string>
+    <string name="drawer_api_quota_donate_patreon" translatable="false">Patreon</string>
+    <string name="drawer_api_quota_priority_free" translatable="false">free</string>
+    <string name="drawer_api_quota_priority_hint">Free requests are queued first. Higher priority requests are less likely to be rejected when the queue is busy.</string>
+    <string name="drawer_api_quota_priority_action">See how to get higher priority</string>
     <string name="drawer_slogan">Find your anime by screenshot</string>
 
     <string name="history_hint_save_time">Save time: </string>
@@ -72,46 +73,42 @@
     <string name="hint_file_too_large">The file is too large, please perform a manual compression!</string>
     <string name="hint_copy_done">Copied to clipboard</string>
 
-    <string name="settings_group_application">Application Settings</string>
-    <string name="settings_title_hide_sex">Hide Sex Content</string>
+    <string name="settings_group_application">Search &amp; Display</string>
+    <string name="settings_title_hide_sex">Hide sensitive results</string>
     <string name="settings_summary_hide_sex" translatable="false">#NSFW</string>
-    <string name="settings_title_prefer_webp">Prefer WEBP image</string>
-    <string name="settings_summary_prefer_webp">Prioritize the delivery of images in the WEBP format to reduce the data transmission volume of images (please disable this option if your device does not support WEBP)</string>
-    <string name="settings_title_debug_mode">Debug mode</string>
-    <string name="settings_summary_debug_mode">Enable debug mode to log HTTP responses</string>
-    <string name="settings_title_api_key">Custom Api Key</string>
-    <string name="settings_summary_api_key">If you've donated to whatAnime, you can fill in the ApiKey you got here. <b>Note that if the ApiKey you enter is invalid, you will not be able to use the search feature.</b></string>
-    <string name="settings_title_quota_used">Quota Used</string>
-    <string name="settings_summary_quota_used">Usage this month: %1$d</string>
-    <string name="settings_title_quota_total">Quota Total</string>
-    <string name="settings_summary_quota_total">Total for the month: %1$d</string>
-    <string name="settings_group_about">About</string>
-    <string name="settings_title_about_github">Github</string>
+    <string name="settings_title_prefer_webp">Prefer WEBP images</string>
+    <string name="settings_summary_prefer_webp">Load WEBP images first when supported to reduce data usage</string>
+    <string name="settings_title_debug_mode">Troubleshooting mode</string>
+    <string name="settings_summary_debug_mode">Keep recent HTTP responses for troubleshooting only</string>
+    <string name="settings_title_api_key">Enter personal API key</string>
+    <string name="settings_summary_api_key">Enter your personal trace.moe API key here if you have one. <b>An invalid key may cause searches to fail.</b></string>
+    <string name="settings_group_about">App Info</string>
+    <string name="settings_title_about_github">Project GitHub</string>
     <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
     <string name="settings_link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
-    <string name="settings_title_about_license">Open Source License</string>
+    <string name="settings_title_about_license">Open-source licenses</string>
     <string name="settings_summary_about_license" translatable="false">Apache License 2.0</string>
     <string name="settings_link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
+    <string name="settings_title_about_janyo_license">License details</string>
+    <string name="settings_summary_about_janyo_license">JanYo Studio licensing information</string>
+    <string name="settings_link_about_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
     <string name="settings_title_about_google_play" translatable="false">Google Play Store</string>
     <string name="settings_summary_about_google_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="settings_link_about_google_play" translatable="false">https://play.google.com/store/apps/details?id=pw.janyo.whatanime</string>
     <string name="settings_title_about_app_store" translatable="false">App Store</string>
     <string name="settings_summary_about_app_store" translatable="false">https://apps.apple.com/us/app/whatanime/id6748246489</string>
     <string name="settings_link_about_app_store" translatable="false">https://apps.apple.com/us/app/whatanime/id6748246489</string>
-    <string name="settings_title_about_janyo_license">License</string>
-    <string name="settings_summary_about_janyo_license">JanYo Studio License</string>
-    <string name="settings_link_about_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
-    <string name="settings_title_about_version">Version</string>
+    <string name="settings_title_about_version">App version</string>
     <string name="settings_title_about_device_id">Device ID</string>
-    <string name="settings_group_about_what_anime">About WhatAnime</string>
+    <string name="settings_group_about_what_anime">About trace.moe</string>
     <string name="settings_title_developer_what_anime" translatable="false">soruly</string>
-    <string name="settings_summary_developer_what_anime">WhatAnime API Developer</string>
+    <string name="settings_summary_developer_what_anime">trace.moe API developer</string>
     <string name="settings_link_developer_what_anime" translatable="false">https://about.me/soruly</string>
     <string name="settings_title_what_anime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
     <string name="settings_summary_what_anime" translatable="false">GNU General Public License v3.0</string>
     <string name="settings_link_what_anime" translatable="false">https://trace.moe/</string>
-    <string name="settings_title_recent_http_responses">Recent HTTP Responses</string>
-    <string name="settings_title_night_mode">Night Mode</string>
+    <string name="settings_title_recent_http_responses">Recent HTTP responses</string>
+    <string name="settings_title_night_mode">Theme</string>
     <string name="array_night_mode_auto">Auto</string>
     <string name="array_night_mode_always_on">Always On</string>
     <string name="array_night_mode_always_off">Always Off</string>

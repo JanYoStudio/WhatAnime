@@ -5,7 +5,8 @@
     <string name="action_about_whatanime">关于WhatAnime</string>
     <string name="action_settings">设置</string>
     <string name="action_start_search">开始搜索</string>
-    <string name="action_cut_border">自动去除黑边</string>
+    <string name="action_cut_border">搜索前自动裁剪黑边</string>
+    <string name="settings_summary_cut_border">开启后会增加检索耗时，服务器会先裁剪黑边，再进行匹配</string>
     <string name="action_open_source_license">开源许可</string>
     <string name="action_donate">前往捐赠</string>
     <string name="action_ok">确认</string>
@@ -13,17 +14,14 @@
     <string name="action_cancel">取消</string>
     <string name="hint_quota_used">已使用次数：%1$d</string>
     <string name="hint_quota_total">本月总次数：%1$d</string>
-    <string name="drawer_api_quota_title">本月 API 用量</string>
-    <string name="drawer_api_quota_priority_label">优先级</string>
+    <string name="drawer_api_quota_title">本月检索额度</string>
+    <string name="drawer_api_quota_priority_label">当前优先级</string>
     <string name="drawer_api_quota_refresh">刷新额度</string>
-    <string name="drawer_api_quota_set_api_key">设置 API-Key</string>
-    <string name="drawer_api_quota_donate_title">通过捐赠提高优先级</string>
-    <string name="drawer_api_quota_donate_message">捐赠后可以获得专属 API-Key，并会根据捐赠额度使用不同的请求优先级。</string>
-    <string name="drawer_api_quota_donate_sponsors">GitHub</string>
-    <string name="drawer_api_quota_donate_patreon">Patreon</string>
-    <string name="drawer_api_quota_priority_free">free</string>
-    <string name="drawer_api_quota_priority_hint">免费请求需要等待队列有空位才会处理；更高优先级的请求会更晚被队列拒绝。</string>
-    <string name="drawer_api_quota_priority_action">提升优先级</string>
+    <string name="drawer_api_quota_set_api_key">输入专属 API Key</string>
+    <string name="drawer_api_quota_donate_title">通过赞助获取更高优先级</string>
+    <string name="drawer_api_quota_donate_message">获得专属 API Key 后，可使用更高的请求优先级并享受更稳定的检索体验。</string>
+    <string name="drawer_api_quota_priority_hint">免费请求需要排队处理；优先级越高，请求越不容易因队列拥挤而被拒绝。</string>
+    <string name="drawer_api_quota_priority_action">了解优先级提升方式</string>
     <string name="drawer_slogan">通过截图寻找番剧</string>
     <string name="history_hint_save_time">保存时间：</string>
     <string name="history_hint_native_title">标题：</string>
@@ -49,28 +47,35 @@
     <string name="hint_searching">正在搜索中，请稍后……</string>
     <string name="hint_select_to_search">点击搜索按钮开始</string>
     <string name="hint_copy_done">已复制到剪切板</string>
-    <string name="settings_group_application">应用设置</string>
-    <string name="settings_title_hide_sex">隐藏敏感内容</string>
-    <string name="settings_title_prefer_webp">使用 WEBP 格式</string>
-    <string name="settings_summary_prefer_webp">优先响应WEBP格式的图片，这会降低图片的传输数据量（注意，如果设备不支持WEBP，请关闭此选项）</string>
-    <string name="settings_summary_debug_mode">启动调试模式记录HTTP响应数据</string>
-    <string name="settings_title_api_key">自定义Api Key</string>
-    <string name="settings_summary_api_key">如果您捐赠过WhatAnime，您可以在这里填入获得的ApiKey。<b>请注意：如果您输入的ApiKey是无效的，可能会导致无法正常使用搜索功能。</b></string>
-    <string name="settings_title_quota_used">已使用的额度</string>
-    <string name="settings_summary_quota_used">本月已使用为：%1$d</string>
-    <string name="settings_title_quota_total">总额度</string>
-    <string name="settings_summary_quota_total">本月总额度为：%1$d</string>
-    <string name="settings_group_about">关于</string>
-    <string name="settings_title_about_github">Github地址</string>
-    <string name="settings_title_about_license">开源协议声明</string>
-    <string name="settings_title_about_janyo_license">授权管理</string>
-    <string name="settings_summary_about_janyo_license">JanYo Studio授权解决方案</string>
-    <string name="settings_title_about_version">当前应用版本</string>
-    <string name="settings_title_about_device_id">设备ID</string>
-    <string name="settings_group_about_what_anime">关于WhatAnime</string>
-    <string name="settings_summary_developer_what_anime">WhatAnime API开发者</string>
-    <string name="settings_title_recent_http_responses">最近的HTTP请求</string>
-    <string name="settings_title_night_mode">夜间模式</string>
+    <string name="settings_group_application">搜索与显示</string>
+    <string name="settings_title_hide_sex">隐藏敏感结果</string>
+    <string name="settings_summary_hide_sex">尽量不显示可能包含敏感内容的搜索结果</string>
+    <string name="settings_title_prefer_webp">优先加载 WEBP 图片</string>
+    <string name="settings_summary_prefer_webp">在设备支持的情况下优先加载 WEBP 图片，以减少流量消耗</string>
+    <string name="settings_summary_debug_mode">记录最近的 HTTP 响应，仅用于排查问题</string>
+    <string name="settings_title_api_key">输入专属 API Key</string>
+    <string name="settings_summary_api_key">如果您已获得 trace.moe 提供的专属 API Key，可在这里输入。<b>输入无效的 Key 可能会导致搜索失败。</b></string>
+    <string name="settings_group_about">应用信息</string>
+    <string name="settings_title_about_github">项目 GitHub</string>
+    <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
+    <string name="settings_link_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>
+    <string name="settings_title_about_license">开源许可</string>
+    <string name="settings_summary_about_license" translatable="false">Apache License 2.0</string>
+    <string name="settings_link_about_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/LICENSE</string>
+    <string name="settings_title_about_janyo_license">授权说明</string>
+    <string name="settings_summary_about_janyo_license">查看 JanYo Studio 授权方案说明</string>
+    <string name="settings_link_about_janyo_license" translatable="false">https://github.com/JanYoStudio/WhatAnime/blob/dev/README.md</string>
+    <string name="settings_title_about_version">应用版本</string>
+    <string name="settings_title_about_device_id">设备标识</string>
+    <string name="settings_group_about_what_anime">关于 trace.moe</string>
+    <string name="settings_title_developer_what_anime" translatable="false">soruly</string>
+    <string name="settings_summary_developer_what_anime">trace.moe API 开发者</string>
+    <string name="settings_link_developer_what_anime" translatable="false">https://about.me/soruly</string>
+    <string name="settings_title_what_anime" translatable="false">WAIT: What Anime Is This? - Anime Scene Search Engine</string>
+    <string name="settings_summary_what_anime" translatable="false">GNU General Public License v3.0</string>
+    <string name="settings_link_what_anime" translatable="false">https://trace.moe/</string>
+    <string name="settings_title_recent_http_responses">最近的 HTTP 响应</string>
+    <string name="settings_title_night_mode">界面主题</string>
     <string name="array_night_mode_auto">自动</string>
     <string name="array_night_mode_always_on">始终开启</string>
     <string name="array_night_mode_always_off">始终关闭</string>
@@ -86,7 +91,7 @@
     <string name="hint_file_too_large">文件过大，请先手动做一次压缩！</string>
     <string name="hint_data_convert_no_detail_in_history">因为数据结构变更，您已经无法再查阅这条历史记录的详细信息，请删除该记录</string>
     <string name="title_activity_receive_share">使用WhatAnime进行搜索</string>
-    <string name="settings_title_debug_mode">调试模式</string>
+    <string name="settings_title_debug_mode">问题排查模式</string>
     <string name="action_copy_title">复制标题</string>
     <string name="action_share_title">分享标题</string>
     <string name="action_view_anilist">查看Anilist信息</string>
