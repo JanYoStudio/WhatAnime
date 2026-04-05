@@ -4,7 +4,7 @@ kotlin = "2.2.21"
 # https://github.com/google/ksp/releases
 ksp = "2.2.21-2.0.4"
 
-app-version = "1.8.8"
+app-version = "1.9.0"
 
 composeMultiplatform = "1.10.3"
 aboutlibraries = "13.2.1"
