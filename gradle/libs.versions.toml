@@ -1,8 +1,8 @@
 [versions]
 agp = "8.13.2"
-kotlin = "2.2.21"
+kotlin = "2.3.20"
 # https://github.com/google/ksp/releases
-ksp = "2.2.21-2.0.4"
+ksp = "2.3.6"
 
 app-version = "1.9.0"
 

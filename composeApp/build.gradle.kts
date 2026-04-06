@@ -211,6 +211,10 @@ dependencies {
     add("kspIosArm64", libs.androidx.room.compiler)
 }
 
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
+}
+
 aboutLibraries {
     offlineMode = true
     collect {
