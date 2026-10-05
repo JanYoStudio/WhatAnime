@@ -4,7 +4,7 @@ kotlin = "2.4.20"
 # https://github.com/google/ksp/releases
 ksp = "2.3.12"
 
-app-version = "1.9.0"
+app-version = "1.10.0"
 
 # Material 3 预览版依赖同系列 Compose，整套保持一致。
 composeMultiplatform = "1.13.0-alpha01"
