@@ -1,150 +1,72 @@
 package pw.janyo.whatanime.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import chaintech.videoplayer.host.MediaPlayerHost
-import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.PlatformFile
-import io.github.vinceglb.filekit.absolutePath
-import io.github.vinceglb.filekit.copyTo
-import io.github.vinceglb.filekit.delete
-import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.size
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.inject
-import pw.janyo.whatanime.Configure
 import pw.janyo.whatanime.base.ComposeViewModel
 import pw.janyo.whatanime.model.SearchAnimeResultItem
-import pw.janyo.whatanime.model.SearchQuota
-import pw.janyo.whatanime.repository.AnimationRepository
-import pw.janyo.whatanime.ui.components.PlayerState
-import pw.janyo.whatanime.utils.getCacheFile
-import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.hint_cache_make_dir_error
-import whatanime.composeapp.generated.resources.hint_file_too_large
-import whatanime.composeapp.generated.resources.hint_no_result
-import whatanime.composeapp.generated.resources.hint_unknown_error
+import pw.janyo.whatanime.model.SearchPhase
+import pw.janyo.whatanime.model.SearchPreferences
+import pw.janyo.whatanime.repository.ImageSearchGateway
+import pw.janyo.whatanime.repository.SearchFailure
+import pw.janyo.whatanime.repository.SearchInputException
+import whatanime.composeapp.generated.resources.*
 
-class MainViewModel : ComposeViewModel() {
-    private val animationRepository by inject<AnimationRepository>()
-    private val mediaPlayerHost by inject<MediaPlayerHost>()
-    private val playerState by inject<PlayerState>()
+class MainViewModel(
+    private val gateway: ImageSearchGateway,
+    private val preferences: SearchPreferences,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    private val failureMessage: suspend (SearchFailure) -> String = { failure ->
+        getString(when (failure) {
+            SearchFailure.TooLarge -> Res.string.hint_file_too_large
+            SearchFailure.FileUnavailable -> Res.string.hint_select_file_not_exist
+            SearchFailure.CacheUnavailable -> Res.string.hint_cache_make_dir_error
+            SearchFailure.SearchFailed -> Res.string.hint_search_error
+        })
+    },
+) : ComposeViewModel() {
+    private val playback by inject<PlaybackCoordinator>()
+    private val session = SearchSession(preferences.hideAdult.value)
+    val searchState = session.state
+    private val mutableRestoration = MutableStateFlow(savedStateHandle.get<Boolean>("has_search") == true)
+    val restorationNeedsSelection = mutableRestoration.asStateFlow()
 
-    private val _searchQuota = MutableStateFlow(SearchQuota.EMPTY)
-    val searchQuota: StateFlow<SearchQuota> = _searchQuota
-
-    private val _quotaLoading = MutableStateFlow(false)
-    val quotaLoading: StateFlow<Boolean> = _quotaLoading
-
-    private val _listState = MutableStateFlow(MainListState())
-    val listState: StateFlow<MainListState> = _listState
-
-    fun showQuota() {
-        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-            Logger.w("showQuota: failed", throwable)
-            _searchQuota.value = SearchQuota.EMPTY
-            _quotaLoading.value = false
-        }) {
-            _quotaLoading.value = true
-            _searchQuota.value = animationRepository.showQuota()
-            _quotaLoading.value = false
-        }
+    init {
+        viewModelScope.launch { preferences.hideAdult.collect { session.setHideAdult(it) } }
     }
 
     fun searchImageFile(imageFile: PlatformFile) {
-        viewModelScope.launch(CoroutineExceptionHandler { context, throwable ->
-            Logger.w("searchImageFile: failed", throwable)
-            _listState.value = _listState.value.copy(
-                loading = false,
-                errorMessage = throwable.message ?: Res.string.hint_unknown_error.string()
-            )
-        }) {
-            _listState.value = _listState.value.copy(
-                loading = true,
-                searchImageFile = imageFile
-            )
-            //开始搜索图片
-            if (imageFile.size() > 26214400L) {
-                //大于25M，提示文件过大
-                _listState.value = _listState.value.copy(
-                    loading = false,
-                    errorMessage = getString(Res.string.hint_file_too_large)
-                )
-                return@launch
-            }
-            //解析缓存路径，将原图片写一份到缓存目录中，避免原图片被删除
-            var cachePath =
-                animationRepository.queryHistoryByOriginPath(imageFile.absolutePath())?.cachePath
-            if (cachePath == null) {
-                val cacheFile = getCacheFile(imageFile)
-                if (cacheFile == null) {
-                    _listState.value = _listState.value.copy(
-                        loading = false,
-                        errorMessage = getString(Res.string.hint_cache_make_dir_error)
-                    )
-                    return@launch
-                }
-                if (cacheFile.exists()) {
-                    cacheFile.delete()
-                }
-                imageFile.copyTo(cacheFile)
-                cachePath = cacheFile.absolutePath()
-            }
-            val animation = animationRepository.queryAnimationByImageLocal(
-                imageFile, imageFile.absolutePath(), cachePath,
-            )
-            val result = if (Configure.hideSex) {
-                animation.result.filter { !it.aniList.adult }
-            } else {
-                animation.result
-            }
-            if (result.isEmpty()) {
-                _listState.value = _listState.value.copy(
-                    loading = false,
-                    searchImageFile = PlatformFile(cachePath),
-                    tokenExpired = false,
-                    errorMessage = getString(Res.string.hint_no_result)
-                )
-                return@launch
-            }
-            _listState.value = _listState.value.copy(
-                loading = false,
-                searchImageFile = PlatformFile(cachePath),
-                tokenExpired = false,
-                list = result,
-                errorMessage = "",
-            )
-        }
-    }
-
-    fun playVideo(result: SearchAnimeResultItem) {
+        val requestId = session.begin(imageFile) ?: return
+        // 恢复只保留工作区曾存在的标记；不保存凭据、响应、带 Token 的地址或悬空 Loading。
+        savedStateHandle["has_search"] = true
+        mutableRestoration.value = false
+        val cutBorders = preferences.cutBorders.value
         viewModelScope.launch {
-            val requestUrl: String = if (result.video.contains("?")) {
-                "${result.video}&size=l"
-            } else {
-                "${result.video}?size=l"
+            try {
+                val response = gateway.search(imageFile, cutBorders)
+                session.complete(requestId, response.image, response.results)
+            } catch (e: CancellationException) {
+                session.cancel(requestId)
+                throw e
+            } catch (e: SearchInputException) {
+                session.reject(requestId, failureMessage(e.failure))
+            } catch (_: Exception) {
+                session.fail(requestId, failureMessage(SearchFailure.SearchFailed))
             }
-            mediaPlayerHost.loadUrl(requestUrl)
-            playerState.loadUrl()
-            mediaPlayerHost.play()
         }
     }
 
-    override fun onCleared() {
-        viewModelScope.cancel()
-        playerState.release()
-        super.onCleared()
+    fun retry() {
+        if (searchState.value.phase != SearchPhase.Error) return
+        searchState.value.image?.let(::searchImageFile)
     }
-}
 
-data class MainListState(
-    val loading: Boolean = false,
-    val searchImageFile: PlatformFile? = null,
-    val tokenExpired: Boolean = false,
-    val list: List<SearchAnimeResultItem> = emptyList(),
-    val errorMessage: String = "",
-)
+    fun acknowledgeError(requestId: Long) = session.acknowledgeError(requestId)
+    fun playVideo(result: SearchAnimeResultItem) { playback.play(result.video) }
+}

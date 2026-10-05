@@ -22,7 +22,8 @@ private fun getTimeUnitByLevel(level: Int): TimeUnit? = when (level) {
 
 fun Long.formatTime(
     minTimeUnit: TimeUnit = TimeUnit.MILLISECOND,
-    maxTimeUnit: TimeUnit = TimeUnit.DAY
+    maxTimeUnit: TimeUnit = TimeUnit.DAY,
+    unitLabel: (TimeUnit) -> String = { it.unit },
 ): String {
     if (minTimeUnit.level > maxTimeUnit.level) {
         //等级不正确，抛出异常
@@ -33,8 +34,8 @@ fun Long.formatTime(
     val hh = mi * 60
     val dd = hh * 24
 
-    if (this <= 0) return "0${minTimeUnit.unit}"
-    if (maxTimeUnit == TimeUnit.MILLISECOND) return "$this${TimeUnit.MILLISECOND.unit}"
+    if (this <= 0) return "0${unitLabel(minTimeUnit)}"
+    if (maxTimeUnit == TimeUnit.MILLISECOND) return "$this${unitLabel(TimeUnit.MILLISECOND)}"
 
     val day = this / dd
     val hour = (this - day * dd) / hh
@@ -51,15 +52,28 @@ fun Long.formatTime(
                 if (nextUnit != null)
                     array[index + 1] += array[index] * nextUnit.interval
             } else {
-                sb.append(array[index]).append(unit.unit)
+                sb.append(array[index]).append(unitLabel(unit))
             }
         }
         if (minTimeUnit == unit) {
-            if (sb.isEmpty()) sb.append(0).append(minTimeUnit.unit)
+            if (sb.isEmpty()) sb.append(0).append(unitLabel(minTimeUnit))
             return sb.toString()
         }
     }
     return sb.toString()
+}
+
+enum class RelativeTimeKind { JustNow, Minutes, Hours, Days }
+data class RelativeTimeParts(val kind: RelativeTimeKind, val count: Long)
+
+fun relativeTimeParts(savedAt: Long, now: Long): RelativeTimeParts {
+    val elapsed = if (now <= savedAt) 0 else (now - savedAt).takeIf { it >= 0 } ?: Long.MAX_VALUE
+    return when {
+        elapsed < 60000 -> RelativeTimeParts(RelativeTimeKind.JustNow, 0)
+        elapsed < 3600000 -> RelativeTimeParts(RelativeTimeKind.Minutes, elapsed / 60000)
+        elapsed < 86400000 -> RelativeTimeParts(RelativeTimeKind.Hours, elapsed / 3600000)
+        else -> RelativeTimeParts(RelativeTimeKind.Days, elapsed / 86400000)
+    }
 }
 
 fun LocalDateTime.formatDateTime(): String = formatWithFormatter("yyyy-MM-dd HH:mm:ss")

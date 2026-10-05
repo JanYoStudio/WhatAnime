@@ -1,316 +1,138 @@
 package pw.janyo.whatanime.ui.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.TipsAndUpdates
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
+import coil3.compose.AsyncImage
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.number
-import kotlinx.datetime.toLocalDateTime
 import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pw.janyo.whatanime.model.ReadOnlyAnimationHistory
-import pw.janyo.whatanime.ui.components.NoDataLayout
 import pw.janyo.whatanime.ui.components.SwipeToDeleteContainer
+import pw.janyo.whatanime.ui.components.WorkspaceMessage
 import pw.janyo.whatanime.ui.navigation.LocalNavController
 import pw.janyo.whatanime.ui.navigation.RouteDetail
-import pw.janyo.whatanime.ui.theme.Icons
 import pw.janyo.whatanime.utils.formatDecimal
+import pw.janyo.whatanime.utils.relativeTimeParts
+import pw.janyo.whatanime.utils.RelativeTimeKind
 import pw.janyo.whatanime.viewmodel.HistoryViewModel
-import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.action_cancel
-import whatanime.composeapp.generated.resources.action_ok
-import whatanime.composeapp.generated.resources.hint_data_convert_no_detail_in_history
-import whatanime.composeapp.generated.resources.hint_delete
-import whatanime.composeapp.generated.resources.hint_delete_desc
-import whatanime.composeapp.generated.resources.hint_swipe_to_delete
-import whatanime.composeapp.generated.resources.title_activity_history
+import whatanime.composeapp.generated.resources.*
 import kotlin.time.Clock
-import kotlin.time.Instant
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(vm: HistoryViewModel = koinViewModel()) {
     val navController = LocalNavController.current!!
-    val vm = koinViewModel<HistoryViewModel>()
-
-    val listState by vm.historyListState.collectAsState()
-
-    val animeDialogState = remember { mutableStateOf<ReadOnlyAnimationHistory?>(null) }
-
+    val state by vm.historyListState.collectAsState()
+    val listState = rememberLazyListState()
+    var confirmation by remember { mutableStateOf<ReadOnlyAnimationHistory?>(null) }
+    val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        vm.refresh()
+    LaunchedEffect(Unit) { vm.refresh() }
+    LaunchedEffect(state.errorMessage, state.cleanupFailed) {
+        val message = if (state.cleanupFailed) getString(Res.string.ui_cleanup_failed) else state.errorMessage
+        if (message.isNotBlank()) {
+            snackbar.showSnackbar(message)
+            vm.acknowledgeError()
+        }
     }
-
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(Res.string.title_activity_history)) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icons(Icons.AutoMirrored.Filled.ArrowBack)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            showToast(getString(Res.string.hint_swipe_to_delete))
-                        }
-                    }) {
-                        Icons(Icons.Outlined.TipsAndUpdates)
+            TopAppBar(title = { Text(stringResource(Res.string.title_activity_history)) }, actions = {
+                IconButton(onClick = vm::refresh, enabled = !state.loading) { Icon(Icons.Outlined.Refresh, stringResource(Res.string.ui_refresh_history)) }
+            })
+        },
+        snackbarHost = { SnackbarHost(snackbar) },
+    ) { padding ->
+        PullToRefreshBox(state.loading, vm::refresh, Modifier.padding(padding).fillMaxSize()) {
+            LazyColumn(
+                state = listState, modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (state.list.isEmpty()) item {
+                    when {
+                        state.loading -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                        state.errorMessage.isNotBlank() -> WorkspaceMessage(state.errorMessage, stringResource(Res.string.ui_retry), vm::refresh)
+                        state.loaded -> WorkspaceMessage(stringResource(Res.string.ui_no_history))
                     }
                 }
-            )
-        },
-    ) { innerPadding ->
-        val pullToRefreshState = rememberPullToRefreshState()
-        PullToRefreshBox(
-            modifier = Modifier.padding(innerPadding),
-            isRefreshing = listState.loading,
-            onRefresh = {
-                vm.refresh()
-                animeDialogState.value = null
-            },
-            state = pullToRefreshState,
-            indicator = {
-                PullToRefreshDefaults.LoadingIndicator(
-                    state = pullToRefreshState,
-                    isRefreshing = listState.loading,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-            }
-        ) {
-            if (listState.list.isEmpty()) {
-                NoDataLayout(modifier = Modifier.fillMaxSize())
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(listState.list) { item: ReadOnlyAnimationHistory ->
-                        SwipeToDeleteContainer(
-                            item = item,
-                            onDelete = {
-                                animeDialogState.value = it
-                            },
-                        ) {
-                            BuildResultItem(
-                                history = item,
-                                onClickOldData = {
-                                    scope.launch {
-                                        showToast(getString(Res.string.hint_data_convert_no_detail_in_history))
-                                    }
-                                },
-                                onClick = {
-                                    navController.navigate(
-                                        RouteDetail(
-                                            item.id,
-                                            item.cachePath
-                                        )
-                                    )
-                                }
-                            )
+                items(state.list, key = { it.id }) { item ->
+                    SwipeToDeleteContainer(item = item, enabled = confirmation == null && item.id !in state.deletingIds, onDelete = {
+                        if (confirmation == null && it.id !in state.deletingIds) confirmation = it
+                    }) {
+                        HistoryCard(item, enabled = item.id !in state.deletingIds) {
+                            if (item.id in state.deletingIds) return@HistoryCard
+                            if (item.isOldData) scope.launch { showToast(getString(Res.string.hint_data_convert_no_detail_in_history)) }
+                            else navController.navigate(RouteDetail(item.id, item.cachePath)) { launchSingleTop = true }
                         }
                     }
                 }
             }
         }
-        BuildAlertDialog(animeDialogState, onOk = {
-            vm.deleteHistory(it.id)
-        })
-        LaunchedEffect(listState) {
-            if (!listState.loading) {
-                pullToRefreshState.animateToHidden()
+    }
+    confirmation?.let { item ->
+        AlertDialog(
+            onDismissRequest = { confirmation = null },
+            title = { Text(stringResource(Res.string.hint_delete, item.title)) }, text = { Text(stringResource(Res.string.hint_delete_desc)) },
+            confirmButton = { TextButton(onClick = { vm.deleteHistory(item.id); confirmation = null }) { Text(stringResource(Res.string.action_ok)) } },
+            dismissButton = { TextButton(onClick = { confirmation = null }) { Text(stringResource(Res.string.action_cancel)) } },
+        )
+    }
+}
+
+@Composable
+private fun HistoryCard(history: ReadOnlyAnimationHistory, enabled: Boolean, onClick: () -> Unit) {
+    ElevatedCard(Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onClick)) {
+        if (!enabled) LinearProgressIndicator(Modifier.fillMaxWidth())
+        BoxWithConstraints(Modifier.padding(12.dp)) {
+            val vertical = maxWidth < 336.dp || (LocalDensity.current.fontScale >= 1.5f && maxWidth < 376.dp)
+            val image: @Composable (Modifier) -> Unit = { modifier ->
+                AsyncImage(
+                    PlatformFile(history.cachePath), null,
+                    modifier = modifier.aspectRatio(16f / 9f), contentScale = ContentScale.Crop,
+                    error = painterResource(Res.drawable.ic_load_failed),
+                )
             }
+            val info: @Composable (Modifier) -> Unit = { modifier ->
+                Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(history.title, style = MaterialTheme.typography.titleMedium, maxLines = 3, overflow = TextOverflow.Ellipsis)
+                    Text(relativeTime(history.time), style = MaterialTheme.typography.bodySmall)
+                    if (!history.isOldData) Text(
+                        stringResource(Res.string.ui_similarity, "${formatDecimal(history.similarity * 100, 1)}%"),
+                        style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+            if (vertical) Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { image(Modifier.fillMaxWidth()); info(Modifier.fillMaxWidth()) }
+            else Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) { image(Modifier.width(128.dp)); info(Modifier.weight(1f)) }
         }
     }
 }
 
 @Composable
-private fun BuildAlertDialog(
-    animeDialogState: MutableState<ReadOnlyAnimationHistory?>,
-    onOk: (ReadOnlyAnimationHistory) -> Unit,
-) {
-    if (animeDialogState.value == null) return
-    val item = animeDialogState.value!!
-    AlertDialog(
-        onDismissRequest = { animeDialogState.value = null },
-        text = {
-            Column {
-                Text(
-                    text = stringResource(Res.string.hint_delete, item.title)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = stringResource(Res.string.hint_delete_desc))
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onOk(item)
-                    animeDialogState.value = null
-                }
-            ) {
-                Text(stringResource(Res.string.action_ok))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { animeDialogState.value = null }) {
-                Text(stringResource(Res.string.action_cancel))
-            }
-        }
-    )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun BuildResultItem(
-    history: ReadOnlyAnimationHistory,
-    onClickOldData: () -> Unit,
-    onClick: () -> Unit,
-) {
-    val typography = MaterialTheme.typography
-    val colorScheme = MaterialTheme.colorScheme
-    val similarity = "${formatDecimal(history.similarity * 100, 1)}%"
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .clickable {
-                if (history.isOldData) {
-                    onClickOldData()
-                } else {
-                    onClick()
-                }
-            },
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(PlatformFile(history.cachePath))
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.DISABLED)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(144.dp)
-                    .height(81.dp)
-                    .clip(RoundedCornerShape(4.dp)),
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = history.title,
-                    style = typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = colorScheme.onSurface,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = history.formatDisplayTime(),
-                    style = typography.bodySmall,
-                    color = colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                if (!history.isOldData) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = similarity,
-                            style = typography.labelMedium,
-                            color = colorScheme.primary,
-                            modifier = Modifier.align(Alignment.BottomEnd),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun ReadOnlyAnimationHistory.formatDisplayTime(): String {
-    val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
-    val diffMillis = (currentTimeMillis - time).coerceAtLeast(0L)
-    val minuteMillis = 60 * 1000L
-    val hourMillis = 60 * minuteMillis
-    val dayMillis = 24 * hourMillis
-
-    return when {
-        diffMillis < 10 * minuteMillis -> "刚刚"
-        diffMillis < hourMillis -> "${diffMillis / minuteMillis}分钟前"
-        diffMillis < dayMillis -> "${diffMillis / hourMillis}小时前"
-        diffMillis < 30 * dayMillis -> "${diffMillis / dayMillis}天前"
-        else -> Instant.fromEpochMilliseconds(time)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .let { dateTime ->
-                val month = dateTime.month.number.toString().padStart(2, '0')
-                val day = dateTime.day.toString().padStart(2, '0')
-                val hour = dateTime.hour.toString().padStart(2, '0')
-                val minute = dateTime.minute.toString().padStart(2, '0')
-                "${dateTime.year}-${month}-${day} ${hour}:${minute}"
-            }
+private fun relativeTime(time: Long): String {
+    val parts = relativeTimeParts(time, Clock.System.now().toEpochMilliseconds())
+    return when (parts.kind) {
+        RelativeTimeKind.JustNow -> stringResource(Res.string.ui_just_now)
+        RelativeTimeKind.Minutes -> stringResource(Res.string.ui_minutes_ago, parts.count)
+        RelativeTimeKind.Hours -> stringResource(Res.string.ui_hours_ago, parts.count)
+        RelativeTimeKind.Days -> stringResource(Res.string.ui_days_ago, parts.count)
     }
 }

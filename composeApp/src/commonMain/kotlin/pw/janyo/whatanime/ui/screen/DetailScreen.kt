@@ -1,118 +1,76 @@
 package pw.janyo.whatanime.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
-import io.github.vinceglb.filekit.PlatformFile
-import kotlinx.coroutines.launch
-import multiplatform.network.cmptoast.showToast
-import org.jetbrains.compose.resources.getString
+import androidx.compose.ui.platform.LocalUriHandler
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import pw.janyo.whatanime.model.DetailPhase
 import pw.janyo.whatanime.model.SearchAnimeResultItem
-import pw.janyo.whatanime.ui.components.BuildBottomSheet
-import pw.janyo.whatanime.ui.components.BuildVideoDialog
-import pw.janyo.whatanime.ui.components.SearchResultItem
-import pw.janyo.whatanime.ui.navigation.LocalNavController
-import pw.janyo.whatanime.ui.theme.Icons
+import pw.janyo.whatanime.ui.components.*
+import pw.janyo.whatanime.ui.navigation.*
+import pw.janyo.whatanime.utils.isVideoExpired
 import pw.janyo.whatanime.viewmodel.DetailViewModel
-import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.title_activity_history
-import whatanime.composeapp.generated.resources.video_play_hint_410
+import whatanime.composeapp.generated.resources.*
+import kotlin.time.Clock
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(historyId: Int, cachePath: String) {
-    val navController = LocalNavController.current!!
-    val uriHandler = LocalUriHandler.current
-    val context = LocalPlatformContext.current
     val vm = koinViewModel<DetailViewModel>()
-
-    val listState by vm.listState.collectAsState()
-
-    val openBottomSheet = rememberSaveable { mutableStateOf(false) }
-    var selectedItemForBottomSheet by remember { mutableStateOf<SearchAnimeResultItem?>(null) }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
+    val state by vm.detailState.collectAsState()
+    val notice by vm.notice.collectAsState()
+    val navController = LocalNavController.current!!
+    val listState = rememberLazyListState()
+    val menuOpen = remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf<SearchAnimeResultItem?>(null) }
+    val snackbar = remember { SnackbarHostState() }
+    val expired by produceState(false, state.savedAt) {
+        val savedAt = state.savedAt ?: return@produceState
+        while (true) {
+            value = isVideoExpired(savedAt, Clock.System.now().toEpochMilliseconds())
+            if (value) break
+            delay(1000)
+        }
+    }
+    LaunchedEffect(historyId) {
+        if (vm.detailState.value.historyId != historyId) vm.loadHistoryDetail(historyId)
+    }
+    LaunchedEffect(notice) {
+        if (notice.isNotBlank()) { snackbar.showSnackbar(notice); vm.acknowledgeNotice() }
+    }
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(Res.string.title_activity_history)) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icons(Icons.AutoMirrored.Filled.ArrowBack)
+        topBar = { TopAppBar(
+            title = { Text(stringResource(Res.string.ui_detail_title)) },
+            navigationIcon = { IconButton(onClick = { navController.popBackStack() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.ui_back)) } },
+        ) }, snackbarHost = { SnackbarHost(snackbar) },
+    ) { padding ->
+        SearchWorkspace(
+            image = state.image, results = state.results, loading = state.phase == DetailPhase.Loading,
+            listState = listState, modifier = Modifier.padding(padding).fillMaxSize(),
+            status = {
+                if (expired) Text(stringResource(Res.string.video_play_hint_410), color = MaterialTheme.colorScheme.error)
+                when (state.phase) {
+                    DetailPhase.Loading -> Text(stringResource(Res.string.ui_loading))
+                    DetailPhase.Ready -> Unit
+                    DetailPhase.Empty -> WorkspaceMessage(stringResource(Res.string.hint_no_result))
+                    DetailPhase.FilteredEmpty -> WorkspaceMessage(stringResource(Res.string.ui_filtered_empty), stringResource(Res.string.action_settings)) {
+                        navController.selectTopLevel(TopLevelDestination.Settings)
                     }
-                },
-            )
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(listState.list) { item: SearchAnimeResultItem ->
-                SearchResultItem(
-                    item,
-                    onClick = {
-                        selectedItemForBottomSheet = item
-                        openBottomSheet.value = true
-                    },
-                )
-            }
-        }
-    }
-
-    BuildBottomSheet(
-        uriHandler = uriHandler,
-        context = context,
-        openBottomSheet = openBottomSheet,
-        item = selectedItemForBottomSheet,
-        onPlayVideo = {
-            if (listState.tokenExpired) {
-                scope.launch {
-                    showToast(getString(Res.string.video_play_hint_410))
+                    DetailPhase.NotFound -> WorkspaceMessage(stringResource(Res.string.ui_history_missing), stringResource(Res.string.action_history)) { navController.popBackStack() }
+                    DetailPhase.Error -> WorkspaceMessage(stringResource(Res.string.hint_unknown_error), stringResource(Res.string.ui_retry)) { vm.loadHistoryDetail(historyId) }
+                    DetailPhase.Legacy -> WorkspaceMessage(stringResource(Res.string.hint_data_convert_no_detail_in_history))
                 }
-                return@BuildBottomSheet
-            }
-            vm.playVideo(it)
-        }
-    )
-
-    BuildVideoDialog()
-
-    LaunchedEffect(listState) {
-        if (listState.errorMessage.isNotBlank()) {
-            snackbarHostState.showSnackbar(listState.errorMessage)
-        }
+            },
+            onPlay = vm::playVideo, onMenu = { selected = it; menuOpen.value = true },
+        )
     }
-    LaunchedEffect(Unit) {
-        val cacheFile = PlatformFile(cachePath)
-        vm.loadHistoryDetail(historyId, cacheFile)
-    }
+    BuildBottomSheet(LocalUriHandler.current, LocalPlatformContext.current, menuOpen, selected, vm::playVideo)
 }

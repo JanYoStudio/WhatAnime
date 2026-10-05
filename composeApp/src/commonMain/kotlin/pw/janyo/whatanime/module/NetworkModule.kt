@@ -20,6 +20,7 @@ import pw.janyo.whatanime.api.createSearchApi
 import pw.janyo.whatanime.httpResponses
 import pw.janyo.whatanime.model.DebugHttpInfo
 import pw.janyo.whatanime.utils.formatDateTime
+import pw.janyo.whatanime.utils.redactDebugResponse
 import kotlin.time.Clock
 
 val networkModule = module {
@@ -65,23 +66,19 @@ private val DebugResponsePlugin = createClientPlugin("DebugResponsePlugin") {
             resp.call.attributes.allKeys.firstOrNull { it -> it.name == "methodName" }?.let {
                 resp.call.attributes[it].toString()
             } ?: "tag"
-        val responseBody = resp.bodyAsText().replace(
-            Regex("\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b"),
-            "0.0.0.0"
+        val responseBody = redactDebugResponse(
+            resp.bodyAsText(), resp.call.request.headers[SearchApi.apiKeyHeader].orEmpty(),
         )
         val currentDateTime =
             Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).formatDateTime()
         val responseCode = resp.status.value
-        httpResponses.add(
+        httpResponses.append(
             DebugHttpInfo(
                 title = "$methodName --> $responseCode",
                 datetime = currentDateTime,
                 response = responseBody
             )
         )
-        if (httpResponses.size > 5) {
-            httpResponses.removeAt(0)
-        }
     }
 }
 

@@ -1,6 +1,6 @@
 package pw.janyo.whatanime
 
-import pw.janyo.whatanime.model.DebugHttpInfo
+import pw.janyo.whatanime.model.DebugResponseStore
 import pw.janyo.whatanime.ui.theme.NightMode
 
 expect inline fun <reified T> getConfiguration(key: String, defaultValue: T): T
@@ -43,4 +43,4 @@ object Constant {
 }
 
 // Global list to store HTTP responses
-val httpResponses = mutableListOf<DebugHttpInfo>()
+val httpResponses = DebugResponseStore()

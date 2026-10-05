@@ -17,7 +17,7 @@ interface HistoryDao {
     @Query("DELETE FROM tb_animation_history where id = :historyId")
     suspend fun delete(historyId: Int): Int
 
-    @Query("SELECT * FROM tb_animation_history")
+    @Query("SELECT * FROM tb_animation_history ORDER BY animation_time DESC, id DESC")
     suspend fun queryAllHistory(): List<AnimationHistory>
 
     @Update

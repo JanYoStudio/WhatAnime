@@ -21,3 +21,6 @@ fun getMimeType(extension: String): String? = map[extension]
 expect suspend fun getCacheFile(file: PlatformFile): PlatformFile?
 
 expect fun getCacheFilePathBySavedCacheFilePath(path: String): String
+
+/** 仅用于校验应用自有缓存清理范围；不可将源文件目录作为替代值。 */
+expect fun managedCacheDirectory(): String?

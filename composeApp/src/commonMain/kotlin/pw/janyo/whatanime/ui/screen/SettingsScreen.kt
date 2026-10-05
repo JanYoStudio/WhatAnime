@@ -1,336 +1,169 @@
 package pw.janyo.whatanime.ui.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import kotlinx.coroutines.launch
-import multiplatform.network.cmptoast.showToast
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import pw.janyo.whatanime.base.appVersionName
-import pw.janyo.whatanime.base.getStoreIcon
-import pw.janyo.whatanime.base.getStoreTitle
-import pw.janyo.whatanime.base.getStoreUrl
-import pw.janyo.whatanime.base.publicDeviceId
+import pw.janyo.whatanime.base.*
 import pw.janyo.whatanime.model.DebugHttpInfo
+import pw.janyo.whatanime.model.QuotaPhase
 import pw.janyo.whatanime.ui.navigation.LocalNavController
-import pw.janyo.whatanime.ui.preference.CheckboxSetting
-import pw.janyo.whatanime.ui.preference.ListSetting
-import pw.janyo.whatanime.ui.preference.SettingsGroup
-import pw.janyo.whatanime.ui.preference.SettingsMenuLink
-import pw.janyo.whatanime.ui.theme.Icons
-import pw.janyo.whatanime.ui.theme.WaIcons
+import pw.janyo.whatanime.ui.navigation.RouteAbout
+import pw.janyo.whatanime.ui.preference.*
 import pw.janyo.whatanime.ui.theme.showNightModeSelectList
-import pw.janyo.whatanime.utils.copyToClipboard
 import pw.janyo.whatanime.utils.copyToClipboardThenToast
 import pw.janyo.whatanime.viewmodel.SettingsViewModel
-import whatanime.composeapp.generated.resources.Res
-import whatanime.composeapp.generated.resources.action_cancel
-import whatanime.composeapp.generated.resources.action_copy
-import whatanime.composeapp.generated.resources.action_cut_border
-import whatanime.composeapp.generated.resources.hint_copy_device_id
-import whatanime.composeapp.generated.resources.settings_group_about
-import whatanime.composeapp.generated.resources.settings_group_about_what_anime
-import whatanime.composeapp.generated.resources.settings_group_application
-import whatanime.composeapp.generated.resources.settings_link_about_github
-import whatanime.composeapp.generated.resources.settings_link_about_janyo_license
-import whatanime.composeapp.generated.resources.settings_link_about_license
-import whatanime.composeapp.generated.resources.settings_link_developer_what_anime
-import whatanime.composeapp.generated.resources.settings_link_what_anime
-import whatanime.composeapp.generated.resources.settings_summary_about_github
-import whatanime.composeapp.generated.resources.settings_summary_about_janyo_license
-import whatanime.composeapp.generated.resources.settings_summary_about_license
-import whatanime.composeapp.generated.resources.settings_summary_cut_border
-import whatanime.composeapp.generated.resources.settings_summary_debug_mode
-import whatanime.composeapp.generated.resources.settings_summary_developer_what_anime
-import whatanime.composeapp.generated.resources.settings_summary_hide_sex
-import whatanime.composeapp.generated.resources.settings_summary_prefer_webp
-import whatanime.composeapp.generated.resources.settings_summary_what_anime
-import whatanime.composeapp.generated.resources.settings_title_about_device_id
-import whatanime.composeapp.generated.resources.settings_title_about_github
-import whatanime.composeapp.generated.resources.settings_title_about_janyo_license
-import whatanime.composeapp.generated.resources.settings_title_about_license
-import whatanime.composeapp.generated.resources.settings_title_about_version
-import whatanime.composeapp.generated.resources.settings_title_debug_mode
-import whatanime.composeapp.generated.resources.settings_title_developer_what_anime
-import whatanime.composeapp.generated.resources.settings_title_hide_sex
-import whatanime.composeapp.generated.resources.settings_title_night_mode
-import whatanime.composeapp.generated.resources.settings_title_prefer_webp
-import whatanime.composeapp.generated.resources.settings_title_recent_http_responses
-import whatanime.composeapp.generated.resources.settings_title_what_anime
-import whatanime.composeapp.generated.resources.title_activity_settings
+import whatanime.composeapp.generated.resources.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(){
-
-    val navController = LocalNavController.current!!
+fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
+    val nav = LocalNavController.current!!
     val context = LocalPlatformContext.current
-    val uriHandler = LocalUriHandler.current
-    val vm = koinViewModel<SettingsViewModel>()
     val cutBorders by vm.cutBorders.collectAsState()
     val hideSex by vm.hideSex.collectAsState()
     val preferWebp by vm.preferWebp.collectAsState()
     val nightMode by vm.nightMode.collectAsState()
     val debugMode by vm.debugMode.collectAsState()
-    val httpResponses by vm.httpResponsesFlow.collectAsState()
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val state = remember { mutableStateOf<DebugHttpInfo?>(null) }
+    val responses by vm.httpResponsesFlow.collectAsState()
+    val hasKey by vm.hasApiKey.collectAsState()
+    val errorMessage by vm.errorMessage.collectAsState()
+    var debugItem by remember { mutableStateOf<DebugHttpInfo?>(null) }
+    var editingKey by remember { mutableStateOf(false) }
+    var input by remember { mutableStateOf("") }
+    var keyVisible by remember { mutableStateOf(false) }
+    var saving by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        vm.init()
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(Res.string.title_activity_settings)) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icons(Icons.AutoMirrored.Filled.ArrowBack)
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            SettingsGroup(
-                title = {
-                    Text(text = stringResource(Res.string.settings_group_application))
-                },
-                content = {
-                    CheckboxSetting(
-                        title = stringResource(Res.string.action_cut_border),
-                        subtitle = stringResource(Res.string.settings_summary_cut_border),
-                        checked = cutBorders,
-                        onCheckedChange = { newValue ->
-                            vm.setCutBorders(newValue)
-                        }
-                    )
-                    CheckboxSetting(
-                        title = stringResource(Res.string.settings_title_hide_sex),
-                        subtitle = stringResource(Res.string.settings_summary_hide_sex),
-                        checked = hideSex,
-                        onCheckedChange = { newValue ->
-                            vm.setHideSex(newValue)
-                        }
-                    )
-                    CheckboxSetting(
-                        title = stringResource(Res.string.settings_title_prefer_webp),
-                        subtitle = stringResource(Res.string.settings_summary_prefer_webp),
-                        checked = preferWebp,
-                        onCheckedChange = { newValue ->
-                            vm.setPreferWebp(newValue)
-                        }
-                    )
-                    val defaultNightMode = stringResource(nightMode.title)
-                    val originShowNightModeSelectList = showNightModeSelectList()
-                    val showNightModeSelectList =
-                        originShowNightModeSelectList.map { stringResource(it.title) }
-                    ListSetting(
-                        title = stringResource(Res.string.settings_title_night_mode),
-                        subtitle = stringResource(nightMode.title),
-                        defaultValue = defaultNightMode,
-                        values = showNightModeSelectList,
-                        onValueChange = {
-                            vm.setNightMode(
-                                originShowNightModeSelectList[showNightModeSelectList.indexOf(
-                                    it
-                                )]
-                            )
-                        },
-                    )
-                })
-            SettingsGroup(
-                title = {
-                    Text(text = stringResource(Res.string.settings_group_about))
-                },
-                content = {
-                    SettingsMenuLink(
-                        icon = { Icons(WaIcons.Settings.github) },
-                        title = stringResource(Res.string.settings_title_about_github),
-                        subtitle = stringResource(Res.string.settings_summary_about_github),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_about_github))
-                            }
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_about_license),
-                        subtitle = stringResource(Res.string.settings_summary_about_license),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_about_license))
-                            }
-                        }
-                    )
-                    SettingsMenuLink(
-                        icon = { Icons(getStoreIcon()) },
-                        title = stringResource(getStoreTitle()),
-                        subtitle = stringResource(getStoreUrl()),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(getStoreUrl()))
-                            }
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_about_janyo_license),
-                        subtitle = stringResource(Res.string.settings_summary_about_janyo_license),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_about_janyo_license))
-                            }
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_about_version),
-                        subtitle = appVersionName(),
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_about_device_id),
-                        subtitle = publicDeviceId(),
-                        onClick = {
-                            scope.launch {
-                                copyToClipboard(context, publicDeviceId())
-                                showToast(getString(Res.string.hint_copy_device_id))
-                            }
-                        }
-                    )
-                })
-            SettingsGroup(
-                title = {
-                    Text(text = stringResource(Res.string.settings_group_about_what_anime))
-                },
-                content = {
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_developer_what_anime),
-                        subtitle = stringResource(Res.string.settings_summary_developer_what_anime),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_developer_what_anime))
-                            }
-                        }
-                    )
-                    SettingsMenuLink(
-                        title = stringResource(Res.string.settings_title_what_anime),
-                        subtitle = stringResource(Res.string.settings_summary_what_anime),
-                        onClick = {
-                            scope.launch {
-                                uriHandler.openUri(getString(Res.string.settings_link_what_anime))
-                            }
-                        }
-                    )
-                    CheckboxSetting(
-                        title = stringResource(Res.string.settings_title_debug_mode),
-                        subtitle = stringResource(Res.string.settings_summary_debug_mode),
-                        checked = debugMode,
-                        onCheckedChange = { newValue ->
-                            vm.setDebugMode(newValue)
-                        }
-                    )
-                })
-            if (debugMode) {
-                SettingsGroup(
-                    title = {
-                        Text(text = stringResource(Res.string.settings_title_recent_http_responses))
-                    },
-                    content = {
-                        httpResponses.forEach { httpInfo ->
-                            SettingsMenuLink(
-                                title = httpInfo.title,
-                                subtitle = httpInfo.datetime,
-                                onClick = {
-                                    state.value = httpInfo
-                                }
-                            )
-                        }
-                    }
+    LaunchedEffect(Unit) { vm.init() }
+    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(Res.string.title_activity_settings)) }) }) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
+            QuotaCard(vm)
+            SettingsGroup(title = { Text(stringResource(Res.string.ui_search_settings)) }, content = {
+                CheckboxSetting(title = stringResource(Res.string.action_cut_border), subtitle = stringResource(Res.string.settings_summary_cut_border), checked = cutBorders, onCheckedChange = vm::setCutBorders)
+                CheckboxSetting(title = stringResource(Res.string.settings_title_hide_sex), subtitle = stringResource(Res.string.settings_summary_hide_sex), checked = hideSex, onCheckedChange = vm::setHideSex)
+                CheckboxSetting(title = stringResource(Res.string.settings_title_prefer_webp), subtitle = stringResource(Res.string.settings_summary_prefer_webp), checked = preferWebp, onCheckedChange = vm::setPreferWebp)
+            })
+            SettingsGroup(title = { Text(stringResource(Res.string.ui_appearance)) }, content = {
+                val modes = showNightModeSelectList()
+                val labels = modes.map { stringResource(it.title) }
+                ListSetting(
+                    title = stringResource(Res.string.settings_title_night_mode), subtitle = stringResource(nightMode.title),
+                    defaultValue = stringResource(nightMode.title), values = labels,
+                    onValueChange = { label -> labels.indexOf(label).takeIf { it >= 0 }?.let { vm.setNightMode(modes[it]) } },
                 )
-            }
+            })
+            SettingsGroup(title = { Text(stringResource(Res.string.ui_service)) }, content = {
+                SettingsMenuLink(
+                    title = stringResource(Res.string.settings_title_api_key),
+                    subtitle = stringResource(if (hasKey) Res.string.ui_key_set else Res.string.ui_key_unset),
+                    onClick = { input = vm.customApiKey.value; keyVisible = false; editingKey = true; vm.acknowledgeError() },
+                )
+            })
+            SettingsGroup(title = { Text(stringResource(Res.string.ui_debug)) }, content = {
+                CheckboxSetting(title = stringResource(Res.string.settings_title_debug_mode), subtitle = stringResource(Res.string.settings_summary_debug_mode), checked = debugMode, onCheckedChange = vm::setDebugMode)
+                if (debugMode) {
+                    Text(stringResource(Res.string.settings_title_recent_http_responses), Modifier.padding(16.dp))
+                    responses.forEach { response -> SettingsMenuLink(title = response.title, subtitle = response.datetime, onClick = { debugItem = response }) }
+                }
+            })
+            SettingsGroup(title = { Text(stringResource(Res.string.settings_group_about)) }, content = {
+                ExternalLink(stringResource(Res.string.settings_title_about_github), stringResource(Res.string.settings_summary_about_github), stringResource(Res.string.settings_link_about_github))
+                ExternalLink(stringResource(Res.string.settings_title_about_license), stringResource(Res.string.settings_summary_about_license), stringResource(Res.string.settings_link_about_license))
+                ExternalLink(stringResource(Res.string.settings_title_about_janyo_license), stringResource(Res.string.settings_summary_about_janyo_license), stringResource(Res.string.settings_link_about_janyo_license))
+                ExternalLink(stringResource(getStoreTitle()), stringResource(getStoreUrl()), stringResource(getStoreUrl()))
+                SettingsMenuLink(title = stringResource(Res.string.settings_title_about_version), subtitle = appVersionName())
+                SettingsMenuLink(title = stringResource(Res.string.settings_title_about_device_id), subtitle = publicDeviceId(), onClick = { scope.launch { copyToClipboardThenToast(context, publicDeviceId()) } })
+                SettingsMenuLink(title = stringResource(Res.string.action_open_source_license), onClick = { nav.navigate(RouteAbout) { launchSingleTop = true } })
+            })
+            SettingsGroup(title = { Text(stringResource(Res.string.settings_group_about_what_anime)) }, content = {
+                ExternalLink(stringResource(Res.string.settings_title_developer_what_anime), stringResource(Res.string.settings_summary_developer_what_anime), stringResource(Res.string.settings_link_developer_what_anime))
+                ExternalLink(stringResource(Res.string.settings_title_what_anime), stringResource(Res.string.settings_summary_what_anime), stringResource(Res.string.settings_link_what_anime))
+                ExternalLink(stringResource(Res.string.drawer_api_quota_donate_sponsors), "soruly", "https://github.com/sponsors/soruly")
+                ExternalLink(stringResource(Res.string.drawer_api_quota_donate_patreon), "soruly", "https://www.patreon.com/soruly")
+            })
         }
     }
+    if (editingKey) {
+        fun dismissKey() { if (!saving) { editingKey = false; input = ""; keyVisible = false } }
+        AlertDialog(
+            onDismissRequest = ::dismissKey,
+            title = { Text(stringResource(Res.string.settings_title_api_key)) },
+            text = { Column(Modifier.imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(stringResource(Res.string.settings_summary_api_key))
+                OutlinedTextField(
+                    value = input, onValueChange = { input = it }, enabled = !saving, singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
+                    visualTransformation = if (keyVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = { IconButton(onClick = { keyVisible = !keyVisible }) {
+                        Icon(if (keyVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility, stringResource(if (keyVisible) Res.string.ui_hide_key else Res.string.ui_show_key))
+                    } },
+                )
+                if (errorMessage.isNotBlank()) Text(errorMessage, color = MaterialTheme.colorScheme.error)
+            } },
+            confirmButton = { TextButton(enabled = !saving, onClick = {
+                saving = true
+                scope.launch {
+                    try { if (vm.saveApiKey(input)) { editingKey = false; input = ""; keyVisible = false } }
+                    finally { saving = false }
+                }
+            }) { Text(stringResource(Res.string.ui_save_refresh)) } },
+            dismissButton = { TextButton(enabled = !saving, onClick = ::dismissKey) { Text(stringResource(Res.string.action_cancel)) } },
+        )
+    }
+    debugItem?.let { item ->
+        AlertDialog(
+            onDismissRequest = { debugItem = null }, title = { Text(stringResource(Res.string.settings_title_recent_http_responses)) },
+            text = { Text(item.response, Modifier.verticalScroll(rememberScrollState())) },
+            confirmButton = { TextButton(onClick = { scope.launch { copyToClipboardThenToast(context, item.response); debugItem = null } }) { Text(stringResource(Res.string.action_copy)) } },
+            dismissButton = { TextButton(onClick = { debugItem = null }) { Text(stringResource(Res.string.ui_close)) } },
+        )
+    }
+}
 
-    BuildAlertDialog(state)
-
-    val errorMessage by vm.errorMessage.collectAsState()
-    if (errorMessage.isNotBlank()) {
-        LaunchedEffect("errorMessage") {
-            snackbarHostState.showSnackbar(errorMessage)
+@Composable
+private fun QuotaCard(vm: SettingsViewModel) {
+    val state by vm.quotaState.collectAsState()
+    ElevatedCard(Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(Res.string.ui_quota_title), style = MaterialTheme.typography.titleMedium)
+            state.value?.let { quota ->
+                if (state.stale) Text(stringResource(Res.string.ui_quota_stale))
+                Text("${stringResource(Res.string.drawer_api_quota_priority_label)}: ${quota.priority}")
+                Text(stringResource(Res.string.hint_quota_total, quota.quota))
+                Text(stringResource(Res.string.hint_quota_used, quota.quotaUsed))
+                state.remaining?.let { Text(stringResource(Res.string.ui_remaining, it)) }
+                state.progress?.let { LinearProgressIndicator(progress = { it }, modifier = Modifier.fillMaxWidth()) }
+                if (state.progress == null) Text(stringResource(Res.string.ui_quota_unknown))
+                if (state.exhausted && !state.stale) Text(stringResource(Res.string.ui_quota_exhausted))
+            }
+            when (state.phase) {
+                QuotaPhase.NotLoaded -> Text(stringResource(Res.string.ui_quota_unknown))
+                QuotaPhase.Loading -> { LinearProgressIndicator(Modifier.fillMaxWidth()); Text(stringResource(Res.string.ui_loading)) }
+                QuotaPhase.Error -> Text(stringResource(Res.string.ui_quota_failed), color = MaterialTheme.colorScheme.error)
+                QuotaPhase.Ready -> Unit
+            }
+            OutlinedButton(onClick = { vm.refreshQuota() }, enabled = state.phase != QuotaPhase.Loading) { Text(stringResource(Res.string.drawer_api_quota_refresh)) }
         }
     }
 }
 
 @Composable
-private fun BuildAlertDialog(state: MutableState<DebugHttpInfo?>) {
-    if (state.value == null) return
-    val item = state.value!!
-    val context = LocalPlatformContext.current
-    val scope = rememberCoroutineScope()
-    AlertDialog(
-        onDismissRequest = { state.value = null },
-        title = {
-            Text(text = "HTTP RESPONSE")
-        },
-        text = {
-            val scrollState = rememberScrollState()
-            Text(
-                text = item.response,
-                modifier = Modifier
-                    .verticalScroll(scrollState)
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    scope.launch {
-                        copyToClipboardThenToast(context, item.response)
-                        state.value = null
-                    }
-                }
-            ) {
-                Text(stringResource(Res.string.action_copy))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { state.value = null }) {
-                Text(stringResource(Res.string.action_cancel))
-            }
-        }
-    )
+private fun ExternalLink(title: String, subtitle: String, url: String) {
+    val uriHandler = LocalUriHandler.current
+    SettingsMenuLink(title = title, subtitle = subtitle, onClick = { uriHandler.openUri(url) })
 }

@@ -15,7 +15,12 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
+import pw.janyo.whatanime.utils.canDeleteCache
+import pw.janyo.whatanime.utils.managedCacheDirectory
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.io.buffered
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.getString
@@ -37,9 +42,13 @@ import whatanime.composeapp.generated.resources.hint_no_result
 import whatanime.composeapp.generated.resources.hint_search_error
 import kotlin.time.Clock
 
-class AnimationRepository : KoinComponent {
+class AnimationRepository : KoinComponent, HistoryGateway {
     private val searchApi by inject<SearchApi>()
     private val historyService by inject<HistoryService>()
+    private val cacheOperations = Mutex()
+
+    // 覆盖选图缓存到历史落库的完整区间，避免切到历史删除时清走正在使用的同一缓存。
+    internal suspend fun <T> withCacheOperation(block: suspend () -> T): T = cacheOperations.withLock { block() }
 
     private suspend fun checkNetwork() {
         if (!isOnline()) {
@@ -52,6 +61,7 @@ class AnimationRepository : KoinComponent {
         file: PlatformFile,
         originPath: String,
         cachePath: String,
+        cutBorders: Boolean,
     ): SearchAnimeResult {
         val history = queryByFileMd5(file)
         if (history != null) {
@@ -66,31 +76,32 @@ class AnimationRepository : KoinComponent {
                 append(HttpHeaders.ContentDisposition, "filename=${file.name}")
             })
         })
-        val data = if (Configure.cutBorders) {
+        val data = if (cutBorders) {
             searchApi.search(multipart)
         } else {
             searchApi.searchNoCut(multipart)
         }
         if (data.error.isNotBlank()) {
-            Logger.e("http request failed, ${data.error}")
+            Logger.e("搜索接口返回错误")
             throw RuntimeException(getString(Res.string.hint_search_error))
         }
         saveHistory(originPath, cachePath, data)
         return data
     }
 
-    suspend fun showQuota(): SearchQuota {
+    suspend fun showQuota(apiKey: String = Configure.apiKey): SearchQuota {
         checkNetwork()
-        return searchApi.getMe()
+        return searchApi.getMe(key = apiKey)
     }
 
     suspend fun queryAnimationByImageLocal(
         file: PlatformFile,
         originPath: String,
         cachePath: String,
+        cutBorders: Boolean = Configure.cutBorders,
     ): SearchAnimeResult {
         val animationHistory = historyService.queryHistoryByOriginPath(originPath)
-            ?: return queryAnimationByImageOnline(file, originPath, cachePath)
+            ?: return queryAnimationByImageOnline(file, originPath, cachePath, cutBorders)
         return Json.decodeFromString(animationHistory.result)
     }
 
@@ -135,7 +146,18 @@ class AnimationRepository : KoinComponent {
         historyService.saveHistory(animationHistory)
     }
 
-    suspend fun queryAllHistory(): List<AnimationHistory> {
+    override suspend fun getHistoryDetails(historyId: Int): HistoryLookup? {
+        val history = historyService.getById(historyId) ?: return null
+        return HistoryLookup(
+            history.id,
+            getCacheFilePathBySavedCacheFilePath(history.cachePath),
+            history.time,
+            Json.decodeFromString(history.result),
+            history.readonly().isOldData,
+        )
+    }
+
+    override suspend fun queryAllHistory(): List<AnimationHistory> {
         val histories = historyService.queryAllHistory()
         //重新组装缓存图片路径，因为iOS沙盒id会变
         histories.forEach { history ->
@@ -144,14 +166,25 @@ class AnimationRepository : KoinComponent {
         return histories
     }
 
-    suspend fun deleteHistory(historyId: Int) {
-        val animationHistory = historyService.getById(historyId)
+    override suspend fun deleteHistory(historyId: Int): DeleteHistoryResult = withCacheOperation {
+        val history = historyService.getById(historyId) ?: return@withCacheOperation DeleteHistoryResult.Deleted
         historyService.delete(historyId)
-        animationHistory?.let {
-            val cacheFIle = PlatformFile(it.cachePath)
-            if (cacheFIle.exists()) {
-                cacheFIle.delete()
+        try {
+            val path = getCacheFilePathBySavedCacheFilePath(history.cachePath)
+            val directory = managedCacheDirectory() ?: return@withCacheOperation DeleteHistoryResult.CacheCleanupFailed
+            val references = historyService.queryAllHistory().map { getCacheFilePathBySavedCacheFilePath(it.cachePath) }
+            if (path in references) return@withCacheOperation DeleteHistoryResult.Deleted
+            if (!canDeleteCache(path, directory, references)) return@withCacheOperation DeleteHistoryResult.CacheCleanupFailed
+            val removed = withContext(Dispatchers.IO) {
+                val file = PlatformFile(path)
+                if (file.exists()) file.delete()
+                !file.exists()
             }
+            if (removed) DeleteHistoryResult.Deleted else DeleteHistoryResult.CacheCleanupFailed
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
+            DeleteHistoryResult.CacheCleanupFailed
         }
     }
 }

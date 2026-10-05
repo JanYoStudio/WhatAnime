@@ -19,3 +19,5 @@ actual suspend fun getCacheFile(file: PlatformFile): PlatformFile? {
 }
 
 actual fun getCacheFilePathBySavedCacheFilePath(path: String): String = path
+
+actual fun managedCacheDirectory(): String? = context.getExternalFilesDir(CACHE_IMAGE_FILE_NAME)?.absolutePath

@@ -16,8 +16,8 @@ val viewModelModule = module {
             }
         }
     }
-    viewModel { MainViewModel() }
-    viewModel { HistoryViewModel() }
-    viewModel { DetailViewModel() }
+    viewModel { MainViewModel(get(), get(), savedStateHandle = get()) }
+    viewModel { HistoryViewModel(get()) }
+    viewModel { DetailViewModel(get(), get()) }
     viewModel { SettingsViewModel() }
 }
