@@ -26,6 +26,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
       - uses: gradle/actions/setup-gradle@v5
       - name: Inspect build environment
         run: |

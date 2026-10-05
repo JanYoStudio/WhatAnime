@@ -21,6 +21,9 @@ jobs:
           distribution: 'temurin'
       - name: 设置Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
       - name: 校验签名配置并解码 keystore
         env:
           SIGN_KEY_BASE64: ${{ secrets.SIGN_KEY_BASE64 }}

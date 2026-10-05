@@ -29,6 +29,9 @@ jobs:
         with:
           python-version: '3.12'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
       - uses: gradle/actions/setup-gradle@v5
       # 不注入任何发布 secrets；脚本在隔离副本中验证 debug/测试和 release 拒绝路径。
       - name: Test debug build and signing boundaries without release secrets
