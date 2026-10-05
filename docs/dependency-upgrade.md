@@ -20,6 +20,7 @@
 | Kermit | 2.1.0 | 2.2.0 |
 | FileKit | 0.15.0 | 0.16.0 |
 | Room | 2.8.4 | 2.8.5 |
+| iOS SQLite framework | Room 传递依赖版本 | 显式使用 2.7.1 |
 
 版本目录中其余库已是核实时的最新稳定版，保持不变。未将 Kotlin Beta、Serialization RC、Navigation Beta 或 AndroidX Activity Alpha 引入项目。
 
@@ -28,6 +29,9 @@
 - Material 3 `1.13.0-alpha01` 的 Gradle metadata 要求 Compose Runtime/UI/Foundation `1.13.0-alpha01`，因此整套同步升级，避免表面固定稳定版、实际被传递依赖提升为 Alpha。
 - Ktorfit `2.7.5` 会按 Kotlin 版本选择编译器插件；移除构建脚本中旧的 `compilerPluginVersion = 2.3.3` 覆盖。
 - 使用 Gradle Wrapper 任务更新脚本和 JAR，并加入官方发行包 SHA-256。Wrapper JAR 的 SHA-256 也与官方值核对。
+- iOS 模拟器 App 链接复现 `_sqlite3_load_extension` 未定义：Room 传递引入的旧 SQLite framework 存在已知问题，显式使用稳定版 `androidx.sqlite:sqlite-framework:2.7.1`。保留系统 SQLite 和现有数据库结构/迁移，不切换数据库驱动。
+- 经确认，将 iOS App 的 Debug/Release 最低版本从 14.0 调整为 15.0，与 Kotlin/Native 产物一致。
+- CI 的 `setup-android@v3` 默认安装已移除的 `tools` 包导致初始化失败，所有现有流程均显式改为安装 `platform-tools`。
 - 保留现有 AGP 旧 DSL/KMP 兼容开关。本轮未拆分 Android 应用与 KMP 模块；弃用警告仍需后续迁移处理。
 - Kotlin `2.4.20` 官方完整测试矩阵上限为 Gradle `9.7.0` / AGP `9.3.1`；本轮按要求采用更新的稳定版，通过项目构建验证，不宣称处于该官方完整支持矩阵内。
 
@@ -57,6 +61,7 @@ iOS 使用 `.github/workflows/check_ios.yaml`：
 - [AGP 9.4 兼容说明](https://developer.android.com/build/releases/agp-9-4-0-release-notes)
 - [Kotlin Gradle 兼容矩阵](https://kotlinlang.org/docs/gradle-configure-project.html)
 - [Compose 1.13.0-alpha01](https://github.com/JetBrains/compose-multiplatform/releases/tag/v1.13.0-alpha01)
+- [SQLite 发布说明：2.7.0-alpha02 修复 iOS 系统库符号缺失，稳定版 2.7.1 包含该修复](https://developer.android.com/jetpack/androidx/releases/sqlite)
 - [KSP 2.3.12](https://github.com/google/ksp/releases/tag/2.3.12)
 - [Ktorfit 2.7.5](https://github.com/Foso/Ktorfit/releases/tag/2.7.5)
 - [AboutLibraries 15.2.0](https://github.com/mikepenz/AboutLibraries/releases/tag/15.2.0)

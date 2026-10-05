@@ -138,6 +138,8 @@ kotlin {
             implementation(libs.media.player)
         }
         iosMain.dependencies {
+            // Room 传递依赖的旧版在 iOS Debug 链接时缺少系统 SQLite 符号。
+            implementation(libs.androidx.sqlite.framework)
             //ktor
             implementation(libs.ktor.client.darwin)
             implementation(libs.ios.settings)
