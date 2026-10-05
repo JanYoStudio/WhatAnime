@@ -1,0 +1,66 @@
+name: "Check iOS Compile"
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-compile-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile-ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Inspect build environment
+        run: |
+          java -version
+          xcodebuild -version
+          uname -m
+          chmod +x gradlew
+      - name: Prepare resources and Apple version
+        run: ./gradlew composeApp:exportLibraryDefinitions composeApp:updateAppleBuildVersion --console=plain
+      # 覆盖真机 Kotlin/Native 优化链接，不归档、不签名、不上传。
+      - name: Link iOS arm64 Release framework
+        run: ./gradlew composeApp:linkReleaseFrameworkIosArm64 --console=plain
+      # 通过现有 Xcode Build Phase 编译模拟器 framework，并验证 Swift 宿主集成。
+      - name: Build simulator app without signing
+        run: |
+          set -o pipefail
+          mkdir -p build/reports/ios
+          xcodebuild \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios-derived-data \
+            -resultBundlePath build/reports/ios/SimulatorBuild.xcresult \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY= DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+            build 2>&1 | tee build/reports/ios/xcodebuild.log
+      - name: Upload iOS diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-compile-diagnostics
+          path: |
+            build/reports/ios/
+            build/reports/problems/
+          if-no-files-found: warn

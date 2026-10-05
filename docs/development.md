@@ -79,6 +79,7 @@ python scripts/verify_signing.py
 
 - `.github/workflows/check.yaml`：PR、`dev` 推送及手动触发，JDK 21，无发布 secrets，执行完整隔离验证并上传报告；不发布产物。
 - `.github/workflows/build_android.yaml`、`release.yaml`：必须提供 `SIGN_KEY_ALIAS`、`SIGN_KEY_STORE_PASSWORD`、`SIGN_KEY_PASSWORD` 和 `SIGN_KEY_BASE64` 四个 secrets；`SIGN_KEY_STORE_FILE` 由 workflow 指定。缺项直接失败，不生成替代密钥。
+- `.github/workflows/check_ios.yaml`：PR、`dev` 推送及手动触发，在 macOS 上验证真机 Release framework 链接和模拟器 App 编译，不需要签名或发布凭据。
 - `.github/workflows/build_ios.yml`：不再准备 Android keystore；Apple 签名、证书和上传要求保持不变。
 
 现有 AGP/Kotlin Multiplatform 兼容开关与弃用警告仍存在；本轮没有迁移 Android/KMP 模块结构。不要为了消除警告擅自移除兼容开关。
