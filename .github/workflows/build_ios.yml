@@ -5,10 +5,6 @@ on:
     branches:
       - dev
 env:
-  SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
-  SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD }}
-  SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
-  SIGN_KEY_STORE_FILE: "/tmp/key.jks"
   XCODE_PROJECT: iosApp
   MOBILE_DIRECTORY: iosApp
   IPA_NAME: WhatAnime
@@ -29,29 +25,6 @@ jobs:
         uses: android-actions/setup-android@v3
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
-      - name: Check for secrets and handle keystore
-        run: |
-          if [ -n "${{ secrets.SIGN_KEY_ALIAS }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_STORE_PASSWORD }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_PASSWORD }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_BASE64 }}" ]; then
-            echo "Signing secrets found. Decoding keystore..."
-            echo "${{ secrets.SIGN_KEY_BASE64 }}" | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
-            echo "Keystore decoded successfully."
-          else
-            echo "Signing secrets not found. Generating temporary keystore..."
-            keytool -genkey -v \
-              -keystore ${{ env.SIGN_KEY_STORE_FILE }} \
-              -alias ${{ env.SIGN_KEY_ALIAS }} \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -storepass ${{ env.SIGN_KEY_STORE_PASSWORD }} \
-              -keypass ${{ env.SIGN_KEY_PASSWORD }} \
-              -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown"
-            echo "Temporary keystore generated successfully."
-          fi
-        shell: bash
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: 更新iOS应用版本号

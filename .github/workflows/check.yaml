@@ -1,0 +1,42 @@
+name: "Check Debug and Signing"
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v5
+      # 不注入任何发布 secrets；脚本在隔离副本中验证 debug/测试和 release 拒绝路径。
+      - name: Test debug build and signing boundaries without release secrets
+        run: python scripts/verify_signing.py --debug
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-reports
+          path: build/reports/signing/
+          if-no-files-found: warn

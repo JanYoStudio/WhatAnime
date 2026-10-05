@@ -1,17 +1,80 @@
-def kFile = rootProject.file('local.properties')
-def props = new Properties()
-if (kFile.canRead()) {
-    props.load(new FileInputStream(kFile))
+import java.security.KeyStore
+import java.security.PrivateKey
 
-    if (props != null) {
-        android.signingConfigs.sign.storeFile file(props['SIGN_KEY_STORE_FILE'])
-        android.signingConfigs.sign.storePassword props['SIGN_KEY_STORE_PASSWORD']
-        android.signingConfigs.sign.keyAlias props['SIGN_KEY_ALIAS']
-        android.signingConfigs.sign.keyPassword props['SIGN_KEY_PASSWORD']
+// 只在执行 release 任务时校验；debug、测试和 IDE 同步不依赖发布密钥。
+abstract class VerifyReleaseSigning extends DefaultTask {
+    @Input
+    List<String> missingKeys = []
+
+    @Internal
+    File keyStoreFile
+
+    @Internal
+    String keyStorePassword
+
+    @Internal
+    String signingKeyAlias
+
+    @Internal
+    String signingKeyPassword
+
+    @TaskAction
+    void verify() {
+        if (!missingKeys.isEmpty()) {
+            throw new GradleException("[RELEASE_SIGNING_REQUIRED] Release 签名配置缺失：${missingKeys.join(', ')}。请设置 local.properties 或同名环境变量。")
+        }
+        if (!keyStoreFile.isFile()) {
+            throw new GradleException('[RELEASE_SIGNING_INVALID] Release keystore 文件不存在或不是普通文件。')
+        }
+        try {
+            def keyStore = KeyStore.getInstance(keyStoreFile, keyStorePassword.toCharArray())
+            def key = keyStore.getKey(signingKeyAlias, signingKeyPassword.toCharArray())
+            if (!(key instanceof PrivateKey) || keyStore.getCertificateChain(signingKeyAlias)?.length == 0 ||
+                keyStore.getCertificateChain(signingKeyAlias) == null) {
+                throw new IllegalArgumentException('Missing private key or certificate chain')
+            }
+        } catch (Exception ignored) {
+            // 不输出密钥值或底层异常内容。
+            throw new GradleException('[RELEASE_SIGNING_INVALID] 无法读取 Release 私钥及证书，请检查 keystore、密码和 alias。')
+        }
     }
-} else {
-    android.signingConfigs.sign.storeFile file(System.getenv('SIGN_KEY_STORE_FILE'))
-    android.signingConfigs.sign.storePassword System.getenv('SIGN_KEY_STORE_PASSWORD')
-    android.signingConfigs.sign.keyAlias System.getenv('SIGN_KEY_ALIAS')
-    android.signingConfigs.sign.keyPassword System.getenv('SIGN_KEY_PASSWORD')
+}
+
+def properties = new Properties()
+def propertiesFile = rootProject.file('local.properties')
+if (propertiesFile.canRead()) {
+    propertiesFile.withInputStream { properties.load(it) }
+}
+
+def keys = ['SIGN_KEY_STORE_FILE', 'SIGN_KEY_STORE_PASSWORD', 'SIGN_KEY_ALIAS', 'SIGN_KEY_PASSWORD']
+def values = keys.collectEntries { key ->
+    def localValue = properties.getProperty(key)
+    def value = localValue?.trim() ? localValue : providers.environmentVariable(key).orNull
+    [(key): value?.trim() ? value : null]
+}
+
+// 保持现有相对路径语义：相对 composeApp 模块解析；建议 CI 使用绝对路径。
+def storeFile = values.SIGN_KEY_STORE_FILE ? file(values.SIGN_KEY_STORE_FILE) : null
+android.signingConfigs.sign.with {
+    if (storeFile != null) {
+        it.storeFile = storeFile
+    }
+    storePassword = values.SIGN_KEY_STORE_PASSWORD
+    keyAlias = values.SIGN_KEY_ALIAS
+    keyPassword = values.SIGN_KEY_PASSWORD
+}
+
+def verifySigning = tasks.register('verifyReleaseSigning', VerifyReleaseSigning) {
+    group = 'verification'
+    description = '验证 Release 签名配置和私钥，不构建或发布产物。'
+    missingKeys = keys.findAll { values[it] == null }
+    keyStoreFile = storeFile
+    keyStorePassword = values.SIGN_KEY_STORE_PASSWORD
+    signingKeyAlias = values.SIGN_KEY_ALIAS
+    signingKeyPassword = values.SIGN_KEY_PASSWORD
+}
+
+// 挂到真实任务依赖，不靠命令行任务名判断；聚合任务和直接打包同样受保护。
+tasks.matching { it.name == 'preReleaseBuild' || it.name == 'validateSigningRelease' }.configureEach {
+    dependsOn(verifySigning)
 }

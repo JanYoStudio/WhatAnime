@@ -62,6 +62,9 @@ kotlin {
     }
 
     sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.activity.compose)
@@ -153,7 +156,9 @@ android {
         versionCode = gitVersionCode
         versionName = appVersionName
 
-        setProperty("archivesBaseName", "WhatAnime-$versionName")
+        base {
+            archivesName.set("WhatAnime-$versionName")
+        }
     }
     packaging {
         resources {
@@ -195,6 +200,7 @@ android {
     }
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
     @Suppress("UnstableApiUsage")
     androidResources {
@@ -224,6 +230,11 @@ aboutLibraries {
     export {
         outputFile = file("src/commonMain/composeResources/files/aboutlibraries.json")
     }
+}
+
+// 依赖声明是共享资源的输入；确保首次构建和组合任务执行顺序正确。
+tasks.matching { it.name == "copyNonXmlValueResourcesForCommonMain" }.configureEach {
+    dependsOn("exportLibraryDefinitions")
 }
 
 tasks.register("updateAppleBuildVersion") {

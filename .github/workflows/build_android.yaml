@@ -6,9 +6,9 @@ on:
       - dev
 env:
   OUTPUT_DIR: "composeApp/build/outputs/apk/release"
-  SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS || 'a' }}
-  SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD || 'passwd' }}
-  SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD || 'passwd' }}
+  SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+  SIGN_KEY_STORE_PASSWORD: ${{ secrets.SIGN_KEY_STORE_PASSWORD }}
+  SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
   SIGN_KEY_STORE_FILE: ${{ github.workspace }}/keystore.jks
   NIGHTLY: true
 jobs:
@@ -29,28 +29,17 @@ jobs:
         uses: android-actions/setup-android@v3
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
-      - name: Check for secrets and handle keystore
+      - name: Validate signing secrets and decode keystore
+        env:
+          SIGN_KEY_BASE64: ${{ secrets.SIGN_KEY_BASE64 }}
         run: |
-          if [ -n "${{ secrets.SIGN_KEY_ALIAS }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_STORE_PASSWORD }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_PASSWORD }}" ] && \
-             [ -n "${{ secrets.SIGN_KEY_BASE64 }}" ]; then
-            echo "Signing secrets found. Decoding keystore..."
-            echo "${{ secrets.SIGN_KEY_BASE64 }}" | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
-            echo "Keystore decoded successfully."
-          else
-            echo "Signing secrets not found. Generating temporary keystore..."
-            keytool -genkey -v \
-              -keystore ${{ env.SIGN_KEY_STORE_FILE }} \
-              -alias ${{ env.SIGN_KEY_ALIAS }} \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -storepass ${{ env.SIGN_KEY_STORE_PASSWORD }} \
-              -keypass ${{ env.SIGN_KEY_PASSWORD }} \
-              -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown"
-            echo "Temporary keystore generated successfully."
-          fi
+          for name in SIGN_KEY_ALIAS SIGN_KEY_STORE_PASSWORD SIGN_KEY_PASSWORD SIGN_KEY_BASE64; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing release signing secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$SIGN_KEY_BASE64" | base64 --decode > "$SIGN_KEY_STORE_FILE"
         shell: bash
       - name: Make gradlew executable
         run: chmod +x gradlew

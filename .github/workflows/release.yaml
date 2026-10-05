@@ -21,9 +21,18 @@ jobs:
           distribution: 'temurin'
       - name: 设置Android SDK
         uses: android-actions/setup-android@v3
-      - name: 解密签名
+      - name: 校验签名配置并解码 keystore
+        env:
+          SIGN_KEY_BASE64: ${{ secrets.SIGN_KEY_BASE64 }}
+        shell: bash
         run: |
-          echo ${{ secrets.SIGN_KEY_BASE64 }} | base64 --decode > ${{ env.SIGN_KEY_STORE_FILE }}
+          for name in SIGN_KEY_ALIAS SIGN_KEY_STORE_PASSWORD SIGN_KEY_PASSWORD SIGN_KEY_BASE64; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing release signing secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$SIGN_KEY_BASE64" | base64 --decode > "$SIGN_KEY_STORE_FILE"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
       - name: 构建 APK
