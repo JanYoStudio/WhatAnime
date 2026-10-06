@@ -53,8 +53,9 @@
     <string name="settings_title_prefer_webp">优先加载 WEBP 图片</string>
     <string name="settings_summary_prefer_webp">在设备支持的情况下优先加载 WEBP 图片，以减少流量消耗</string>
     <string name="settings_summary_debug_mode">记录最近的 HTTP 响应，仅用于排查问题</string>
-    <string name="settings_title_api_key">输入专属 API Key</string>
-    <string name="settings_summary_api_key">如果您已获得 trace.moe 提供的专属 API Key，可在这里输入。<b>输入无效的 Key 可能会导致搜索失败。</b></string>
+    <string name="settings_title_api_key">API 密钥</string>
+    <string name="ui_configure_api_key">配置 API 密钥</string>
+    <string name="settings_summary_api_key">可选设置：使用您的 trace.moe API 密钥，或留空使用默认服务。<b>无效密钥可能导致搜索失败。</b></string>
     <string name="settings_group_about">应用信息</string>
     <string name="settings_title_about_github">项目 GitHub</string>
     <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>

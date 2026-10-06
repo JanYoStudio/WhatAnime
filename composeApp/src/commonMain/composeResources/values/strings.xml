@@ -82,8 +82,9 @@
     <string name="settings_summary_prefer_webp">Load WEBP images first when supported to reduce data usage</string>
     <string name="settings_title_debug_mode">Troubleshooting mode</string>
     <string name="settings_summary_debug_mode">Keep recent HTTP responses for troubleshooting only</string>
-    <string name="settings_title_api_key">Enter personal API key</string>
-    <string name="settings_summary_api_key">Enter your personal trace.moe API key here if you have one. <b>An invalid key may cause searches to fail.</b></string>
+    <string name="settings_title_api_key">API key</string>
+    <string name="ui_configure_api_key">Configure API key</string>
+    <string name="settings_summary_api_key">Optional: use your trace.moe API key, or leave this blank to use the default service. <b>An invalid key may cause searches to fail.</b></string>
     <string name="settings_group_about">App Info</string>
     <string name="settings_title_about_github">Project GitHub</string>
     <string name="settings_summary_about_github" translatable="false">https://github.com/JanYoStudio/WhatAnime</string>

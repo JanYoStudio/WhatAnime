@@ -128,8 +128,6 @@ kotlin {
             implementation(libs.aboutlibraries.compose.m3)
             //room
             implementation(libs.androidx.room)
-            //preference
-            implementation(libs.compose.preference)
             //kotlin-crypto-hash
             implementation(project.dependencies.platform(libs.kotlin.crypto.hash.bom))
             implementation(libs.kotlin.crypto.hash.md)

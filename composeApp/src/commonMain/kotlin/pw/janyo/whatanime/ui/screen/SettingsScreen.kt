@@ -102,10 +102,12 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         fun dismissKey() { if (!saving) { editingKey = false; input = ""; keyVisible = false } }
         AlertDialog(
             onDismissRequest = ::dismissKey,
-            title = { Text(stringResource(Res.string.settings_title_api_key)) },
-            text = { Column(Modifier.imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            title = { Text(stringResource(Res.string.ui_configure_api_key)) },
+            text = { Column(Modifier.fillMaxWidth().imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(Res.string.settings_summary_api_key))
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(Res.string.settings_title_api_key)) },
                     value = input, onValueChange = { input = it }, enabled = !saving, singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
                     visualTransformation = if (keyVisible) VisualTransformation.None else PasswordVisualTransformation(),

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,7 +32,6 @@ import pw.janyo.whatanime.model.PlaybackPhase
 import pw.janyo.whatanime.viewmodel.PlaybackCoordinator
 import whatanime.composeapp.generated.resources.Res
 import whatanime.composeapp.generated.resources.ui_close
-import whatanime.composeapp.generated.resources.ui_loading
 import whatanime.composeapp.generated.resources.ui_retry
 import whatanime.composeapp.generated.resources.video_play_hint_410
 import whatanime.composeapp.generated.resources.video_play_hint_unknown
@@ -72,10 +70,6 @@ fun BuildVideoDialog() {
                             coordinator.host?.let { host ->
                                 PlatformMediaPlayerView(Modifier.fillMaxWidth().aspectRatio(16f / 9f), host)
                             }
-                        }
-                        if (state.phase == PlaybackPhase.Loading) Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
-                            Text(stringResource(Res.string.ui_loading), Modifier.padding(top = 8.dp))
                         }
                     }
                 }
