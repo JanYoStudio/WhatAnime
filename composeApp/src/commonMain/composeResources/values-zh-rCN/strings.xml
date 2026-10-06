@@ -143,4 +143,13 @@
     <string name="ui_time_day">天</string>
     <string name="ui_refresh_history">刷新历史记录</string>
     <string name="ui_back">返回</string>
+    <string name="ui_history_empty_hint">用一张截图寻找动画，发现的记录会留在这里。</string>
+    <string name="ui_selected_count">已选 %1$d 项</string>
+    <string name="ui_exit_selection">退出选择模式</string>
+    <string name="ui_select_history">选择这条记录</string>
+    <string name="ui_select_all">全选</string>
+    <string name="ui_deselect_all">取消全选</string>
+    <string name="ui_delete_selected">删除所选记录</string>
+    <string name="ui_delete_selected_title">删除选中的 %1$d 条记录？</string>
+    <string name="ui_batch_delete_failed">%1$d 条记录未能删除，请重试。</string>
 </resources>

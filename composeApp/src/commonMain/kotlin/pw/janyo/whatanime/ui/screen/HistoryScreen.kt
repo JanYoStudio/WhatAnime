@@ -1,6 +1,13 @@
 package pw.janyo.whatanime.ui.screen
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
+import pw.janyo.whatanime.ui.components.HistoryEmptyState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,12 +49,20 @@ fun HistoryScreen(vm: HistoryViewModel = koinViewModel()) {
     val navController = LocalNavController.current!!
     val state by vm.historyListState.collectAsState()
     val listState = rememberLazyListState()
-    var confirmation by remember { mutableStateOf<ReadOnlyAnimationHistory?>(null) }
+    var confirmation by remember { mutableStateOf<HistoryDeleteConfirmation?>(null) }
+    val busy = state.deletingIds.isNotEmpty()
+    BackHandler(state.selectionMode && confirmation == null) { vm.exitSelection() }
+    DisposableEffect(vm) { onDispose { vm.exitSelection() } }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) { vm.refresh() }
-    LaunchedEffect(state.errorMessage, state.cleanupFailed) {
-        val message = if (state.cleanupFailed) getString(Res.string.ui_cleanup_failed) else state.errorMessage
+    LaunchedEffect(state.errorMessage, state.cleanupFailed, state.failedDeleteCount, busy) {
+        if (busy) return@LaunchedEffect
+        val message = listOfNotNull(
+            if (state.failedDeleteCount > 0) getString(Res.string.ui_batch_delete_failed, state.failedDeleteCount)
+            else state.errorMessage.takeIf { it.isNotBlank() },
+            if (state.cleanupFailed) getString(Res.string.ui_cleanup_failed) else null,
+        ).joinToString("\n")
         if (message.isNotBlank()) {
             snackbar.showSnackbar(message)
             vm.acknowledgeError()
@@ -55,60 +70,118 @@ fun HistoryScreen(vm: HistoryViewModel = koinViewModel()) {
     }
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(Res.string.title_activity_history)) }, actions = {
-                IconButton(onClick = vm::refresh, enabled = !state.loading) { Icon(Icons.Outlined.Refresh, stringResource(Res.string.ui_refresh_history)) }
-            })
+            if (state.selectionMode) {
+                // 全选操作独立成行并允许换行，确保窄屏大字下 X、计数及删除仍可见。
+                Column {
+                    TopAppBar(
+                        title = { Text(stringResource(Res.string.ui_selected_count, state.selectedIds.size)) },
+                        navigationIcon = { IconButton(onClick = vm::exitSelection) {
+                            Icon(Icons.Outlined.Close, stringResource(Res.string.ui_exit_selection))
+                        } },
+                        actions = { IconButton(enabled = state.selectedIds.isNotEmpty() && !busy, onClick = {
+                            confirmation = HistoryDeleteConfirmation(state.selectedIds.toSet(), batch = true)
+                        }) { Icon(Icons.Outlined.Delete, stringResource(Res.string.ui_delete_selected)) } },
+                    )
+                    FlowRow(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.End) {
+                        TextButton(onClick = vm::selectAll, enabled = !busy && state.selectedIds.size < state.list.size) {
+                            Text(stringResource(Res.string.ui_select_all))
+                        }
+                        TextButton(onClick = vm::clearSelection, enabled = !busy && state.selectedIds.isNotEmpty()) {
+                            Text(stringResource(Res.string.ui_deselect_all))
+                        }
+                    }
+                }
+            } else {
+                TopAppBar(title = { Text(stringResource(Res.string.title_activity_history)) }, actions = {
+                    IconButton(onClick = vm::refresh, enabled = !state.loading && !busy) {
+                        Icon(Icons.Outlined.Refresh, stringResource(Res.string.ui_refresh_history))
+                    }
+                })
+            }
         },
         snackbarHost = { SnackbarHost(snackbar) },
     ) { padding ->
-        PullToRefreshBox(state.loading, vm::refresh, Modifier.padding(padding).fillMaxSize()) {
-            LazyColumn(
-                state = listState, modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                if (state.list.isEmpty()) item {
-                    when {
-                        state.loading -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                        state.errorMessage.isNotBlank() -> WorkspaceMessage(state.errorMessage, stringResource(Res.string.ui_retry), vm::refresh)
-                        state.loaded -> WorkspaceMessage(stringResource(Res.string.ui_no_history))
+        PullToRefreshBox(state.loading, { if (!state.selectionMode && !busy) vm.refresh() }, Modifier.padding(padding).fillMaxSize()) {
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val emptyMinHeight = (maxHeight - 32.dp).coerceAtLeast(0.dp)
+                LazyColumn(
+                    state = listState, modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    if (state.list.isEmpty()) item {
+                        when {
+                            state.loading -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                            state.errorMessage.isNotBlank() -> WorkspaceMessage(state.errorMessage, stringResource(Res.string.ui_retry), vm::refresh)
+                            state.loaded -> Box(Modifier.fillMaxWidth().heightIn(min = emptyMinHeight), contentAlignment = Alignment.Center) { HistoryEmptyState() }
+                        }
                     }
-                }
-                items(state.list, key = { it.id }) { item ->
-                    SwipeToDeleteContainer(item = item, enabled = confirmation == null && item.id !in state.deletingIds, onDelete = {
-                        if (confirmation == null && it.id !in state.deletingIds) confirmation = it
-                    }) {
-                        HistoryCard(item, enabled = item.id !in state.deletingIds) {
-                            if (item.id in state.deletingIds) return@HistoryCard
-                            if (item.isOldData) scope.launch { showToast(getString(Res.string.hint_data_convert_no_detail_in_history)) }
-                            else navController.navigate(RouteDetail(item.id, item.cachePath)) { launchSingleTop = true }
+                    items(state.list, key = { it.id }) { item ->
+                        SwipeToDeleteContainer(item = item, enabled = !state.selectionMode && !state.loading && confirmation == null && !busy, onDelete = {
+                            if (confirmation == null && !busy) confirmation = HistoryDeleteConfirmation(setOf(it.id), title = it.title)
+                        }) {
+                            HistoryCard(
+                                item, enabled = item.id !in state.deletingIds,
+                                selectionMode = state.selectionMode, selected = item.id in state.selectedIds,
+                                onLongClick = { if (state.selectionMode) vm.toggleSelection(item.id) else vm.beginSelection(item.id) },
+                                onClick = {
+                                    if (state.selectionMode) vm.toggleSelection(item.id)
+                                    else if (item.isOldData) scope.launch { showToast(getString(Res.string.hint_data_convert_no_detail_in_history)) }
+                                    else navController.navigate(RouteDetail(item.id, item.cachePath)) { launchSingleTop = true }
+                                },
+                            )
                         }
                     }
                 }
             }
         }
     }
-    confirmation?.let { item ->
+    confirmation?.let { request ->
         AlertDialog(
             onDismissRequest = { confirmation = null },
-            title = { Text(stringResource(Res.string.hint_delete, item.title)) }, text = { Text(stringResource(Res.string.hint_delete_desc)) },
-            confirmButton = { TextButton(onClick = { vm.deleteHistory(item.id); confirmation = null }) { Text(stringResource(Res.string.action_ok)) } },
+            title = { Text(if (request.batch) stringResource(Res.string.ui_delete_selected_title, request.ids.size)
+                else stringResource(Res.string.hint_delete, request.title)) },
+            text = { Text(stringResource(Res.string.hint_delete_desc)) },
+            confirmButton = { TextButton(onClick = {
+                if (request.batch) vm.deleteSelected(request.ids) else vm.deleteHistory(request.ids.single())
+                confirmation = null
+            }) { Text(stringResource(Res.string.action_ok)) } },
             dismissButton = { TextButton(onClick = { confirmation = null }) { Text(stringResource(Res.string.action_cancel)) } },
         )
     }
 }
 
+private data class HistoryDeleteConfirmation(val ids: Set<Int>, val title: String = "", val batch: Boolean = false)
+
 @Composable
-private fun HistoryCard(history: ReadOnlyAnimationHistory, enabled: Boolean, onClick: () -> Unit) {
-    ElevatedCard(Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onClick)) {
+private fun HistoryCard(
+    history: ReadOnlyAnimationHistory, enabled: Boolean,
+    selectionMode: Boolean, selected: Boolean, onLongClick: () -> Unit, onClick: () -> Unit,
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth().combinedClickable(
+            enabled = enabled, role = if (selectionMode) Role.Checkbox else Role.Button,
+            onLongClickLabel = stringResource(Res.string.ui_select_history),
+            onLongClick = onLongClick, onClick = onClick,
+        ).semantics { if (selectionMode) toggleableState = ToggleableState(selected) },
+        colors = CardDefaults.elevatedCardColors(containerColor = if (selected) {
+            MaterialTheme.colorScheme.secondaryContainer
+        } else MaterialTheme.colorScheme.surfaceContainerLow),
+    ) {
         if (!enabled) LinearProgressIndicator(Modifier.fillMaxWidth())
         BoxWithConstraints(Modifier.padding(12.dp)) {
             val vertical = maxWidth < 336.dp || (LocalDensity.current.fontScale >= 1.5f && maxWidth < 376.dp)
             val image: @Composable (Modifier) -> Unit = { modifier ->
-                AsyncImage(
-                    PlatformFile(history.cachePath), null,
-                    modifier = modifier.aspectRatio(16f / 9f), contentScale = ContentScale.Crop,
-                    error = painterResource(Res.drawable.ic_load_failed),
-                )
+                Box(modifier.aspectRatio(16f / 9f)) {
+                    AsyncImage(
+                        PlatformFile(history.cachePath), null,
+                        modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop,
+                        error = painterResource(Res.drawable.ic_load_failed),
+                    )
+                    if (selectionMode) Surface(
+                        Modifier.align(Alignment.TopStart).padding(4.dp),
+                        shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surface,
+                    ) { Checkbox(checked = selected, onCheckedChange = null) }
+                }
             }
             val info: @Composable (Modifier) -> Unit = { modifier ->
                 Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {

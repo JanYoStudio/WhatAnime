@@ -143,4 +143,13 @@
     <string name="ui_time_day">天</string>
     <string name="ui_refresh_history">重新整理歷史記錄</string>
     <string name="ui_back">返回</string>
+    <string name="ui_history_empty_hint">用一張截圖尋找動畫，發現的紀錄會留在這裡。</string>
+    <string name="ui_selected_count">已選 %1$d 項</string>
+    <string name="ui_exit_selection">結束選取模式</string>
+    <string name="ui_select_history">選取這筆紀錄</string>
+    <string name="ui_select_all">全選</string>
+    <string name="ui_deselect_all">取消全選</string>
+    <string name="ui_delete_selected">刪除所選紀錄</string>
+    <string name="ui_delete_selected_title">刪除選取的 %1$d 筆紀錄？</string>
+    <string name="ui_batch_delete_failed">%1$d 筆紀錄未能刪除，請重試。</string>
 </resources>

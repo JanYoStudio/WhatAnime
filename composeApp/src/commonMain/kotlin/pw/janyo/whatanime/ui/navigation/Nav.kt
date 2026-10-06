@@ -10,6 +10,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
+import pw.janyo.whatanime.TopLevelPage
 import pw.janyo.whatanime.ui.screen.AboutScreen
 import pw.janyo.whatanime.ui.screen.DetailScreen
 import pw.janyo.whatanime.ui.screen.HistoryScreen
@@ -29,15 +30,21 @@ fun NavGraphBuilder.appNavGraph(navController: NavController) {
     navigation<RouteRoot>(startDestination = RouteMain) {
         composable<RouteMain> { entry ->
             val root = remember(entry) { navController.getBackStackEntry<RouteRoot>() }
-            MainScreen(koinViewModel(viewModelStoreOwner = root))
+            TopLevelPage(TopLevelDestination.Search, navController) {
+                MainScreen(koinViewModel(viewModelStoreOwner = root))
+            }
         }
         composable<RouteHistory> { entry ->
             val root = remember(entry) { navController.getBackStackEntry<RouteRoot>() }
-            HistoryScreen(koinViewModel(viewModelStoreOwner = root))
+            TopLevelPage(TopLevelDestination.History, navController) {
+                HistoryScreen(koinViewModel(viewModelStoreOwner = root))
+            }
         }
         composable<RouteSettings> { entry ->
             val root = remember(entry) { navController.getBackStackEntry<RouteRoot>() }
-            SettingsScreen(koinViewModel(viewModelStoreOwner = root))
+            TopLevelPage(TopLevelDestination.Settings, navController) {
+                SettingsScreen(koinViewModel(viewModelStoreOwner = root))
+            }
         }
         composable<RouteAbout> { AboutScreen() }
         composable<RouteDetail> { entry ->

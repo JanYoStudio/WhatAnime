@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -60,11 +61,11 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             })
             SettingsGroup(title = { Text(stringResource(Res.string.ui_appearance)) }, content = {
                 val modes = showNightModeSelectList()
-                val labels = modes.map { stringResource(it.title) }
                 ListSetting(
                     title = stringResource(Res.string.settings_title_night_mode), subtitle = stringResource(nightMode.title),
-                    defaultValue = stringResource(nightMode.title), values = labels,
-                    onValueChange = { label -> labels.indexOf(label).takeIf { it >= 0 }?.let { vm.setNightMode(modes[it]) } },
+                    defaultValue = nightMode, values = modes,
+                    valueToText = { AnnotatedString(stringResource(it.title)) },
+                    onValueChange = vm::setNightMode,
                 )
             })
             SettingsGroup(title = { Text(stringResource(Res.string.ui_service)) }, content = {
@@ -96,6 +97,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
                 ExternalLink(stringResource(Res.string.drawer_api_quota_donate_sponsors), "soruly", "https://github.com/sponsors/soruly")
                 ExternalLink(stringResource(Res.string.drawer_api_quota_donate_patreon), "soruly", "https://www.patreon.com/soruly")
             })
+            Spacer(Modifier.height(16.dp))
         }
     }
     if (editingKey) {

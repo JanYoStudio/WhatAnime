@@ -1,0 +1,16 @@
+<!-- 由 files/history_empty.svg 的路径生成；深色版仅替换调色板。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="240dp" android:height="180dp" android:viewportWidth="240" android:viewportHeight="180">
+    <path android:fillColor="#282B38" android:pathData="M28 92C28 47 71 23 121 30C174 17 213 54 211 102C210 145 163 162 112 151C67 167 25 137 28 92Z" />
+    <path android:fillColor="#3A4057" android:pathData="M55 34L178 49Q188 50 186 61L176 128Q174 138 164 136L43 121Q33 120 35 109L44 44Q45 33 55 34Z" />
+    <path android:fillColor="#7088B6" android:pathData="M33 55Q33 43 45 43H159Q171 43 171 55V123Q171 135 159 135H45Q33 135 33 123Z" />
+    <path android:fillColor="#35384B" android:pathData="M49 60H155V118H49Z" />
+    <path android:fillColor="#4C6570" android:pathData="M49 103L77 77L99 97L117 81L155 111V118H49Z" />
+    <path android:fillColor="#8CB5C1" android:pathData="M49 110L76 92L99 108L115 98L141 118H49Z" />
+    <path android:fillColor="#D2B893" android:pathData="M128 73m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0" />
+    <path android:fillColor="#C3D0EE" android:pathData="M44 48h12v5H44Z M66 48h12v5H66Z M88 48h12v5H88Z M110 48h12v5H110Z M132 48h12v5H132Z M44 124h12v5H44Z M66 124h12v5H66Z M88 124h12v5H88Z M110 124h12v5H110Z M132 124h12v5H132Z" />
+    <path android:fillColor="#8D83BC" android:pathData="M176 123m-32 0a32 32 0 1 0 64 0a32 32 0 1 0-64 0" />
+    <path android:fillColor="#35384B" android:pathData="M176 123m-24 0a24 24 0 1 0 48 0a24 24 0 1 0-48 0" />
+    <path android:fillColor="#D8CCFC" android:pathData="M173 105h6v17l-13 12-4-4 11-11Z" />
+    <path android:fillColor="#8CB5C1" android:pathData="M193 36l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" />
+    <path android:fillColor="#8D83BC" android:pathData="M27 137m-5 0a5 5 0 1 0 10 0a5 5 0 1 0-10 0" />
+</vector>

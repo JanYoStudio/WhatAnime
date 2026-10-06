@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -78,48 +79,66 @@ fun App() {
     WhatAnimeTheme {
         Surface(Modifier.fillMaxSize()) {
             BoxWithConstraints(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
-                val layout = layoutFor(maxWidth.value, maxHeight.value, LocalDensity.current.fontScale, showNavigation = topLevel)
+                val layout = layoutFor(maxWidth.value, maxHeight.value, LocalDensity.current.fontScale, showNavigation = false)
                 CompositionLocalProvider(LocalNavController provides navController, LocalLayoutSpec provides layout) {
-                    Column(Modifier.fillMaxSize()) {
-                        Row(Modifier.weight(1f).fillMaxWidth()) {
-                            if (topLevel && layout.navigation != NavigationKind.Bottom) {
-                                NavigationRail(Modifier.width(layout.railWidth.dp).fillMaxHeight().verticalScroll(rememberScrollState())) {
-                                    TopLevelDestination.entries.forEach { tab ->
-                                        val label = tabLabel(tab)
-                                        NavigationRailItem(
-                                            selected = selected == tab,
-                                            onClick = { navController.selectTopLevel(tab) },
-                                            icon = { Icon(tabIcon(tab), label) },
-                                            label = if (layout.navigation == NavigationKind.CompactRail) null else ({ Text(label) }),
-                                        )
-                                    }
-                                }
-                            }
-                            NavHost(
-                                navController = navController,
-                                startDestination = RouteRoot,
-                                modifier = Modifier.weight(1f).fillMaxHeight(),
-                                enterTransition = { EnterTransition.None },
-                                exitTransition = { ExitTransition.None },
-                                popEnterTransition = { EnterTransition.None },
-                                popExitTransition = { ExitTransition.None },
-                            ) { appNavGraph(navController) }
-                        }
-                        if (topLevel && layout.navigation == NavigationKind.Bottom) {
-                            NavigationBar {
+                    NavHost(
+                        navController = navController,
+                        startDestination = RouteRoot,
+                        modifier = Modifier.fillMaxSize(),
+                        enterTransition = {
+                            if (initialState.destination.isTopLevelPage() && targetState.destination.isTopLevelPage()) EnterTransition.None else pageEnter()
+                        },
+                        exitTransition = {
+                            if (initialState.destination.isTopLevelPage() && targetState.destination.isTopLevelPage()) ExitTransition.None else pageExit()
+                        },
+                        popEnterTransition = {
+                            if (initialState.destination.isTopLevelPage() && targetState.destination.isTopLevelPage()) EnterTransition.None else pagePopEnter()
+                        },
+                        popExitTransition = {
+                            if (initialState.destination.isTopLevelPage() && targetState.destination.isTopLevelPage()) ExitTransition.None else pagePopExit()
+                        },
+                    ) { appNavGraph(navController) }
+                    BuildVideoDialog()
+                }
+            }
+        }
+    }
+}
+
+// 主入口的导航栏属于该页面，一起参与层级转场；返回手势结束时不再突然增减内容高度。
+@Composable
+internal fun TopLevelPage(selected: TopLevelDestination, navController: NavController, content: @Composable () -> Unit) {
+    Surface(Modifier.fillMaxSize()) {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val layout = layoutFor(maxWidth.value, maxHeight.value, LocalDensity.current.fontScale)
+            CompositionLocalProvider(LocalLayoutSpec provides layout) {
+                Column(Modifier.fillMaxSize()) {
+                    Row(Modifier.weight(1f).fillMaxWidth()) {
+                        if (layout.navigation != NavigationKind.Bottom) {
+                            NavigationRail(Modifier.width(layout.railWidth.dp).fillMaxHeight().verticalScroll(rememberScrollState())) {
                                 TopLevelDestination.entries.forEach { tab ->
                                     val label = tabLabel(tab)
-                                    NavigationBarItem(
-                                        selected = selected == tab,
-                                        onClick = { navController.selectTopLevel(tab) },
+                                    NavigationRailItem(
+                                        selected = selected == tab, onClick = { navController.selectTopLevel(tab) },
                                         icon = { Icon(tabIcon(tab), label) },
-                                        label = { Text(label) },
+                                        label = if (layout.navigation == NavigationKind.CompactRail) null else ({ Text(label) }),
                                     )
                                 }
                             }
                         }
+                        Box(Modifier.weight(1f).fillMaxHeight()) { content() }
                     }
-                    BuildVideoDialog()
+                    if (layout.navigation == NavigationKind.Bottom) {
+                        NavigationBar {
+                            TopLevelDestination.entries.forEach { tab ->
+                                val label = tabLabel(tab)
+                                NavigationBarItem(
+                                    selected = selected == tab, onClick = { navController.selectTopLevel(tab) },
+                                    icon = { Icon(tabIcon(tab), label) }, label = { Text(label) },
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
@@ -23,9 +24,10 @@ fun <T> SwipeToDeleteContainer(item: T, enabled: Boolean = true, onDelete: (T) -
     SwipeToDismissBox(
         state = state, enableDismissFromStartToEnd = false, gesturesEnabled = enabled,
         backgroundContent = {
-            val active = state.targetValue == SwipeToDismissBoxValue.EndToStart
-            Box(Modifier.fillMaxSize().background(if (active) MaterialTheme.colorScheme.errorContainer else Color.Transparent)) {
-                if (active) Icon(
+            // 背景始终铺在卡片下面，拖动刚开始即可露出，不等跨过删除阈值。
+            Box(Modifier.fillMaxSize().clip(MaterialTheme.shapes.medium)
+                .background(if (enabled) MaterialTheme.colorScheme.errorContainer else Color.Transparent)) {
+                if (enabled) Icon(
                     Icons.Default.Delete, stringResource(Res.string.hint_swipe_to_delete),
                     Modifier.align(Alignment.CenterEnd).padding(end = 16.dp),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
@@ -33,9 +35,12 @@ fun <T> SwipeToDeleteContainer(item: T, enabled: Boolean = true, onDelete: (T) -
             }
         },
     ) { content(item) }
+    LaunchedEffect(enabled) {
+        if (!enabled) state.snapTo(SwipeToDismissBoxValue.Settled)
+    }
     LaunchedEffect(state.currentValue) {
         if (state.currentValue == SwipeToDismissBoxValue.EndToStart) {
-            onDelete(item)
+            if (enabled) onDelete(item)
             state.snapTo(SwipeToDismissBoxValue.Settled)
         }
     }

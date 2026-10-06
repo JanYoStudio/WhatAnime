@@ -165,4 +165,13 @@
     <string name="ui_time_day">d</string>
     <string name="ui_refresh_history">Refresh history</string>
     <string name="ui_back">Back</string>
+    <string name="ui_history_empty_hint">Search with a screenshot, and your discoveries will appear here.</string>
+    <string name="ui_selected_count">%1$d selected</string>
+    <string name="ui_exit_selection">Exit selection mode</string>
+    <string name="ui_select_history">Select this record</string>
+    <string name="ui_select_all">Select all</string>
+    <string name="ui_deselect_all">Deselect all</string>
+    <string name="ui_delete_selected">Delete selected records</string>
+    <string name="ui_delete_selected_title">Delete selected records (%1$d)?</string>
+    <string name="ui_batch_delete_failed">Not deleted: %1$d. Please try again.</string>
 </resources>
