@@ -15,6 +15,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.CancellationException
 import pw.janyo.whatanime.utils.canDeleteCache
 import pw.janyo.whatanime.utils.managedCacheDirectory

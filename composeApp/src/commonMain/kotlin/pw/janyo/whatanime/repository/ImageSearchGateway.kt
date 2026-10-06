@@ -7,6 +7,7 @@ import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.size
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import pw.janyo.whatanime.model.SearchAnimeResultItem
 import pw.janyo.whatanime.utils.getCacheFile
