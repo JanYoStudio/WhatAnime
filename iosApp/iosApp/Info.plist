@@ -2,6 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 当前仅使用系统 HTTPS/TLS 和摘要计算；新增非豁免加密功能时须重新评估此声明。 -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
     <key>CFBundleLocalizations</key>
